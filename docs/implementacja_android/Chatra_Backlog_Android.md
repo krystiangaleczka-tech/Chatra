@@ -1,6 +1,6 @@
 # Chatra Szczegółowy backlog implementacji Android
 
-Wersja 1.0 · 29 października 2026 · powiązanie z dokumentem Chatra Dokumentacja Android
+Wersja 1.1 · 29 października 2026 · powiązanie z dokumentem Chatra Dokumentacja Android
 
 Backlog obejmuje pełną aplikację, nie tylko statyczne ekrany. Każde zadanie ma zakres, wykonawcę, zależności, nakład oraz kryteria i weryfikację. Nakład oznacza osobodni pracy przy znanych kontraktach i dostępnym środowisku, nie termin kalendarzowy ani ofertę cenową. Zakresy są orientacyjne; po spike szkła i MMS należy je ponownie oszacować.
 
@@ -14,8 +14,10 @@ P0 oznacza fundament lub ryzyko blokujące dalsze prace; P1 oznacza pozostały w
 | M1 Wierny interfejs | CH007–CH020 | 10 ekranów z danymi demonstracyjnymi, raport obrazów i komplet projektów brakujących |
 | M2 Lokalny klient | CH021–CH034 | Rzeczywiste SMS/MMS, SIM, szkice, powiadomienia i media |
 | M3 Funkcje lokalne | CH035–CH045 | Harmonogram, wyszukiwanie, wygląd, porządek i Pro |
+| M3X Rozszerzenia UX | CH065–CH070 | Karta kontaktu, galeria, kolaże, personalizacja, gesty i nieprzeczytane zintegrowane przed odbiorem |
 | M4 Pełne HD | CH046–CH053 | Dwa urządzenia i odbiorca linku obsługują cały przepływ |
-| M5 Odbiór i wydanie | CH054–CH064 | Raporty regresji, urządzeń, prywatności, dostępności i gotowość dystrybucji |
+| M5 Odbiór i wydanie | CH054–CH064 oraz bramki CH065–CH070 | QA obejmuje również nowe funkcje UX |
+| M6 Po wydaniu / badania | CH071–CH072 | Opcjonalny eksport/skrót i spike iOS/RCS nie blokują M5 | Raporty regresji, urządzeń, prywatności, dostępności i gotowość dystrybucji |
 
 Po CH005 można prowadzić niezależne prace UI i telefonii, a po CH046/CH047 backend i klient HD. Zadania QA przygotowywać wcześniej na gotowych kontraktach; podane zależności są warunkami finalnego zamknięcia. Publikacja wymaga zakończenia pełnego zakresu. Samo „ekran się otwiera” nie jest kryterium wykonania.
 
@@ -30,6 +32,11 @@ Definition of Done każdego zadania: implementacja w repozytorium, przegląd, od
 Wykonanie: utworzyć rejestr G01–G10 z dokumentacji; wskazać właścicieli. Potwierdzić minSdk, dystrybucję, listę operatorów, obsługę wideo/grup MMS, kosz i zakres Pro. Zapisać, że HD wymaga backendu, a RCS/iMessage/połączenia nie wchodzą w zakres. Przygotować listę brakujących ekranów i polityk bez wymyślania ich jako części HTML.
 
 Odbiór: każda decyzja ma wariant, właściciela i zadanie zamykające; istnieje definicja pełnego wydania i etapu demo. Weryfikacja: przegląd matrycy 10 plansz × funkcje, brak nieoznaczonych założeń.
+
+**Uzupełnienie UX 29.10.2026:** Do rejestru zakresu dodać UX01–UX08 oraz ścieżki CH065–CH072: sześć rozszerzeń wymaganych w pełnym wydaniu (CH065–CH070) i dwie pozycje opcjonalne lub badawcze (CH071–CH072). Zapisać, że są dodatkiem do wzorca Liquid Glass i nie legalizują iMessage ani RCS na Androidzie.
+
+**Odbiór rozszerzony:** Matryca zakresu rozróżnia funkcje już zaplanowane od nowych; zakres pełnego wydania obejmuje CH065–CH070, a CH071–CH072 nie blokują wydania bez odrębnej decyzji.
+
 
 ### CH002 Zamrozić wzorce obrazu i typografii
 
@@ -62,6 +69,11 @@ Odbiór: czyste środowisko buduje demo i release testowy bez ręcznych zmian pl
 Wykonanie: zdefiniować typowane identyfikatory, Conversation, MessageRef, Draft, SendOperation, Attempt, Schedule i Attachment. Rozdzielić transport SMS/MMS/HD, repozytoria, zegar i dostawcę SIM. Ustalić UiState/UiAction, błędy i kontrakt zapisu. Zapisać ADR o providerze jako historii SMS/MMS i Room jako metadanych/projekcji.
 
 Odbiór: UI może działać z repozytorium testowym, a logika wysyłania bez UI. Weryfikacja: przegląd zależności modułów oraz sekwencji send/cancel/retry; brak cyklicznej zależności feature→feature.
+
+**Uzupełnienie UX 29.10.2026:** Rozszerzyć kontrakty modelu o trwałe ustawienia per conversationId (dziedziczenie z globalnego motywu), read/unread override, stan wyciszenia, lokalne metadane przypięć, identyfikator źródłowej wiadomości dla mediów oraz bezpieczne identyfikatory skrótów. Określić migracje i zachowanie po usunięciu wątku.
+
+**Odbiór rozszerzony:** Modele obsługują odtwarzalną galerię, skok do wiadomości i ustawienia per rozmowa bez duplikowania treści wiadomości w Room.
+
 
 ### CH006 Przygotować dane demonstracyjne i raportowanie
 
@@ -113,6 +125,11 @@ Wykonanie: nagłówek, pole wyszukiwania, filtr, przypięte/pozostałe, siedem w
 
 Odbiór: widoczne detale S02 zgodne, filtr liczy wątki, ostatni wiersz osiągalny. Weryfikacja: fixture plus lista 1000 wątków, długie nazwy i natychmiastowa zmiana odczytu bez resetu scrolla.
 
+**Uzupełnienie UX 29.10.2026:** Przewidzieć wejście do działań z długiego przytrzymania wiersza i dostępności, a także dostęp do oznaczania wszystkich jako przeczytane. Projekt przesunięć/gestów i konfiguracji realizuje CH069; na S02 nie zmieniać geometrii zatwierdzonego wzorca.
+
+**Odbiór rozszerzony:** Przypięcia, nieprzeczytane i dostępne akcje pozostają spójne po zmianie wątku lub powrocie z ekranu szczegółów; funkcje gestowe mają alternatywę bez gestu.
+
+
 ### CH012 Odtworzyć S03 Rozmowa
 
 **P1 · Android UI · 3–4 osobodni · zależności CH006 CH008 CH009**
@@ -120,6 +137,11 @@ Odbiór: widoczne detale S02 zgodne, filtr liczy wątki, ostatni wiersz osiągal
 Wykonanie: pływający header, sekcje dni, oba dymki, karta HD, wszystkie statusy, Ponów, odliczanie i kompozytor. Oddzielić listę od warstw pływających. Obsłużyć przewijanie do wiadomości, paginację i wskaźnik nowych wiadomości. Pole wieloliniowe rośnie do ustalonej wysokości, potem przewija tekst.
 
 Odbiór: zgodny S03 oraz statusy odrębne od treści; brak utraty szkicu przy IME i powrocie. Weryfikacja: długa rozmowa, kilkulinijkowa treść, przychodząca wiadomość podczas czytania historii i błędy transportu.
+
+**Uzupełnienie UX 29.10.2026:** Nagłówek rozmowy prowadzi do karty szczegółów CH065. Zapewnić zakotwiczenie konkretnej wiadomości dla wyników wyszukiwania i galerii, render grup załączników z CH067 oraz punkt wejścia do pierwszej nieprzeczytanej z CH070. Zachować IME, SIM, stany HD i wzorzec S03.
+
+**Odbiór rozszerzony:** Powrót ze szczegółów/galerii zachowuje pozycję i szkic; skok do wiadomości działa przy stronicowaniu, nie przenosi użytkownika arbitralnie na koniec.
+
 
 ### CH013 Odtworzyć S04 Dodatki i Chatra HD
 
@@ -185,6 +207,11 @@ Wykonanie: zaprojektować menu skrzynki, szczegóły rozmowy, SIM, pickery, szab
 
 Odbiór: katalog projektów i mapa do zadań; nowe widoki rozpoznawalne jako uzupełnienie, domyślne 10 plansz nie przeprojektowane. Weryfikacja: przegląd scenariuszy bez martwych końców.
 
+**Uzupełnienie UX 29.10.2026:** Uzupełnić katalog brakujących ekranów o szczegóły kontaktu/grupy (CH065), galerię rozmowy (CH066), gesty i menu (CH069), ustawienia lokalnego wyglądu (CH068), nieprzeczytane (CH070), opcjonalny eksport i skrót (CH071). Wszystkie podwidoki zgodne z językiem Liquid Glass; wzorzec S01–S10 pozostaje bez zmian.
+
+**Odbiór rozszerzony:** Zatwierdzone interakcje, empty/loading/error, ograniczenia numerów i protokołów oraz dostępność dla CH065–CH071 mają mapę do zadania i dowodu odbioru.
+
+
 ## 4 Telefonia dane i media
 
 ### CH021 Wdrożyć rolę SMS i uprawnienia
@@ -203,6 +230,11 @@ Wykonanie: DAO, migracje i klucze z typem SMS/MMS. Stronicowany odczyt historii,
 
 Odbiór: istniejące wiadomości pozostają nienaruszone; ponowny odczyt nie tworzy duplikatów. Weryfikacja: duża historia, identyczne ID w różnych tabelach, zewnętrzna zmiana, błąd providera i brak roli.
 
+**Uzupełnienie UX 29.10.2026:** Zapewnić stabilne relacje załącznik→wiadomość→wątek, klucze do galerii mediów i bezpieczne zapytania po conversationId. Przechowywać jedynie ustawienia i indeksy lokalne, nie tworzyć drugiej kanonicznej kopii SMS/MMS. Zastosować migracje dla zmian wyciszenia i oznaczenia nieprzeczytane.
+
+**Odbiór rozszerzony:** Indeks galerii i ustawienia nadal działają po rekoncyliacji, zmianie kontaktu, ponownej instalacji w granicach istniejącej polityki oraz aktualizacji providera.
+
+
 ### CH023 Obsłużyć odbiór SMS i status przeczytania
 
 **P0 · Android telefonia · 2–3 osobodni · zależności CH021 CH022**
@@ -210,6 +242,11 @@ Odbiór: istniejące wiadomości pozostają nienaruszone; ponowny odczyt nie two
 Wykonanie: odbiornik SMS_DELIVER, składanie części, trwały zapis zgodnie z obowiązkami klienta i aktualizacja projekcji. Odróżnić nową wiadomość od ponownego zdarzenia; zachować adres, czas i SIM. Oznaczanie przeczytania przez właściwy use case, synchronizacja badge oraz powiadomienia.
 
 Odbiór: przychodzący SMS jest w historii systemowej i właściwym wątku, bez podwojenia. Weryfikacja: pojedynczy/multipart, ekran zamknięty, proces nieaktywny, aktywna rozmowa oraz wielokrotne odświeżenie obserwatora.
+
+**Uzupełnienie UX 29.10.2026:** Rozszerzyć use case o ręczne 'oznacz jako nieprzeczytane', 'oznacz wszystkie jako przeczytane' i semantykę pierwszej nieprzeczytanej, bez oznaczania wiadomości przed realnym pokazaniem treści. Zdefiniować synchronizację badge, provider i powiadomień także po restarcie (CH070).
+
+**Odbiór rozszerzony:** Powiadomienia, liczniki i ręczny stan nieprzeczytania nie rozjeżdżają się po odczycie, ponownym wejściu, przyjściu nowego SMS ani zmianie roli.
+
 
 ### CH024 Wdrożyć subskrypcje i wybór SIM
 
@@ -259,6 +296,11 @@ Wykonanie: wyszukiwanie kontaktów, wybór kilku numerów, normalizacja, dedupli
 
 Odbiór: tryb osobnych wiadomości nie ujawnia numerów pozostałych odbiorców; retry omija już wysłanych. Weryfikacja: 3 osoby i częściowy sukces, ten sam numer zapisany z prefiksem +48 i w formacie lokalnym, odmowa kontaktów i dodanie załącznika wymagające wyboru transportu.
 
+**Uzupełnienie UX 29.10.2026:** Karta rozmowy CH065 musi rozpoznawać kontakt z kilkoma numerami, niezapisany numer i alfanumerycznego nadawcę. Akcja 'Zadzwoń' uruchamia wyłącznie systemowy dialer dla prawidłowego numeru, nie jest połączeniem VoIP. Zachować jawny wybór numeru/SIM.
+
+**Odbiór rozszerzony:** Nie można po cichu zadzwonić na zły numer ani pokazać działającego telefonu przy alfanumerycznym nadawcy.
+
+
 ### CH030 Wdrożyć powiadomienia i wejścia systemowe
 
 **P1 · Android platforma · 2–3 osobodni · zależności CH009 CH020 CH023 CH026 CH028**
@@ -267,6 +309,11 @@ Wykonanie: kanały wiadomości/błędy/harmonogram/HD, grupowanie, prywatność 
 
 Odbiór: właściwy wątek, aktualne badge, brak tekstu na blokadzie przy ukrytych podglądach. Weryfikacja: brak zgody na powiadomienia, urządzenie zablokowane, cold start i wielokrotne powiadomienie.
 
+**Uzupełnienie UX 29.10.2026:** Zaimplementować wyciszenie per rozmowa i kontrolę jego trwania, czytelne stany UI oraz prawidłowe mapowanie na Android NotificationChannels i skróty konwersacji. Wyciszenie nie jest blokowaniem ani kasowaniem wiadomości (CH065).
+
+**Odbiór rozszerzony:** Nowa wiadomość w wyciszonej rozmowie aktualizuje historię i liczniki bez niepożądanego alertu; zmiana preferencji pozostaje skuteczna po restarcie.
+
+
 ### CH031 Przygotować cykl życia załączników
 
 **P0 · Android media · 2–3 osobodni · zależności CH013 CH022 CH028**
@@ -274,6 +321,11 @@ Odbiór: właściwy wątek, aktualne badge, brak tekstu na blokadzie przy ukryty
 Wykonanie: Photo Picker i aparat, walidacja MIME/rozmiaru, trwały URI grant lub kopia prywatna, miniatury, porządek i usuwanie. Liczyć sumę rozmiarów i SHA256 poza głównym wątkiem. Zapewnić FileProvider i czyszczenie cache bez naruszenia aktywnej operacji.
 
 Odbiór: wybrane pliki nadal dostępne po restarcie; brak szerokiej zgody na galerię bez potrzeby. Weryfikacja: utracony dostęp do URI, brak miejsca, przerwane kopiowanie, duże wideo i anulowanie po wyborze.
+
+**Uzupełnienie UX 29.10.2026:** Dodać interfejs danych dla galerii per rozmowa CH066: paginacja, rodzaj załącznika, licznik, identyfikator wiadomości źródłowej, odczyt stanu MMS/HD, bezpieczne otwieranie i udostępnianie URI. Zabezpieczyć odwołania do utraconych i usuniętych plików.
+
+**Odbiór rozszerzony:** Galeria nie zawyża liczby załączników, nie ładuje jednocześnie wszystkich pełnych plików, nie ujawnia danych wrażliwych przez przypadkowy URI.
+
 
 ### CH032 Zbudować transport MMS i grupy
 
@@ -333,6 +385,11 @@ Wykonanie: indeks odtwarzalny dla wspieranych treści, normalizacja polskich lit
 
 Odbiór: paczk znajduje paczkę/PACZKA, łódź znajduje lodz po normalizacji; highlight trafia w oryginał. Weryfikacja: 50 tysięcy rekordów, usunięcie z providera, odtworzenie indeksu i zapytanie z emoji/interpunkcją.
 
+**Uzupełnienie UX 29.10.2026:** Indeks i API zapytań muszą umożliwiać szukanie w kontekście konkretnej rozmowy (conversationId) z zachowaniem zakotwiczenia do messageId. Wyszukiwanie mediów dotyczy metadanych i załączonych treści, nie OCR ani semantyki AI.
+
+**Odbiór rozszerzony:** Wynik z ekranu kontaktu otwiera właściwą wiadomość, także ze starszej strony historii; brak Internetu nie blokuje wyszukiwania lokalnego.
+
+
 ### CH039 Dodać filtry i szybkie trafienia
 
 **P1 · Android domena · 2–3 osobodni · zależności CH020 CH038**
@@ -341,6 +398,11 @@ Wykonanie: typ treści, nadawca i daty łączone operatorem AND; lokalne rozpozn
 
 Odbiór: cztery wyniki fixture i poprawne wyróżnienia, filtry rzeczywiście zawężają zbiór. Weryfikacja: numer telefonu podobny do kodu, fałszywy nadawca, brak trafień i przedział dat obejmujący zmianę czasu DST.
 
+**Uzupełnienie UX 29.10.2026:** Udostępnić identyczny silnik filtrów globalnie i w rozmowie: osoba/wątek, data, tekst, typ pliku, z opcjonalnym SIM jeżeli dane istnieją. Wszystkie filtry są widoczne, usuwalne i łączone AND; CH066 może otworzyć wiadomość źródłową.
+
+**Odbiór rozszerzony:** Filtr rozmowy nie pokazuje wyników z innych wątków; usunięcie filtra i Back przywracają stan bez fałszywych trafień.
+
+
 ### CH040 Utrwalić wygląd i dostępne warianty
 
 **P1 · Android UI · 3–4 osobodni · zależności CH018 CH020 CH007 CH008**
@@ -348,6 +410,11 @@ Odbiór: cztery wyniki fixture i poprawne wyróżnienia, filtry rzeczywiście za
 Wykonanie: DataStore dla wszystkich opcji, tokeny czterech kompozycji i dark/auto, compact i skali 1–7. Zastosować zmiany globalnie i w podglądzie; reset do źródłowego stanu. Ograniczenie przezroczystości i kontrast mają osobne tokeny. Nie blokować opcji dostępności płatnością.
 
 Odbiór: wybory zachowane po restarcie, Auto reaguje na system, brak nieczytelnego tekstu. Weryfikacja: kombinacje trybów, fontScale 2.0 i porównanie domyślnego Szkła do wzorca po resecie.
+
+**Uzupełnienie UX 29.10.2026:** Przewidzieć dziedziczenie globalnych tokenów przez motywy per rozmowa (CH068), oddzielny reset pojedynczego wątku, lokalne tło/kolor/dymki i kontrolę kontrastu. Opcje dostępności mają pierwszeństwo; nie udawać wspólnego tła po stronie odbiorcy SMS.
+
+**Odbiór rozszerzony:** Zmiana motywu globalnego nie niszczy świadomych wyjątków; powrót do globalnego usuwa tylko nadpisania konkretnej rozmowy.
+
 
 ### CH041 Podłączyć ustawienia wysyłania
 
@@ -364,6 +431,11 @@ Odbiór: ustawienia działają w nowych szkicach, nie zmieniają treści samoczy
 Wykonanie: oznaczać nieznanych nadawców bez klasyfikowania ich jako spam; lokalne reguły blokowania, lista i przywracanie. Zatrzymać powiadomienia zgodnie z regułą, zachować historię. Jeżeli G05 wybiera blokadę systemową, dodać osobny komunikat o skutkach dla połączeń i zweryfikować API.
 
 Odbiór: reguła działa dla znormalizowanego numeru, cofnięcie blokady przywraca widoczność; brak cichego kasowania SMS. Weryfikacja: nowy SMS od zablokowanego, odmienne formaty numeru, kontakt dodany później i brak roli.
+
+**Uzupełnienie UX 29.10.2026:** Akcje wycisz, blokuj, usuń i oznacz nieprzeczytane muszą mieć odrębne, prawdziwe znaczenie w CH065 i CH069. Po zablokowaniu kontaktu UI jednoznacznie pokazuje stan; dostarczone SMS nie znikają po cichu.
+
+**Odbiór rozszerzony:** Blokada z karty kontaktu i ekranu ustawień prowadzi do tych samych danych, a cofnięcie działa bez utraty historii.
+
 
 ### CH043 Wdrożyć kosz i odzyskiwanie
 
@@ -465,6 +537,11 @@ Wykonanie: testy istotnych reguł kodowania, deduplikacji, wersji zleceń, multi
 
 Odbiór: scenariusze duplikacji i utraty danych mają niezależne asercje i przechodzą w CI. Weryfikacja: wstrzykiwanie awarii, callbacki poza kolejnością, częściowe sprzątanie i zachowanie po odtworzeniu.
 
+**Uzupełnienie UX 29.10.2026:** Do testów domeny dodać ustawienia per conversationId, relacje galerii do źródła oraz reguły mark-read/unread, przypięć i wyciszenia. Nie dopuszczać zduplikowanego indeksu mediów po rekoncyliacji.
+
+**Odbiór rozszerzony:** Testy migracji i awarii potwierdzają zachowanie ustawień i prawidłowe liczniki galerii.
+
+
 ### CH055 Odebrać zgodność wizualną wszystkich ekranów
 
 **P0 · QA i UX i Android · 3–5 osobodni · zależności CH010 CH011 CH012 CH013 CH014 CH015 CH016 CH017 CH018 CH019 CH040**
@@ -472,6 +549,11 @@ Odbiór: scenariusze duplikacji i utraty danych mają niezależne asercje i prze
 Wykonanie: obrazy S01–S10 w warunkach CH002, overlay 50 procent, heatmapa i pomiary obszarów ROI. Sprawdzić typografię, linebreak, stroke ikon, box sizing, gradienty, szkło i dock. Osobny przegląd renderowania GPU na urządzeniu. Zarejestrować i poprawić odchyłki; golden nie aktualizuje się automatycznie.
 
 Odbiór: każdy ekran spełnia kontrakt 1 do 1, wyjątki tylko jawnie uzgodnione. Weryfikacja: podpisany raport z 10 par obrazów i brakiem nieprzejrzanych masek; osobny test 360/430 dp i dużego fontu.
+
+**Uzupełnienie UX 29.10.2026:** Poza obowiązkowym porównaniem 10 wzorców dodać wizualny przegląd nowych podwidoków CH065–CH070 jako osobnych ekranów, bez narzucania im fałszywego kryterium 1:1 wobec nieistniejącego wzorca.
+
+**Odbiór rozszerzony:** Galeria, karta kontaktu, lokalny wygląd i gesty mają zatwierdzone referencje UX; wzorce S01–S10 nie zostały potajemnie zmienione.
+
 
 ### CH056 Przetestować rzeczywistą telefonię
 
@@ -505,6 +587,11 @@ Wykonanie: uruchomienie aplikacji, 50 tys. wiadomości, scroll, otwarcie arkusza
 
 Odbiór: raport liczbowy i spełnione lub jawnie ponownie uzgodnione cele, bez rezygnacji ze szkła 1 do 1. Weryfikacja: identyczny scenariusz przed/po, brak zwiększenia wycieków pamięci i degradacji po dłuższym użyciu.
 
+**Uzupełnienie UX 29.10.2026:** Profilować galerię przy 67 i 1000 załączników, kolaże wielu zdjęć, skok do wiadomości źródłowej, gesture actions i aktualizację tła. Pamiętać o oddzielnych bitmapach miniatur i oryginałów.
+
+**Odbiór rozszerzony:** Nie ma wycieków bitmap ani blokowania UI przy szybkim przełączaniu filtrów i otwieraniu galerii.
+
+
 ### CH060 Odebrać dostępność i układy adaptacyjne
 
 **P1 · QA i UX i Android · 2–3 osobodni · zależności CH020 CH040 CH055**
@@ -512,6 +599,11 @@ Odbiór: raport liczbowy i spełnione lub jawnie ponownie uzgodnione cele, bez r
 Wykonanie: TalkBack, fokus dialogów, poprawne role i stan, nazwy przycisków i cele 48 dp bez nakładania. Systemowa skala tekstu 1.3/2.0, suwak aplikacji, redukcja przezroczystości i kontrast. Test 360/390/430 dp, IME, cutout i obie metody nawigacji systemu.
 
 Odbiór: każda akcja osiągalna, brak informacji tylko kolorem i brak uciętej treści. Weryfikacja: ręczny przepływ wysłania/zaplanowania/wyszukania wyłącznie z czytnikiem; regresja wizualna domyślnych ustawień.
+
+**Uzupełnienie UX 29.10.2026:** Ująć CH065–CH070: TalkBack dla gestów i przycisków, obsługę galerii klawiaturą i czytnikiem, skok do pierwszej nieprzeczytanej, skalę czcionki i kontrast zdjęcia jako tła.
+
+**Odbiór rozszerzony:** Każda akcja gestowa ma dostępny odpowiednik w menu; przy fontScale 2.0 wszystkie funkcje pozostają osiągalne.
+
 
 ### CH061 Zweryfikować migracje backup i odzyskanie
 
@@ -537,6 +629,11 @@ Wykonanie: przejść wszystkie widoczne akcje dziesięciu plansz i uzupełnione 
 
 Odbiór: pełna matryca bez martwych przycisków i nieprawdziwych statusów; build gotowy do wydania. Weryfikacja: raport odbioru, jawna lista ograniczeń operatorów i brak odstępstw 1 do 1 bez decyzji.
 
+**Uzupełnienie UX 29.10.2026:** Pełny odbiór wydania obejmuje CH065–CH070; przetestować szczegóły, galerię, kolaż, wygląd per rozmowa, gesty i stany nieprzeczytania. CH071–CH072 mają status opcjonalny/badawczy i nie mogą ukrywać braku funkcji wymaganej w wydaniu.
+
+**Odbiór rozszerzony:** Raport zawiera mapę UX01–UX06→CH065–CH070→testy; nie ma fikcyjnego RCS, iMessage ani niewidocznych martwych akcji.
+
+
 ### CH064 Przygotować dystrybucję i przekazanie
 
 **P0 · właściciel produktu i Android i DevOps · 2–3 osobodni · zależności CH063**
@@ -545,13 +642,81 @@ Wykonanie: ponownie sprawdzić wymagania Google Play/target SDK/uprawnień SMS/B
 
 Odbiór: paczka instaluje się z kanału testowego, podstawowe przepływy działają w buildzie release; właściciel ma instrukcję wypuszczenia i wsparcia. Weryfikacja: smoke test wydania oraz zgodność treści sklepu z realnym zakresem bez RCS/iMessage.
 
+## 7a Rozszerzenia UX wynikające z Textry i iOS (CH065–CH072)
+
+Poniższe taski uzupełniają CH001–CH064. CH065–CH070 są wymagane w pełnym wydaniu i muszą przejść CH063; CH071–CH072 to opcjonalne rozszerzenie i badanie poza bramką wydania. Szczegółowy kontekst: [porównanie Textra/iOS](../UX_TEXTRA_IOS_WNIOSKI_2026-10-29.md). Nie zastępować nimi wzorców wizualnych S01–S10.
+
+### CH065 Wdrożyć kartę kontaktu i szczegóły rozmowy
+
+**P1 · UX i Android · 4–6 osobodni · zależności CH012 CH020 CH029 CH030 CH042**
+
+Wykonanie: na podstawie CH020 stworzyć osobny podwidok otwierany z nagłówka S03. Pokazać prawidłowy kontakt, numer lub członków grupy, akcje Zadzwoń przez systemowy dialer, Szukaj w rozmowie, Wycisz i Więcej; przypięcie, dostęp do galerii CH066, ustawień wyglądu CH068, SIM, blokowania i usuwania. Rozróżnić wyciszenie, blokadę i usunięcie. Nie zakładać wsparcia iMessage/RCS i nie zmieniać planszy S03.
+
+Odbiór: wszystkie akcje działają lub jawnie wyjaśniają niedostępność; po powrocie zachowana pozycja historii i szkic. Weryfikacja: jeden/wiele numerów, alfanumeryczny nadawca, brak dialera/roli, grupa i TalkBack.
+
+### CH066 Zbudować galerię mediów jednej rozmowy
+
+**P1 · Android UI i dane · 4–6 osobodni · zależności CH020 CH022 CH031 CH038 CH065**
+
+Wykonanie: podwidok Wspólne z zakładkami zdjęcia, filmy, linki, dokumenty i pozostałe; paginacja miniaturek, realny licznik elementów, zachowanie po obrocie, otwarcie pliku, zapisz i Sharesheet bez wycieku URI. Każdy element zachowuje MessageRef i akcję Pokaż w rozmowie. Ująć załączniki MMS i Chatra HD z ich realnym stanem.
+
+Odbiór: 67 i 1000 plików wyświetla się kompletnie bez OOM i bez zgubionych stron. Weryfikacja: usunięty plik, brak URI, załącznik HD oczekujący na pobranie, wyszukiwanie źródłowej wiadomości.
+
+### CH067 Renderować kolaże i stosy załączników w wiadomości
+
+**P1 · Android UI · 2–4 osobodni · zależności CH012 CH031 CH020**
+
+Wykonanie: połączyć zestaw mediów należących do jednej wiadomości w zwięzły kolaż/stos, z licznikiem pozostałych zdjęć i pełnoekranowym podglądem; zachować kolejność plików i obsłużyć stany wysyłki, brak miniatury i wielkie obrazy. Nie grupować osobnych wiadomości według podobnej godziny.
+
+Odbiór: 1, 2, 3 i co najmniej 4 zdjęcia są prezentowane czytelnie, każde otwiera prawidłowy oryginał lub stan błędu. Weryfikacja: szybkie przewijanie, długie wiadomości, MMS i HD, dostępność i pamięć.
+
+### CH068 Dodać indywidualny wygląd i ustawienia konwersacji
+
+**P1 · UX i Android UI · 3–5 osobodni · zależności CH020 CH040 CH065**
+
+Wykonanie: per conversationId udostępnić nadpisania globalnego stylu dla tła, koloru akcentu, dymków i powiadomień. Zapewnić podgląd na żywo, wskazanie co pochodzi z motywu globalnego i reset wyłącznie tej rozmowy. Przestrzegać kontrastu, redukcji szkła i ustawień dostępności. W SMS/MMS wygląd jest wyłącznie lokalny; odbiorca nie widzi wspólnego tła.
+
+Odbiór: kilka rozmów ma różne ustawienia, a zmiana globalna nie usuwa wyjątków; reset przywraca dziedziczenie. Weryfikacja: restart, ciemny/jasny, zdjęcie o małym kontraście, TalkBack, brak zmian wzorca S09.
+
+### CH069 Wdrożyć gesty i menu szybkich działań skrzynki
+
+**P1 · UX i Android · 2–4 osobodni · zależności CH011 CH020 CH023 CH030 CH042**
+
+Wykonanie: długie przytrzymanie i opcjonalne gesty przesunięcia na liście rozmów do przypięcia, wyciszania, przeczytane/nieprzeczytane i zarządzania rozmową. Maksymalnie jedna szybka akcja na kierunek; mapowanie do zatwierdzenia po teście; działania destrukcyjne nie mogą wykonać się przypadkiem. Każda akcja ma alternatywę menu i czytnika ekranu; cofnięcie operacji odwracalnych.
+
+Odbiór: gesty nie konfliktują z nawigacją systemową, nie usuwają przypadkowo wątku; opcje menu i gest prowadzą do identycznego stanu. Weryfikacja: przełożenie przypięć, długi swipe, TalkBack, mały ekran i restart.
+
+### CH070 Ujednolicić nieprzeczytane i skok do wiadomości
+
+**P1 · Android dane i UI · 2–3 osobodni · zależności CH012 CH022 CH023 CH038 CH020**
+
+Wykonanie: implementować oznacz jako nieprzeczytane, oznacz wszystkie jako przeczytane i nawigację do pierwszej nieprzeczytanej wiadomości. Zdefiniować spójność ręcznego stanu z providerem, badge i powiadomieniami, w tym realny odczyt tylko po pokazaniu treści. Potwierdzenie masowego oznaczenia przy dużej liczbie rozmów do decyzji UX.
+
+Odbiór: otwarcie starszej części historii nie oznacza z automatu niewidocznych nowych wiadomości; restart, napływ SMS i aktualizacja danych zachowują logiczne stany. Weryfikacja: wiele nieprzeczytanych, duże stronicowanie, głęboki link, powrót do skrzynki.
+
+### CH071 Opcjonalnie dodać eksport i skrót rozmowy na pulpicie
+
+**P2 · Android i UX i bezpieczeństwo · 3–5 osobodni · zależności CH020 CH022 CH031 CH044 CH065**
+
+Wykonanie (po osobnej decyzji produktowej): udostępnianie zaznaczonych wiadomości i załączników przez Android Sharesheet, eksport rozmowy ze świadomym określeniem zakresu i metadanych oraz shortcut do conversationId na ekranie głównym. Nie osadzać treści SMS i numerów w identyfikatorach/etykietach bez zgody. Obsłużyć brak rozmowy i zgodę użytkownika.
+
+Odbiór: eksport nie ujawnia przypadkowo innych wątków, zakres jest czytelny, a skrót nie prowadzi do niewłaściwej osoby. Weryfikacja: przekazanie e-mailem, cofnięte uprawnienia, usunięty wątek, restart i dostępność. Nie blokuje pierwszego pełnego wydania bez zatwierdzenia.
+
+### CH072 Zbadać TelephonyMessagingKit i alternatywny transport Androida
+
+**P2 · architekt mobilny i badania techniczne · 3–5 osobodni · zależności CH001**
+
+Wykonanie (spike, poza MVP): zweryfikować aktualne wymagania Apple TelephonyMessagingKit dla domyślnej aplikacji SMS/MMS/RCS w UE, entitlement, operatorów PL, historię i ograniczenia względem iMessage. Oddzielnie zbadać AlternativeMessageTransportService Android API 37 jako mechanizm alternatywnego transportu bez zakładania automatycznej interoperacyjności RCS. Przygotować macierz ryzyk, koszty, bramki prototypu i decyzję go/no-go.
+
+Odbiór: raport z oficjalnych API i testów na odpowiednich urządzeniach, bez nieudokumentowanej obietnicy dostępu do iMessage lub RCS Google. Weryfikacja: ścieżka uprawnień, operatorzy, wersje OS, zakres historii i transportów. Nie blokuje pierwszego wydania Androida.
+
 ## 8 Planowanie nakładu i ryzyk
 
 Nakłady nie uwzględniają czasu oczekiwania na decyzje, uzyskanie dostępu do konsoli sklepu, weryfikację dostawców, dostarczenie fizycznych kart SIM i formalny przegląd publikacji. Implementacja E2EE, wsparcie Androida poniżej 31 lub nowe reguły Pro wymagają ponownego oszacowania po zamknięciu decyzji. Nie wolno dopisywać ich do istniejącego nakładu bez oceny.
 
 Najbardziej wrażliwe zadania to CH003 szkło, CH032 MMS, CH036 harmonogram, CH043 kosz oraz CH046–CH052 backend i bezpieczeństwo HD. Te zadania powinny dostarczać wynik techniczny wcześnie. Nie planować całego zespołu wyłącznie według liczby ekranów; domyślny klient SMS zawiera istotną pracę poza UI.
 
-Łączny orientacyjny nakład wynosi **155–240 osobodni** dla całego zespołu. Nie jest to 155–240 dni kalendarzowych.
+Historyczny nakład bazowych 64 zadań to **155–240 osobodni**. Nowe CH065–CH070 dodają orientacyjnie **17–28 osobodni** do zakresu pełnego wydania (łącznie **172–268**), a CH071–CH072 kolejne **6–10 osobodni** w backlogu opcjonalnym (łącznie **178–278** dla wszystkich 72 pozycji). Ponieważ rozszerzono także opisy istniejących tasków, **szacunki nie są pełną ponowną wyceną**; należy je zrewidować przy planowaniu. Nakłady nie oznaczają dni kalendarzowych.
 
 | Etap | Liczba zadań | Osobodni |
 | --- | --- | --- |
@@ -559,8 +724,11 @@ Najbardziej wrażliwe zadania to CH003 szkło, CH032 MMS, CH036 harmonogram, CH0
 | M1 Wierny interfejs | 14 | 29–45 |
 | M2 Lokalny klient | 14 | 34–53 |
 | M3 Funkcje lokalne | 11 | 27–41 |
+| M3X Rozszerzenia UX do wydania | 6 | 17–28 |
 | M4 Pełne HD | 8 | 27–41 |
 | M5 Odbiór i wydanie | 11 | 28–43 |
-| Razem | 64 | 155–240 |
+| M6 Po wydaniu / badania | 2 | 6–10 |
+| **Pełne wydanie** | **70** | **172–268** |
+| **Cały backlog (łącznie z opcjami)** | **72** | **178–278** |
 
-Zestawienie `Chatra_Plan_zadan.json` w pakiecie jest eksportem tego backlogu z tymi samymi ID, zależnościami i zakresami osobodni. Zależności są acykliczne. Szacowanie kalendarza powinno uwzględnić dostępność osób odpowiedzialnych za Androida, backend, UX i QA oraz to, że równoległe zadania mają różne wymagane role.
+Aktualny plik `Chatra_Plan_zadan.json` w repozytorium jest eksportem 72 zadań z tymi samymi ID, zależnościami i zakresami osobodni. Istniejące pliki Word i ZIP pozostają historycznym eksportem wersji 1.0, dopóki nie zostaną osobno wygenerowane na nowo. Zależności są acykliczne. Szacowanie kalendarza powinno uwzględnić dostępność osób odpowiedzialnych za Androida, backend, UX i QA oraz to, że równoległe zadania mają różne wymagane role.

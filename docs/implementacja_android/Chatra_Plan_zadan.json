@@ -1,9 +1,9 @@
 {
-  "version": "1.0",
+  "version": "1.1",
   "date": "2026-10-29",
   "estimate_unit": "person_days",
-  "total_min": 155,
-  "total_max": 240,
+  "total_min": 178,
+  "total_max": 278,
   "milestones": [
     {
       "id": "M0",
@@ -30,6 +30,12 @@
       "person_days_max": 41
     },
     {
+      "id": "M3X",
+      "tasks": 6,
+      "person_days_min": 17,
+      "person_days_max": 28
+    },
+    {
       "id": "M4",
       "tasks": 8,
       "person_days_min": 27,
@@ -40,6 +46,12 @@
       "tasks": 11,
       "person_days_min": 28,
       "person_days_max": 43
+    },
+    {
+      "id": "M6",
+      "tasks": 2,
+      "person_days_min": 6,
+      "person_days_max": 10
     }
   ],
   "tasks": [
@@ -51,7 +63,7 @@
       "person_days_min": 1,
       "person_days_max": 2,
       "dependencies": [],
-      "description": "Wykonanie: utworzyć rejestr G01–G10 z dokumentacji; wskazać właścicieli. Potwierdzić minSdk, dystrybucję, listę operatorów, obsługę wideo/grup MMS, kosz i zakres Pro. Zapisać, że HD wymaga backendu, a RCS/iMessage/połączenia nie wchodzą w zakres. Przygotować listę brakujących ekranów i polityk bez wymyślania ich jako części HTML.\n\nOdbiór: każda decyzja ma wariant, właściciela i zadanie zamykające; istnieje definicja pełnego wydania i etapu demo. Weryfikacja: przegląd matrycy 10 plansz × funkcje, brak nieoznaczonych założeń."
+      "description": "Wykonanie: utworzyć rejestr G01–G10 z dokumentacji; wskazać właścicieli. Potwierdzić minSdk, dystrybucję, listę operatorów, obsługę wideo/grup MMS, kosz i zakres Pro. Zapisać, że HD wymaga backendu, a RCS/iMessage/połączenia nie wchodzą w zakres. Przygotować listę brakujących ekranów i polityk bez wymyślania ich jako części HTML.\n\nOdbiór: każda decyzja ma wariant, właściciela i zadanie zamykające; istnieje definicja pełnego wydania i etapu demo. Weryfikacja: przegląd matrycy 10 plansz × funkcje, brak nieoznaczonych założeń.\n\nUzupełnienie UX 29.10.2026: Do rejestru zakresu dodać UX01–UX08 oraz ścieżki CH065–CH072: sześć rozszerzeń wymaganych w pełnym wydaniu (CH065–CH070) i dwie pozycje opcjonalne lub badawcze (CH071–CH072). Zapisać, że są dodatkiem do wzorca Liquid Glass i nie legalizują iMessage ani RCS na Androidzie.\n\nOdbiór rozszerzony: Matryca zakresu rozróżnia funkcje już zaplanowane od nowych; zakres pełnego wydania obejmuje CH065–CH070, a CH071–CH072 nie blokują wydania bez odrębnej decyzji."
     },
     {
       "id": "CH002",
@@ -100,7 +112,7 @@
       "dependencies": [
         "CH001"
       ],
-      "description": "Wykonanie: zdefiniować typowane identyfikatory, Conversation, MessageRef, Draft, SendOperation, Attempt, Schedule i Attachment. Rozdzielić transport SMS/MMS/HD, repozytoria, zegar i dostawcę SIM. Ustalić UiState/UiAction, błędy i kontrakt zapisu. Zapisać ADR o providerze jako historii SMS/MMS i Room jako metadanych/projekcji.\n\nOdbiór: UI może działać z repozytorium testowym, a logika wysyłania bez UI. Weryfikacja: przegląd zależności modułów oraz sekwencji send/cancel/retry; brak cyklicznej zależności feature→feature."
+      "description": "Wykonanie: zdefiniować typowane identyfikatory, Conversation, MessageRef, Draft, SendOperation, Attempt, Schedule i Attachment. Rozdzielić transport SMS/MMS/HD, repozytoria, zegar i dostawcę SIM. Ustalić UiState/UiAction, błędy i kontrakt zapisu. Zapisać ADR o providerze jako historii SMS/MMS i Room jako metadanych/projekcji.\n\nOdbiór: UI może działać z repozytorium testowym, a logika wysyłania bez UI. Weryfikacja: przegląd zależności modułów oraz sekwencji send/cancel/retry; brak cyklicznej zależności feature→feature.\n\nUzupełnienie UX 29.10.2026: Rozszerzyć kontrakty modelu o trwałe ustawienia per conversationId (dziedziczenie z globalnego motywu), read/unread override, stan wyciszenia, lokalne metadane przypięć, identyfikator źródłowej wiadomości dla mediów oraz bezpieczne identyfikatory skrótów. Określić migracje i zachowanie po usunięciu wątku.\n\nOdbiór rozszerzony: Modele obsługują odtwarzalną galerię, skok do wiadomości i ustawienia per rozmowa bez duplikowania treści wiadomości w Room."
     },
     {
       "id": "CH006",
@@ -181,7 +193,7 @@
         "CH008",
         "CH009"
       ],
-      "description": "Wykonanie: nagłówek, pole wyszukiwania, filtr, przypięte/pozostałe, siedem wariantów wierszy i dock. Wyświetlać prawidłowe line clamp, badge, draft i błąd. Dodać stany pustej listy, braku wyników filtra, odczytu i utraty roli. Menu i long press według CH020.\n\nOdbiór: widoczne detale S02 zgodne, filtr liczy wątki, ostatni wiersz osiągalny. Weryfikacja: fixture plus lista 1000 wątków, długie nazwy i natychmiastowa zmiana odczytu bez resetu scrolla."
+      "description": "Wykonanie: nagłówek, pole wyszukiwania, filtr, przypięte/pozostałe, siedem wariantów wierszy i dock. Wyświetlać prawidłowe line clamp, badge, draft i błąd. Dodać stany pustej listy, braku wyników filtra, odczytu i utraty roli. Menu i long press według CH020.\n\nOdbiór: widoczne detale S02 zgodne, filtr liczy wątki, ostatni wiersz osiągalny. Weryfikacja: fixture plus lista 1000 wątków, długie nazwy i natychmiastowa zmiana odczytu bez resetu scrolla.\n\nUzupełnienie UX 29.10.2026: Przewidzieć wejście do działań z długiego przytrzymania wiersza i dostępności, a także dostęp do oznaczania wszystkich jako przeczytane. Projekt przesunięć/gestów i konfiguracji realizuje CH069; na S02 nie zmieniać geometrii zatwierdzonego wzorca.\n\nOdbiór rozszerzony: Przypięcia, nieprzeczytane i dostępne akcje pozostają spójne po zmianie wątku lub powrocie z ekranu szczegółów; funkcje gestowe mają alternatywę bez gestu."
     },
     {
       "id": "CH012",
@@ -195,7 +207,7 @@
         "CH008",
         "CH009"
       ],
-      "description": "Wykonanie: pływający header, sekcje dni, oba dymki, karta HD, wszystkie statusy, Ponów, odliczanie i kompozytor. Oddzielić listę od warstw pływających. Obsłużyć przewijanie do wiadomości, paginację i wskaźnik nowych wiadomości. Pole wieloliniowe rośnie do ustalonej wysokości, potem przewija tekst.\n\nOdbiór: zgodny S03 oraz statusy odrębne od treści; brak utraty szkicu przy IME i powrocie. Weryfikacja: długa rozmowa, kilkulinijkowa treść, przychodząca wiadomość podczas czytania historii i błędy transportu."
+      "description": "Wykonanie: pływający header, sekcje dni, oba dymki, karta HD, wszystkie statusy, Ponów, odliczanie i kompozytor. Oddzielić listę od warstw pływających. Obsłużyć przewijanie do wiadomości, paginację i wskaźnik nowych wiadomości. Pole wieloliniowe rośnie do ustalonej wysokości, potem przewija tekst.\n\nOdbiór: zgodny S03 oraz statusy odrębne od treści; brak utraty szkicu przy IME i powrocie. Weryfikacja: długa rozmowa, kilkulinijkowa treść, przychodząca wiadomość podczas czytania historii i błędy transportu.\n\nUzupełnienie UX 29.10.2026: Nagłówek rozmowy prowadzi do karty szczegółów CH065. Zapewnić zakotwiczenie konkretnej wiadomości dla wyników wyszukiwania i galerii, render grup załączników z CH067 oraz punkt wejścia do pierwszej nieprzeczytanej z CH070. Zachować IME, SIM, stany HD i wzorzec S03.\n\nOdbiór rozszerzony: Powrót ze szczegółów/galerii zachowuje pozycję i szkic; skok do wiadomości działa przy stronicowaniu, nie przenosi użytkownika arbitralnie na koniec."
     },
     {
       "id": "CH013",
@@ -307,7 +319,7 @@
         "CH002",
         "CH008"
       ],
-      "description": "Wykonanie: zaprojektować menu skrzynki, szczegóły rozmowy, SIM, pickery, szablony, ustawienia HD, blokady, kosz, pomoc, prywatność, paywall i stronę linku. Opisać empty/loading/error/disabled/permission dla wszystkich ekranów. Dokończyć Mgłę/Grafit/Kontrast, dark i compact z tokenami. Każdy widok ma komplet akcji, fokusu i tekstów.\n\nOdbiór: katalog projektów i mapa do zadań; nowe widoki rozpoznawalne jako uzupełnienie, domyślne 10 plansz nie przeprojektowane. Weryfikacja: przegląd scenariuszy bez martwych końców."
+      "description": "Wykonanie: zaprojektować menu skrzynki, szczegóły rozmowy, SIM, pickery, szablony, ustawienia HD, blokady, kosz, pomoc, prywatność, paywall i stronę linku. Opisać empty/loading/error/disabled/permission dla wszystkich ekranów. Dokończyć Mgłę/Grafit/Kontrast, dark i compact z tokenami. Każdy widok ma komplet akcji, fokusu i tekstów.\n\nOdbiór: katalog projektów i mapa do zadań; nowe widoki rozpoznawalne jako uzupełnienie, domyślne 10 plansz nie przeprojektowane. Weryfikacja: przegląd scenariuszy bez martwych końców.\n\nUzupełnienie UX 29.10.2026: Uzupełnić katalog brakujących ekranów o szczegóły kontaktu/grupy (CH065), galerię rozmowy (CH066), gesty i menu (CH069), ustawienia lokalnego wyglądu (CH068), nieprzeczytane (CH070), opcjonalny eksport i skrót (CH071). Wszystkie podwidoki zgodne z językiem Liquid Glass; wzorzec S01–S10 pozostaje bez zmian.\n\nOdbiór rozszerzony: Zatwierdzone interakcje, empty/loading/error, ograniczenia numerów i protokołów oraz dostępność dla CH065–CH071 mają mapę do zadania i dowodu odbioru."
     },
     {
       "id": "CH021",
@@ -334,7 +346,7 @@
         "CH005",
         "CH021"
       ],
-      "description": "Wykonanie: DAO, migracje i klucze z typem SMS/MMS. Stronicowany odczyt historii, rozpoznanie uczestników i ThreadID, ContentObserver oraz odtwarzanie projekcji. Nie duplikować kanonicznej historii. Wspierać odczyt MMS z częściami i leniwe miniatury. Zasilać UI przez Flow.\n\nOdbiór: istniejące wiadomości pozostają nienaruszone; ponowny odczyt nie tworzy duplikatów. Weryfikacja: duża historia, identyczne ID w różnych tabelach, zewnętrzna zmiana, błąd providera i brak roli."
+      "description": "Wykonanie: DAO, migracje i klucze z typem SMS/MMS. Stronicowany odczyt historii, rozpoznanie uczestników i ThreadID, ContentObserver oraz odtwarzanie projekcji. Nie duplikować kanonicznej historii. Wspierać odczyt MMS z częściami i leniwe miniatury. Zasilać UI przez Flow.\n\nOdbiór: istniejące wiadomości pozostają nienaruszone; ponowny odczyt nie tworzy duplikatów. Weryfikacja: duża historia, identyczne ID w różnych tabelach, zewnętrzna zmiana, błąd providera i brak roli.\n\nUzupełnienie UX 29.10.2026: Zapewnić stabilne relacje załącznik→wiadomość→wątek, klucze do galerii mediów i bezpieczne zapytania po conversationId. Przechowywać jedynie ustawienia i indeksy lokalne, nie tworzyć drugiej kanonicznej kopii SMS/MMS. Zastosować migracje dla zmian wyciszenia i oznaczenia nieprzeczytane.\n\nOdbiór rozszerzony: Indeks galerii i ustawienia nadal działają po rekoncyliacji, zmianie kontaktu, ponownej instalacji w granicach istniejącej polityki oraz aktualizacji providera."
     },
     {
       "id": "CH023",
@@ -347,7 +359,7 @@
         "CH021",
         "CH022"
       ],
-      "description": "Wykonanie: odbiornik SMS_DELIVER, składanie części, trwały zapis zgodnie z obowiązkami klienta i aktualizacja projekcji. Odróżnić nową wiadomość od ponownego zdarzenia; zachować adres, czas i SIM. Oznaczanie przeczytania przez właściwy use case, synchronizacja badge oraz powiadomienia.\n\nOdbiór: przychodzący SMS jest w historii systemowej i właściwym wątku, bez podwojenia. Weryfikacja: pojedynczy/multipart, ekran zamknięty, proces nieaktywny, aktywna rozmowa oraz wielokrotne odświeżenie obserwatora."
+      "description": "Wykonanie: odbiornik SMS_DELIVER, składanie części, trwały zapis zgodnie z obowiązkami klienta i aktualizacja projekcji. Odróżnić nową wiadomość od ponownego zdarzenia; zachować adres, czas i SIM. Oznaczanie przeczytania przez właściwy use case, synchronizacja badge oraz powiadomienia.\n\nOdbiór: przychodzący SMS jest w historii systemowej i właściwym wątku, bez podwojenia. Weryfikacja: pojedynczy/multipart, ekran zamknięty, proces nieaktywny, aktywna rozmowa oraz wielokrotne odświeżenie obserwatora.\n\nUzupełnienie UX 29.10.2026: Rozszerzyć use case o ręczne 'oznacz jako nieprzeczytane', 'oznacz wszystkie jako przeczytane' i semantykę pierwszej nieprzeczytanej, bez oznaczania wiadomości przed realnym pokazaniem treści. Zdefiniować synchronizację badge, provider i powiadomień także po restarcie (CH070).\n\nOdbiór rozszerzony: Powiadomienia, liczniki i ręczny stan nieprzeczytania nie rozjeżdżają się po odczycie, ponownym wejściu, przyjściu nowego SMS ani zmianie roli."
     },
     {
       "id": "CH024",
@@ -432,7 +444,7 @@
         "CH026",
         "CH028"
       ],
-      "description": "Wykonanie: wyszukiwanie kontaktów, wybór kilku numerów, normalizacja, deduplikacja, sugestie i ręczny numer. Osobne SMS jako domyślny tryb, nadrzędna operacja i wyniki odbiorców. Grupowy MMS wymaga jawnego trybu. Zablokować nieprawidłowe adresy i alfanumerycznych nadawców wyjściowych.\n\nOdbiór: tryb osobnych wiadomości nie ujawnia numerów pozostałych odbiorców; retry omija już wysłanych. Weryfikacja: 3 osoby i częściowy sukces, ten sam numer zapisany z prefiksem +48 i w formacie lokalnym, odmowa kontaktów i dodanie załącznika wymagające wyboru transportu."
+      "description": "Wykonanie: wyszukiwanie kontaktów, wybór kilku numerów, normalizacja, deduplikacja, sugestie i ręczny numer. Osobne SMS jako domyślny tryb, nadrzędna operacja i wyniki odbiorców. Grupowy MMS wymaga jawnego trybu. Zablokować nieprawidłowe adresy i alfanumerycznych nadawców wyjściowych.\n\nOdbiór: tryb osobnych wiadomości nie ujawnia numerów pozostałych odbiorców; retry omija już wysłanych. Weryfikacja: 3 osoby i częściowy sukces, ten sam numer zapisany z prefiksem +48 i w formacie lokalnym, odmowa kontaktów i dodanie załącznika wymagające wyboru transportu.\n\nUzupełnienie UX 29.10.2026: Karta rozmowy CH065 musi rozpoznawać kontakt z kilkoma numerami, niezapisany numer i alfanumerycznego nadawcę. Akcja 'Zadzwoń' uruchamia wyłącznie systemowy dialer dla prawidłowego numeru, nie jest połączeniem VoIP. Zachować jawny wybór numeru/SIM.\n\nOdbiór rozszerzony: Nie można po cichu zadzwonić na zły numer ani pokazać działającego telefonu przy alfanumerycznym nadawcy."
     },
     {
       "id": "CH030",
@@ -448,7 +460,7 @@
         "CH026",
         "CH028"
       ],
-      "description": "Wykonanie: kanały wiadomości/błędy/harmonogram/HD, grupowanie, prywatność lockscreen i deep link. SENDTO/RESPOND_VIA_MESSAGE oraz bezpieczne udostępnianie. Szybka odpowiedź korzysta ze wspólnej kolejki i jawnie wybranej SIM. Walidować zewnętrzne argumenty i URI; nie wysyłać automatycznie po otwarciu intentu.\n\nOdbiór: właściwy wątek, aktualne badge, brak tekstu na blokadzie przy ukrytych podglądach. Weryfikacja: brak zgody na powiadomienia, urządzenie zablokowane, cold start i wielokrotne powiadomienie."
+      "description": "Wykonanie: kanały wiadomości/błędy/harmonogram/HD, grupowanie, prywatność lockscreen i deep link. SENDTO/RESPOND_VIA_MESSAGE oraz bezpieczne udostępnianie. Szybka odpowiedź korzysta ze wspólnej kolejki i jawnie wybranej SIM. Walidować zewnętrzne argumenty i URI; nie wysyłać automatycznie po otwarciu intentu.\n\nOdbiór: właściwy wątek, aktualne badge, brak tekstu na blokadzie przy ukrytych podglądach. Weryfikacja: brak zgody na powiadomienia, urządzenie zablokowane, cold start i wielokrotne powiadomienie.\n\nUzupełnienie UX 29.10.2026: Zaimplementować wyciszenie per rozmowa i kontrolę jego trwania, czytelne stany UI oraz prawidłowe mapowanie na Android NotificationChannels i skróty konwersacji. Wyciszenie nie jest blokowaniem ani kasowaniem wiadomości (CH065).\n\nOdbiór rozszerzony: Nowa wiadomość w wyciszonej rozmowie aktualizuje historię i liczniki bez niepożądanego alertu; zmiana preferencji pozostaje skuteczna po restarcie."
     },
     {
       "id": "CH031",
@@ -462,7 +474,7 @@
         "CH022",
         "CH028"
       ],
-      "description": "Wykonanie: Photo Picker i aparat, walidacja MIME/rozmiaru, trwały URI grant lub kopia prywatna, miniatury, porządek i usuwanie. Liczyć sumę rozmiarów i SHA256 poza głównym wątkiem. Zapewnić FileProvider i czyszczenie cache bez naruszenia aktywnej operacji.\n\nOdbiór: wybrane pliki nadal dostępne po restarcie; brak szerokiej zgody na galerię bez potrzeby. Weryfikacja: utracony dostęp do URI, brak miejsca, przerwane kopiowanie, duże wideo i anulowanie po wyborze."
+      "description": "Wykonanie: Photo Picker i aparat, walidacja MIME/rozmiaru, trwały URI grant lub kopia prywatna, miniatury, porządek i usuwanie. Liczyć sumę rozmiarów i SHA256 poza głównym wątkiem. Zapewnić FileProvider i czyszczenie cache bez naruszenia aktywnej operacji.\n\nOdbiór: wybrane pliki nadal dostępne po restarcie; brak szerokiej zgody na galerię bez potrzeby. Weryfikacja: utracony dostęp do URI, brak miejsca, przerwane kopiowanie, duże wideo i anulowanie po wyborze.\n\nUzupełnienie UX 29.10.2026: Dodać interfejs danych dla galerii per rozmowa CH066: paginacja, rodzaj załącznika, licznik, identyfikator wiadomości źródłowej, odczyt stanu MMS/HD, bezpieczne otwieranie i udostępnianie URI. Zabezpieczyć odwołania do utraconych i usuniętych plików.\n\nOdbiór rozszerzony: Galeria nie zawyża liczby załączników, nie ładuje jednocześnie wszystkich pełnych plików, nie ujawnia danych wrażliwych przez przypadkowy URI."
     },
     {
       "id": "CH032",
@@ -562,7 +574,7 @@
         "CH022",
         "CH023"
       ],
-      "description": "Wykonanie: indeks odtwarzalny dla wspieranych treści, normalizacja polskich liter w tym „ł”, casefold, tokeny prefiksowe i mapa offsetów. Przyrostowe aktualizacje, debounce 200 ms, anulowanie starego zapytania i paginacja. Indeksowanie z postępem poza głównym wątkiem; bez sieci.\n\nOdbiór: paczk znajduje paczkę/PACZKA, łódź znajduje lodz po normalizacji; highlight trafia w oryginał. Weryfikacja: 50 tysięcy rekordów, usunięcie z providera, odtworzenie indeksu i zapytanie z emoji/interpunkcją."
+      "description": "Wykonanie: indeks odtwarzalny dla wspieranych treści, normalizacja polskich liter w tym „ł”, casefold, tokeny prefiksowe i mapa offsetów. Przyrostowe aktualizacje, debounce 200 ms, anulowanie starego zapytania i paginacja. Indeksowanie z postępem poza głównym wątkiem; bez sieci.\n\nOdbiór: paczk znajduje paczkę/PACZKA, łódź znajduje lodz po normalizacji; highlight trafia w oryginał. Weryfikacja: 50 tysięcy rekordów, usunięcie z providera, odtworzenie indeksu i zapytanie z emoji/interpunkcją.\n\nUzupełnienie UX 29.10.2026: Indeks i API zapytań muszą umożliwiać szukanie w kontekście konkretnej rozmowy (conversationId) z zachowaniem zakotwiczenia do messageId. Wyszukiwanie mediów dotyczy metadanych i załączonych treści, nie OCR ani semantyki AI.\n\nOdbiór rozszerzony: Wynik z ekranu kontaktu otwiera właściwą wiadomość, także ze starszej strony historii; brak Internetu nie blokuje wyszukiwania lokalnego."
     },
     {
       "id": "CH039",
@@ -575,7 +587,7 @@
         "CH020",
         "CH038"
       ],
-      "description": "Wykonanie: typ treści, nadawca i daty łączone operatorem AND; lokalne rozpoznawanie kodów i przesyłek. Zachować wiadomość źródłową, nadawcę i pewność wzorca. Kopiowanie precyzyjnej wartości; bez zgadywania kodu z dowolnej liczby. Powrót z rozmowy przywraca komplet filtrów.\n\nOdbiór: cztery wyniki fixture i poprawne wyróżnienia, filtry rzeczywiście zawężają zbiór. Weryfikacja: numer telefonu podobny do kodu, fałszywy nadawca, brak trafień i przedział dat obejmujący zmianę czasu DST."
+      "description": "Wykonanie: typ treści, nadawca i daty łączone operatorem AND; lokalne rozpoznawanie kodów i przesyłek. Zachować wiadomość źródłową, nadawcę i pewność wzorca. Kopiowanie precyzyjnej wartości; bez zgadywania kodu z dowolnej liczby. Powrót z rozmowy przywraca komplet filtrów.\n\nOdbiór: cztery wyniki fixture i poprawne wyróżnienia, filtry rzeczywiście zawężają zbiór. Weryfikacja: numer telefonu podobny do kodu, fałszywy nadawca, brak trafień i przedział dat obejmujący zmianę czasu DST.\n\nUzupełnienie UX 29.10.2026: Udostępnić identyczny silnik filtrów globalnie i w rozmowie: osoba/wątek, data, tekst, typ pliku, z opcjonalnym SIM jeżeli dane istnieją. Wszystkie filtry są widoczne, usuwalne i łączone AND; CH066 może otworzyć wiadomość źródłową.\n\nOdbiór rozszerzony: Filtr rozmowy nie pokazuje wyników z innych wątków; usunięcie filtra i Back przywracają stan bez fałszywych trafień."
     },
     {
       "id": "CH040",
@@ -590,7 +602,7 @@
         "CH007",
         "CH008"
       ],
-      "description": "Wykonanie: DataStore dla wszystkich opcji, tokeny czterech kompozycji i dark/auto, compact i skali 1–7. Zastosować zmiany globalnie i w podglądzie; reset do źródłowego stanu. Ograniczenie przezroczystości i kontrast mają osobne tokeny. Nie blokować opcji dostępności płatnością.\n\nOdbiór: wybory zachowane po restarcie, Auto reaguje na system, brak nieczytelnego tekstu. Weryfikacja: kombinacje trybów, fontScale 2.0 i porównanie domyślnego Szkła do wzorca po resecie."
+      "description": "Wykonanie: DataStore dla wszystkich opcji, tokeny czterech kompozycji i dark/auto, compact i skali 1–7. Zastosować zmiany globalnie i w podglądzie; reset do źródłowego stanu. Ograniczenie przezroczystości i kontrast mają osobne tokeny. Nie blokować opcji dostępności płatnością.\n\nOdbiór: wybory zachowane po restarcie, Auto reaguje na system, brak nieczytelnego tekstu. Weryfikacja: kombinacje trybów, fontScale 2.0 i porównanie domyślnego Szkła do wzorca po resecie.\n\nUzupełnienie UX 29.10.2026: Przewidzieć dziedziczenie globalnych tokenów przez motywy per rozmowa (CH068), oddzielny reset pojedynczego wątku, lokalne tło/kolor/dymki i kontrolę kontrastu. Opcje dostępności mają pierwszeństwo; nie udawać wspólnego tła po stronie odbiorcy SMS.\n\nOdbiór rozszerzony: Zmiana motywu globalnego nie niszczy świadomych wyjątków; powrót do globalnego usuwa tylko nadpisania konkretnej rozmowy."
     },
     {
       "id": "CH041",
@@ -621,7 +633,7 @@
         "CH023",
         "CH030"
       ],
-      "description": "Wykonanie: oznaczać nieznanych nadawców bez klasyfikowania ich jako spam; lokalne reguły blokowania, lista i przywracanie. Zatrzymać powiadomienia zgodnie z regułą, zachować historię. Jeżeli G05 wybiera blokadę systemową, dodać osobny komunikat o skutkach dla połączeń i zweryfikować API.\n\nOdbiór: reguła działa dla znormalizowanego numeru, cofnięcie blokady przywraca widoczność; brak cichego kasowania SMS. Weryfikacja: nowy SMS od zablokowanego, odmienne formaty numeru, kontakt dodany później i brak roli."
+      "description": "Wykonanie: oznaczać nieznanych nadawców bez klasyfikowania ich jako spam; lokalne reguły blokowania, lista i przywracanie. Zatrzymać powiadomienia zgodnie z regułą, zachować historię. Jeżeli G05 wybiera blokadę systemową, dodać osobny komunikat o skutkach dla połączeń i zweryfikować API.\n\nOdbiór: reguła działa dla znormalizowanego numeru, cofnięcie blokady przywraca widoczność; brak cichego kasowania SMS. Weryfikacja: nowy SMS od zablokowanego, odmienne formaty numeru, kontakt dodany później i brak roli.\n\nUzupełnienie UX 29.10.2026: Akcje wycisz, blokuj, usuń i oznacz nieprzeczytane muszą mieć odrębne, prawdziwe znaczenie w CH065 i CH069. Po zablokowaniu kontaktu UI jednoznacznie pokazuje stan; dostarczone SMS nie znikają po cichu.\n\nOdbiór rozszerzony: Blokada z karty kontaktu i ekranu ustawień prowadzi do tych samych danych, a cofnięcie działa bez utraty historii."
     },
     {
       "id": "CH043",
@@ -801,7 +813,7 @@
         "CH038",
         "CH043"
       ],
-      "description": "Wykonanie: testy istotnych reguł kodowania, deduplikacji, wersji zleceń, multi recipient, indeksu i kosza. Testy DAO i migracji na danych z różnych wersji; kontrolowany zegar i awarie. Nie ograniczać się do testu, który powtarza implementację.\n\nOdbiór: scenariusze duplikacji i utraty danych mają niezależne asercje i przechodzą w CI. Weryfikacja: wstrzykiwanie awarii, callbacki poza kolejnością, częściowe sprzątanie i zachowanie po odtworzeniu."
+      "description": "Wykonanie: testy istotnych reguł kodowania, deduplikacji, wersji zleceń, multi recipient, indeksu i kosza. Testy DAO i migracji na danych z różnych wersji; kontrolowany zegar i awarie. Nie ograniczać się do testu, który powtarza implementację.\n\nOdbiór: scenariusze duplikacji i utraty danych mają niezależne asercje i przechodzą w CI. Weryfikacja: wstrzykiwanie awarii, callbacki poza kolejnością, częściowe sprzątanie i zachowanie po odtworzeniu.\n\nUzupełnienie UX 29.10.2026: Do testów domeny dodać ustawienia per conversationId, relacje galerii do źródła oraz reguły mark-read/unread, przypięć i wyciszenia. Nie dopuszczać zduplikowanego indeksu mediów po rekoncyliacji.\n\nOdbiór rozszerzony: Testy migracji i awarii potwierdzają zachowanie ustawień i prawidłowe liczniki galerii."
     },
     {
       "id": "CH055",
@@ -821,9 +833,15 @@
         "CH017",
         "CH018",
         "CH019",
-        "CH040"
+        "CH040",
+        "CH065",
+        "CH066",
+        "CH067",
+        "CH068",
+        "CH069",
+        "CH070"
       ],
-      "description": "Wykonanie: obrazy S01–S10 w warunkach CH002, overlay 50 procent, heatmapa i pomiary obszarów ROI. Sprawdzić typografię, linebreak, stroke ikon, box sizing, gradienty, szkło i dock. Osobny przegląd renderowania GPU na urządzeniu. Zarejestrować i poprawić odchyłki; golden nie aktualizuje się automatycznie.\n\nOdbiór: każdy ekran spełnia kontrakt 1 do 1, wyjątki tylko jawnie uzgodnione. Weryfikacja: podpisany raport z 10 par obrazów i brakiem nieprzejrzanych masek; osobny test 360/430 dp i dużego fontu."
+      "description": "Wykonanie: obrazy S01–S10 w warunkach CH002, overlay 50 procent, heatmapa i pomiary obszarów ROI. Sprawdzić typografię, linebreak, stroke ikon, box sizing, gradienty, szkło i dock. Osobny przegląd renderowania GPU na urządzeniu. Zarejestrować i poprawić odchyłki; golden nie aktualizuje się automatycznie.\n\nOdbiór: każdy ekran spełnia kontrakt 1 do 1, wyjątki tylko jawnie uzgodnione. Weryfikacja: podpisany raport z 10 par obrazów i brakiem nieprzejrzanych masek; osobny test 360/430 dp i dużego fontu.\n\nUzupełnienie UX 29.10.2026: Poza obowiązkowym porównaniem 10 wzorców dodać wizualny przegląd nowych podwidoków CH065–CH070 jako osobnych ekranów, bez narzucania im fałszywego kryterium 1:1 wobec nieistniejącego wzorca.\n\nOdbiór rozszerzony: Galeria, karta kontaktu, lokalny wygląd i gesty mają zatwierdzone referencje UX; wzorce S01–S10 nie zostały potajemnie zmienione."
     },
     {
       "id": "CH056",
@@ -888,9 +906,11 @@
         "CH022",
         "CH032",
         "CH038",
-        "CH053"
+        "CH053",
+        "CH066",
+        "CH067"
       ],
-      "description": "Wykonanie: uruchomienie aplikacji, 50 tys. wiadomości, scroll, otwarcie arkusza, pamięć miniatur i transfer HD. Zmierzyć cele P95 na ustalonym urządzeniu, profilować koszt rejestrowania warstw i rozmycia i indeksowania. Backend monitorować bez prywatnych danych. Poprawić potwierdzone wąskie gardła.\n\nOdbiór: raport liczbowy i spełnione lub jawnie ponownie uzgodnione cele, bez rezygnacji ze szkła 1 do 1. Weryfikacja: identyczny scenariusz przed/po, brak zwiększenia wycieków pamięci i degradacji po dłuższym użyciu."
+      "description": "Wykonanie: uruchomienie aplikacji, 50 tys. wiadomości, scroll, otwarcie arkusza, pamięć miniatur i transfer HD. Zmierzyć cele P95 na ustalonym urządzeniu, profilować koszt rejestrowania warstw i rozmycia i indeksowania. Backend monitorować bez prywatnych danych. Poprawić potwierdzone wąskie gardła.\n\nOdbiór: raport liczbowy i spełnione lub jawnie ponownie uzgodnione cele, bez rezygnacji ze szkła 1 do 1. Weryfikacja: identyczny scenariusz przed/po, brak zwiększenia wycieków pamięci i degradacji po dłuższym użyciu.\n\nUzupełnienie UX 29.10.2026: Profilować galerię przy 67 i 1000 załączników, kolaże wielu zdjęć, skok do wiadomości źródłowej, gesture actions i aktualizację tła. Pamiętać o oddzielnych bitmapach miniatur i oryginałów.\n\nOdbiór rozszerzony: Nie ma wycieków bitmap ani blokowania UI przy szybkim przełączaniu filtrów i otwieraniu galerii."
     },
     {
       "id": "CH060",
@@ -902,9 +922,14 @@
       "dependencies": [
         "CH020",
         "CH040",
-        "CH055"
+        "CH055",
+        "CH065",
+        "CH066",
+        "CH068",
+        "CH069",
+        "CH070"
       ],
-      "description": "Wykonanie: TalkBack, fokus dialogów, poprawne role i stan, nazwy przycisków i cele 48 dp bez nakładania. Systemowa skala tekstu 1.3/2.0, suwak aplikacji, redukcja przezroczystości i kontrast. Test 360/390/430 dp, IME, cutout i obie metody nawigacji systemu.\n\nOdbiór: każda akcja osiągalna, brak informacji tylko kolorem i brak uciętej treści. Weryfikacja: ręczny przepływ wysłania/zaplanowania/wyszukania wyłącznie z czytnikiem; regresja wizualna domyślnych ustawień."
+      "description": "Wykonanie: TalkBack, fokus dialogów, poprawne role i stan, nazwy przycisków i cele 48 dp bez nakładania. Systemowa skala tekstu 1.3/2.0, suwak aplikacji, redukcja przezroczystości i kontrast. Test 360/390/430 dp, IME, cutout i obie metody nawigacji systemu.\n\nOdbiór: każda akcja osiągalna, brak informacji tylko kolorem i brak uciętej treści. Weryfikacja: ręczny przepływ wysłania/zaplanowania/wyszukania wyłącznie z czytnikiem; regresja wizualna domyślnych ustawień.\n\nUzupełnienie UX 29.10.2026: Ująć CH065–CH070: TalkBack dla gestów i przycisków, obsługę galerii klawiaturą i czytnikiem, skok do pierwszej nieprzeczytanej, skalę czcionki i kontrast zdjęcia jako tła.\n\nOdbiór rozszerzony: Każda akcja gestowa ma dostępny odpowiednik w menu; przy fontScale 2.0 wszystkie funkcje pozostają osiągalne."
     },
     {
       "id": "CH061",
@@ -959,9 +984,15 @@
         "CH059",
         "CH060",
         "CH061",
-        "CH062"
+        "CH062",
+        "CH065",
+        "CH066",
+        "CH067",
+        "CH068",
+        "CH069",
+        "CH070"
       ],
-      "description": "Wykonanie: przejść wszystkie widoczne akcje dziesięciu plansz i uzupełnione podwidoki. Sprawdzić SMS i funkcje lokalne bez konta oraz dostępu do internetu, MMS przy wymaganej transmisji operatora, a HD i zakup Pro przy dostępnej sieci. Osobno zweryfikować role, harmonogram, wyszukiwanie i przywracanie zakupu. Zestawić wymaganie→zadanie→dowód, zamknąć błędy krytyczne i otwarte decyzje.\n\nOdbiór: pełna matryca bez martwych przycisków i nieprawdziwych statusów; build gotowy do wydania. Weryfikacja: raport odbioru, jawna lista ograniczeń operatorów i brak odstępstw 1 do 1 bez decyzji."
+      "description": "Wykonanie: przejść wszystkie widoczne akcje dziesięciu plansz i uzupełnione podwidoki. Sprawdzić SMS i funkcje lokalne bez konta oraz dostępu do internetu, MMS przy wymaganej transmisji operatora, a HD i zakup Pro przy dostępnej sieci. Osobno zweryfikować role, harmonogram, wyszukiwanie i przywracanie zakupu. Zestawić wymaganie→zadanie→dowód, zamknąć błędy krytyczne i otwarte decyzje.\n\nOdbiór: pełna matryca bez martwych przycisków i nieprawdziwych statusów; build gotowy do wydania. Weryfikacja: raport odbioru, jawna lista ograniczeń operatorów i brak odstępstw 1 do 1 bez decyzji.\n\nUzupełnienie UX 29.10.2026: Pełny odbiór wydania obejmuje CH065–CH070; przetestować szczegóły, galerię, kolaż, wygląd per rozmowa, gesty i stany nieprzeczytania. CH071–CH072 mają status opcjonalny/badawczy i nie mogą ukrywać braku funkcji wymaganej w wydaniu.\n\nOdbiór rozszerzony: Raport zawiera mapę UX01–UX06→CH065–CH070→testy; nie ma fikcyjnego RCS, iMessage ani niewidocznych martwych akcji."
     },
     {
       "id": "CH064",
@@ -974,6 +1005,131 @@
         "CH063"
       ],
       "description": "Wykonanie: ponownie sprawdzić wymagania Google Play/target SDK/uprawnień SMS/Billing i dane prywatności. Przygotować podpisany AAB/APK w uzgodnionym kanale, opis sklepu, obrazy, deklaracje i politykę. Przekazać repozytoria, ADR, OpenAPI, konfiguracje bez sekretów i raporty. Przygotowanie do wydania nie oznacza automatycznej publikacji.\n\nOdbiór: paczka instaluje się z kanału testowego, podstawowe przepływy działają w buildzie release; właściciel ma instrukcję wypuszczenia i wsparcia. Weryfikacja: smoke test wydania oraz zgodność treści sklepu z realnym zakresem bez RCS/iMessage."
+    },
+    {
+      "id": "CH065",
+      "title": "Wdrożyć kartę kontaktu i szczegóły rozmowy",
+      "priority": "P1",
+      "roles": "UX i Android",
+      "person_days_min": 4,
+      "person_days_max": 6,
+      "dependencies": [
+        "CH012",
+        "CH020",
+        "CH029",
+        "CH030",
+        "CH042"
+      ],
+      "description": "Wykonanie: na podstawie CH020 stworzyć osobny podwidok otwierany z nagłówka S03. Pokazać prawidłowy kontakt, numer lub członków grupy, akcje Zadzwoń przez systemowy dialer, Szukaj w rozmowie, Wycisz i Więcej; przypięcie, dostęp do galerii CH066, ustawień wyglądu CH068, SIM, blokowania i usuwania. Rozróżnić wyciszenie, blokadę i usunięcie. Nie zakładać wsparcia iMessage/RCS i nie zmieniać planszy S03.\n\nOdbiór: wszystkie akcje działają lub jawnie wyjaśniają niedostępność; po powrocie zachowana pozycja historii i szkic. Weryfikacja: jeden/wiele numerów, alfanumeryczny nadawca, brak dialera/roli, grupa i TalkBack."
+    },
+    {
+      "id": "CH066",
+      "title": "Zbudować galerię mediów jednej rozmowy",
+      "priority": "P1",
+      "roles": "Android UI i dane",
+      "person_days_min": 4,
+      "person_days_max": 6,
+      "dependencies": [
+        "CH020",
+        "CH022",
+        "CH031",
+        "CH038",
+        "CH065"
+      ],
+      "description": "Wykonanie: podwidok Wspólne z zakładkami zdjęcia, filmy, linki, dokumenty i pozostałe; paginacja miniaturek, realny licznik elementów, zachowanie po obrocie, otwarcie pliku, zapisz i Sharesheet bez wycieku URI. Każdy element zachowuje MessageRef i akcję Pokaż w rozmowie. Ująć załączniki MMS i Chatra HD z ich realnym stanem.\n\nOdbiór: 67 i 1000 plików wyświetla się kompletnie bez OOM i bez zgubionych stron. Weryfikacja: usunięty plik, brak URI, załącznik HD oczekujący na pobranie, wyszukiwanie źródłowej wiadomości."
+    },
+    {
+      "id": "CH067",
+      "title": "Renderować kolaże i stosy załączników w wiadomości",
+      "priority": "P1",
+      "roles": "Android UI",
+      "person_days_min": 2,
+      "person_days_max": 4,
+      "dependencies": [
+        "CH012",
+        "CH031",
+        "CH020"
+      ],
+      "description": "Wykonanie: połączyć zestaw mediów należących do jednej wiadomości w zwięzły kolaż/stos, z licznikiem pozostałych zdjęć i pełnoekranowym podglądem; zachować kolejność plików i obsłużyć stany wysyłki, brak miniatury i wielkie obrazy. Nie grupować osobnych wiadomości według podobnej godziny.\n\nOdbiór: 1, 2, 3 i co najmniej 4 zdjęcia są prezentowane czytelnie, każde otwiera prawidłowy oryginał lub stan błędu. Weryfikacja: szybkie przewijanie, długie wiadomości, MMS i HD, dostępność i pamięć."
+    },
+    {
+      "id": "CH068",
+      "title": "Dodać indywidualny wygląd i ustawienia konwersacji",
+      "priority": "P1",
+      "roles": "UX i Android UI",
+      "person_days_min": 3,
+      "person_days_max": 5,
+      "dependencies": [
+        "CH020",
+        "CH040",
+        "CH065"
+      ],
+      "description": "Wykonanie: per conversationId udostępnić nadpisania globalnego stylu dla tła, koloru akcentu, dymków i powiadomień. Zapewnić podgląd na żywo, wskazanie co pochodzi z motywu globalnego i reset wyłącznie tej rozmowy. Przestrzegać kontrastu, redukcji szkła i ustawień dostępności. W SMS/MMS wygląd jest wyłącznie lokalny; odbiorca nie widzi wspólnego tła.\n\nOdbiór: kilka rozmów ma różne ustawienia, a zmiana globalna nie usuwa wyjątków; reset przywraca dziedziczenie. Weryfikacja: restart, ciemny/jasny, zdjęcie o małym kontraście, TalkBack, brak zmian wzorca S09."
+    },
+    {
+      "id": "CH069",
+      "title": "Wdrożyć gesty i menu szybkich działań skrzynki",
+      "priority": "P1",
+      "roles": "UX i Android",
+      "person_days_min": 2,
+      "person_days_max": 4,
+      "dependencies": [
+        "CH011",
+        "CH020",
+        "CH023",
+        "CH030",
+        "CH042"
+      ],
+      "description": "Wykonanie: długie przytrzymanie i opcjonalne gesty przesunięcia na liście rozmów do przypięcia, wyciszania, przeczytane/nieprzeczytane i zarządzania rozmową. Maksymalnie jedna szybka akcja na kierunek; mapowanie do zatwierdzenia po teście; działania destrukcyjne nie mogą wykonać się przypadkiem. Każda akcja ma alternatywę menu i czytnika ekranu; cofnięcie operacji odwracalnych.\n\nOdbiór: gesty nie konfliktują z nawigacją systemową, nie usuwają przypadkowo wątku; opcje menu i gest prowadzą do identycznego stanu. Weryfikacja: przełożenie przypięć, długi swipe, TalkBack, mały ekran i restart."
+    },
+    {
+      "id": "CH070",
+      "title": "Ujednolicić nieprzeczytane i skok do wiadomości",
+      "priority": "P1",
+      "roles": "Android dane i UI",
+      "person_days_min": 2,
+      "person_days_max": 3,
+      "dependencies": [
+        "CH012",
+        "CH022",
+        "CH023",
+        "CH038",
+        "CH020"
+      ],
+      "description": "Wykonanie: implementować oznacz jako nieprzeczytane, oznacz wszystkie jako przeczytane i nawigację do pierwszej nieprzeczytanej wiadomości. Zdefiniować spójność ręcznego stanu z providerem, badge i powiadomieniami, w tym realny odczyt tylko po pokazaniu treści. Potwierdzenie masowego oznaczenia przy dużej liczbie rozmów do decyzji UX.\n\nOdbiór: otwarcie starszej części historii nie oznacza z automatu niewidocznych nowych wiadomości; restart, napływ SMS i aktualizacja danych zachowują logiczne stany. Weryfikacja: wiele nieprzeczytanych, duże stronicowanie, głęboki link, powrót do skrzynki."
+    },
+    {
+      "id": "CH071",
+      "title": "Opcjonalnie dodać eksport i skrót rozmowy na pulpicie",
+      "priority": "P2",
+      "roles": "Android i UX i bezpieczeństwo",
+      "person_days_min": 3,
+      "person_days_max": 5,
+      "dependencies": [
+        "CH020",
+        "CH022",
+        "CH031",
+        "CH044",
+        "CH065"
+      ],
+      "description": "Wykonanie (po osobnej decyzji produktowej): udostępnianie zaznaczonych wiadomości i załączników przez Android Sharesheet, eksport rozmowy ze świadomym określeniem zakresu i metadanych oraz shortcut do conversationId na ekranie głównym. Nie osadzać treści SMS i numerów w identyfikatorach/etykietach bez zgody. Obsłużyć brak rozmowy i zgodę użytkownika.\n\nOdbiór: eksport nie ujawnia przypadkowo innych wątków, zakres jest czytelny, a skrót nie prowadzi do niewłaściwej osoby. Weryfikacja: przekazanie e-mailem, cofnięte uprawnienia, usunięty wątek, restart i dostępność. Nie blokuje pierwszego pełnego wydania bez zatwierdzenia."
+    },
+    {
+      "id": "CH072",
+      "title": "Zbadać TelephonyMessagingKit i alternatywny transport Androida",
+      "priority": "P2",
+      "roles": "architekt mobilny i badania techniczne",
+      "person_days_min": 3,
+      "person_days_max": 5,
+      "dependencies": [
+        "CH001"
+      ],
+      "description": "Wykonanie (spike, poza MVP): zweryfikować aktualne wymagania Apple TelephonyMessagingKit dla domyślnej aplikacji SMS/MMS/RCS w UE, entitlement, operatorów PL, historię i ograniczenia względem iMessage. Oddzielnie zbadać AlternativeMessageTransportService Android API 37 jako mechanizm alternatywnego transportu bez zakładania automatycznej interoperacyjności RCS. Przygotować macierz ryzyk, koszty, bramki prototypu i decyzję go/no-go.\n\nOdbiór: raport z oficjalnych API i testów na odpowiednich urządzeniach, bez nieudokumentowanej obietnicy dostępu do iMessage lub RCS Google. Weryfikacja: ścieżka uprawnień, operatorzy, wersje OS, zakres historii i transportów. Nie blokuje pierwszego wydania Androida."
     }
-  ]
+  ],
+  "release_total_min": 172,
+  "release_total_max": 268,
+  "optional_total_min": 6,
+  "optional_total_max": 10,
+  "scope_notes": "CH001–CH064: baza. CH065–CH070: wymagane rozszerzenia UX w pełnym wydaniu, odbiór CH063. CH071–CH072: opcjonalne lub badawcze poza bramką wydania. Rozszerzenie opisów istniejących zadań wymaga ponownego oszacowania; suma osobodni jest wstępna. Pliki DOCX/ZIP pozostają eksportem wersji 1.0."
 }

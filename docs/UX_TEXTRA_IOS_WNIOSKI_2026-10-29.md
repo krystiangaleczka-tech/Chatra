@@ -17,7 +17,7 @@ Zrzuty pokazują:
 
 **Prywatność:** dokument nie publikuje zrzutów, numerów telefonów ani treści prywatnych rozmów. Wnioski dotyczą wyłącznie widocznych kontrolek, a nie jakości dostarczania lub szybkości działania aplikacji.
 
-**Ważne:** w repozytorium już istnieją: 10 plansz referencyjnych, ich kontrakt 1:1 oraz 64 zadania CH001–CH064. Ten dokument **nie zmienia tych wzorców, priorytetów ani gotowych decyzji**, tylko wskazuje rozszerzenia do przyszłego projektu brakujących podwidoków i osobną pulę propozycji. Funkcję obecną w dotychczasowej specyfikacji oznaczamy „JUŻ UJĘTA”, żeby nie zadawać zespołowi tej samej pracy dwa razy.
+**Ważne:** w repozytorium już istnieją: 10 plansz referencyjnych, ich kontrakt 1:1 oraz 64 zadania CH001–CH064. Sam ten dokument nie zmienia wzorców Liquid Glass ani decyzji dotyczących transportów. Na jego podstawie zaktualizowano backlog CH001–CH064 i dodano zadania CH065–CH072, opisując odpowiednie priorytety i zależności. Funkcję obecną w dotychczasowej specyfikacji oznaczamy „JUŻ UJĘTA”, żeby nie zadawać zespołowi tej samej pracy dwa razy.
 
 ## 2. Zasada wyboru: Textra funkcjonalnie, Apple ergonomicznie, Chatra wizualnie
 
@@ -127,20 +127,20 @@ Obecny kontrakt Androida **nie włącza RCS do pierwszego wydania**. Ustalenie t
 
 ## 7. Proponowane zadania UX do rozpatrzenia po CH020
 
-Żaden z poniższych identyfikatorów nie zastępuje CH001–CH064. To **kandydaci do osobnego doprecyzowania zakresu**, nie zadania automatycznie przypisane zespołowi.
+Uzupełnienia UX01–UX08 zostały **przepisane do rzeczywistego backlogu**: zmieniono powiązane zadania CH001–CH064 i dodano CH065–CH072. CH065–CH070 są w zakresie pełnego wydania i mają kryteria odbioru; CH071–CH072 pozostają opcjonalne/badawcze. Poniższa tabela podaje mapowanie, a plik [Chatra_Backlog_Android.md](implementacja_android/Chatra_Backlog_Android.md) jest źródłem zadań.
 
 | ID | Kandydat | Powiązanie | Proponowany priorytet | Kryterium akceptacji |
 | --- | --- | --- | --- | --- |
-| UX01 | Podwidok szczegółów kontaktu/grupy | S03, CH012, CH020, CH029 | P0 | Wszystkie akcje mają faktyczne działanie lub wyjaśniony stan niedostępny |
-| UX02 | Galeria załączników per rozmowa | CH020, CH031, CH033, CH038 | P1 | Filtry i „Pokaż w rozmowie” otwierają właściwą wiadomość |
-| UX03 | Kolaż / stos zdjęć z jednej wiadomości | S03, CH012, CH031 | P1 | Kolejność, liczniki i podgląd oryginałów zgadzają się z modelem danych |
-| UX04 | Gesty i działania na wierszach | S02, CH011, CH023, CH030 | P1 | Cofnięcie, czytnik ekranu i brak przypadkowego usuwania |
-| UX05 | Lokalna personalizacja pojedynczej rozmowy | S09, CH018, CH040 | P1 | Dziedziczenie, podgląd, reset i kontrast bez naruszenia wzorców |
-| UX06 | Nieprzeczytane + przeskok do pierwszej zaległej | S02/S03, CH022, CH023 | P1 | Stany spójne po restarcie i po otrzymaniu wiadomości |
-| UX07 | Eksport / Sharesheet i skrót na pulpit | CH020, CH022, CH044 | P2 | Eksport nie ujawnia danych niezamierzonych, skrót działa po restarcie |
-| UX08 | Spike wykonalności iOS UE + aktualizacja analizy RCS Android | CH001, AUDYT.md | Badanie, nie MVP | Notatka z wynikami na urządzeniach, operatorem i API; bez obietnic wdrożenia |
+| UX01 → CH065 | Podwidok szczegółów kontaktu/grupy | S03, CH012, CH020, CH029 | P0 | Wszystkie akcje mają faktyczne działanie lub wyjaśniony stan niedostępny |
+| UX02 → CH066 | Galeria załączników per rozmowa | CH020, CH031, CH033, CH038 | P1 | Filtry i „Pokaż w rozmowie” otwierają właściwą wiadomość |
+| UX03 → CH067 | Kolaż / stos zdjęć z jednej wiadomości | S03, CH012, CH031 | P1 | Kolejność, liczniki i podgląd oryginałów zgadzają się z modelem danych |
+| UX04 → CH069 | Gesty i działania na wierszach | S02, CH011, CH023, CH030 | P1 | Cofnięcie, czytnik ekranu i brak przypadkowego usuwania |
+| UX05 → CH068 | Lokalna personalizacja pojedynczej rozmowy | S09, CH018, CH040 | P1 | Dziedziczenie, podgląd, reset i kontrast bez naruszenia wzorców |
+| UX06 → CH070 | Nieprzeczytane + przeskok do pierwszej zaległej | S02/S03, CH022, CH023 | P1 | Stany spójne po restarcie i po otrzymaniu wiadomości |
+| UX07 → CH071 | Eksport / Sharesheet i skrót na pulpit | CH020, CH022, CH044 | P2 | Eksport nie ujawnia danych niezamierzonych, skrót działa po restarcie |
+| UX08 → CH072 | Spike wykonalności iOS UE + aktualizacja analizy RCS Android | CH001, AUDYT.md | Badanie, nie MVP | Notatka z wynikami na urządzeniach, operatorem i API; bez obietnic wdrożenia |
 
-**Zasada wdrożenia:** najpierw aktualizować projekt i kontrakt brakujących ekranów w CH020, uzgodnić zakres, dopiero potem wdrażać. Nie wolno zastępować istniejących wzorców S01–S10 „bardziej applowskimi” ekranami bez wyraźnej decyzji właściciela projektu.
+**Zasada wdrożenia:** CH020 projektuje brakujące ekrany; CH065–CH070 implementują i testują zatwierdzony zakres, a CH063 blokuje wydanie bez ich odbioru. CH071–CH072 pozostają poza bramką pierwszego wydania. Nie oznacza to, że funkcje są już zaimplementowane. Nie wolno zastępować istniejących wzorców S01–S10 „bardziej applowskimi” ekranami bez wyraźnej decyzji właściciela projektu.
 
 ## 8. Scenariusze testowe / Definition of Done nowych zachowań
 

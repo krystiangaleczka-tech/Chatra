@@ -36,11 +36,11 @@ Specyfikacja z 29 października 2026 opisuje odtworzenie 1:1 dziesięciu ekranó
 
 - [Dokumentacja implementacji w Markdown](docs/implementacja_android/Chatra_Dokumentacja_Android.md)
 - [Dokumentacja implementacji w Word](docs/implementacja_android/Chatra_Dokumentacja_Android.docx)
-- [64 szczegółowe zadania w Markdown](docs/implementacja_android/Chatra_Backlog_Android.md)
-- [64 szczegółowe zadania w Word](docs/implementacja_android/Chatra_Backlog_Android.docx)
-- [Eksport zadań i zależności w JSON](docs/implementacja_android/Chatra_Plan_zadan.json)
+- [72 zadania w aktualnym backlogu Markdown (70 do wydania, 2 opcjonalne)](docs/implementacja_android/Chatra_Backlog_Android.md)
+- [Archiwalny eksport 64 zadań w Word (wersja 1.0)](docs/implementacja_android/Chatra_Backlog_Android.docx)
+- [Aktualny plan 72 zadań i zależności w JSON](docs/implementacja_android/Chatra_Plan_zadan.json)
 - [Wprowadzenie i zawartość pakietu](docs/implementacja_android/Czytaj_najpierw.md)
 - [Pakiet referencyjny ekranów i stylów](docs/implementacja_android/Chatra_Pakiet_referencyjny/README.md)
-- [Kompletny pakiet ZIP](docs/implementacja_android/Chatra_Dokumentacja_i_taski.zip)
+- [Archiwalny pakiet ZIP (wersja 1.0, 64 zadania)](docs/implementacja_android/Chatra_Dokumentacja_i_taski.zip)
 
-Dokumentacja obejmuje wygląd, architekturę Androida, SMS/MMS, dual SIM, harmonogram, wyszukiwanie, Chatra HD, prywatność i kryteria odbioru. Zadania zawierają priorytety, role, zależności, orientacyjne nakłady i weryfikację. Braki źródłowego projektu i decyzje do zamknięcia oznaczono osobno. Pakiet jest dokumentacją do realizacji i nie zawiera gotowego APK.
+Dokumentacja obejmuje wygląd, architekturę Androida, SMS/MMS, dual SIM, harmonogram, wyszukiwanie, Chatra HD, prywatność i kryteria odbioru. Aktualny backlog Markdown i JSON (wersja 1.1) obejmuje także szczegóły rozmowy, galerię, kolaże, personalizację per rozmowa, gesty oraz nieprzeczytane; dwie pozycje dotyczą opcjonalnego eksportu i badań platform. Zadania zawierają priorytety, role, zależności, orientacyjne nakłady i weryfikację. Braki źródłowego projektu i decyzje do zamknięcia oznaczono osobno. Pakiet jest dokumentacją do realizacji i nie zawiera gotowego APK.
