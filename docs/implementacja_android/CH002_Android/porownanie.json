@@ -1,0 +1,499 @@
+{
+ "task": "CH002",
+ "tolerance_channel": 3,
+ "capture": "android_capture.json",
+ "board": "plansza_macos_vs_android.jpg",
+ "board_sha256": "b7e4a45a9f86a3e07f3f3185dd1a02dd4b11e0b3764e057d32ec737e86ece0de",
+ "screens": [
+  {
+   "id": "S01",
+   "title": "01 Start i ograniczenia",
+   "android_png": "run1/android-S01.png",
+   "android_png_sha256": "4cdd7a4b2268da2060a70d9be14da5c5860e944f93ec37dc6f5e9ca8d6f3c13f",
+   "size_px": [
+    1365,
+    2954
+   ],
+   "stability": {
+    "identical_bytes": true,
+    "run2_sha256": "4cdd7a4b2268da2060a70d9be14da5c5860e944f93ec37dc6f5e9ca8d6f3c13f",
+    "pixels_total": 4032210,
+    "pixels_changed": 0,
+    "pixels_over_tolerance": 0,
+    "max_channel_delta": 0
+   },
+   "geometry_vs_macos": {
+    "matched": "8/8",
+    "within_1px": 0,
+    "max_abs_delta_css_px": 9.73,
+    "worst_element": {
+     "tag": "H2",
+     "text": "CZEGO NIE OBSŁUGUJE",
+     "dx": -0.14285659790039062,
+     "dy": -9.734344482421875,
+     "dw": 0.285736083984375,
+     "dh": 0
+    },
+    "first_rows_changed_y": [
+     -9.31,
+     -9.31,
+     -9.45
+    ]
+   },
+   "image_vs_macos": {
+    "macos_png": "Chatra_Pakiet_referencyjny/ekrany/screen-01.png",
+    "android_downscaled_to": [
+     390,
+     844
+    ],
+    "pixels_over_tolerance_pct": 28.22,
+    "mean_channel_delta": 20.53,
+    "ssim_luma_global": 0.3986
+   },
+   "rendered_fonts": {
+    "Inter (Inter-Regular) [web font]": 529
+   }
+  },
+  {
+   "id": "S02",
+   "title": "02 Skrzynka",
+   "android_png": "run1/android-S02.png",
+   "android_png_sha256": "a2342dc6740f1b5df8bada79c247a6f9d0b185eb7d6b753b3f1aa2f7aed5e61b",
+   "size_px": [
+    1365,
+    2954
+   ],
+   "stability": {
+    "identical_bytes": false,
+    "run2_sha256": "3008dd9248404dcd2f0ea718ab41ff73e1dc713a1f192cbd35529a3e27819c4c",
+    "pixels_total": 4032210,
+    "pixels_changed": 55,
+    "pixels_over_tolerance": 1,
+    "max_channel_delta": 45
+   },
+   "geometry_vs_macos": {
+    "matched": "20/20",
+    "within_1px": 11,
+    "max_abs_delta_css_px": 7.68,
+    "worst_element": {
+     "tag": "H1",
+     "text": "Rozmowy",
+     "dx": 0,
+     "dy": 3.814697265625e-06,
+     "dw": 7.680816650390625,
+     "dh": 0
+    },
+    "first_rows_changed_y": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "image_vs_macos": {
+    "macos_png": "Chatra_Pakiet_referencyjny/ekrany/screen-02.png",
+    "android_downscaled_to": [
+     390,
+     844
+    ],
+    "pixels_over_tolerance_pct": 17.41,
+    "mean_channel_delta": 13.29,
+    "ssim_luma_global": 0.5649
+   },
+   "rendered_fonts": {
+    "Inter (Inter-Regular) [web font]": 632
+   }
+  },
+  {
+   "id": "S03",
+   "title": "03 Rozmowa",
+   "android_png": "run1/android-S03.png",
+   "android_png_sha256": "2d1ceefc921024e0a63f7ff999f5db8d55bad63c39764c8773e01bc7740bb2d2",
+   "size_px": [
+    1365,
+    2954
+   ],
+   "stability": {
+    "identical_bytes": true,
+    "run2_sha256": "2d1ceefc921024e0a63f7ff999f5db8d55bad63c39764c8773e01bc7740bb2d2",
+    "pixels_total": 4032210,
+    "pixels_changed": 0,
+    "pixels_over_tolerance": 0,
+    "max_channel_delta": 0
+   },
+   "geometry_vs_macos": {
+    "matched": "12/12",
+    "within_1px": 7,
+    "max_abs_delta_css_px": 2.14,
+    "worst_element": {
+     "tag": "DIV",
+     "text": "Zdjęcie 1",
+     "dx": -0.142852783203125,
+     "dy": 2.1428680419921875,
+     "dw": 0.1004486083984375,
+     "dh": 0
+    },
+    "first_rows_changed_y": [
+     2.14,
+     2.14,
+     2.14
+    ]
+   },
+   "image_vs_macos": {
+    "macos_png": "Chatra_Pakiet_referencyjny/ekrany/screen-03.png",
+    "android_downscaled_to": [
+     390,
+     844
+    ],
+    "pixels_over_tolerance_pct": 15.12,
+    "mean_channel_delta": 10.31,
+    "ssim_luma_global": 0.751
+   },
+   "rendered_fonts": {
+    "Inter (Inter-Regular) [web font]": 502
+   }
+  },
+  {
+   "id": "S04",
+   "title": "04 Dodatki i Chatra HD",
+   "android_png": "run1/android-S04.png",
+   "android_png_sha256": "908f32193d121ad05d0c1fa6e35a708b85b3bc20e0533f24e28ee4ddc69168ea",
+   "size_px": [
+    1365,
+    2954
+   ],
+   "stability": {
+    "identical_bytes": true,
+    "run2_sha256": "908f32193d121ad05d0c1fa6e35a708b85b3bc20e0533f24e28ee4ddc69168ea",
+    "pixels_total": 4032210,
+    "pixels_changed": 0,
+    "pixels_over_tolerance": 0,
+    "max_channel_delta": 0
+   },
+   "geometry_vs_macos": {
+    "matched": "16/16",
+    "within_1px": 11,
+    "max_abs_delta_css_px": 22.43,
+    "worst_element": {
+     "tag": "A",
+     "text": "Wyślij 4 zdjęcia w oryginale",
+     "dx": -0.14285659790039062,
+     "dy": 22.4285888671875,
+     "dw": 0.285736083984375,
+     "dh": 0.5714302062988281
+    },
+    "first_rows_changed_y": [
+     0.0,
+     -0.79,
+     -0.14
+    ]
+   },
+   "image_vs_macos": {
+    "macos_png": "Chatra_Pakiet_referencyjny/ekrany/screen-04.png",
+    "android_downscaled_to": [
+     390,
+     844
+    ],
+    "pixels_over_tolerance_pct": 23.53,
+    "mean_channel_delta": 16.08,
+    "ssim_luma_global": 0.6489
+   },
+   "rendered_fonts": {
+    "Inter (Inter-Regular) [web font]": 353
+   }
+  },
+  {
+   "id": "S05",
+   "title": "05 Zaplanuj wysyłkę",
+   "android_png": "run1/android-S05.png",
+   "android_png_sha256": "b36aa00c711f7756631c3ec5bbc4f11215e82cb718937a796768c347bb733423",
+   "size_px": [
+    1365,
+    2954
+   ],
+   "stability": {
+    "identical_bytes": true,
+    "run2_sha256": "b36aa00c711f7756631c3ec5bbc4f11215e82cb718937a796768c347bb733423",
+    "pixels_total": 4032210,
+    "pixels_changed": 0,
+    "pixels_over_tolerance": 0,
+    "max_channel_delta": 0
+   },
+   "geometry_vs_macos": {
+    "matched": "16/16",
+    "within_1px": 10,
+    "max_abs_delta_css_px": 4.11,
+    "worst_element": {
+     "tag": "H2",
+     "text": "Zaplanuj wysyłkę",
+     "dx": -2.0624923706054688,
+     "dy": -0.428558349609375,
+     "dw": 4.1138458251953125,
+     "dh": 0.5714302062988281
+    },
+    "first_rows_changed_y": [
+     0.0,
+     -0.14,
+     -0.43
+    ]
+   },
+   "image_vs_macos": {
+    "macos_png": "Chatra_Pakiet_referencyjny/ekrany/screen-05.png",
+    "android_downscaled_to": [
+     390,
+     844
+    ],
+    "pixels_over_tolerance_pct": 13.15,
+    "mean_channel_delta": 8.73,
+    "ssim_luma_global": 0.7852
+   },
+   "rendered_fonts": {
+    "Inter (Inter-Regular) [web font]": 389
+   }
+  },
+  {
+   "id": "S06",
+   "title": "06 Zaplanowane",
+   "android_png": "run1/android-S06.png",
+   "android_png_sha256": "595a8c646c95e2906d5b73d4fee447386f33818df137c37ac83d05849584a632",
+   "size_px": [
+    1365,
+    2954
+   ],
+   "stability": {
+    "identical_bytes": true,
+    "run2_sha256": "595a8c646c95e2906d5b73d4fee447386f33818df137c37ac83d05849584a632",
+    "pixels_total": 4032210,
+    "pixels_changed": 0,
+    "pixels_over_tolerance": 0,
+    "max_channel_delta": 0
+   },
+   "geometry_vs_macos": {
+    "matched": "16/16",
+    "within_1px": 6,
+    "max_abs_delta_css_px": 22.43,
+    "worst_element": {
+     "tag": "A",
+     "text": "PON.\n9:00\nMarek (praca)\nRaport jest na dysku, omówimy po spo",
+     "dx": -0.14285659790039062,
+     "dy": 22.4285888671875,
+     "dw": 0.285736083984375,
+     "dh": 0.857147216796875
+    },
+    "first_rows_changed_y": [
+     0.0,
+     19,
+     20.29
+    ]
+   },
+   "image_vs_macos": {
+    "macos_png": "Chatra_Pakiet_referencyjny/ekrany/screen-06.png",
+    "android_downscaled_to": [
+     390,
+     844
+    ],
+    "pixels_over_tolerance_pct": 33.48,
+    "mean_channel_delta": 23.59,
+    "ssim_luma_global": 0.3152
+   },
+   "rendered_fonts": {
+    "Inter (Inter-Regular) [web font]": 807
+   }
+  },
+  {
+   "id": "S07",
+   "title": "07 Wyszukiwanie",
+   "android_png": "run1/android-S07.png",
+   "android_png_sha256": "dfe1d351f08e54059596943d2bd3381165ad119bd83b285e2ee77ce56b7d6fa7",
+   "size_px": [
+    1365,
+    2954
+   ],
+   "stability": {
+    "identical_bytes": false,
+    "run2_sha256": "595529628b555dd18ab85b6499da9af88809a649ef3a9c17f06d719ffb99389a",
+    "pixels_total": 4032210,
+    "pixels_changed": 227,
+    "pixels_over_tolerance": 24,
+    "max_channel_delta": 61
+   },
+   "geometry_vs_macos": {
+    "matched": "18/18",
+    "within_1px": 8,
+    "max_abs_delta_css_px": 42.7,
+    "worst_element": {
+     "tag": "INPUT",
+     "text": "",
+     "dx": -0.142852783203125,
+     "dy": -0.42856597900390625,
+     "dw": 42.696441650390625,
+     "dh": 0.5714302062988281
+    },
+    "first_rows_changed_y": [
+     -0.43,
+     -0.14,
+     -0.14
+    ]
+   },
+   "image_vs_macos": {
+    "macos_png": "Chatra_Pakiet_referencyjny/ekrany/screen-07.png",
+    "android_downscaled_to": [
+     390,
+     844
+    ],
+    "pixels_over_tolerance_pct": 20.67,
+    "mean_channel_delta": 11.34,
+    "ssim_luma_global": 0.6445
+   },
+   "rendered_fonts": {
+    "Inter (Inter-Regular) [web font]": 524
+   }
+  },
+  {
+   "id": "S08",
+   "title": "08 Nowa wiadomość",
+   "android_png": "run1/android-S08.png",
+   "android_png_sha256": "47836a419ebc987908a92ee0fee066e630715c1d54392f4ca81e4968f5b6bbcb",
+   "size_px": [
+    1365,
+    2954
+   ],
+   "stability": {
+    "identical_bytes": false,
+    "run2_sha256": "e3cc66c066973d4ab27799488d436f91ff305866674f599a87b0570be165c7cd",
+    "pixels_total": 4032210,
+    "pixels_changed": 407,
+    "pixels_over_tolerance": 2,
+    "max_channel_delta": 41
+   },
+   "geometry_vs_macos": {
+    "matched": "15/15",
+    "within_1px": 2,
+    "max_abs_delta_css_px": 4.33,
+    "worst_element": {
+     "tag": "H1",
+     "text": "Nowa wiadomość",
+     "dx": -2.1674041748046875,
+     "dy": -0.28571319580078125,
+     "dw": 4.3348236083984375,
+     "dh": 0.5714302062988281
+    },
+    "first_rows_changed_y": [
+     0.0,
+     -0.29,
+     -0.14
+    ]
+   },
+   "image_vs_macos": {
+    "macos_png": "Chatra_Pakiet_referencyjny/ekrany/screen-08.png",
+    "android_downscaled_to": [
+     390,
+     844
+    ],
+    "pixels_over_tolerance_pct": 15.44,
+    "mean_channel_delta": 11.29,
+    "ssim_luma_global": 0.4619
+   },
+   "rendered_fonts": {
+    "Inter (Inter-Regular) [web font]": 460
+   }
+  },
+  {
+   "id": "S09",
+   "title": "09 Wygląd",
+   "android_png": "run1/android-S09.png",
+   "android_png_sha256": "5d99aa5d246d1244196cd136ad57b21e05894eedf4301285f81a99e40f364605",
+   "size_px": [
+    1365,
+    2954
+   ],
+   "stability": {
+    "identical_bytes": true,
+    "run2_sha256": "5d99aa5d246d1244196cd136ad57b21e05894eedf4301285f81a99e40f364605",
+    "pixels_total": 4032210,
+    "pixels_changed": 0,
+    "pixels_over_tolerance": 0,
+    "max_channel_delta": 0
+   },
+   "geometry_vs_macos": {
+    "matched": "19/19",
+    "within_1px": 8,
+    "max_abs_delta_css_px": 12.53,
+    "worst_element": {
+     "tag": "BUTTON",
+     "text": "Przywróć ustawienia domyślne",
+     "dx": -6.261157989501953,
+     "dy": 3.14288330078125,
+     "dw": 12.53350830078125,
+     "dh": 3.814697265625e-06
+    },
+    "first_rows_changed_y": [
+     0.0,
+     -0.64,
+     -0.29
+    ]
+   },
+   "image_vs_macos": {
+    "macos_png": "Chatra_Pakiet_referencyjny/ekrany/screen-09.png",
+    "android_downscaled_to": [
+     390,
+     844
+    ],
+    "pixels_over_tolerance_pct": 13.01,
+    "mean_channel_delta": 8.41,
+    "ssim_luma_global": 0.6885
+   },
+   "rendered_fonts": {
+    "Inter (Inter-Regular) [web font]": 272
+   }
+  },
+  {
+   "id": "S10",
+   "title": "10 Ustawienia",
+   "android_png": "run1/android-S10.png",
+   "android_png_sha256": "8df1cd82a7f2999c8898a7a67672cbd0df7894456cbf32de9795483529488553",
+   "size_px": [
+    1365,
+    2954
+   ],
+   "stability": {
+    "identical_bytes": false,
+    "run2_sha256": "02e860e0c225077db3e84c60567594edc6651ab76e075d6c09a46aea3e0b6fc8",
+    "pixels_total": 4032210,
+    "pixels_changed": 1414,
+    "pixels_over_tolerance": 39,
+    "max_channel_delta": 62
+   },
+   "geometry_vs_macos": {
+    "matched": "21/21",
+    "within_1px": 6,
+    "max_abs_delta_css_px": 12.29,
+    "worst_element": {
+     "tag": "BUTTON",
+     "text": "Zablokowani\n3 numery · możesz przywrócić",
+     "dx": -0.14285659790039062,
+     "dy": 12.2857666015625,
+     "dw": 0.285736083984375,
+     "dh": 3.814697265625e-06
+    },
+    "first_rows_changed_y": [
+     0.0,
+     0.57,
+     1.14
+    ]
+   },
+   "image_vs_macos": {
+    "macos_png": "Chatra_Pakiet_referencyjny/ekrany/screen-10.png",
+    "android_downscaled_to": [
+     390,
+     844
+    ],
+    "pixels_over_tolerance_pct": 27.07,
+    "mean_channel_delta": 19.33,
+    "ssim_luma_global": 0.4304
+   },
+   "rendered_fonts": {
+    "Inter (Inter-Regular) [web font]": 610
+   }
+  }
+ ]
+}

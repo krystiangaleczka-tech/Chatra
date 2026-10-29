@@ -1,8 +1,8 @@
 {
-  "version": "0.1",
+  "version": "0.2",
   "date": "2026-10-29",
   "task": "CH002",
-  "status": "macos_source_verified_android_reference_missing",
+  "status": "android_reference_verified_awaiting_g01_approval",
   "source": {
     "file": "Chatra_Pakiet_referencyjny/Chatra — Liquid Glass.html",
     "sha256_verified_from_full_blob": "80e7652c4de8a483b39a38e6cd319524817af11986499f0f7aee28d4efa4cbe3",
@@ -355,7 +355,8 @@
     "actual_font_mac": null,
     "actual_font_android": null,
     "reason": "Computed CSS font-family is a preference stack, not a measured rendered font; Android DevTools Rendered Fonts/CDP needed",
-    "working_proposal": "Inter 400/500/600/700/800 only, not approved"
+    "working_proposal": "Inter 400/500/600/700/800 only, not approved",
+    "android_rendered": "Inter (variable web font from bundle), weights declared 400-700; weight 800 (HD badge S03/S04/S10) resolves to the 700 face per CSS font matching"
   },
   "anomalies": [
     {
@@ -404,28 +405,58 @@
       "w": 390,
       "h": 844
     },
-    "android_api": null,
-    "device": null,
-    "screen_physical_px": null,
-    "density": null,
+    "android_api": 37,
+    "device": "Samsung SM-S948B (Galaxy S26 Ultra)",
+    "screen_physical_px": {
+      "w": 1440,
+      "h": 3120
+    },
+    "density": {
+      "physical": 600,
+      "override": 560,
+      "chrome_dpr": 3.5
+    },
     "locale": "pl-PL",
     "font_scale": 1,
-    "browser_version": null,
+    "browser_version": "Chrome 156.0.8078.49 (com.android.chrome)",
     "fixed_fixture_date": "2026-10-29",
     "light_theme": true,
     "animations_disabled_for_test": true,
-    "two_renders_per_screen": false,
-    "rendered_font_evidence": null
+    "two_renders_per_screen": true,
+    "rendered_font_evidence": "CSS.getPlatformFontsForNode: 100% glyphs Inter (Inter-Regular) [web font], 5078 glyphs on 10 screens; no system font glyphs",
+    "android_release": "17",
+    "build": "CP2A.260605.016.S948BXXS4BZIG",
+    "webview_version": "156.0.8078.47",
+    "capture_px": {
+      "w": 1365,
+      "h": 2954
+    },
+    "system_font_scale": 0.9,
+    "effective_web_font_scale": 1,
+    "system_night_mode": true,
+    "emulated_in_tab": {
+      "prefers_color_scheme": "light",
+      "auto_dark": false,
+      "prefers_reduced_motion": "reduce",
+      "locale": "pl-PL",
+      "timezone": "Europe/Warsaw"
+    },
+    "evidence": [
+      "CH002_Android/android_capture.json",
+      "CH002_Android/porownanie.json",
+      "CH002_Android/run1",
+      "CH002_Android/plansza_macos_vs_android.jpg"
+    ]
   },
   "verification": {
     "html_sha256": true,
     "all_10_macos_reference_entries": true,
     "all_10_measurements": true,
     "all_10_source_styles": true,
-    "source_png_binary_hashes_checked_locally": false,
-    "android_render_390x844": false,
-    "android_rendered_fonts": false,
-    "android_two_pass_stability": false,
+    "source_png_binary_hashes_checked_locally": true,
+    "android_render_390x844": true,
+    "android_rendered_fonts": true,
+    "android_two_pass_stability": "within_tolerance: 6/10 byte-identical, others max 39 px > 3/255",
     "final_g01_approval": false
   }
 }

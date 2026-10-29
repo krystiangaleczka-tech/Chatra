@@ -27,5 +27,22 @@ for(let i=0;i<10;i++){
  console.log("PASS "+id+": PNG sha256, 390x844, "+measure[i].elements.length+" boxes");
 }
 console.log("PASS HTML SHA256; 10 PNG; "+count+" measured elements");
-console.log("PENDING: Android actual font, viewport capture ×2, device manifest and visual review");
-if(process.argv.includes("--strict-android")){console.error("BLOCKED: no Android renderer evidence yet");process.exitCode=2;}
+// Dowód z Androida: golden run1 (PNG i SHA-256), 10 ekranów, wyłącznie Inter w Rendered Fonts.
+const androidDir=path.resolve(process.cwd(),"docs/implementacja_android/CH002_Android");
+const androidReport=path.join(androidDir,"porownanie.json");
+if(fs.existsSync(androidReport)){
+ const rep=JSON.parse(fs.readFileSync(androidReport,"utf8"));
+ chk(rep.screens.length===10,"Android: not 10 screens");
+ for(const s of rep.screens){
+  const buf=fs.readFileSync(path.join(androidDir,s.android_png));
+  chk(sha(buf)===s.android_png_sha256,"Android PNG SHA mismatch "+s.id);
+  chk(buf.readUInt32BE(16)===1365&&buf.readUInt32BE(20)===2954,"Android PNG size "+s.id);
+  chk(Object.keys(s.rendered_fonts).every((f)=>f.startsWith("Inter")),"Android non-Inter font "+s.id);
+  chk(s.stability.pixels_over_tolerance<=0.0001*s.stability.pixels_total,"Android unstable "+s.id);
+ }
+ console.log("PASS Android golden: 10 PNG 1365x2954, Rendered Fonts = Inter, two-pass overlay within 3/255");
+ console.log("PENDING: G01 approval by UX/QA");
+}else{
+ console.log("PENDING: Android actual font, viewport capture ×2, device manifest and visual review");
+ if(process.argv.includes("--strict-android")){console.error("BLOCKED: no Android renderer evidence yet");process.exitCode=2;}
+}
