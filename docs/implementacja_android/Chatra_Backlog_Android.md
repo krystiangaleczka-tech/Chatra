@@ -4,7 +4,7 @@ Wersja 1.1 · 29 października 2026 · powiązanie z dokumentem Chatra Dokumenta
 
 Backlog obejmuje pełną aplikację, nie tylko statyczne ekrany. Każde zadanie ma zakres, wykonawcę, zależności, nakład oraz kryteria i weryfikację. Nakład oznacza osobodni pracy przy znanych kontraktach i dostępnym środowisku, nie termin kalendarzowy ani ofertę cenową. Zakresy są orientacyjne; po spike szkła i MMS należy je ponownie oszacować.
 
-P0 oznacza fundament lub ryzyko blokujące dalsze prace; P1 oznacza pozostały wymagany zakres pełnego wydania. P1 nie oznacza funkcji, którą można pominąć bez zmiany zakresu. Skrót BE oznacza backend, QA oznacza testy, a UX oznacza projektowanie interfejsu. Zadania z kilkoma rolami mają wspólny nakład, nie podwójne naliczenie.
+P0 oznacza fundament lub ryzyko blokujące dalsze prace; P1 oznacza pozostały wymagany zakres pełnego wydania. P1 nie oznacza funkcji, którą można pominąć bez zmiany zakresu. P2 oznacza opcję lub badanie wymagające odrębnej decyzji, bez blokowania pierwszego wydania. Skrót BE oznacza backend, QA oznacza testy, a UX oznacza projektowanie interfejsu. Zadania z kilkoma rolami mają wspólny nakład, nie podwójne naliczenie.
 
 ## 1 Kamienie milowe i zasady zamykania
 
@@ -544,7 +544,7 @@ Odbiór: scenariusze duplikacji i utraty danych mają niezależne asercje i prze
 
 ### CH055 Odebrać zgodność wizualną wszystkich ekranów
 
-**P0 · QA i UX i Android · 3–5 osobodni · zależności CH010 CH011 CH012 CH013 CH014 CH015 CH016 CH017 CH018 CH019 CH040**
+**P0 · QA i UX i Android · 3–5 osobodni · zależności CH010 CH011 CH012 CH013 CH014 CH015 CH016 CH017 CH018 CH019 CH040 CH065 CH066 CH067 CH068 CH069 CH070**
 
 Wykonanie: obrazy S01–S10 w warunkach CH002, overlay 50 procent, heatmapa i pomiary obszarów ROI. Sprawdzić typografię, linebreak, stroke ikon, box sizing, gradienty, szkło i dock. Osobny przegląd renderowania GPU na urządzeniu. Zarejestrować i poprawić odchyłki; golden nie aktualizuje się automatycznie.
 
@@ -581,7 +581,7 @@ Odbiór: brak wycieków i zgodność całego przepływu, receipt dopiero po rzec
 
 ### CH059 Zmierzyć i poprawić wydajność
 
-**P1 · Android i BE i QA · 2–4 osobodni · zależności CH008 CH022 CH032 CH038 CH053**
+**P1 · Android i BE i QA · 2–4 osobodni · zależności CH008 CH022 CH032 CH038 CH053 CH066 CH067**
 
 Wykonanie: uruchomienie aplikacji, 50 tys. wiadomości, scroll, otwarcie arkusza, pamięć miniatur i transfer HD. Zmierzyć cele P95 na ustalonym urządzeniu, profilować koszt rejestrowania warstw i rozmycia i indeksowania. Backend monitorować bez prywatnych danych. Poprawić potwierdzone wąskie gardła.
 
@@ -594,7 +594,7 @@ Odbiór: raport liczbowy i spełnione lub jawnie ponownie uzgodnione cele, bez r
 
 ### CH060 Odebrać dostępność i układy adaptacyjne
 
-**P1 · QA i UX i Android · 2–3 osobodni · zależności CH020 CH040 CH055**
+**P1 · QA i UX i Android · 2–3 osobodni · zależności CH020 CH040 CH055 CH065 CH066 CH068 CH069 CH070**
 
 Wykonanie: TalkBack, fokus dialogów, poprawne role i stan, nazwy przycisków i cele 48 dp bez nakładania. Systemowa skala tekstu 1.3/2.0, suwak aplikacji, redukcja przezroczystości i kontrast. Test 360/390/430 dp, IME, cutout i obie metody nawigacji systemu.
 
@@ -623,7 +623,7 @@ Odbiór: nowa osoba z zespołu odtwarza build i środowisko testowe z instrukcji
 
 ### CH063 Przeprowadzić pełny odbiór produktu
 
-**P0 · produkt i QA · 2–3 osobodni · zależności CH034 CH039 CH041 CH042 CH043 CH044 CH045 CH055 CH056 CH057 CH058 CH059 CH060 CH061 CH062**
+**P0 · produkt i QA · 2–3 osobodni · zależności CH034 CH039 CH041 CH042 CH043 CH044 CH045 CH055 CH056 CH057 CH058 CH059 CH060 CH061 CH062 CH065 CH066 CH067 CH068 CH069 CH070**
 
 Wykonanie: przejść wszystkie widoczne akcje dziesięciu plansz i uzupełnione podwidoki. Sprawdzić SMS i funkcje lokalne bez konta oraz dostępu do internetu, MMS przy wymaganej transmisji operatora, a HD i zakup Pro przy dostępnej sieci. Osobno zweryfikować role, harmonogram, wyszukiwanie i przywracanie zakupu. Zestawić wymaganie→zadanie→dowód, zamknąć błędy krytyczne i otwarte decyzje.
 
