@@ -48,6 +48,8 @@ Wykonanie: zweryfikować SHA256 HTML i zachować niezmienny oryginał. Otworzyć
 
 Odbiór: 10 wzorców, manifest warunków i uzgodniony wariant fontu. Każdy niejednoznaczny wymiar ma pomiar; brak cichego zamienienia SF na Inter. Weryfikacja: overlay dwóch kolejnych renderów jest stabilny.
 
+**Wynik częściowy CH002 (2026-10-29):** wykonano niezależną weryfikację sumy SHA256 HTML i audyt 10 referencji Chrome/macOS, geometrii CSS i wrappera. [Raport CH002](CH002_Weryfikacja_wzorcow.md), [pomiary](CH002_Pomiary_i_manifest.json) i [walidator](../../scripts/ch002_verify_reference.mjs). **Blokada:** nie wykonano renderu Android 390×844, pomiaru faktycznego fontu ani dwóch prób stabilności; G01 pozostaje otwarte. Status `in_progress_blocked_android_reference`; nie oznaczać CH002 jako ukończonego.
+
 ### CH003 Sprawdzić wykonalność natywnego szkła
 
 **P0 · Android grafika · 3–5 osobodni · zależności CH002**

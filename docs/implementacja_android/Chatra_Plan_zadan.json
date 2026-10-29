@@ -81,7 +81,14 @@
       "dependencies": [
         "CH001"
       ],
-      "description": "Wykonanie: zweryfikować SHA256 HTML i zachować niezmienny oryginał. Otworzyć go na referencyjnym Androidzie, ustalić rzeczywisty font z zadeklarowanego stosu i render 390×844. Oddzielić ramkę iframe od zawartości. Zapisać API, density, fontScale, renderer, locale, dane i zegar. Zestawić deklarowane CSS z computed geometry, uwzględniając border i box sizing.\n\nOdbiór: 10 wzorców, manifest warunków i uzgodniony wariant fontu. Każdy niejednoznaczny wymiar ma pomiar; brak cichego zamienienia SF na Inter. Weryfikacja: overlay dwóch kolejnych renderów jest stabilny."
+      "description": "Wykonanie: zweryfikować SHA256 HTML i zachować niezmienny oryginał. Otworzyć go na referencyjnym Androidzie, ustalić rzeczywisty font z zadeklarowanego stosu i render 390×844. Oddzielić ramkę iframe od zawartości. Zapisać API, density, fontScale, renderer, locale, dane i zegar. Zestawić deklarowane CSS z computed geometry, uwzględniając border i box sizing.\n\nOdbiór: 10 wzorców, manifest warunków i uzgodniony wariant fontu. Każdy niejednoznaczny wymiar ma pomiar; brak cichego zamienienia SF na Inter. Weryfikacja: overlay dwóch kolejnych renderów jest stabilny.",
+      "execution_status": "in_progress_blocked_android_reference",
+      "evidence_files": [
+        "docs/implementacja_android/CH002_Pomiary_i_manifest.json",
+        "docs/implementacja_android/CH002_Weryfikacja_wzorcow.md",
+        "scripts/ch002_verify_reference.mjs"
+      ],
+      "review_note": "Źródło SHA256 i 10 istniejących macOS reference zbadane; brak Chrome na fizycznym Androidzie, identyfikacji Rendered Fonts i 2 renderów. CH002 niezamknięty."
     },
     {
       "id": "CH003",
