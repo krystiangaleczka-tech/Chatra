@@ -5,6 +5,7 @@ A better and unique version of Textra, but mine.
 
 - [Pełny audyt w Markdown](docs/AUDYT.md)
 - [Pełny audyt w PDF](docs/AUDYT.pdf)
+- [UX: Textra vs Wiadomości Apple, decyzje i propozycje dla Chatry (29.10.2026)](docs/UX_TEXTRA_IOS_WNIOSKI_2026-10-29.md)
 
 Badanie bazowe: **26 października 2026**. Uzupełnienie: **29 października 2026**.
 Raport obejmuje 8 produktów, 61 źródeł i ustalenia z dalszej rozmowy.
