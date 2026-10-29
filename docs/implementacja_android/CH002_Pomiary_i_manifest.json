@@ -1,0 +1,431 @@
+{
+  "version": "0.1",
+  "date": "2026-10-29",
+  "task": "CH002",
+  "status": "macos_source_verified_android_reference_missing",
+  "source": {
+    "file": "Chatra_Pakiet_referencyjny/Chatra — Liquid Glass.html",
+    "sha256_verified_from_full_blob": "80e7652c4de8a483b39a38e6cd319524817af11986499f0f7aee28d4efa4cbe3",
+    "bytes_verified": 3996110,
+    "unmodified": true
+  },
+  "macos": {
+    "platform": "macOS",
+    "browser": "Chrome",
+    "version": "155.0.8059.85",
+    "dpr": 1,
+    "reference_width": 390,
+    "reference_height": 844,
+    "origin": "existing references, not fresh render",
+    "screens": [
+      {
+        "id": "S01",
+        "name": "Chatra — start i ograniczenia",
+        "measurement_count": 8,
+        "style_elements": 33,
+        "reference_png": "ekrany/screen-01.png",
+        "reference_png_sha256_declared": "fdafbe2c384d0232cab62d338cb6d0e63501f23a2e8179b158e1a0f211982cd9",
+        "reference_dimensions": {
+          "width": 390,
+          "height": 844
+        },
+        "anchor_rectangles": [
+          {
+            "tag": "H1",
+            "label": "Chatra",
+            "x": 20,
+            "y": 130.734375,
+            "w": 350,
+            "h": 40,
+            "font_size": "36px",
+            "line_height": "40px"
+          },
+          {
+            "tag": "SECTION",
+            "label": "CO DZIAŁA\nSMS i MMS z każdym numerem, także z iPhone'em\nZdję",
+            "x": 20,
+            "y": 236.734375,
+            "w": 350,
+            "h": 206,
+            "font_size": "16px",
+            "line_height": "normal"
+          },
+          {
+            "tag": "SECTION",
+            "label": "CZEGO NIE OBSŁUGUJE\nCzatów RCS — np. „pisze…” i potwierdzeń ",
+            "x": 20,
+            "y": 456.734375,
+            "w": 350,
+            "h": 154,
+            "font_size": "16px",
+            "line_height": "normal"
+          }
+        ]
+      },
+      {
+        "id": "S02",
+        "name": "Chatra — skrzynka",
+        "measurement_count": 20,
+        "style_elements": 83,
+        "reference_png": "ekrany/screen-02.png",
+        "reference_png_sha256_declared": "cfddeb2e273f39fd391216bbd0aa3597eaa7f3582db98908f8fdacdfd7d8eb36",
+        "reference_dimensions": {
+          "width": 390,
+          "height": 844
+        },
+        "anchor_rectangles": [
+          {
+            "tag": "H1",
+            "label": "Rozmowy",
+            "x": 20,
+            "y": 53.5,
+            "w": 149.921875,
+            "h": 41,
+            "font_size": "34px",
+            "line_height": "41px"
+          },
+          {
+            "tag": "NAV",
+            "label": "Rozmowy\nZaplanowane\nUstawienia",
+            "x": 16,
+            "y": 754,
+            "w": 358,
+            "h": 64,
+            "font_size": "16px",
+            "line_height": "normal"
+          }
+        ]
+      },
+      {
+        "id": "S03",
+        "name": "Chatra — rozmowa z Olą",
+        "measurement_count": 12,
+        "style_elements": 45,
+        "reference_png": "ekrany/screen-03.png",
+        "reference_png_sha256_declared": "388b5a886740aaa1208ac361e8a3ec255571f06a36d3a1c2b734a0902a4a8ead",
+        "reference_dimensions": {
+          "width": 390,
+          "height": 844
+        },
+        "anchor_rectangles": [
+          {
+            "tag": "HEADER",
+            "label": "ON\nOla Nowak\nSMS · MMS · ma Chatra HD",
+            "x": 12,
+            "y": 50,
+            "w": 366,
+            "h": 50,
+            "font_size": "16px",
+            "line_height": "normal"
+          }
+        ]
+      },
+      {
+        "id": "S04",
+        "name": "Chatra — dodatki i Chatra HD",
+        "measurement_count": 16,
+        "style_elements": 41,
+        "reference_png": "ekrany/screen-04.png",
+        "reference_png_sha256_declared": "d6685236b3568d2b3149deaa8f1ca883909bebca2d69757fa03b5c6a34456bd3",
+        "reference_dimensions": {
+          "width": 390,
+          "height": 844
+        },
+        "anchor_rectangles": [
+          {
+            "tag": "SECTION",
+            "label": "Dodaj do wiadomości\nZdjęcie\nAparat\nZaplanuj\nSzablony\nWybrane",
+            "x": 8,
+            "y": 196,
+            "w": 374,
+            "h": 640,
+            "font_size": "16px",
+            "line_height": "normal"
+          }
+        ]
+      },
+      {
+        "id": "S05",
+        "name": "Chatra — zaplanuj wysyłkę",
+        "measurement_count": 16,
+        "style_elements": 37,
+        "reference_png": "ekrany/screen-05.png",
+        "reference_png_sha256_declared": "eb90504cf9a782d36f0ec54ed73936e64d8871ced1ad7d5e9cd5eeaf1fea2a98",
+        "reference_dimensions": {
+          "width": 390,
+          "height": 844
+        },
+        "anchor_rectangles": [
+          {
+            "tag": "SECTION",
+            "label": "Zaplanuj wysyłkę\nDO: OLA NOWAK\nPrzypomnienie: dziś o 18:00 u",
+            "x": 8,
+            "y": 120,
+            "w": 374,
+            "h": 716,
+            "font_size": "16px",
+            "line_height": "normal"
+          }
+        ]
+      },
+      {
+        "id": "S06",
+        "name": "Chatra — zaplanowane",
+        "measurement_count": 16,
+        "style_elements": 56,
+        "reference_png": "ekrany/screen-06.png",
+        "reference_png_sha256_declared": "d5900fe363ea9ec00365d6edb64d3d45a081075710179c8435cf74bf216f10d3",
+        "reference_dimensions": {
+          "width": 390,
+          "height": 844
+        },
+        "anchor_rectangles": [
+          {
+            "tag": "H1",
+            "label": "Zaplanowane",
+            "x": 20,
+            "y": 52,
+            "w": 350,
+            "h": 41,
+            "font_size": "34px",
+            "line_height": "41px"
+          },
+          {
+            "tag": "SECTION",
+            "label": "WYMAGA DECYZJI\nTomek Wiśniewski\nPamiętaj o kluczach do piwni",
+            "x": 16,
+            "y": 128,
+            "w": 358,
+            "h": 190,
+            "font_size": "16px",
+            "line_height": "normal"
+          },
+          {
+            "tag": "SECTION",
+            "label": "CZEKA · 4\nPT.\n8:00\nMama\nWszystkiego najlepszego z okazji imi",
+            "x": 16,
+            "y": 330,
+            "w": 358,
+            "h": 345,
+            "font_size": "16px",
+            "line_height": "normal"
+          }
+        ]
+      },
+      {
+        "id": "S07",
+        "name": "Chatra — wyszukiwanie",
+        "measurement_count": 18,
+        "style_elements": 47,
+        "reference_png": "ekrany/screen-07.png",
+        "reference_png_sha256_declared": "cba26452961878911f6bfdba8578def4ec254a089adee67e3bed9c5ee59577c7",
+        "reference_dimensions": {
+          "width": 390,
+          "height": 844
+        },
+        "anchor_rectangles": [
+          {
+            "tag": "SECTION",
+            "label": "KOD ODBIORU · PACZKA24\n482 915\nKopiuj\nAUTOMAT\nKRA01M · ul. D",
+            "x": 16,
+            "y": 264,
+            "w": 358,
+            "h": 133,
+            "font_size": "16px",
+            "line_height": "normal"
+          },
+          {
+            "tag": "SECTION",
+            "label": "WIADOMOŚCI · 4\nPaczka24\ndziś\nTwoja paczka czeka w automacie ",
+            "x": 16,
+            "y": 409,
+            "w": 358,
+            "h": 286,
+            "font_size": "16px",
+            "line_height": "normal"
+          }
+        ]
+      },
+      {
+        "id": "S08",
+        "name": "Chatra — nowa wiadomość",
+        "measurement_count": 15,
+        "style_elements": 43,
+        "reference_png": "ekrany/screen-08.png",
+        "reference_png_sha256_declared": "62a6c3f5b2c248c50a1691cde23255fe55ba69a787b7c6c7a8d0797c8449eda1",
+        "reference_dimensions": {
+          "width": 390,
+          "height": 844
+        },
+        "anchor_rectangles": [
+          {
+            "tag": "H1",
+            "label": "Nowa wiadomość",
+            "x": 123.671875,
+            "y": 65,
+            "w": 142.65625,
+            "h": 20,
+            "font_size": "17px",
+            "line_height": "normal"
+          },
+          {
+            "tag": "SECTION",
+            "label": "SUGEROWANE\nKZ\nKasia Zielińska\nkomórka · +48 512 408 771\nM\nMa",
+            "x": 16,
+            "y": 463,
+            "w": 358,
+            "h": 150,
+            "font_size": "16px",
+            "line_height": "normal"
+          }
+        ]
+      },
+      {
+        "id": "S09",
+        "name": "Chatra — wygląd",
+        "measurement_count": 19,
+        "style_elements": 49,
+        "reference_png": "ekrany/screen-09.png",
+        "reference_png_sha256_declared": "e7a8be55f4fd0e42f30e45c8b0b542314486276d2eaae389cd3d8ff85dc1e3ac",
+        "reference_dimensions": {
+          "width": 390,
+          "height": 844
+        },
+        "anchor_rectangles": [
+          {
+            "tag": "H1",
+            "label": "Wygląd",
+            "x": 74,
+            "y": 56.5,
+            "w": 95.75,
+            "h": 33,
+            "font_size": "28px",
+            "line_height": "normal"
+          }
+        ]
+      },
+      {
+        "id": "S10",
+        "name": "Chatra — ustawienia",
+        "measurement_count": 21,
+        "style_elements": 66,
+        "reference_png": "ekrany/screen-10.png",
+        "reference_png_sha256_declared": "259555e4b4da519831ceeb94da26f7a62748facdfa23284742ff06ee6a0d8d80",
+        "reference_dimensions": {
+          "width": 390,
+          "height": 844
+        },
+        "anchor_rectangles": [
+          {
+            "tag": "H1",
+            "label": "Ustawienia",
+            "x": 16,
+            "y": 52,
+            "w": 358,
+            "h": 41,
+            "font_size": "34px",
+            "line_height": "41px"
+          },
+          {
+            "tag": "SECTION",
+            "label": "WYSYŁANIE\nKarty SIM\nSIM 1 Prywatna — domyślna · SIM 2 Praca\n",
+            "x": 16,
+            "y": 221,
+            "w": 358,
+            "h": 266,
+            "font_size": "16px",
+            "line_height": "normal"
+          },
+          {
+            "tag": "SECTION",
+            "label": "WYGLĄD I PORZĄDEK\nWygląd\nSzkło · jasny · standardowa gęstość",
+            "x": 16,
+            "y": 499,
+            "w": 358,
+            "h": 263,
+            "font_size": "16px",
+            "line_height": "normal"
+          }
+        ]
+      }
+    ]
+  },
+  "font": {
+    "css_stack": "-apple-system,BlinkMacSystemFont,SF Pro Text,Inter,system-ui,sans-serif",
+    "actual_font_mac": null,
+    "actual_font_android": null,
+    "reason": "Computed CSS font-family is a preference stack, not a measured rendered font; Android DevTools Rendered Fonts/CDP needed",
+    "working_proposal": "Inter 400/500/600/700/800 only, not approved"
+  },
+  "anomalies": [
+    {
+      "screen": "S02",
+      "element": "pole wyszukiwania",
+      "declared_css_height_px": 44,
+      "measured_outer_box_px": 46,
+      "reason": "border 1px + 1px / default content-box"
+    },
+    {
+      "screen": "S02",
+      "element": "dolny okrągły przycisk",
+      "declared_content_size_px": 62,
+      "measured_outer_box_px": 64,
+      "reason": "border 1px + 1px"
+    },
+    {
+      "screen": "S04",
+      "element": "panel dodawania",
+      "measured_rect_px": {
+        "x": 8,
+        "y": 196,
+        "w": 374,
+        "h": 640
+      },
+      "reason": "box-sizing:border-box; nie mylić z promieniem prezentacyjnego iframe"
+    },
+    {
+      "screen": "S05",
+      "element": "panel harmonogramu",
+      "measured_rect_px": {
+        "x": 8,
+        "y": 120,
+        "w": 374,
+        "h": 716
+      },
+      "reason": "border-box wysokości na tle planszy 390x844"
+    }
+  ],
+  "android_target": {
+    "viewport_css": {
+      "w": 390,
+      "h": 844
+    },
+    "target_design_dp": {
+      "w": 390,
+      "h": 844
+    },
+    "android_api": null,
+    "device": null,
+    "screen_physical_px": null,
+    "density": null,
+    "locale": "pl-PL",
+    "font_scale": 1,
+    "browser_version": null,
+    "fixed_fixture_date": "2026-10-29",
+    "light_theme": true,
+    "animations_disabled_for_test": true,
+    "two_renders_per_screen": false,
+    "rendered_font_evidence": null
+  },
+  "verification": {
+    "html_sha256": true,
+    "all_10_macos_reference_entries": true,
+    "all_10_measurements": true,
+    "all_10_source_styles": true,
+    "source_png_binary_hashes_checked_locally": false,
+    "android_render_390x844": false,
+    "android_rendered_fonts": false,
+    "android_two_pass_stability": false,
+    "final_g01_approval": false
+  }
+}
