@@ -63,7 +63,13 @@
       "person_days_min": 1,
       "person_days_max": 2,
       "dependencies": [],
-      "description": "Wykonanie: utworzyć rejestr G01–G10 z dokumentacji; wskazać właścicieli. Potwierdzić minSdk, dystrybucję, listę operatorów, obsługę wideo/grup MMS, kosz i zakres Pro. Zapisać, że HD wymaga backendu, a RCS/iMessage/połączenia nie wchodzą w zakres. Przygotować listę brakujących ekranów i polityk bez wymyślania ich jako części HTML.\n\nOdbiór: każda decyzja ma wariant, właściciela i zadanie zamykające; istnieje definicja pełnego wydania i etapu demo. Weryfikacja: przegląd matrycy 10 plansz × funkcje, brak nieoznaczonych założeń.\n\nUzupełnienie UX 29.10.2026: Do rejestru zakresu dodać UX01–UX08 oraz ścieżki CH065–CH072: sześć rozszerzeń wymaganych w pełnym wydaniu (CH065–CH070) i dwie pozycje opcjonalne lub badawcze (CH071–CH072). Zapisać, że są dodatkiem do wzorca Liquid Glass i nie legalizują iMessage ani RCS na Androidzie.\n\nOdbiór rozszerzony: Matryca zakresu rozróżnia funkcje już zaplanowane od nowych; zakres pełnego wydania obejmuje CH065–CH070, a CH071–CH072 nie blokują wydania bez odrębnej decyzji."
+      "description": "Wykonanie: utworzyć rejestr G01–G10 z dokumentacji; wskazać właścicieli. Potwierdzić minSdk, dystrybucję, listę operatorów, obsługę wideo/grup MMS, kosz i zakres Pro. Zapisać, że HD wymaga backendu, a RCS/iMessage/połączenia nie wchodzą w zakres. Przygotować listę brakujących ekranów i polityk bez wymyślania ich jako części HTML.\n\nOdbiór: każda decyzja ma wariant, właściciela i zadanie zamykające; istnieje definicja pełnego wydania i etapu demo. Weryfikacja: przegląd matrycy 10 plansz × funkcje, brak nieoznaczonych założeń.\n\nUzupełnienie UX 29.10.2026: Do rejestru zakresu dodać UX01–UX08 oraz ścieżki CH065–CH072: sześć rozszerzeń wymaganych w pełnym wydaniu (CH065–CH070) i dwie pozycje opcjonalne lub badawcze (CH071–CH072). Zapisać, że są dodatkiem do wzorca Liquid Glass i nie legalizują iMessage ani RCS na Androidzie.\n\nOdbiór rozszerzony: Matryca zakresu rozróżnia funkcje już zaplanowane od nowych; zakres pełnego wydania obejmuje CH065–CH070, a CH071–CH072 nie blokują wydania bez odrębnej decyzji.",
+      "execution_status": "documentation_completed_open_decision_gates",
+      "evidence_files": [
+        "docs/implementacja_android/CH001_Kontrakt_produktu_i_rejestr_decyzji.md",
+        "docs/implementacja_android/CH001_Rejestr_decyzji.json"
+      ],
+      "review_note": "CH001 rejestr i matryca gotowe; finalne decyzje wymagają dowodów zamknięcia G01–G10 w przypisanych zadaniach. Brak potwierdzonych testów fizycznych, operatorów i ceny Pro."
     },
     {
       "id": "CH002",

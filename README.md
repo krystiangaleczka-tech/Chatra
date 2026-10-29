@@ -32,6 +32,9 @@ W PDF uzupełnienie zaczyna się na stronie 24.
 
 ## Dokumentacja implementacji Android
 
+- [CH001: kontrakt produktu, G01–G10 i macierz S01–S10](docs/implementacja_android/CH001_Kontrakt_produktu_i_rejestr_decyzji.md)
+- [CH001: rejestr decyzji w JSON](docs/implementacja_android/CH001_Rejestr_decyzji.json)
+
 Specyfikacja z 29 października 2026 opisuje odtworzenie 1:1 dziesięciu ekranów projektu Liquid Glass oraz docelowe zachowanie aplikacji SMS/MMS.
 
 - [Dokumentacja implementacji w Markdown](docs/implementacja_android/Chatra_Dokumentacja_Android.md)

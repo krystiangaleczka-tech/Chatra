@@ -17,7 +17,7 @@ P0 oznacza fundament lub ryzyko blokujące dalsze prace; P1 oznacza pozostały w
 | M3X Rozszerzenia UX | CH065–CH070 | Karta kontaktu, galeria, kolaże, personalizacja, gesty i nieprzeczytane zintegrowane przed odbiorem |
 | M4 Pełne HD | CH046–CH053 | Dwa urządzenia i odbiorca linku obsługują cały przepływ |
 | M5 Odbiór i wydanie | CH054–CH064 oraz bramki CH065–CH070 | QA obejmuje również nowe funkcje UX |
-| M6 Po wydaniu / badania | CH071–CH072 | Opcjonalny eksport/skrót i spike iOS/RCS nie blokują M5 | Raporty regresji, urządzeń, prywatności, dostępności i gotowość dystrybucji |
+| M6 Po wydaniu / badania | CH071–CH072 | Opcjonalny eksport/skrót i spike iOS/RCS nie blokują M5 |
 
 Po CH005 można prowadzić niezależne prace UI i telefonii, a po CH046/CH047 backend i klient HD. Zadania QA przygotowywać wcześniej na gotowych kontraktach; podane zależności są warunkami finalnego zamknięcia. Publikacja wymaga zakończenia pełnego zakresu. Samo „ekran się otwiera” nie jest kryterium wykonania.
 
@@ -37,6 +37,8 @@ Odbiór: każda decyzja ma wariant, właściciela i zadanie zamykające; istniej
 
 **Odbiór rozszerzony:** Matryca zakresu rozróżnia funkcje już zaplanowane od nowych; zakres pełnego wydania obejmuje CH065–CH070, a CH071–CH072 nie blokują wydania bez odrębnej decyzji.
 
+
+**Wynik CH001 (29.10.2026):** rejestr zakresu, G01–G10, definicje demo/wydania i matryca 10 × 10 zapisane w [CH001_Kontrakt_produktu_i_rejestr_decyzji.md](CH001_Kontrakt_produktu_i_rejestr_decyzji.md), wraz z [rejestrem JSON](CH001_Rejestr_decyzji.json). **Status zadania dokumentacyjnego: wykonany; status otwartych decyzji: do domknięcia w taskach wskazanych przy G01–G10.** Nie oznacza to uruchomionych SMS/MMS, potwierdzonych operatorów ani produkcyjnego HD.
 
 ### CH002 Zamrozić wzorce obrazu i typografii
 
