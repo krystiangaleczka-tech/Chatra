@@ -1,0 +1,80 @@
+{
+  "source_sha256": "80e7652c4de8a483b39a38e6cd319524817af11986499f0f7aee28d4efa4cbe3",
+  "source_bytes": 3996110,
+  "date": "2026-10-29",
+  "platform": "macOS",
+  "browser": "Google Chrome",
+  "browser_version": "155.0.8059.85",
+  "device_scale_factor": 1,
+  "reference_width": 390,
+  "reference_height": 844,
+  "application_content_modified": false,
+  "presentation_wrapper_modified": [
+    "iframe border radius and shadow removed",
+    "board title line height 20px to align screenshot coordinates"
+  ],
+  "font_stack": "-apple-system,BlinkMacSystemFont,SF Pro Text,Inter,system-ui,sans-serif",
+  "font_baseline_status": "Android reference and actual font to be confirmed in CH002",
+  "screens": [
+    {
+      "path": "ekrany/screen-01.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "fdafbe2c384d0232cab62d338cb6d0e63501f23a2e8179b158e1a0f211982cd9"
+    },
+    {
+      "path": "ekrany/screen-02.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "cfddeb2e273f39fd391216bbd0aa3597eaa7f3582db98908f8fdacdfd7d8eb36"
+    },
+    {
+      "path": "ekrany/screen-03.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "388b5a886740aaa1208ac361e8a3ec255571f06a36d3a1c2b734a0902a4a8ead"
+    },
+    {
+      "path": "ekrany/screen-04.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "d6685236b3568d2b3149deaa8f1ca883909bebca2d69757fa03b5c6a34456bd3"
+    },
+    {
+      "path": "ekrany/screen-05.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "eb90504cf9a782d36f0ec54ed73936e64d8871ced1ad7d5e9cd5eeaf1fea2a98"
+    },
+    {
+      "path": "ekrany/screen-06.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "d5900fe363ea9ec00365d6edb64d3d45a081075710179c8435cf74bf216f10d3"
+    },
+    {
+      "path": "ekrany/screen-07.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "cba26452961878911f6bfdba8578def4ec254a089adee67e3bed9c5ee59577c7"
+    },
+    {
+      "path": "ekrany/screen-08.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "62a6c3f5b2c248c50a1691cde23255fe55ba69a787b7c6c7a8d0797c8449eda1"
+    },
+    {
+      "path": "ekrany/screen-09.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "e7a8be55f4fd0e42f30e45c8b0b542314486276d2eaae389cd3d8ff85dc1e3ac"
+    },
+    {
+      "path": "ekrany/screen-10.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "259555e4b4da519831ceeb94da26f7a62748facdfa23284742ff06ee6a0d8d80"
+    }
+  ]
+}

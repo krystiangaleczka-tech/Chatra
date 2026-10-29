@@ -1,0 +1,979 @@
+{
+  "version": "1.0",
+  "date": "2026-10-29",
+  "estimate_unit": "person_days",
+  "total_min": 155,
+  "total_max": 240,
+  "milestones": [
+    {
+      "id": "M0",
+      "tasks": 6,
+      "person_days_min": 10,
+      "person_days_max": 17
+    },
+    {
+      "id": "M1",
+      "tasks": 14,
+      "person_days_min": 29,
+      "person_days_max": 45
+    },
+    {
+      "id": "M2",
+      "tasks": 14,
+      "person_days_min": 34,
+      "person_days_max": 53
+    },
+    {
+      "id": "M3",
+      "tasks": 11,
+      "person_days_min": 27,
+      "person_days_max": 41
+    },
+    {
+      "id": "M4",
+      "tasks": 8,
+      "person_days_min": 27,
+      "person_days_max": 41
+    },
+    {
+      "id": "M5",
+      "tasks": 11,
+      "person_days_min": 28,
+      "person_days_max": 43
+    }
+  ],
+  "tasks": [
+    {
+      "id": "CH001",
+      "title": "Ustalić kontrakt produktu i decyzje otwarte",
+      "priority": "P0",
+      "roles": "produkt i lider Android",
+      "person_days_min": 1,
+      "person_days_max": 2,
+      "dependencies": [],
+      "description": "Wykonanie: utworzyć rejestr G01–G10 z dokumentacji; wskazać właścicieli. Potwierdzić minSdk, dystrybucję, listę operatorów, obsługę wideo/grup MMS, kosz i zakres Pro. Zapisać, że HD wymaga backendu, a RCS/iMessage/połączenia nie wchodzą w zakres. Przygotować listę brakujących ekranów i polityk bez wymyślania ich jako części HTML.\n\nOdbiór: każda decyzja ma wariant, właściciela i zadanie zamykające; istnieje definicja pełnego wydania i etapu demo. Weryfikacja: przegląd matrycy 10 plansz × funkcje, brak nieoznaczonych założeń."
+    },
+    {
+      "id": "CH002",
+      "title": "Zamrozić wzorce obrazu i typografii",
+      "priority": "P0",
+      "roles": "UX i Android i QA",
+      "person_days_min": 2,
+      "person_days_max": 3,
+      "dependencies": [
+        "CH001"
+      ],
+      "description": "Wykonanie: zweryfikować SHA256 HTML i zachować niezmienny oryginał. Otworzyć go na referencyjnym Androidzie, ustalić rzeczywisty font z zadeklarowanego stosu i render 390×844. Oddzielić ramkę iframe od zawartości. Zapisać API, density, fontScale, renderer, locale, dane i zegar. Zestawić deklarowane CSS z computed geometry, uwzględniając border i box sizing.\n\nOdbiór: 10 wzorców, manifest warunków i uzgodniony wariant fontu. Każdy niejednoznaczny wymiar ma pomiar; brak cichego zamienienia SF na Inter. Weryfikacja: overlay dwóch kolejnych renderów jest stabilny."
+    },
+    {
+      "id": "CH003",
+      "title": "Sprawdzić wykonalność natywnego szkła",
+      "priority": "P0",
+      "roles": "Android grafika",
+      "person_days_min": 3,
+      "person_days_max": 5,
+      "dependencies": [
+        "CH002"
+      ],
+      "description": "Wykonanie: przygotować prototyp S02 i S04 w Compose, z prawdziwym próbkowaniem sceny, saturacją, maską, gradientem i refleksami. Porównać do CSS oraz kontrolnego wariantu WebView. Zmierzyć GPU, klatki, pamięć i scroll. Sprawdzić szkło nad treścią, nie tylko statyczną tapetą. Opisać wymagane API i koszt starszych urządzeń.\n\nOdbiór: decyzja G03 na podstawie obrazów i pomiaru; tekst nad panelem pozostaje ostry, brak rekurencji warstw. Weryfikacja: urządzenie z docelowego minimum i ekran nakładających się paneli. Nie uznawać matowej karty za pełną zgodność."
+    },
+    {
+      "id": "CH004",
+      "title": "Przygotować projekt i powtarzalne środowisko",
+      "priority": "P0",
+      "roles": "Android",
+      "person_days_min": 1,
+      "person_days_max": 2,
+      "dependencies": [
+        "CH001",
+        "CH003"
+      ],
+      "description": "Wykonanie: ustalić stabilne kompatybilne wersje JDK/Kotlin/AGP/Compose BOM i aktualne target/compile SDK. Utworzyć katalog wersji, wrapper, moduły i warianty demo/debug/release. Dodać konfigurację podpisu poza repozytorium, przykładowe zmienne bez sekretów i instrukcję uruchomienia. Build demo nie ma prawdziwej wysyłki ani zakupów.\n\nOdbiór: czyste środowisko buduje demo i release testowy bez ręcznych zmian plików. Weryfikacja: odtworzenie według README i kontrola, że fixture nie trafiają do produkcyjnego źródła danych."
+    },
+    {
+      "id": "CH005",
+      "title": "Zdefiniować modele i granice architektury",
+      "priority": "P0",
+      "roles": "lider Android",
+      "person_days_min": 2,
+      "person_days_max": 3,
+      "dependencies": [
+        "CH001"
+      ],
+      "description": "Wykonanie: zdefiniować typowane identyfikatory, Conversation, MessageRef, Draft, SendOperation, Attempt, Schedule i Attachment. Rozdzielić transport SMS/MMS/HD, repozytoria, zegar i dostawcę SIM. Ustalić UiState/UiAction, błędy i kontrakt zapisu. Zapisać ADR o providerze jako historii SMS/MMS i Room jako metadanych/projekcji.\n\nOdbiór: UI może działać z repozytorium testowym, a logika wysyłania bez UI. Weryfikacja: przegląd zależności modułów oraz sekwencji send/cancel/retry; brak cyklicznej zależności feature→feature."
+    },
+    {
+      "id": "CH006",
+      "title": "Przygotować dane demonstracyjne i raportowanie",
+      "priority": "P0",
+      "roles": "Android i QA",
+      "person_days_min": 1,
+      "person_days_max": 2,
+      "dependencies": [
+        "CH002",
+        "CH005"
+      ],
+      "description": "Wykonanie: przepisać fixture wszystkich 10 plansz, polskie teksty, liczby, daty, SIM i gradientowe miniatury. Dodać kontrolowany zegar 29 października 2026 i przypadki błędu/draft/HD. Przygotować komendę zapisu ekranów oraz raport overlay/mapa różnic. Zachować literalny błędny licznik 21/160 tylko w fixture, oznaczając wyjątek względem produkcyjnej logiki.\n\nOdbiór: stabilne ID i render bez sieci oraz kontaktów urządzenia. Weryfikacja: dwa uruchomienia generują te same dane i nie wysyłają SMS."
+    },
+    {
+      "id": "CH007",
+      "title": "Wdrożyć fonty tokeny i ikony",
+      "priority": "P0",
+      "roles": "Android UI",
+      "person_days_min": 2,
+      "person_days_max": 3,
+      "dependencies": [
+        "CH002",
+        "CH004"
+      ],
+      "description": "Wykonanie: przygotować zasoby fontu z polskimi znakami i wymaganymi wagami oraz sprawdzić metryki i licencje. Przenieść kolory, typografię, promienie, odstępy i cienie do tokenów. Przekonwertować źródłowe ścieżki SVG na zasoby Androida, zachowując viewBox, stroke, cap i join. Rozdzielić wartość CSS od wymiaru faktycznego boxu.\n\nOdbiór: galeria komponentów pokazuje komplet tokenów i ikon, poprawnie wyświetlane „ąęłńóśźż” i cyfry. Weryfikacja: porównanie baselines, wag i kształtów; brak automatycznych podmian na ikony Material."
+    },
+    {
+      "id": "CH008",
+      "title": "Zbudować tła i komponenty szklane",
+      "priority": "P0",
+      "roles": "Android grafika",
+      "person_days_min": 4,
+      "person_days_max": 6,
+      "dependencies": [
+        "CH003",
+        "CH007"
+      ],
+      "description": "Wykonanie: implementować eliptyczne gradienty per ekran, GlassControl/Card/Sheet/Dock oraz avatar, badge i bubble. Zachować kolejność Z, maski i różne blur 28/30/40. Buforować niezmienne warstwy; panel nie trafia do własnego backdropu. Dodać przełącznik matowych powierzchni do ustawień dostępności.\n\nOdbiór: zgodność geometrii i powierzchni z tokenami oraz brak rozmycia tekstu. Weryfikacja: nakładki na wzorcach, scroll za dockiem, otwarty arkusz i pomiar kosztu GPU na urządzeniu."
+    },
+    {
+      "id": "CH009",
+      "title": "Wdrożyć szkielet nawigacji i insets",
+      "priority": "P0",
+      "roles": "Android UI",
+      "person_days_min": 2,
+      "person_days_max": 3,
+      "dependencies": [
+        "CH004",
+        "CH005",
+        "CH008"
+      ],
+      "description": "Wykonanie: trzy zakładki z zachowaniem stosu, FAB, rozmowa, wyszukiwarka i arkusze. Rozdzielić Back IME/arkusz/ekran. Zdefiniować bezpieczny routing po ID i obsługę wejść zewnętrznych. Ustawić edge to edge i jeden właściciel insets. Zapewnić dolny padding przewijanych list.\n\nOdbiór: brak duplikowania ekranów po wielokrotnym kliknięciu i brak zasłoniętych akcji. Weryfikacja: gesty, 3 przyciski, wycięcie, IME, obrót i odtworzenie procesu na otwartej zakładce."
+    },
+    {
+      "id": "CH010",
+      "title": "Odtworzyć S01 Start i ograniczenia",
+      "priority": "P1",
+      "roles": "Android UI",
+      "person_days_min": 1,
+      "person_days_max": 2,
+      "dependencies": [
+        "CH006",
+        "CH008",
+        "CH009"
+      ],
+      "description": "Wykonanie: logo, dekoracyjne koła, treści obu sekcji, informacja o historii, CTA i przyciski pomocnicze. Podpiąć tymczasowy kontrakt konfiguracji, później CH021. Dodać loading, odmowę, brak roli i brak telefonii. Treść przewijalna na małym ekranie i dużym foncie.\n\nOdbiór: obraz S01 zgodny ze wzorcem; naciśnięcia mają określone rezultaty i nie żądają galerii/aparatu. Weryfikacja: fixture, kontrola tekstów oraz odmowa/anulowanie/sukces fałszywego role adaptera."
+    },
+    {
+      "id": "CH011",
+      "title": "Odtworzyć S02 Skrzynka",
+      "priority": "P1",
+      "roles": "Android UI",
+      "person_days_min": 2,
+      "person_days_max": 3,
+      "dependencies": [
+        "CH006",
+        "CH008",
+        "CH009"
+      ],
+      "description": "Wykonanie: nagłówek, pole wyszukiwania, filtr, przypięte/pozostałe, siedem wariantów wierszy i dock. Wyświetlać prawidłowe line clamp, badge, draft i błąd. Dodać stany pustej listy, braku wyników filtra, odczytu i utraty roli. Menu i long press według CH020.\n\nOdbiór: widoczne detale S02 zgodne, filtr liczy wątki, ostatni wiersz osiągalny. Weryfikacja: fixture plus lista 1000 wątków, długie nazwy i natychmiastowa zmiana odczytu bez resetu scrolla."
+    },
+    {
+      "id": "CH012",
+      "title": "Odtworzyć S03 Rozmowa",
+      "priority": "P1",
+      "roles": "Android UI",
+      "person_days_min": 3,
+      "person_days_max": 4,
+      "dependencies": [
+        "CH006",
+        "CH008",
+        "CH009"
+      ],
+      "description": "Wykonanie: pływający header, sekcje dni, oba dymki, karta HD, wszystkie statusy, Ponów, odliczanie i kompozytor. Oddzielić listę od warstw pływających. Obsłużyć przewijanie do wiadomości, paginację i wskaźnik nowych wiadomości. Pole wieloliniowe rośnie do ustalonej wysokości, potem przewija tekst.\n\nOdbiór: zgodny S03 oraz statusy odrębne od treści; brak utraty szkicu przy IME i powrocie. Weryfikacja: długa rozmowa, kilkulinijkowa treść, przychodząca wiadomość podczas czytania historii i błędy transportu."
+    },
+    {
+      "id": "CH013",
+      "title": "Odtworzyć S04 Dodatki i Chatra HD",
+      "priority": "P1",
+      "roles": "Android UI",
+      "person_days_min": 2,
+      "person_days_max": 3,
+      "dependencies": [
+        "CH006",
+        "CH008",
+        "CH009"
+      ],
+      "description": "Wykonanie: sheet 374×640, dim, uchwyt, cztery akcje, miniatury, Zmień i trzy opcje. Wspólny stan wybranych plików z kompozytorem. Dynamiczne CTA i opis kosztu/rozmiaru; stan bez plików i błędu. Przy mniejszym ekranie przewijanie, stała dostępność CTA.\n\nOdbiór: zgodny S04; opcje wyboru wzajemnie się wykluczają i aktualizują wariant zlecenia. Weryfikacja: 4 pliki, brak plików i wiele plików, zamknięcie bez utraty danych i TalkBack po otwarciu arkusza."
+    },
+    {
+      "id": "CH014",
+      "title": "Odtworzyć S05 Formularz harmonogramu",
+      "priority": "P1",
+      "roles": "Android UI",
+      "person_days_min": 2,
+      "person_days_max": 3,
+      "dependencies": [
+        "CH006",
+        "CH008",
+        "CH009"
+      ],
+      "description": "Wykonanie: arkusz, podgląd szkicu, skróty, data/godzina, wybór SIM i polityki spóźnienia. Zaprojektowane pickery z CH020. Wstrzyknąć zegar; daty i etykieta CTA wynikają ze stanu. Walidacja daty, brak SIM i brak dostępu do alarmów widoczne przed potwierdzeniem.\n\nOdbiór: zgodny stan 31 października 10:00 i poprawna zmiana pól. Weryfikacja: termin przeszły, północ, DST i zmiana odbiorcy; zapis na razie przez kontrakt testowy schedule repository."
+    },
+    {
+      "id": "CH015",
+      "title": "Odtworzyć S06 Zaplanowane",
+      "priority": "P1",
+      "roles": "Android UI",
+      "person_days_min": 1,
+      "person_days_max": 2,
+      "dependencies": [
+        "CH006",
+        "CH008",
+        "CH009"
+      ],
+      "description": "Wykonanie: karta decyzji, trzy akcje, lista oczekujących, podsumowanie ostatnio wysłanego i dock. Lista sortowana po terminie, błędy wyróżnione tekstem i ikoną. Dodać pusty harmonogram, wiele zaległych pozycji i brak dokładnych alarmów.\n\nOdbiór: zgodny S06, licznik listy dynamiczny. Weryfikacja: usunięcie jednego harmonogramu nie usuwa rozmowy, Wyślij teraz uruchamia jedną akcję, powrót zachowuje pozycję."
+    },
+    {
+      "id": "CH016",
+      "title": "Odtworzyć S07 Wyszukiwanie",
+      "priority": "P1",
+      "roles": "Android UI",
+      "person_days_min": 2,
+      "person_days_max": 3,
+      "dependencies": [
+        "CH006",
+        "CH008",
+        "CH009"
+      ],
+      "description": "Wykonanie: pole, wyczyść/anuluj, filtry, objaśnienie, dwa szybkie trafienia, lista i mark. Zapytanie, filtry i scroll w stanie możliwym do odtworzenia. Dodać brak wyników, indeksowanie i błąd. Kopiowanie przez systemowy schowek bez logowania wartości.\n\nOdbiór: zgodny S07 i poprawny powrót z wyniku. Weryfikacja: długie zapytanie, wiele wyróżnień, duży font, dwa różne przyciski Kopiuj i czyszczenie pola."
+    },
+    {
+      "id": "CH017",
+      "title": "Odtworzyć S08 Nowa wiadomość",
+      "priority": "P1",
+      "roles": "Android UI",
+      "person_days_min": 2,
+      "person_days_max": 3,
+      "dependencies": [
+        "CH006",
+        "CH008",
+        "CH009"
+      ],
+      "description": "Wykonanie: chipy, wpisywanie numeru, tryby wysyłki, ostrzeżenie grupowe, sugestie i kompozytor. Puste i niepoprawne dane blokują wysłanie. Chipy muszą zawijać się zgodnie z projektem. Widoczny transport i liczba operacji zmieniają się wraz z odbiorcami.\n\nOdbiór: zgodny S08 dla 3 osób; usuwanie konkretnego chipa zachowuje resztę. Weryfikacja: 1 osoba, 3 osoby i duża liczba osób, IME, długi kontakt i powrót do szkicu po anulowaniu."
+    },
+    {
+      "id": "CH018",
+      "title": "Odtworzyć S09 Wygląd",
+      "priority": "P1",
+      "roles": "Android UI",
+      "person_days_min": 1,
+      "person_days_max": 2,
+      "dependencies": [
+        "CH006",
+        "CH008",
+        "CH009"
+      ],
+      "description": "Wykonanie: nagłówek, podgląd o wysokości 196 jednostek projektu, cztery próbki, segmenty, suwak i switche 52×32 oraz reset. Przenosić stan do podglądu bez zapisu demonstracyjnych danych. Tryby niezaprojektowane w pełni kierować do kontraktu tokenów CH020/CH040, bez fikcyjnego działania.\n\nOdbiór: zgodny domyślny S09; role radio/switch/slider i bieżący stan dostępne dla czytnika. Weryfikacja: suwak 1/4/7, reset i przejście wstecz bez utraty wyboru."
+    },
+    {
+      "id": "CH019",
+      "title": "Odtworzyć S10 Ustawienia",
+      "priority": "P1",
+      "roles": "Android UI",
+      "person_days_min": 1,
+      "person_days_max": 2,
+      "dependencies": [
+        "CH006",
+        "CH008",
+        "CH009"
+      ],
+      "description": "Wykonanie: karta Pro, sekcje Wysyłanie/Wygląd i porządek/Prywatność, ikony i dock. Podsumowania z modelu zamiast stałych 3/4. Placeholder ceny wyłącznie w fixture; produkcyjny brak oferty ma własny tekst. Każdy wiersz emituje oddzielną akcję.\n\nOdbiór: zgodny S10 z fixture oraz poprawny routing wszystkich pozycji. Weryfikacja: krótki ekran, duży font, brak produktu sklepu i różne liczniki kosza/blokad."
+    },
+    {
+      "id": "CH020",
+      "title": "Uzupełnić brakujące projekty i stany",
+      "priority": "P0",
+      "roles": "UX i produkt",
+      "person_days_min": 4,
+      "person_days_max": 6,
+      "dependencies": [
+        "CH001",
+        "CH002",
+        "CH008"
+      ],
+      "description": "Wykonanie: zaprojektować menu skrzynki, szczegóły rozmowy, SIM, pickery, szablony, ustawienia HD, blokady, kosz, pomoc, prywatność, paywall i stronę linku. Opisać empty/loading/error/disabled/permission dla wszystkich ekranów. Dokończyć Mgłę/Grafit/Kontrast, dark i compact z tokenami. Każdy widok ma komplet akcji, fokusu i tekstów.\n\nOdbiór: katalog projektów i mapa do zadań; nowe widoki rozpoznawalne jako uzupełnienie, domyślne 10 plansz nie przeprojektowane. Weryfikacja: przegląd scenariuszy bez martwych końców."
+    },
+    {
+      "id": "CH021",
+      "title": "Wdrożyć rolę SMS i uprawnienia",
+      "priority": "P0",
+      "roles": "Android platforma",
+      "person_days_min": 2,
+      "person_days_max": 3,
+      "dependencies": [
+        "CH004",
+        "CH005",
+        "CH010"
+      ],
+      "description": "Wykonanie: manifest pełnego klienta SMS, RoleManager, kontrola dostępności i wyników. Oddzielić nadanie roli od uprawnień przyznawanych podczas działania aplikacji. Wdrożyć utratę roli podczas działania, blokadę automatycznej wysyłki i bezpieczne powroty z ustawień. Pytać o dostęp do kontaktów, SIM, powiadomień i mediów w kontekście użycia danej funkcji.\n\nOdbiór: aplikacja pojawia się jako kandydat roli i nie odczytuje chronionej historii przed dostępem. Weryfikacja: świeża instalacja, odmowa, ponowienie, cofnięcie roli oraz bezpieczny stan każdego receivera po zmianie."
+    },
+    {
+      "id": "CH022",
+      "title": "Zintegrować historię providera i projekcję Room",
+      "priority": "P0",
+      "roles": "Android dane",
+      "person_days_min": 3,
+      "person_days_max": 5,
+      "dependencies": [
+        "CH005",
+        "CH021"
+      ],
+      "description": "Wykonanie: DAO, migracje i klucze z typem SMS/MMS. Stronicowany odczyt historii, rozpoznanie uczestników i ThreadID, ContentObserver oraz odtwarzanie projekcji. Nie duplikować kanonicznej historii. Wspierać odczyt MMS z częściami i leniwe miniatury. Zasilać UI przez Flow.\n\nOdbiór: istniejące wiadomości pozostają nienaruszone; ponowny odczyt nie tworzy duplikatów. Weryfikacja: duża historia, identyczne ID w różnych tabelach, zewnętrzna zmiana, błąd providera i brak roli."
+    },
+    {
+      "id": "CH023",
+      "title": "Obsłużyć odbiór SMS i status przeczytania",
+      "priority": "P0",
+      "roles": "Android telefonia",
+      "person_days_min": 2,
+      "person_days_max": 3,
+      "dependencies": [
+        "CH021",
+        "CH022"
+      ],
+      "description": "Wykonanie: odbiornik SMS_DELIVER, składanie części, trwały zapis zgodnie z obowiązkami klienta i aktualizacja projekcji. Odróżnić nową wiadomość od ponownego zdarzenia; zachować adres, czas i SIM. Oznaczanie przeczytania przez właściwy use case, synchronizacja badge oraz powiadomienia.\n\nOdbiór: przychodzący SMS jest w historii systemowej i właściwym wątku, bez podwojenia. Weryfikacja: pojedynczy/multipart, ekran zamknięty, proces nieaktywny, aktywna rozmowa oraz wielokrotne odświeżenie obserwatora."
+    },
+    {
+      "id": "CH024",
+      "title": "Wdrożyć subskrypcje i wybór SIM",
+      "priority": "P0",
+      "roles": "Android telefonia",
+      "person_days_min": 2,
+      "person_days_max": 3,
+      "dependencies": [
+        "CH020",
+        "CH021",
+        "CH005"
+      ],
+      "description": "Wykonanie: lista aktywnych subskrypcji, obserwacja zmian, nazwy i domyślna karta. Ustalić pierwszeństwo wybór szkicu→preferencja rozmowy→domyślna, z walidacją dostępności. Zapisywać ID i migawkę opisu, nie sam slot. Wybór jawny w rozmowie, edytorze i harmonogramie.\n\nOdbiór: brak cichego przełączenia po wyjęciu karty; jedna karta nie uruchamia zbędnego pytania. Weryfikacja: dwie karty SIM i eSIM, brak dostępu do listy, SIM usunięta po zapisaniu szkicu i zmiana systemowej domyślnej."
+    },
+    {
+      "id": "CH025",
+      "title": "Zaimplementować licznik i kodowanie SMS",
+      "priority": "P0",
+      "roles": "Android domena",
+      "person_days_min": 1,
+      "person_days_max": 2,
+      "dependencies": [
+        "CH005",
+        "CH024"
+      ],
+      "description": "Wykonanie: adapter platformowego dzielenia tekstu, model encoding/units/parts i prezentacja licznika. Ustalić opis dla Unicode i multipart. Dodać opt in transliteracji z podglądem i możliwością przywrócenia. Zaktualizować licznik podczas edycji i po zmianie transportu.\n\nOdbiór: treść nigdy nie jest zmieniana samoczynnie, wynik nie korzysta z prostego length/160. Weryfikacja: granice części, GSM extension, polskie znaki, emoji i źródłowy tekst 20 znaków z niepoprawnym fixture 21/160."
+    },
+    {
+      "id": "CH026",
+      "title": "Wdrożyć wysyłanie SMS",
+      "priority": "P0",
+      "roles": "Android telefonia",
+      "person_days_min": 3,
+      "person_days_max": 4,
+      "dependencies": [
+        "CH022",
+        "CH024",
+        "CH025"
+      ],
+      "description": "Wykonanie: utworzyć trwałe operacje, próby, per recipient i per part. Przekazać do SmsManager właściwej SIM, z unikalnymi callbackami. Zapisać i uzgadniać rekordy providera zgodnie z obowiązkami domyślnego klienta. Wysyłka niezależna od aktualnego ekranu.\n\nOdbiór: drugi klik nie tworzy tej samej operacji, sent nie oznacza delivered. Weryfikacja: rzeczywisty SMS i multipart z obu kart SIM, brak zasięgu, tryb samolotowy i brak uprawnienia w chwili wykonania."
+    },
+    {
+      "id": "CH027",
+      "title": "Uzgodnić statusy ponawianie i niepewne próby",
+      "priority": "P0",
+      "roles": "Android domena",
+      "person_days_min": 2,
+      "person_days_max": 3,
+      "dependencies": [
+        "CH026"
+      ],
+      "description": "Wykonanie: maszyna stanów, agregacja części, callbacki poza kolejnością i deduplikacja. Retry tylko jawnie dla pewnej porażki, nigdy automatycznie po niepewnym crashu. Dodać DISPATCH_UNCERTAIN i decyzję użytkownika. Rekoncyliować z providerem, jeśli istnieją porównywalne dane, bez zgadywania sukcesu.\n\nOdbiór: DELIVERED nie cofa się do SENT, brak duplikatów przy ponownym callbacku. Weryfikacja: awaria tuż przed/po wywołaniu API, jedna część nieudana, brak raportu doręczenia i retry po zmianie SIM."
+    },
+    {
+      "id": "CH028",
+      "title": "Utrwalić szkice i okno anulowania",
+      "priority": "P0",
+      "roles": "Android dane i domena",
+      "person_days_min": 3,
+      "person_days_max": 4,
+      "dependencies": [
+        "CH012",
+        "CH017",
+        "CH022",
+        "CH026",
+        "CH027"
+      ],
+      "description": "Wykonanie: zapis szkicu tekst/odbiorcy/pliki/SIM, trwały snapshot operacji PENDING_UNDO. Odliczanie od deadline, atomowy cancel przeciw dispatch, przywrócenie szkicu po cancel. Zdefiniować bezpieczne zachowanie po zabiciu procesu i restarcie. Nigdy nie wywoływać transportu przed końcem okna.\n\nOdbiór: powrót i obrót nie gubią szkicu; skuteczny cancel nie wysyła. Weryfikacja: 2,9 s, 3,0 s i 3,1 s, wielokrotny klik, brak aktywnego UI i wyścig cancel/send."
+    },
+    {
+      "id": "CH029",
+      "title": "Podłączyć kontakty i wysyłkę do wielu osób",
+      "priority": "P1",
+      "roles": "Android domena",
+      "person_days_min": 2,
+      "person_days_max": 3,
+      "dependencies": [
+        "CH017",
+        "CH022",
+        "CH025",
+        "CH026",
+        "CH028"
+      ],
+      "description": "Wykonanie: wyszukiwanie kontaktów, wybór kilku numerów, normalizacja, deduplikacja, sugestie i ręczny numer. Osobne SMS jako domyślny tryb, nadrzędna operacja i wyniki odbiorców. Grupowy MMS wymaga jawnego trybu. Zablokować nieprawidłowe adresy i alfanumerycznych nadawców wyjściowych.\n\nOdbiór: tryb osobnych wiadomości nie ujawnia numerów pozostałych odbiorców; retry omija już wysłanych. Weryfikacja: 3 osoby i częściowy sukces, ten sam numer zapisany z prefiksem +48 i w formacie lokalnym, odmowa kontaktów i dodanie załącznika wymagające wyboru transportu."
+    },
+    {
+      "id": "CH030",
+      "title": "Wdrożyć powiadomienia i wejścia systemowe",
+      "priority": "P1",
+      "roles": "Android platforma",
+      "person_days_min": 2,
+      "person_days_max": 3,
+      "dependencies": [
+        "CH009",
+        "CH020",
+        "CH023",
+        "CH026",
+        "CH028"
+      ],
+      "description": "Wykonanie: kanały wiadomości/błędy/harmonogram/HD, grupowanie, prywatność lockscreen i deep link. SENDTO/RESPOND_VIA_MESSAGE oraz bezpieczne udostępnianie. Szybka odpowiedź korzysta ze wspólnej kolejki i jawnie wybranej SIM. Walidować zewnętrzne argumenty i URI; nie wysyłać automatycznie po otwarciu intentu.\n\nOdbiór: właściwy wątek, aktualne badge, brak tekstu na blokadzie przy ukrytych podglądach. Weryfikacja: brak zgody na powiadomienia, urządzenie zablokowane, cold start i wielokrotne powiadomienie."
+    },
+    {
+      "id": "CH031",
+      "title": "Przygotować cykl życia załączników",
+      "priority": "P0",
+      "roles": "Android media",
+      "person_days_min": 2,
+      "person_days_max": 3,
+      "dependencies": [
+        "CH013",
+        "CH022",
+        "CH028"
+      ],
+      "description": "Wykonanie: Photo Picker i aparat, walidacja MIME/rozmiaru, trwały URI grant lub kopia prywatna, miniatury, porządek i usuwanie. Liczyć sumę rozmiarów i SHA256 poza głównym wątkiem. Zapewnić FileProvider i czyszczenie cache bez naruszenia aktywnej operacji.\n\nOdbiór: wybrane pliki nadal dostępne po restarcie; brak szerokiej zgody na galerię bez potrzeby. Weryfikacja: utracony dostęp do URI, brak miejsca, przerwane kopiowanie, duże wideo i anulowanie po wyborze."
+    },
+    {
+      "id": "CH032",
+      "title": "Zbudować transport MMS i grupy",
+      "priority": "P0",
+      "roles": "Android telefonia",
+      "person_days_min": 6,
+      "person_days_max": 10,
+      "dependencies": [
+        "CH022",
+        "CH024",
+        "CH027",
+        "CH029",
+        "CH031"
+      ],
+      "description": "Wykonanie: ocenić utrzymywany i zgodny licencyjnie adapter PDU, obsłużyć konstrukcję nagłówków/części, send/download, WAP_PUSH i zapis providera. Limity i kompresja dla operatora/SIM; tekst, zdjęcie, wspierane wideo i grupy. Rozróżnić APN, dane, timeout, przekroczony limit i częściowy błąd.\n\nOdbiór: rzeczywisty MMS w obu kierunkach oraz grupa u uzgodnionych operatorów. Weryfikacja: fizyczne urządzenia z dwiema kartami SIM, roaming, brak danych i restart. Dokumentowany brak wsparcia nie może wyglądać jak sukces."
+    },
+    {
+      "id": "CH033",
+      "title": "Zbudować oryginał i kopię bez lokalizacji",
+      "priority": "P0",
+      "roles": "Android media",
+      "person_days_min": 3,
+      "person_days_max": 5,
+      "dependencies": [
+        "CH031"
+      ],
+      "description": "Wykonanie: oryginał jako niezmienne bajty; osobne pochodne dla MMS i usunięcia lokalizacji. Zdefiniować formaty zdjęć/wideo i pełny zestaw wspieranych metadanych lokalizacyjnych. Dla formatów nieobsługiwanych jawny błąd albo bezpieczna konwersja z oznaczeniem. Nie nadpisywać pliku źródłowego.\n\nOdbiór: oryginał ma identyczny hash; kopia nie zawiera lokalizacji w obsługiwanych polach i nie jest opisana jako oryginał. Weryfikacja: niezależny odczyt metadanych, orientacja i jakość po konwersji, nieobsługiwany format."
+    },
+    {
+      "id": "CH034",
+      "title": "Wdrożyć szablony wiadomości",
+      "priority": "P1",
+      "roles": "Android",
+      "person_days_min": 1,
+      "person_days_max": 2,
+      "dependencies": [
+        "CH020",
+        "CH028"
+      ],
+      "description": "Wykonanie: lokalny katalog szablonów, dodanie/edycja/usunięcie, wybór w dodatkach. Wstawienie w kursor lub jasna reguła dopisania; zastąpienie niepustej treści wyłącznie po świadomej akcji. Zachować odbiorców, SIM i pliki. Brak synchronizacji z chmurą w tym zakresie.\n\nOdbiór: akcja Szablony jest kompletna, stan pusty prowadzi do utworzenia. Weryfikacja: polskie znaki, długa treść, reset procesu i brak podwojenia po dwukrotnym kliknięciu."
+    },
+    {
+      "id": "CH035",
+      "title": "Zaimplementować trwały harmonogram",
+      "priority": "P0",
+      "roles": "Android domena",
+      "person_days_min": 3,
+      "person_days_max": 5,
+      "dependencies": [
+        "CH014",
+        "CH022",
+        "CH024",
+        "CH026",
+        "CH027",
+        "CH028"
+      ],
+      "description": "Wykonanie: rekord instant/localDateTime/zone/polityka/SIM/version, scheduler i unikalny alarm. Sprawdzić specjalny dostęp do dokładnych alarmów. Sprawdzić, czy data jest przyszła i czy warunki przed zapisem są poprawne; rekord zapisany niezależnie od awarii rejestracji alarmu, z rekoncyliacją i widocznym błędem. WorkManager nie pełni roli dokładnego zegara.\n\nOdbiór: po zapisaniu i restarcie procesu termin pozostaje, alarm wywołuje najwyżej jednego wykonawcę. Weryfikacja: brak dostępu, dwie pozycje o tej samej godzinie, zmiana terminu i nieistniejąca godzina podczas zmiany czasu DST."
+    },
+    {
+      "id": "CH036",
+      "title": "Obsłużyć zaległości restart i zmianę warunków",
+      "priority": "P0",
+      "roles": "Android platforma",
+      "person_days_min": 3,
+      "person_days_max": 4,
+      "dependencies": [
+        "CH035",
+        "CH030"
+      ],
+      "description": "Wykonanie: rekoncyliacja po boot/aktualizacji/czasie/SIM/roli/uprawnieniach. Polityki pytaj i do 1 h, stan missed, powiadomienie i blokada automatycznego retry niepewnej próby. Uwzględnić brak odblokowania po restarcie, force stop i ograniczenia producentów. Odtwarzać tylko aktualną wersję alarmu.\n\nOdbiór: wyłączony telefon nie jest opisywany jako źródło wysłanego SMS; po upływie okna wiadomość czeka na decyzję. Weryfikacja: spóźnienie 59, 60 i 61 min, Doze, utrata SIM, cofnięcie exact alarm i odzyskanie roli."
+    },
+    {
+      "id": "CH037",
+      "title": "Podłączyć edycję i decyzje harmonogramu",
+      "priority": "P1",
+      "roles": "Android",
+      "person_days_min": 2,
+      "person_days_max": 3,
+      "dependencies": [
+        "CH015",
+        "CH035",
+        "CH036",
+        "CH027"
+      ],
+      "description": "Wykonanie: listy live, edit, cancel, delete, Wyślij teraz i Zmień termin. Wersjonować rekord; stary alarm i spóźniony callback nie zmieniają nowej wersji. Edycja nie narusza wysłanego snapshotu. Potwierdzić usunięcie zlecenia niezależne od rozmowy.\n\nOdbiór: licznik „Czeka” jest poprawny, akcje nie powodują dwóch wysyłek. Weryfikacja: edycja tuż przy terminie, kilka otwartych widoków tego samego zadania i restart między zapisem a anulowaniem alarmu."
+    },
+    {
+      "id": "CH038",
+      "title": "Wdrożyć lokalny indeks i wyszukiwanie",
+      "priority": "P0",
+      "roles": "Android dane",
+      "person_days_min": 3,
+      "person_days_max": 4,
+      "dependencies": [
+        "CH016",
+        "CH022",
+        "CH023"
+      ],
+      "description": "Wykonanie: indeks odtwarzalny dla wspieranych treści, normalizacja polskich liter w tym „ł”, casefold, tokeny prefiksowe i mapa offsetów. Przyrostowe aktualizacje, debounce 200 ms, anulowanie starego zapytania i paginacja. Indeksowanie z postępem poza głównym wątkiem; bez sieci.\n\nOdbiór: paczk znajduje paczkę/PACZKA, łódź znajduje lodz po normalizacji; highlight trafia w oryginał. Weryfikacja: 50 tysięcy rekordów, usunięcie z providera, odtworzenie indeksu i zapytanie z emoji/interpunkcją."
+    },
+    {
+      "id": "CH039",
+      "title": "Dodać filtry i szybkie trafienia",
+      "priority": "P1",
+      "roles": "Android domena",
+      "person_days_min": 2,
+      "person_days_max": 3,
+      "dependencies": [
+        "CH020",
+        "CH038"
+      ],
+      "description": "Wykonanie: typ treści, nadawca i daty łączone operatorem AND; lokalne rozpoznawanie kodów i przesyłek. Zachować wiadomość źródłową, nadawcę i pewność wzorca. Kopiowanie precyzyjnej wartości; bez zgadywania kodu z dowolnej liczby. Powrót z rozmowy przywraca komplet filtrów.\n\nOdbiór: cztery wyniki fixture i poprawne wyróżnienia, filtry rzeczywiście zawężają zbiór. Weryfikacja: numer telefonu podobny do kodu, fałszywy nadawca, brak trafień i przedział dat obejmujący zmianę czasu DST."
+    },
+    {
+      "id": "CH040",
+      "title": "Utrwalić wygląd i dostępne warianty",
+      "priority": "P1",
+      "roles": "Android UI",
+      "person_days_min": 3,
+      "person_days_max": 4,
+      "dependencies": [
+        "CH018",
+        "CH020",
+        "CH007",
+        "CH008"
+      ],
+      "description": "Wykonanie: DataStore dla wszystkich opcji, tokeny czterech kompozycji i dark/auto, compact i skali 1–7. Zastosować zmiany globalnie i w podglądzie; reset do źródłowego stanu. Ograniczenie przezroczystości i kontrast mają osobne tokeny. Nie blokować opcji dostępności płatnością.\n\nOdbiór: wybory zachowane po restarcie, Auto reaguje na system, brak nieczytelnego tekstu. Weryfikacja: kombinacje trybów, fontScale 2.0 i porównanie domyślnego Szkła do wzorca po resecie."
+    },
+    {
+      "id": "CH041",
+      "title": "Podłączyć ustawienia wysyłania",
+      "priority": "P1",
+      "roles": "Android",
+      "person_days_min": 2,
+      "person_days_max": 3,
+      "dependencies": [
+        "CH019",
+        "CH020",
+        "CH024",
+        "CH025",
+        "CH028"
+      ],
+      "description": "Wykonanie: ekran SIM i preferencje, opóźnienie 0/3/5/10 s według zatwierdzenia, licznik oraz domyślne warianty HD i pytanie o link. Podsumowania ustawień wynikają z DataStore. Zmiana ustawienia nie modyfikuje zlecenia już przekazanego ani istniejącego harmonogramu bez akcji użytkownika.\n\nOdbiór: ustawienia działają w nowych szkicach, nie zmieniają treści samoczynnie. Weryfikacja: restart, brak SIM, wyłączenie licznika i zmiana delay podczas aktywnego odliczania."
+    },
+    {
+      "id": "CH042",
+      "title": "Wdrożyć nieznanych i blokady",
+      "priority": "P1",
+      "roles": "Android dane",
+      "person_days_min": 2,
+      "person_days_max": 3,
+      "dependencies": [
+        "CH020",
+        "CH022",
+        "CH023",
+        "CH030"
+      ],
+      "description": "Wykonanie: oznaczać nieznanych nadawców bez klasyfikowania ich jako spam; lokalne reguły blokowania, lista i przywracanie. Zatrzymać powiadomienia zgodnie z regułą, zachować historię. Jeżeli G05 wybiera blokadę systemową, dodać osobny komunikat o skutkach dla połączeń i zweryfikować API.\n\nOdbiór: reguła działa dla znormalizowanego numeru, cofnięcie blokady przywraca widoczność; brak cichego kasowania SMS. Weryfikacja: nowy SMS od zablokowanego, odmienne formaty numeru, kontakt dodany później i brak roli."
+    },
+    {
+      "id": "CH043",
+      "title": "Wdrożyć kosz i odzyskiwanie",
+      "priority": "P0",
+      "roles": "Android dane",
+      "person_days_min": 3,
+      "person_days_max": 5,
+      "dependencies": [
+        "CH020",
+        "CH022",
+        "CH023",
+        "CH038"
+      ],
+      "description": "Wykonanie: TrashEntry ze zbiorem provider refs/HD refs, local tombstone, TTL wynoszący 30 dni, restore i potwierdzony purge. Nowa wiadomość w widocznym wątku nie należy do starego zakresu kosza. Sprzątanie tylko po upływie TTL i przy dostępie. W UI wyjaśnić lokalne ukrycie względem innych klientów.\n\nOdbiór: restore bez duplikacji; purge nie usuwa nowych SMS z tego samego wątku. Weryfikacja: upływ 29, 30 i 31 dni, utrata roli, awaria w połowie usuwania, MMS parts i odbudowa indeksu."
+    },
+    {
+      "id": "CH044",
+      "title": "Zbudować prywatność i pomoc",
+      "priority": "P1",
+      "roles": "Android i produkt",
+      "person_days_min": 1,
+      "person_days_max": 2,
+      "dependencies": [
+        "CH020",
+        "CH021",
+        "CH046"
+      ],
+      "description": "Wykonanie: lokalna strona prywatności opisująca provider/indeks/HD/logi/backup i usuwanie danych. Pomoc z informacją o SMS/MMS/RCS, SIM i harmonogramie; docelowy kontakt dostarcza właściciel. Z obu miejsc dojście z S01/S10. Link zewnętrzny bez automatycznego udostępniania danych.\n\nOdbiór: treść zgodna z faktyczną implementacją, brak wymyślonego adresu i nieprawdziwego E2EE. Weryfikacja: offline, duży font, działające linki i porównanie z zachowaniem HD oraz kosza."
+    },
+    {
+      "id": "CH045",
+      "title": "Wdrożyć jednorazowy zakup Pro",
+      "priority": "P1",
+      "roles": "Android i BE",
+      "person_days_min": 3,
+      "person_days_max": 5,
+      "dependencies": [
+        "CH001",
+        "CH019",
+        "CH020",
+        "CH040",
+        "CH046"
+      ],
+      "description": "Wykonanie: zatwierdzić katalog Pro i productId, pobierać lokalną cenę sklepu, paywall, purchase flow, acknowledgement/weryfikacja oraz restore. Obsłużyć oczekującą płatność, anulowanie, zwrot i brak sklepu. Uprawnienie do podstaw nie zależy od Pro; darmowe ustawienia dostępności pozostają dostępne.\n\nOdbiór: w produkcyjnym UI nie ma placeholdera [CENA], zakup jednorazowy odtwarzany zgodnie z zatwierdzonym modelem. Weryfikacja: środowisko testowe sklepu, ponowna instalacja, błędny token, oczekiwanie i cofnięta transakcja."
+    },
+    {
+      "id": "CH046",
+      "title": "Zaprojektować usługę i zasady danych HD",
+      "priority": "P0",
+      "roles": "BE i produkt i bezpieczeństwo",
+      "person_days_min": 3,
+      "person_days_max": 4,
+      "dependencies": [
+        "CH001",
+        "CH005",
+        "CH020"
+      ],
+      "description": "Wykonanie: wybrać stos/backend, region, storage, bazę, push, hosting linku i koszty. Zamknąć G06/G07: model tożsamości, discovery, limity, retencję, usuwanie i szyfrowanie. Model zagrożeń: enumeracja numerów, przejęty link, cudzy plik, podszycie się i nadużycia. Zapisać ADR i granice obietnic prywatności.\n\nOdbiór: decyzje przed kodem, architektura obejmuje obsługę awarii i odzyskanie numeru. Weryfikacja: przegląd bezpieczeństwa i przepływu danych; brak założenia, że odczyt danych z SIM potwierdza numer."
+    },
+    {
+      "id": "CH047",
+      "title": "Zdefiniować API i tożsamość instalacji",
+      "priority": "P0",
+      "roles": "BE i Android",
+      "person_days_min": 4,
+      "person_days_max": 6,
+      "dependencies": [
+        "CH046"
+      ],
+      "description": "Wykonanie: OpenAPI, modele i kody błędów, podpis/klucz instalacji, sesje i rotacja. Weryfikacja posiadania numeru z limitami prób, opt in odkrywalności i lookup tylko wybranego odbiorcy. Klient Keystore, wylogowanie/odpięcie i zmiana urządzenia. Do kontraktu dodać idempotency i paginację.\n\nOdbiór: dwa urządzenia uzyskują zweryfikowane powiązania i odbiorca nie jest publicznie enumerowalny. Weryfikacja: niewłaściwy lub zużyty kod, replay, skradziona sesja, rotacja i odmowa HD bez utraty SMS."
+    },
+    {
+      "id": "CH048",
+      "title": "Zbudować magazyn i wznawialny upload",
+      "priority": "P0",
+      "roles": "BE",
+      "person_days_min": 4,
+      "person_days_max": 6,
+      "dependencies": [
+        "CH046",
+        "CH047"
+      ],
+      "description": "Wykonanie: manifest transferu, plik/chunki, offset, checksum, finalize i stany. Limit rozmiaru/ilości/quota przed uploadem, adresy URL o krótkim okresie ważności i autoryzacja właściciela. Przerwane sesje sprzątać po upływie TTL, obiekty gotowe tylko po weryfikacji. Atomowe powiązanie finalized z kopertą.\n\nOdbiór: wznowienie nie powiela bajtów, błędny hash nie zostaje opublikowany. Weryfikacja: przerwanie w połowie, brak miejsca/quota, równoległe finalize, próba dostępu do innego transferu i opuszczony upload."
+    },
+    {
+      "id": "CH049",
+      "title": "Zbudować klienta transferów HD",
+      "priority": "P1",
+      "roles": "Android sieć",
+      "person_days_min": 3,
+      "person_days_max": 5,
+      "dependencies": [
+        "CH031",
+        "CH033",
+        "CH047",
+        "CH048"
+      ],
+      "description": "Wykonanie: trwała kolejka, kontrola sieci, postęp, resume/backoff i anulowanie. Dobór mechanizmu długiego transferu zgodnego z docelowym Androidem. Jawne zużycie danych i możliwość wstrzymania. Błąd lub restart nie usuwa prywatnej kopii aktywnego pliku.\n\nOdbiór: upload działa po zmianie ekranu i odtwarza stan po ponownym uruchomieniu procesu; nie pokazuje sukcesu przed finalize. Weryfikacja: zmiana sieci Wi-Fi na komórkową, brak sieci, błędy 401/413/429/5xx, anulowanie i 2 równoległe transfery."
+    },
+    {
+      "id": "CH050",
+      "title": "Zbudować routing kopert i statusy pobrania",
+      "priority": "P0",
+      "roles": "BE i Android",
+      "person_days_min": 4,
+      "person_days_max": 6,
+      "dependencies": [
+        "CH047",
+        "CH048",
+        "CH049"
+      ],
+      "description": "Wykonanie: outbox serwera, koperty wyłącznie dla uprawnionych instalacji, cursor sync i push jako sygnał. Lokalna deduplikacja, historia HD i receipt pobrania po integralnym zapisaniu. Odebranie push nie jest pobraniem; pobranie nie jest odczytem. Uzgodnić zachowanie przy zmianie numeru/klucza.\n\nOdbiór: odbiorca offline dostaje zaległe koperty raz po synchronizacji; nadawca widzi prawdziwy etap. Weryfikacja: duplikat push, utrata cursora, dwie instalacje, powtórny receipt i próba cudzej skrzynki."
+    },
+    {
+      "id": "CH051",
+      "title": "Zbudować bezpieczny link i stronę odbioru",
+      "priority": "P1",
+      "roles": "BE i web i UX",
+      "person_days_min": 3,
+      "person_days_max": 5,
+      "dependencies": [
+        "CH020",
+        "CH046",
+        "CH048",
+        "CH050"
+      ],
+      "description": "Wykonanie: zgoda na link dla nieposiadającego Chatry, sekretny token, expiry/revoke i strona pobrania na Androidzie/iOS/przeglądarce. Podgląd liczby i rozmiaru plików dopiero przy ważnym dostępie. Brak indeksowania/wycieku przez nagłówek Referer/niepotrzebnych trackerów; przycisk pobierz i stan wygasły.\n\nOdbiór: uprawniony odbiorca pobiera, odwołany link nie działa, sekret nie trafia do logów. Weryfikacja: incognito, iOS, zły/wygasły/odwołany token i wielokrotny klik. SMS z linkiem wymaga osobnego zatwierdzenia."
+    },
+    {
+      "id": "CH052",
+      "title": "Wdrożyć retencję usuwanie i ochronę HD",
+      "priority": "P0",
+      "roles": "BE i bezpieczeństwo",
+      "person_days_min": 3,
+      "person_days_max": 5,
+      "dependencies": [
+        "CH046",
+        "CH047",
+        "CH048",
+        "CH050",
+        "CH051"
+      ],
+      "description": "Wykonanie: egzekwować TTL, revoke, usunięcie obiektu lub powiązania, politykę backupu i audyt bez danych. Limity lookup/upload/download i alerty nadużyć. Jeśli G07 wybiera E2EE, uzupełnić uzgodniony protokół i ponownie oszacować zadanie przed implementacją; TLS nie zastępuje E2EE. Sekrety w zarządzanym magazynie, rotacja i separacja środowisk.\n\nOdbiór: polityka serwera zgodna z UI, brak dostępu po cofnięciu i brak wycieków poprzez publiczny magazyn plików. Weryfikacja: negatywne testy obiektowe, granice TTL, odtworzenie backupu i skan logów."
+    },
+    {
+      "id": "CH053",
+      "title": "Połączyć HD z rozmową i dodatkami",
+      "priority": "P1",
+      "roles": "Android",
+      "person_days_min": 3,
+      "person_days_max": 4,
+      "dependencies": [
+        "CH012",
+        "CH013",
+        "CH033",
+        "CH041",
+        "CH049",
+        "CH050",
+        "CH051",
+        "CH052"
+      ],
+      "description": "Wykonanie: discovery, oryginał, kopia bez GPS i MMS, dynamiczne CTA, postęp, otrzymanie koperty i karta HD. Rozpoznać nieznany stan dostępności HD bez udawania braku aplikacji. Wyświetlić źródło transportu; odbiór HD nie zamienia się w SMS. Fallback/link tylko po zgodzie.\n\nOdbiór: scenariusz 4 zdjęcia / 38,2 MB ze wzorca działa z rzeczywistymi plikami i potwierdzonym hashem. Weryfikacja: odbiorca Chatra, odbiorca bez Chatry, niedostępny backend, restart i częściowe pobranie."
+    },
+    {
+      "id": "CH054",
+      "title": "Zweryfikować domenę i bazę",
+      "priority": "P0",
+      "roles": "Android i QA",
+      "person_days_min": 3,
+      "person_days_max": 4,
+      "dependencies": [
+        "CH027",
+        "CH028",
+        "CH032",
+        "CH035",
+        "CH038",
+        "CH043"
+      ],
+      "description": "Wykonanie: testy istotnych reguł kodowania, deduplikacji, wersji zleceń, multi recipient, indeksu i kosza. Testy DAO i migracji na danych z różnych wersji; kontrolowany zegar i awarie. Nie ograniczać się do testu, który powtarza implementację.\n\nOdbiór: scenariusze duplikacji i utraty danych mają niezależne asercje i przechodzą w CI. Weryfikacja: wstrzykiwanie awarii, callbacki poza kolejnością, częściowe sprzątanie i zachowanie po odtworzeniu."
+    },
+    {
+      "id": "CH055",
+      "title": "Odebrać zgodność wizualną wszystkich ekranów",
+      "priority": "P0",
+      "roles": "QA i UX i Android",
+      "person_days_min": 3,
+      "person_days_max": 5,
+      "dependencies": [
+        "CH010",
+        "CH011",
+        "CH012",
+        "CH013",
+        "CH014",
+        "CH015",
+        "CH016",
+        "CH017",
+        "CH018",
+        "CH019",
+        "CH040"
+      ],
+      "description": "Wykonanie: obrazy S01–S10 w warunkach CH002, overlay 50 procent, heatmapa i pomiary obszarów ROI. Sprawdzić typografię, linebreak, stroke ikon, box sizing, gradienty, szkło i dock. Osobny przegląd renderowania GPU na urządzeniu. Zarejestrować i poprawić odchyłki; golden nie aktualizuje się automatycznie.\n\nOdbiór: każdy ekran spełnia kontrakt 1 do 1, wyjątki tylko jawnie uzgodnione. Weryfikacja: podpisany raport z 10 par obrazów i brakiem nieprzejrzanych masek; osobny test 360/430 dp i dużego fontu."
+    },
+    {
+      "id": "CH056",
+      "title": "Przetestować rzeczywistą telefonię",
+      "priority": "P0",
+      "roles": "QA i Android",
+      "person_days_min": 4,
+      "person_days_max": 6,
+      "dependencies": [
+        "CH021",
+        "CH023",
+        "CH024",
+        "CH026",
+        "CH027",
+        "CH029",
+        "CH030",
+        "CH032"
+      ],
+      "description": "Wykonanie: macierz fizycznych telefonów/SIM/operatorów z CH001. SMS/MMS w obu kierunkach, długie, Unicode i grupowe, z dwiema kartami SIM, roaming, dane/APN i tryb samolotowy. Potwierdzić kody błędów oraz zachowanie zmiany roli domyślnej. Numery testowe za zgodą ich właścicieli.\n\nOdbiór: raport dostarczenia i odbioru oraz lista wspieranych konfiguracji; brak uznania emulatora za dowód MMS. Weryfikacja: zapis wersji OS/operatora i wyników dla każdej kombinacji, regresja po poprawkach."
+    },
+    {
+      "id": "CH057",
+      "title": "Przetestować alarmy i awarie wysyłki",
+      "priority": "P0",
+      "roles": "QA i Android",
+      "person_days_min": 3,
+      "person_days_max": 4,
+      "dependencies": [
+        "CH028",
+        "CH035",
+        "CH036",
+        "CH037"
+      ],
+      "description": "Wykonanie: zabicie procesu, restart, force stop, Doze, brak odblokowania, cofnięcie roli/alarmów, utrata SIM, zmiana daty/strefy/DST. Kontrolowany wyścig cancel/dispatch i edit/alarm. Granice spóźnienia 59/60/61 min i odzyskanie łączności.\n\nOdbiór: brak niejawnego ponowienia przy niepewności i brak wysyłki po skutecznym anulowaniu; zaległości trafiają do właściwej polityki. Weryfikacja: rejestrowane zdarzenia z correlationId bez treści oraz porównanie liczby rzeczywistych wiadomości."
+    },
+    {
+      "id": "CH058",
+      "title": "Przetestować HD end to end i bezpieczeństwo",
+      "priority": "P0",
+      "roles": "QA i bezpieczeństwo",
+      "person_days_min": 3,
+      "person_days_max": 5,
+      "dependencies": [
+        "CH047",
+        "CH048",
+        "CH050",
+        "CH051",
+        "CH052",
+        "CH053"
+      ],
+      "description": "Wykonanie: dwa Androidy i odbiorca linku, duże pliki, hash oryginału, sanityzacja GPS, offline/resume/expiry/revoke. Negatywna autoryzacja, enumeracja, replay, tokeny i logi. Ocenić stronę linku i push. Zweryfikować usuwanie zgodnie z retencją oraz spójność komunikatów.\n\nOdbiór: brak wycieków i zgodność całego przepływu, receipt dopiero po rzeczywistym pobraniu. Weryfikacja: niezależny odczyt metadanych i SHA256, niedozwolone dostępy odrzucone, awaria API nie uruchamia MMS."
+    },
+    {
+      "id": "CH059",
+      "title": "Zmierzyć i poprawić wydajność",
+      "priority": "P1",
+      "roles": "Android i BE i QA",
+      "person_days_min": 2,
+      "person_days_max": 4,
+      "dependencies": [
+        "CH008",
+        "CH022",
+        "CH032",
+        "CH038",
+        "CH053"
+      ],
+      "description": "Wykonanie: uruchomienie aplikacji, 50 tys. wiadomości, scroll, otwarcie arkusza, pamięć miniatur i transfer HD. Zmierzyć cele P95 na ustalonym urządzeniu, profilować koszt rejestrowania warstw i rozmycia i indeksowania. Backend monitorować bez prywatnych danych. Poprawić potwierdzone wąskie gardła.\n\nOdbiór: raport liczbowy i spełnione lub jawnie ponownie uzgodnione cele, bez rezygnacji ze szkła 1 do 1. Weryfikacja: identyczny scenariusz przed/po, brak zwiększenia wycieków pamięci i degradacji po dłuższym użyciu."
+    },
+    {
+      "id": "CH060",
+      "title": "Odebrać dostępność i układy adaptacyjne",
+      "priority": "P1",
+      "roles": "QA i UX i Android",
+      "person_days_min": 2,
+      "person_days_max": 3,
+      "dependencies": [
+        "CH020",
+        "CH040",
+        "CH055"
+      ],
+      "description": "Wykonanie: TalkBack, fokus dialogów, poprawne role i stan, nazwy przycisków i cele 48 dp bez nakładania. Systemowa skala tekstu 1.3/2.0, suwak aplikacji, redukcja przezroczystości i kontrast. Test 360/390/430 dp, IME, cutout i obie metody nawigacji systemu.\n\nOdbiór: każda akcja osiągalna, brak informacji tylko kolorem i brak uciętej treści. Weryfikacja: ręczny przepływ wysłania/zaplanowania/wyszukania wyłącznie z czytnikiem; regresja wizualna domyślnych ustawień."
+    },
+    {
+      "id": "CH061",
+      "title": "Zweryfikować migracje backup i odzyskanie",
+      "priority": "P0",
+      "roles": "Android i QA",
+      "person_days_min": 2,
+      "person_days_max": 3,
+      "dependencies": [
+        "CH022",
+        "CH028",
+        "CH035",
+        "CH043",
+        "CH047",
+        "CH050"
+      ],
+      "description": "Wykonanie: polityka backupu prywatnej bazy/indeksu/kluczy, test aktualizacji i przerwane migracje. Nie odtwarzać nieświadomie starych harmonogramów ani sekretów Keystore z nową instalacją. Rekoncyliacja providera i ponowna weryfikacja HD po utracie powiązania. Opisać ograniczenia reinstalacji.\n\nOdbiór: historia providera nienaruszona, brak drugiej wysyłki po przywróceniu. Weryfikacja: aktualizacja instalacji zawierającej szkice, harmonogram i kosz, czysta instalacja i restore testowy."
+    },
+    {
+      "id": "CH062",
+      "title": "Przygotować CI konfigurację i instrukcje utrzymania",
+      "priority": "P1",
+      "roles": "Android i BE i DevOps",
+      "person_days_min": 2,
+      "person_days_max": 3,
+      "dependencies": [
+        "CH004",
+        "CH047",
+        "CH054"
+      ],
+      "description": "Wykonanie: lint/build/test, obrazy regresji, migracje bazy BE, staging, secrets i podpisywanie. Instrukcja budowy lokalnej, wdrożenia, wycofania zgodnego z migracjami, rotacji kluczy i alarmów produkcyjnych. Oddzielić środowiska i testowych odbiorców; fixture i sekrety nie trafiają do wydania produkcyjnego.\n\nOdbiór: nowa osoba z zespołu odtwarza build i środowisko testowe z instrukcji. Weryfikacja: pipeline z czystego commitu, kontrola paczek i próbne wycofanie bez utraty danych."
+    },
+    {
+      "id": "CH063",
+      "title": "Przeprowadzić pełny odbiór produktu",
+      "priority": "P0",
+      "roles": "produkt i QA",
+      "person_days_min": 2,
+      "person_days_max": 3,
+      "dependencies": [
+        "CH034",
+        "CH039",
+        "CH041",
+        "CH042",
+        "CH043",
+        "CH044",
+        "CH045",
+        "CH055",
+        "CH056",
+        "CH057",
+        "CH058",
+        "CH059",
+        "CH060",
+        "CH061",
+        "CH062"
+      ],
+      "description": "Wykonanie: przejść wszystkie widoczne akcje dziesięciu plansz i uzupełnione podwidoki. Sprawdzić SMS i funkcje lokalne bez konta oraz dostępu do internetu, MMS przy wymaganej transmisji operatora, a HD i zakup Pro przy dostępnej sieci. Osobno zweryfikować role, harmonogram, wyszukiwanie i przywracanie zakupu. Zestawić wymaganie→zadanie→dowód, zamknąć błędy krytyczne i otwarte decyzje.\n\nOdbiór: pełna matryca bez martwych przycisków i nieprawdziwych statusów; build gotowy do wydania. Weryfikacja: raport odbioru, jawna lista ograniczeń operatorów i brak odstępstw 1 do 1 bez decyzji."
+    },
+    {
+      "id": "CH064",
+      "title": "Przygotować dystrybucję i przekazanie",
+      "priority": "P0",
+      "roles": "właściciel produktu i Android i DevOps",
+      "person_days_min": 2,
+      "person_days_max": 3,
+      "dependencies": [
+        "CH063"
+      ],
+      "description": "Wykonanie: ponownie sprawdzić wymagania Google Play/target SDK/uprawnień SMS/Billing i dane prywatności. Przygotować podpisany AAB/APK w uzgodnionym kanale, opis sklepu, obrazy, deklaracje i politykę. Przekazać repozytoria, ADR, OpenAPI, konfiguracje bez sekretów i raporty. Przygotowanie do wydania nie oznacza automatycznej publikacji.\n\nOdbiór: paczka instaluje się z kanału testowego, podstawowe przepływy działają w buildzie release; właściciel ma instrukcję wypuszczenia i wsparcia. Weryfikacja: smoke test wydania oraz zgodność treści sklepu z realnym zakresem bez RCS/iMessage."
+    }
+  ]
+}
