@@ -27,3 +27,19 @@ iMessage ani transferu HD. Kotlin i Rust są rekomendacją do weryfikacji w prot
 
 Rozdziały 1-21 zawierają część bazową. Rozdziały 22-27 zawierają uzupełnienie rozmowy.
 W PDF uzupełnienie zaczyna się na stronie 24.
+
+
+## Dokumentacja implementacji Android
+
+Specyfikacja z 29 października 2026 opisuje odtworzenie 1:1 dziesięciu ekranów projektu Liquid Glass oraz docelowe zachowanie aplikacji SMS/MMS.
+
+- [Dokumentacja implementacji w Markdown](docs/implementacja_android/Chatra_Dokumentacja_Android.md)
+- [Dokumentacja implementacji w Word](docs/implementacja_android/Chatra_Dokumentacja_Android.docx)
+- [64 szczegółowe zadania w Markdown](docs/implementacja_android/Chatra_Backlog_Android.md)
+- [64 szczegółowe zadania w Word](docs/implementacja_android/Chatra_Backlog_Android.docx)
+- [Eksport zadań i zależności w JSON](docs/implementacja_android/Chatra_Plan_zadan.json)
+- [Wprowadzenie i zawartość pakietu](docs/implementacja_android/Czytaj_najpierw.md)
+- [Pakiet referencyjny ekranów i stylów](docs/implementacja_android/Chatra_Pakiet_referencyjny/README.md)
+- [Kompletny pakiet ZIP](docs/implementacja_android/Chatra_Dokumentacja_i_taski.zip)
+
+Dokumentacja obejmuje wygląd, architekturę Androida, SMS/MMS, dual SIM, harmonogram, wyszukiwanie, Chatra HD, prywatność i kryteria odbioru. Zadania zawierają priorytety, role, zależności, orientacyjne nakłady i weryfikację. Braki źródłowego projektu i decyzje do zamknięcia oznaczono osobno. Pakiet jest dokumentacją do realizacji i nie zawiera gotowego APK.

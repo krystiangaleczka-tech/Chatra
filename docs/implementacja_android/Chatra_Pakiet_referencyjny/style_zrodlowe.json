@@ -1,0 +1,3062 @@
+[
+  {
+    "screen": "S01",
+    "title": "Chatra — start i ograniczenia",
+    "elements": [
+      {
+        "tag": "div",
+        "text": "Chatra Spokojne SMS i MMS. Bez reklam w rozmowach i bez zakładania konta. Co działa SMS i MMS z każdym numerem, także z iPhone'em Zdjęcia i filmy w oryginale przez Chatra HD Wyszuk",
+        "style": "width:390px;height:844px;box-sizing:border-box;position:relative;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',Inter,system-ui,sans-serif;color:#0B0D14;background:radial-gradient(65% 38% at 8% 6%,#9CC3FF 0%,rgba(156,195,255,0) 70%),radial-gradient(55% 35% at 100% 28%,#FFC2AE 0%,rgba(255,194,174,0) 70%),radial-gradient(70% 40% at 12% 80%,#CDBFFF 0%,rgba(205,191,255,0) 70%),radial-gradient(60% 35% at 96% 98%,#9FE3DA 0%,rgba(159,227,218,0) 70%),#EDF0F7",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "",
+        "style": "position:absolute;top:150px;right:-60px;width:220px;height:220px;border-radius:50%;background:linear-gradient(135deg,#5E9BFF,#B18CFF);opacity:0.55",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "",
+        "style": "position:absolute;top:470px;left:-70px;width:200px;height:200px;border-radius:50%;background:linear-gradient(135deg,#FFB199,#FF8FB8);opacity:0.5",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Chatra Spokojne SMS i MMS. Bez reklam w rozmowach i bez zakładania konta. Co działa SMS i MMS z każdym numerem, także z iPhone'em Zdjęcia i filmy w oryginale przez Chatra HD Wyszuk",
+        "style": "position:relative;height:100%;box-sizing:border-box;padding:60px 20px 28px;display:flex;flex-direction:column;gap:14px",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "",
+        "style": "width:60px;height:60px;border-radius:19px;display:flex;align-items:center;justify-content:center;color:{{accent}};background:linear-gradient(160deg,rgba(255,255,255,0.8),rgba(255,255,255,0.5));backdrop-filter:blur(28px) saturate(170%);-webkit-backdrop-filter:blur(28px) saturate(170%);border:1px solid rgba(255,255,255,0.9);box-shadow:inset 0 1px 0 rgba(255,255,255,0.95),0 10px 30px rgba(27,35,74,0.14)",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Chatra Spokojne SMS i MMS. Bez reklam w rozmowach i bez zakładania konta.",
+        "style": "display:flex;flex-direction:column;gap:6px",
+        "aria": null
+      },
+      {
+        "tag": "h1",
+        "text": "Chatra",
+        "style": "margin:0;font-size:36px;line-height:40px;font-weight:700;letter-spacing:-0.02em",
+        "aria": null
+      },
+      {
+        "tag": "p",
+        "text": "Spokojne SMS i MMS. Bez reklam w rozmowach i bez zakładania konta.",
+        "style": "margin:0;font-size:17px;line-height:23px;color:#3A4054",
+        "aria": null
+      },
+      {
+        "tag": "section",
+        "text": "Co działa SMS i MMS z każdym numerem, także z iPhone'em Zdjęcia i filmy w oryginale przez Chatra HD Wyszukiwanie, planowanie i pewny wybór karty SIM",
+        "style": "border-radius:26px;padding:16px 18px;display:flex;flex-direction:column;gap:12px;background:linear-gradient(160deg,rgba(255,255,255,0.74),rgba(255,255,255,0.44));backdrop-filter:blur(28px) saturate(170%);-webkit-backdrop-filter:blur(28px) saturate(170%);border:1px solid rgba(255,255,255,0.85);box-shadow:inset 0 1px 0 rgba(255,255,255,0.95),0 10px 30px rgba(27,35,74,0.12)",
+        "aria": null
+      },
+      {
+        "tag": "h2",
+        "text": "Co działa",
+        "style": "margin:0;font-size:13px;line-height:16px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:#3A4054",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "SMS i MMS z każdym numerem, także z iPhone'em",
+        "style": "display:flex;gap:12px;align-items:flex-start",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "",
+        "style": "flex:none;width:26px;height:26px;border-radius:13px;background:#FFFFFF;color:{{accent}};display:flex;align-items:center;justify-content:center",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "SMS i MMS z każdym numerem, także z iPhone'em",
+        "style": "font-size:15px;line-height:20px",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Zdjęcia i filmy w oryginale przez Chatra HD",
+        "style": "display:flex;gap:12px;align-items:flex-start",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "",
+        "style": "flex:none;width:26px;height:26px;border-radius:13px;background:#FFFFFF;color:{{accent}};display:flex;align-items:center;justify-content:center",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Zdjęcia i filmy w oryginale przez Chatra HD",
+        "style": "font-size:15px;line-height:20px",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Wyszukiwanie, planowanie i pewny wybór karty SIM",
+        "style": "display:flex;gap:12px;align-items:flex-start",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "",
+        "style": "flex:none;width:26px;height:26px;border-radius:13px;background:#FFFFFF;color:{{accent}};display:flex;align-items:center;justify-content:center",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Wyszukiwanie, planowanie i pewny wybór karty SIM",
+        "style": "font-size:15px;line-height:20px",
+        "aria": null
+      },
+      {
+        "tag": "section",
+        "text": "Czego nie obsługuje Czatów RCS — np. „pisze…” i potwierdzeń odczytu iMessage oraz połączeń głosowych i wideo",
+        "style": "border-radius:26px;padding:16px 18px;display:flex;flex-direction:column;gap:12px;background:linear-gradient(160deg,rgba(255,255,255,0.74),rgba(255,255,255,0.44));backdrop-filter:blur(28px) saturate(170%);-webkit-backdrop-filter:blur(28px) saturate(170%);border:1px solid rgba(255,255,255,0.85);box-shadow:inset 0 1px 0 rgba(255,255,255,0.95),0 10px 30px rgba(27,35,74,0.12)",
+        "aria": null
+      },
+      {
+        "tag": "h2",
+        "text": "Czego nie obsługuje",
+        "style": "margin:0;font-size:13px;line-height:16px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:#3A4054",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Czatów RCS — np. „pisze…” i potwierdzeń odczytu",
+        "style": "display:flex;gap:12px;align-items:flex-start",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "",
+        "style": "flex:none;width:26px;height:26px;border-radius:13px;background:rgba(11,13,20,0.08);color:#3A4054;display:flex;align-items:center;justify-content:center",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Czatów RCS — np. „pisze…” i potwierdzeń odczytu",
+        "style": "font-size:15px;line-height:20px",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "iMessage oraz połączeń głosowych i wideo",
+        "style": "display:flex;gap:12px;align-items:flex-start",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "",
+        "style": "flex:none;width:26px;height:26px;border-radius:13px;background:rgba(11,13,20,0.08);color:#3A4054;display:flex;align-items:center;justify-content:center",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "iMessage oraz połączeń głosowych i wideo",
+        "style": "font-size:15px;line-height:20px",
+        "aria": null
+      },
+      {
+        "tag": "p",
+        "text": "Historia SMS i MMS zostaje na telefonie. Rozmowy RCS z poprzedniej aplikacji mogą się nie przenieść. O aparat i zdjęcia zapytamy dopiero, gdy będą potrzebne.",
+        "style": "margin:2px 4px 0;font-size:13px;line-height:18px;color:#3A4054",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "",
+        "style": "flex:1",
+        "aria": null
+      },
+      {
+        "tag": "a",
+        "text": "Ustaw jako domyślną aplikację SMS",
+        "style": "height:54px;border-radius:27px;background:{{accent}};color:#FFFFFF;font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 1px 0 rgba(255,255,255,0.45),0 10px 24px rgba(10,60,160,0.28)",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Prywatność Pomoc i kontakt",
+        "style": "display:flex;justify-content:center;gap:8px",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "Prywatność",
+        "style": "min-height:44px;padding:0 14px;border:none;background:none;color:#0058D6;font-size:15px;cursor:pointer",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "Pomoc i kontakt",
+        "style": "min-height:44px;padding:0 14px;border:none;background:none;color:#0058D6;font-size:15px;cursor:pointer",
+        "aria": null
+      }
+    ]
+  },
+  {
+    "screen": "S02",
+    "title": "Chatra — skrzynka",
+    "elements": [
+      {
+        "tag": "div",
+        "text": "Rozmowy Szukaj kontaktu, treści lub kodu Wszystkie Nieprzeczytane · 3 Przypięte M Mama 14:32 Kupiłam bilety na niedzielę. Odbierzesz mnie z dworca? 2 ON Ola Nowak 13:05 Dotarły, wy",
+        "style": "width:390px;height:844px;box-sizing:border-box;position:relative;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',Inter,system-ui,sans-serif;color:#0B0D14;background:radial-gradient(65% 38% at 8% 6%,#9CC3FF 0%,rgba(156,195,255,0) 70%),radial-gradient(55% 35% at 100% 28%,#FFC2AE 0%,rgba(255,194,174,0) 70%),radial-gradient(70% 40% at 12% 80%,#CDBFFF 0%,rgba(205,191,255,0) 70%),radial-gradient(60% 35% at 96% 98%,#9FE3DA 0%,rgba(159,227,218,0) 70%),#EDF0F7",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Rozmowy Szukaj kontaktu, treści lub kodu Wszystkie Nieprzeczytane · 3 Przypięte M Mama 14:32 Kupiłam bilety na niedzielę. Odbierzesz mnie z dworca? 2 ON Ola Nowak 13:05 Dotarły, wy",
+        "style": "padding:52px 16px 0;display:flex;flex-direction:column;gap:12px",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Rozmowy",
+        "style": "display:flex;align-items:center;justify-content:space-between;padding:0 4px",
+        "aria": null
+      },
+      {
+        "tag": "h1",
+        "text": "Rozmowy",
+        "style": "margin:0;font-size:34px;line-height:41px;font-weight:700;letter-spacing:-0.02em",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "",
+        "style": "width:44px;height:44px;border-radius:22px;display:flex;align-items:center;justify-content:center;color:#0B0D14;cursor:pointer;background:linear-gradient(160deg,rgba(255,255,255,0.74),rgba(255,255,255,0.44));backdrop-filter:blur(28px) saturate(170%);-webkit-backdrop-filter:blur(28px) saturate(170%);border:1px solid rgba(255,255,255,0.85);box-shadow:inset 0 1px 0 rgba(255,255,255,0.95),0 6px 18px rgba(27,35,74,0.12)",
+        "aria": "Więcej opcji"
+      },
+      {
+        "tag": "a",
+        "text": "Szukaj kontaktu, treści lub kodu",
+        "style": "height:44px;border-radius:22px;display:flex;align-items:center;gap:8px;padding:0 14px;color:#3A4054;font-size:17px;background:linear-gradient(160deg,rgba(255,255,255,0.74),rgba(255,255,255,0.44));backdrop-filter:blur(28px) saturate(170%);-webkit-backdrop-filter:blur(28px) saturate(170%);border:1px solid rgba(255,255,255,0.85);box-shadow:inset 0 1px 0 rgba(255,255,255,0.95),0 6px 18px rgba(27,35,74,0.10)",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Wszystkie Nieprzeczytane · 3",
+        "style": "height:40px;border-radius:20px;padding:3px;box-sizing:border-box;display:flex;gap:3px;background:rgba(255,255,255,0.38);backdrop-filter:blur(28px) saturate(170%);-webkit-backdrop-filter:blur(28px) saturate(170%);border:1px solid rgba(255,255,255,0.75)",
+        "aria": "Filtr rozmów"
+      },
+      {
+        "tag": "button",
+        "text": "Wszystkie",
+        "style": "flex:1;border:none;border-radius:17px;background:#FFFFFF;color:#0B0D14;font-size:15px;font-weight:600;cursor:pointer;box-shadow:0 2px 8px rgba(27,35,74,0.12)",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "Nieprzeczytane · 3",
+        "style": "flex:1;border:none;border-radius:17px;background:transparent;color:#2A3042;font-size:15px;font-weight:500;cursor:pointer",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Przypięte M Mama 14:32 Kupiłam bilety na niedzielę. Odbierzesz mnie z dworca? 2 ON Ola Nowak 13:05 Dotarły, wyglądają super. Ostre jak z aparatu! Pozostałe Paczka24 Kod 12:47 Paczk",
+        "style": "border-radius:28px;overflow:hidden;background:linear-gradient(160deg,rgba(255,255,255,0.78),rgba(255,255,255,0.52));backdrop-filter:blur(28px) saturate(170%);-webkit-backdrop-filter:blur(28px) saturate(170%);border:1px solid rgba(255,255,255,0.85);box-shadow:inset 0 1px 0 rgba(255,255,255,0.95),0 10px 30px rgba(27,35,74,0.10)",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Przypięte",
+        "style": "padding:12px 18px 4px;font-size:13px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:#3A4054",
+        "aria": null
+      },
+      {
+        "tag": "a",
+        "text": "M Mama 14:32 Kupiłam bilety na niedzielę. Odbierzesz mnie z dworca? 2",
+        "style": "display:flex;gap:12px;align-items:center;padding:9px 16px;color:#0B0D14",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "M",
+        "style": "flex:none;width:46px;height:46px;border-radius:23px;background:linear-gradient(180deg,#D6DDEE,#B7C1D9);color:#1E2433;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:600",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Mama 14:32 Kupiłam bilety na niedzielę. Odbierzesz mnie z dworca? 2",
+        "style": "flex:1;min-width:0;display:flex;flex-direction:column;gap:2px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Mama 14:32",
+        "style": "display:flex;align-items:center;gap:6px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Mama",
+        "style": "font-size:16px;font-weight:700",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "",
+        "style": "flex:1",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "14:32",
+        "style": "font-size:13px;color:#0B0D14;font-weight:600",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Kupiłam bilety na niedzielę. Odbierzesz mnie z dworca? 2",
+        "style": "display:flex;gap:10px;align-items:center",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Kupiłam bilety na niedzielę. Odbierzesz mnie z dworca?",
+        "style": "flex:1;font-size:14px;line-height:19px;color:#0B0D14;font-weight:500;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "2",
+        "style": "flex:none;min-width:22px;height:22px;padding:0 6px;box-sizing:border-box;border-radius:11px;background:{{accent}};color:#FFFFFF;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center",
+        "aria": "2 nieprzeczytane"
+      },
+      {
+        "tag": "a",
+        "text": "ON Ola Nowak 13:05 Dotarły, wyglądają super. Ostre jak z aparatu!",
+        "style": "display:flex;gap:12px;align-items:center;padding:9px 16px;color:#0B0D14",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "ON",
+        "style": "flex:none;width:46px;height:46px;border-radius:23px;background:linear-gradient(180deg,#F1D9D2,#DDB8AE);color:#3A1E16;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:600",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Ola Nowak 13:05 Dotarły, wyglądają super. Ostre jak z aparatu!",
+        "style": "flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;border-bottom:0",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Ola Nowak 13:05",
+        "style": "display:flex;align-items:center;gap:6px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Ola Nowak",
+        "style": "font-size:16px;font-weight:600",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "",
+        "style": "flex:1",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "13:05",
+        "style": "font-size:13px;color:#3A4054",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Dotarły, wyglądają super. Ostre jak z aparatu!",
+        "style": "font-size:14px;line-height:19px;color:#3A4054;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Pozostałe",
+        "style": "padding:12px 18px 4px;font-size:13px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:#3A4054;border-top:1px solid rgba(11,13,20,0.07)",
+        "aria": null
+      },
+      {
+        "tag": "a",
+        "text": "Paczka24 Kod 12:47 Paczka czeka w automacie KRA01M. Kod odbioru: 482 915 1",
+        "style": "display:flex;gap:12px;align-items:center;padding:9px 16px;color:#0B0D14",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "",
+        "style": "flex:none;width:46px;height:46px;border-radius:23px;background:linear-gradient(180deg,#D9E8DF,#B8D3C3);color:#143322;display:flex;align-items:center;justify-content:center",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Paczka24 Kod 12:47 Paczka czeka w automacie KRA01M. Kod odbioru: 482 915 1",
+        "style": "flex:1;min-width:0;display:flex;flex-direction:column;gap:2px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Paczka24 Kod 12:47",
+        "style": "display:flex;align-items:center;gap:6px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Paczka24",
+        "style": "font-size:16px;font-weight:700",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Kod",
+        "style": "font-size:11px;font-weight:600;padding:2px 7px;border-radius:9px;background:rgba(11,13,20,0.07);color:#2A3042",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "",
+        "style": "flex:1",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "12:47",
+        "style": "font-size:13px;color:#0B0D14;font-weight:600",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Paczka czeka w automacie KRA01M. Kod odbioru: 482 915 1",
+        "style": "display:flex;gap:10px;align-items:center",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Paczka czeka w automacie KRA01M. Kod odbioru: 482 915",
+        "style": "flex:1;font-size:14px;line-height:19px;color:#0B0D14;font-weight:500;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "1",
+        "style": "flex:none;min-width:22px;height:22px;padding:0 6px;box-sizing:border-box;border-radius:11px;background:{{accent}};color:#FFFFFF;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center",
+        "aria": "1 nieprzeczytana"
+      },
+      {
+        "tag": "a",
+        "text": "TW Tomek Wiśniewski 11:20 Szkic: Jasne, będę koło 19, wezmę…",
+        "style": "display:flex;gap:12px;align-items:center;padding:9px 16px;color:#0B0D14",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "TW",
+        "style": "flex:none;width:46px;height:46px;border-radius:23px;background:linear-gradient(180deg,#D6DDEE,#B7C1D9);color:#1E2433;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:600",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Tomek Wiśniewski 11:20 Szkic: Jasne, będę koło 19, wezmę…",
+        "style": "flex:1;min-width:0;display:flex;flex-direction:column;gap:2px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Tomek Wiśniewski 11:20",
+        "style": "display:flex;align-items:center;gap:6px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Tomek Wiśniewski",
+        "style": "font-size:16px;font-weight:600",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "",
+        "style": "flex:1",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "11:20",
+        "style": "font-size:13px;color:#3A4054",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Szkic: Jasne, będę koło 19, wezmę…",
+        "style": "font-size:14px;line-height:19px;color:#3A4054;white-space:nowrap;overflow:hidden;text-overflow:ellipsis",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Szkic:",
+        "style": "color:#B4410F;font-weight:600",
+        "aria": null
+      },
+      {
+        "tag": "a",
+        "text": "+48 601 234 567 10:58 Nieznany numer Dzień dobry, tu kurier. Będę za 20 min. 1",
+        "style": "display:flex;gap:12px;align-items:center;padding:9px 16px;color:#0B0D14",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "",
+        "style": "flex:none;width:46px;height:46px;border-radius:23px;background:linear-gradient(180deg,#E3E5EA,#C9CDD6);color:#1E2433;display:flex;align-items:center;justify-content:center",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "+48 601 234 567 10:58 Nieznany numer Dzień dobry, tu kurier. Będę za 20 min. 1",
+        "style": "flex:1;min-width:0;display:flex;flex-direction:column;gap:2px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "+48 601 234 567 10:58",
+        "style": "display:flex;align-items:center;gap:6px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "+48 601 234 567",
+        "style": "font-size:16px;font-weight:700",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "",
+        "style": "flex:1",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "10:58",
+        "style": "font-size:13px;color:#0B0D14;font-weight:600",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Nieznany numer Dzień dobry, tu kurier. Będę za 20 min. 1",
+        "style": "display:flex;gap:10px;align-items:center",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Nieznany numer Dzień dobry, tu kurier. Będę za 20 min.",
+        "style": "flex:1;min-width:0;font-size:14px;line-height:19px;color:#0B0D14;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Nieznany numer",
+        "style": "font-size:11px;font-weight:600;padding:2px 7px;border-radius:9px;background:rgba(11,13,20,0.07);color:#2A3042;margin-right:6px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "1",
+        "style": "flex:none;min-width:22px;height:22px;padding:0 6px;box-sizing:border-box;border-radius:11px;background:{{accent}};color:#FFFFFF;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center",
+        "aria": "1 nieprzeczytana"
+      },
+      {
+        "tag": "a",
+        "text": "KZ Kasia Zielińska wt. Nie wysłano. Dotknij, aby ponowić.",
+        "style": "display:flex;gap:12px;align-items:center;padding:9px 16px;color:#0B0D14",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "KZ",
+        "style": "flex:none;width:46px;height:46px;border-radius:23px;background:linear-gradient(180deg,#E7DCF2,#CDBDE3);color:#2A1A3E;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:600",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Kasia Zielińska wt. Nie wysłano. Dotknij, aby ponowić.",
+        "style": "flex:1;min-width:0;display:flex;flex-direction:column;gap:2px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Kasia Zielińska wt.",
+        "style": "display:flex;align-items:center;gap:6px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Kasia Zielińska",
+        "style": "font-size:16px;font-weight:600",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "",
+        "style": "flex:1",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "wt.",
+        "style": "font-size:13px;color:#3A4054",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Nie wysłano. Dotknij, aby ponowić.",
+        "style": "display:flex;align-items:center;gap:5px;font-size:14px;line-height:19px;color:#C0262D;font-weight:600",
+        "aria": null
+      },
+      {
+        "tag": "a",
+        "text": "Brygada rowerowa wt. Grupowy MMS · Kuba: To w sobotę 9:00 pod mostem?",
+        "style": "display:flex;gap:12px;align-items:center;padding:9px 16px;color:#0B0D14",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "",
+        "style": "flex:none;width:46px;height:46px;border-radius:23px;background:linear-gradient(180deg,#D3E3F1,#B2CBE2);color:#14283A;display:flex;align-items:center;justify-content:center",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Brygada rowerowa wt. Grupowy MMS · Kuba: To w sobotę 9:00 pod mostem?",
+        "style": "flex:1;min-width:0;display:flex;flex-direction:column;gap:2px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Brygada rowerowa wt.",
+        "style": "display:flex;align-items:center;gap:6px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Brygada rowerowa",
+        "style": "font-size:16px;font-weight:600",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "",
+        "style": "flex:1",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "wt.",
+        "style": "font-size:13px;color:#3A4054",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Grupowy MMS · Kuba: To w sobotę 9:00 pod mostem?",
+        "style": "font-size:14px;line-height:19px;color:#3A4054;white-space:nowrap;overflow:hidden;text-overflow:ellipsis",
+        "aria": null
+      },
+      {
+        "tag": "nav",
+        "text": "Rozmowy Zaplanowane Ustawienia",
+        "style": "position:absolute;left:16px;right:16px;bottom:26px;display:flex;gap:10px;align-items:center",
+        "aria": "Główne sekcje"
+      },
+      {
+        "tag": "div",
+        "text": "Rozmowy Zaplanowane Ustawienia",
+        "style": "flex:1;height:62px;border-radius:31px;padding:4px;box-sizing:border-box;display:flex;gap:2px;background:linear-gradient(160deg,rgba(255,255,255,0.72),rgba(255,255,255,0.42));backdrop-filter:blur(30px) saturate(180%);-webkit-backdrop-filter:blur(30px) saturate(180%);border:1px solid rgba(255,255,255,0.85);box-shadow:inset 0 1px 0 rgba(255,255,255,0.95),0 12px 32px rgba(27,35,74,0.18)",
+        "aria": null
+      },
+      {
+        "tag": "a",
+        "text": "Rozmowy",
+        "style": "flex:1;border-radius:27px;background:rgba(255,255,255,0.85);color:{{accent}};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:11px;font-weight:600",
+        "aria": null
+      },
+      {
+        "tag": "a",
+        "text": "Zaplanowane",
+        "style": "flex:1;border-radius:27px;color:#2A3042;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:11px;font-weight:500",
+        "aria": null
+      },
+      {
+        "tag": "a",
+        "text": "Ustawienia",
+        "style": "flex:1;border-radius:27px;color:#2A3042;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:11px;font-weight:500",
+        "aria": null
+      },
+      {
+        "tag": "a",
+        "text": "",
+        "style": "flex:none;width:62px;height:62px;border-radius:31px;display:flex;align-items:center;justify-content:center;color:#FFFFFF;background:{{accent}};border:1px solid rgba(255,255,255,0.6);box-shadow:inset 0 1px 0 rgba(255,255,255,0.5),0 12px 28px rgba(10,60,160,0.32)",
+        "aria": "Nowa wiadomość"
+      }
+    ]
+  },
+  {
+    "screen": "S03",
+    "title": "Chatra — rozmowa z Olą",
+    "elements": [
+      {
+        "tag": "div",
+        "text": "Wczoraj Masz zdjęcia z wesela Ani? Te z MMS-a są rozmazane. Jasne, wyślę w oryginale. +1 HD 4 zdjęcia · oryginał 38,2 MB · przesłano przez internet Pobrane przez Olę · SIM 1 Dziś D",
+        "style": "width:390px;height:844px;box-sizing:border-box;position:relative;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',Inter,system-ui,sans-serif;color:#0B0D14;background:radial-gradient(70% 40% at 0% 20%,#B9D3FF 0%,rgba(185,211,255,0) 70%),radial-gradient(60% 40% at 100% 55%,#FFD3C4 0%,rgba(255,211,196,0) 70%),radial-gradient(80% 40% at 30% 100%,#D6CBFF 0%,rgba(214,203,255,0) 70%),#EEF1F8",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Wczoraj Masz zdjęcia z wesela Ani? Te z MMS-a są rozmazane. Jasne, wyślę w oryginale. +1 HD 4 zdjęcia · oryginał 38,2 MB · przesłano przez internet Pobrane przez Olę · SIM 1 Dziś D",
+        "style": "position:absolute;top:108px;bottom:150px;left:0;right:0;padding:0 14px;display:flex;flex-direction:column;justify-content:flex-end;gap:6px;overflow:hidden",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Wczoraj",
+        "style": "align-self:center;padding:4px 12px;border-radius:12px;font-size:12px;font-weight:600;color:#2A3042;background:rgba(255,255,255,0.55);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.8)",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Masz zdjęcia z wesela Ani? Te z MMS-a są rozmazane.",
+        "style": "align-self:flex-start;max-width:270px;padding:9px 14px;border-radius:20px 20px 20px 6px;font-size:16px;line-height:21px;background:linear-gradient(160deg,rgba(255,255,255,0.88),rgba(255,255,255,0.66));backdrop-filter:blur(24px) saturate(170%);-webkit-backdrop-filter:blur(24px) saturate(170%);border:1px solid rgba(255,255,255,0.9);box-shadow:0 4px 14px rgba(27,35,74,0.08)",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Jasne, wyślę w oryginale.",
+        "style": "align-self:flex-end;max-width:270px;padding:9px 14px;border-radius:20px 20px 6px 20px;font-size:16px;line-height:21px;color:#FFFFFF;background:{{accent}};box-shadow:inset 0 1px 0 rgba(255,255,255,0.35),0 4px 14px rgba(10,60,160,0.2)",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "+1 HD 4 zdjęcia · oryginał 38,2 MB · przesłano przez internet",
+        "style": "align-self:flex-end;width:248px;padding:6px;box-sizing:border-box;border-radius:22px;background:linear-gradient(160deg,rgba(255,255,255,0.86),rgba(255,255,255,0.6));backdrop-filter:blur(24px) saturate(170%);-webkit-backdrop-filter:blur(24px) saturate(170%);border:1px solid rgba(255,255,255,0.9);box-shadow:0 6px 18px rgba(27,35,74,0.1)",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "+1",
+        "style": "display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "",
+        "style": "height:76px;border-radius:16px 6px 6px 6px;background:linear-gradient(150deg,#F3C6A8,#C98E7A)",
+        "aria": "Zdjęcie 1"
+      },
+      {
+        "tag": "div",
+        "text": "",
+        "style": "height:76px;border-radius:6px;background:linear-gradient(150deg,#A9C7E8,#6C8FB8)",
+        "aria": "Zdjęcie 2"
+      },
+      {
+        "tag": "div",
+        "text": "+1",
+        "style": "height:76px;border-radius:6px 16px 6px 6px;background:linear-gradient(150deg,#C9D8B0,#8DA674);display:flex;align-items:center;justify-content:center;color:#FFFFFF;font-size:17px;font-weight:700;text-shadow:0 1px 4px rgba(0,0,0,0.45)",
+        "aria": "Zdjęcie 3 i jeszcze 1"
+      },
+      {
+        "tag": "div",
+        "text": "HD 4 zdjęcia · oryginał 38,2 MB · przesłano przez internet",
+        "style": "display:flex;align-items:center;gap:8px;padding:8px 6px 4px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "HD",
+        "style": "flex:none;font-size:11px;font-weight:800;letter-spacing:0.04em;padding:3px 6px;border-radius:6px;background:#0B0D14;color:#FFFFFF",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "4 zdjęcia · oryginał 38,2 MB · przesłano przez internet",
+        "style": "flex:1;min-width:0;display:flex;flex-direction:column",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "4 zdjęcia · oryginał",
+        "style": "font-size:14px;font-weight:600",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "38,2 MB · przesłano przez internet",
+        "style": "font-size:12px;color:#3A4054",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Pobrane przez Olę · SIM 1",
+        "style": "align-self:flex-end;font-size:12px;color:#2A3042;padding-right:6px",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Dziś",
+        "style": "align-self:center;margin-top:6px;padding:4px 12px;border-radius:12px;font-size:12px;font-weight:600;color:#2A3042;background:rgba(255,255,255,0.55);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.8)",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Dotarły, wyglądają super. Ostre jak z aparatu!",
+        "style": "align-self:flex-start;max-width:270px;padding:9px 14px;border-radius:20px 20px 20px 6px;font-size:16px;line-height:21px;background:linear-gradient(160deg,rgba(255,255,255,0.88),rgba(255,255,255,0.66));backdrop-filter:blur(24px) saturate(170%);-webkit-backdrop-filter:blur(24px) saturate(170%);border:1px solid rgba(255,255,255,0.9);box-shadow:0 4px 14px rgba(27,35,74,0.08)",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "To w sobotę o 18:00 u was?",
+        "style": "align-self:flex-end;max-width:270px;padding:9px 14px;border-radius:20px 20px 6px 20px;font-size:16px;line-height:21px;color:#FFFFFF;background:{{accent}};box-shadow:inset 0 1px 0 rgba(255,255,255,0.35),0 4px 14px rgba(10,60,160,0.2)",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Doręczono 13:12 · SIM 1 · to nie oznacza odczytu",
+        "style": "align-self:flex-end;font-size:12px;color:#2A3042;padding-right:6px",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Wezmę wino i deser.",
+        "style": "align-self:flex-end;max-width:270px;padding:8px 13px;border-radius:20px 20px 6px 20px;font-size:16px;line-height:21px;color:#0B0D14;background:rgba(255,255,255,0.7);border:1.5px solid #C0262D",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Nie udało się wysłać. Wybierz kartę SIM i spróbuj ponownie. Ponów",
+        "style": "align-self:flex-end;display:flex;align-items:center;gap:8px;max-width:330px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Nie udało się wysłać. Wybierz kartę SIM i spróbuj ponownie.",
+        "style": "font-size:12px;line-height:16px;color:#A3141B;font-weight:600;text-align:right",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "Ponów",
+        "style": "flex:none;min-height:32px;padding:0 12px;border-radius:16px;border:1px solid rgba(255,255,255,0.9);background:#FFFFFF;color:#A3141B;font-size:13px;font-weight:700;cursor:pointer",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Pasuje, do zobaczenia!",
+        "style": "align-self:flex-end;max-width:270px;padding:9px 14px;border-radius:20px 20px 6px 20px;font-size:16px;line-height:21px;color:#FFFFFF;background:{{accent}};opacity:0.62",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Wyślę za 3 s Anuluj",
+        "style": "align-self:flex-end;display:flex;align-items:center;gap:6px;font-size:12px;color:#2A3042",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "Anuluj",
+        "style": "min-height:32px;padding:0 12px;border-radius:16px;border:none;background:rgba(255,255,255,0.85);color:#0058D6;font-size:13px;font-weight:700;cursor:pointer",
+        "aria": null
+      },
+      {
+        "tag": "header",
+        "text": "ON Ola Nowak SMS · MMS · ma Chatra HD",
+        "style": "position:absolute;top:50px;left:12px;right:12px;display:flex;align-items:center;gap:8px",
+        "aria": null
+      },
+      {
+        "tag": "a",
+        "text": "",
+        "style": "flex:none;width:44px;height:44px;border-radius:22px;display:flex;align-items:center;justify-content:center;color:#0B0D14;background:linear-gradient(160deg,rgba(255,255,255,0.74),rgba(255,255,255,0.44));backdrop-filter:blur(28px) saturate(170%);-webkit-backdrop-filter:blur(28px) saturate(170%);border:1px solid rgba(255,255,255,0.85);box-shadow:inset 0 1px 0 rgba(255,255,255,0.95),0 6px 18px rgba(27,35,74,0.12)",
+        "aria": "Wróć do rozmów"
+      },
+      {
+        "tag": "div",
+        "text": "ON Ola Nowak SMS · MMS · ma Chatra HD",
+        "style": "flex:1;display:flex;justify-content:center",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "ON Ola Nowak SMS · MMS · ma Chatra HD",
+        "style": "height:48px;border-radius:24px;padding:0 16px 0 5px;display:flex;align-items:center;gap:9px;background:linear-gradient(160deg,rgba(255,255,255,0.74),rgba(255,255,255,0.44));backdrop-filter:blur(28px) saturate(170%);-webkit-backdrop-filter:blur(28px) saturate(170%);border:1px solid rgba(255,255,255,0.85);box-shadow:inset 0 1px 0 rgba(255,255,255,0.95),0 6px 18px rgba(27,35,74,0.12)",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "ON",
+        "style": "width:38px;height:38px;border-radius:19px;background:linear-gradient(180deg,#F1D9D2,#DDB8AE);color:#3A1E16;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Ola Nowak SMS · MMS · ma Chatra HD",
+        "style": "display:flex;flex-direction:column",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Ola Nowak",
+        "style": "font-size:15px;font-weight:600;line-height:19px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "SMS · MMS · ma Chatra HD",
+        "style": "font-size:11px;line-height:14px;color:#2A3042",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "",
+        "style": "flex:none;width:44px;height:44px;border-radius:22px;display:flex;align-items:center;justify-content:center;color:#0B0D14;cursor:pointer;background:linear-gradient(160deg,rgba(255,255,255,0.74),rgba(255,255,255,0.44));backdrop-filter:blur(28px) saturate(170%);-webkit-backdrop-filter:blur(28px) saturate(170%);border:1px solid rgba(255,255,255,0.85);box-shadow:inset 0 1px 0 rgba(255,255,255,0.95),0 6px 18px rgba(27,35,74,0.12)",
+        "aria": "Szczegóły rozmowy"
+      },
+      {
+        "tag": "div",
+        "text": "SIM 1 · Prywatna 21/160 · 1 SMS Wiadomość SMS do Oli Nowak",
+        "style": "position:absolute;left:12px;right:12px;bottom:26px;display:flex;flex-direction:column;gap:8px",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "SIM 1 · Prywatna 21/160 · 1 SMS",
+        "style": "display:flex;align-items:center;justify-content:space-between;padding-left:52px;padding-right:4px",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "SIM 1 · Prywatna",
+        "style": "height:32px;border-radius:16px;padding:0 10px 0 8px;display:flex;align-items:center;gap:6px;color:#0B0D14;font-size:13px;font-weight:600;cursor:pointer;background:linear-gradient(160deg,rgba(255,255,255,0.8),rgba(255,255,255,0.5));backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.9)",
+        "aria": "Wyślij z karty SIM 1 Prywatna, zmień"
+      },
+      {
+        "tag": "span",
+        "text": "21/160 · 1 SMS",
+        "style": "font-size:12px;color:#2A3042;font-variant-numeric:tabular-nums",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Wiadomość SMS do Oli Nowak",
+        "style": "display:flex;align-items:flex-end;gap:8px",
+        "aria": null
+      },
+      {
+        "tag": "a",
+        "text": "",
+        "style": "flex:none;width:44px;height:44px;border-radius:22px;display:flex;align-items:center;justify-content:center;color:#0B0D14;background:linear-gradient(160deg,rgba(255,255,255,0.74),rgba(255,255,255,0.44));backdrop-filter:blur(28px) saturate(170%);-webkit-backdrop-filter:blur(28px) saturate(170%);border:1px solid rgba(255,255,255,0.85);box-shadow:inset 0 1px 0 rgba(255,255,255,0.95),0 6px 18px rgba(27,35,74,0.12)",
+        "aria": "Dodatki: zdjęcie, aparat, zaplanuj, szablony"
+      },
+      {
+        "tag": "span",
+        "text": "Wiadomość SMS do Oli Nowak",
+        "style": "position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)",
+        "aria": null
+      },
+      {
+        "tag": "input",
+        "text": "",
+        "style": "flex:1;min-width:0;border:none;background:transparent;font:inherit;font-size:16px;color:#0B0D14;outline:none",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "",
+        "style": "flex:none;width:36px;height:36px;border-radius:18px;border:none;background:{{accent}};color:#FFFFFF;display:flex;align-items:center;justify-content:center;cursor:pointer",
+        "aria": "Wyślij"
+      }
+    ]
+  },
+  {
+    "screen": "S04",
+    "title": "Chatra — dodatki i Chatra HD",
+    "elements": [
+      {
+        "tag": "div",
+        "text": "Dodaj do wiadomości Zdjęcie Aparat Zaplanuj Szablony Wybrane: 4 zdjęcia Zmień Jak wysłać? Oryginał HD 38,2 MB bez kompresji, przez internet. Ola ma Chatra, więc zdjęcia pojawią się",
+        "style": "width:390px;height:844px;box-sizing:border-box;position:relative;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',Inter,system-ui,sans-serif;color:#0B0D14;background:radial-gradient(70% 40% at 0% 20%,#B9D3FF 0%,rgba(185,211,255,0) 70%),radial-gradient(60% 40% at 100% 55%,#FFD3C4 0%,rgba(255,211,196,0) 70%),radial-gradient(80% 40% at 30% 100%,#D6CBFF 0%,rgba(214,203,255,0) 70%),#EEF1F8",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "",
+        "style": "position:absolute;top:60px;left:14px;right:14px;display:flex;flex-direction:column;gap:8px",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "",
+        "style": "align-self:center;width:190px;height:48px;border-radius:24px;background:rgba(255,255,255,0.6)",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "",
+        "style": "align-self:flex-start;width:220px;height:40px;border-radius:20px;background:rgba(255,255,255,0.75);margin-top:24px",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "",
+        "style": "align-self:flex-end;width:180px;height:40px;border-radius:20px;background:{{accent}}",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "",
+        "style": "align-self:flex-end;width:240px;height:110px;border-radius:22px;background:linear-gradient(150deg,#F3C6A8,#A9C7E8)",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "",
+        "style": "position:absolute;inset:0;background:rgba(14,18,32,0.28)",
+        "aria": null
+      },
+      {
+        "tag": "section",
+        "text": "Dodaj do wiadomości Zdjęcie Aparat Zaplanuj Szablony Wybrane: 4 zdjęcia Zmień Jak wysłać? Oryginał HD 38,2 MB bez kompresji, przez internet. Ola ma Chatra, więc zdjęcia pojawią się",
+        "style": "position:absolute;left:8px;right:8px;bottom:8px;top:196px;border-radius:40px;padding:8px 18px 20px;box-sizing:border-box;display:flex;flex-direction:column;gap:14px;background:linear-gradient(170deg,rgba(255,255,255,0.86),rgba(255,255,255,0.7));backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border:1px solid rgba(255,255,255,0.95);box-shadow:inset 0 1px 0 rgba(255,255,255,1),0 -10px 40px rgba(14,18,32,0.18)",
+        "aria": "Dodaj do wiadomości"
+      },
+      {
+        "tag": "div",
+        "text": "",
+        "style": "align-self:center;width:38px;height:5px;border-radius:3px;background:rgba(11,13,20,0.22)",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Dodaj do wiadomości",
+        "style": "display:flex;align-items:center;justify-content:space-between",
+        "aria": null
+      },
+      {
+        "tag": "h2",
+        "text": "Dodaj do wiadomości",
+        "style": "margin:0;font-size:20px;font-weight:700;letter-spacing:-0.01em",
+        "aria": null
+      },
+      {
+        "tag": "a",
+        "text": "",
+        "style": "width:36px;height:36px;border-radius:18px;background:rgba(11,13,20,0.07);color:#2A3042;display:flex;align-items:center;justify-content:center",
+        "aria": "Zamknij"
+      },
+      {
+        "tag": "div",
+        "text": "Zdjęcie Aparat Zaplanuj Szablony",
+        "style": "display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "Zdjęcie",
+        "style": "height:74px;border-radius:20px;border:1.5px solid {{accent}};background:#FFFFFF;color:#0B0D14;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;font-size:12px;font-weight:600;cursor:pointer",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "Aparat",
+        "style": "height:74px;border-radius:20px;border:1px solid rgba(255,255,255,0.95);background:rgba(255,255,255,0.6);color:#0B0D14;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;font-size:12px;font-weight:600;cursor:pointer",
+        "aria": null
+      },
+      {
+        "tag": "a",
+        "text": "Zaplanuj",
+        "style": "height:74px;border-radius:20px;border:1px solid rgba(255,255,255,0.95);background:rgba(255,255,255,0.6);color:#0B0D14;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;font-size:12px;font-weight:600",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "Szablony",
+        "style": "height:74px;border-radius:20px;border:1px solid rgba(255,255,255,0.95);background:rgba(255,255,255,0.6);color:#0B0D14;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;font-size:12px;font-weight:600;cursor:pointer",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Wybrane: 4 zdjęcia Zmień",
+        "style": "display:flex;flex-direction:column;gap:8px",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Wybrane: 4 zdjęcia Zmień",
+        "style": "display:flex;justify-content:space-between;align-items:baseline",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Wybrane: 4 zdjęcia",
+        "style": "font-size:15px;font-weight:600",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "Zmień",
+        "style": "border:none;background:none;color:#0058D6;font-size:15px;min-height:32px;cursor:pointer",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "",
+        "style": "display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "",
+        "style": "height:70px;border-radius:14px;background:linear-gradient(150deg,#F3C6A8,#C98E7A)",
+        "aria": "Zdjęcie 1, wybrane"
+      },
+      {
+        "tag": "div",
+        "text": "",
+        "style": "height:70px;border-radius:14px;background:linear-gradient(150deg,#A9C7E8,#6C8FB8)",
+        "aria": "Zdjęcie 2, wybrane"
+      },
+      {
+        "tag": "div",
+        "text": "",
+        "style": "height:70px;border-radius:14px;background:linear-gradient(150deg,#C9D8B0,#8DA674)",
+        "aria": "Zdjęcie 3, wybrane"
+      },
+      {
+        "tag": "div",
+        "text": "",
+        "style": "height:70px;border-radius:14px;background:linear-gradient(150deg,#E2C7E8,#A889B8)",
+        "aria": "Zdjęcie 4, wybrane"
+      },
+      {
+        "tag": "input",
+        "text": "",
+        "style": "margin:3px 0 0;width:20px;height:20px;accent-color:{{accent}}",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Oryginał HD 38,2 MB bez kompresji, przez internet. Ola ma Chatra, więc zdjęcia pojawią się w rozmowie.",
+        "style": "display:flex;flex-direction:column;gap:2px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Oryginał HD",
+        "style": "display:flex;align-items:center;gap:6px;font-size:16px;font-weight:600",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "HD",
+        "style": "font-size:11px;font-weight:800;padding:2px 6px;border-radius:6px;background:#0B0D14;color:#FFFFFF",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "38,2 MB bez kompresji, przez internet. Ola ma Chatra, więc zdjęcia pojawią się w rozmowie.",
+        "style": "font-size:13px;line-height:18px;color:#3A4054",
+        "aria": null
+      },
+      {
+        "tag": "input",
+        "text": "",
+        "style": "margin:3px 0 0;width:20px;height:20px;accent-color:{{accent}}",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Kopia bez lokalizacji Usuniemy dane GPS. To już nie będzie identyczny plik.",
+        "style": "display:flex;flex-direction:column;gap:2px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Kopia bez lokalizacji",
+        "style": "font-size:16px;font-weight:600",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Usuniemy dane GPS. To już nie będzie identyczny plik.",
+        "style": "font-size:13px;line-height:18px;color:#3A4054",
+        "aria": null
+      },
+      {
+        "tag": "input",
+        "text": "",
+        "style": "margin:3px 0 0;width:20px;height:20px;accent-color:{{accent}}",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "MMS Pomniejszona kopia w limicie operatora. Część szczegółów przepadnie.",
+        "style": "display:flex;flex-direction:column;gap:2px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "MMS",
+        "style": "font-size:16px;font-weight:600",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Pomniejszona kopia w limicie operatora. Część szczegółów przepadnie.",
+        "style": "font-size:13px;line-height:18px;color:#3A4054",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "",
+        "style": "flex:1",
+        "aria": null
+      },
+      {
+        "tag": "a",
+        "text": "Wyślij 4 zdjęcia w oryginale",
+        "style": "height:54px;border-radius:27px;background:{{accent}};color:#FFFFFF;font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 1px 0 rgba(255,255,255,0.45),0 10px 24px rgba(10,60,160,0.26)",
+        "aria": null
+      }
+    ]
+  },
+  {
+    "screen": "S05",
+    "title": "Chatra — zaplanuj wysyłkę",
+    "elements": [
+      {
+        "tag": "div",
+        "text": "Zaplanuj wysyłkę Do: Ola Nowak Przypomnienie: dziś o 18:00 u Ani. Wezmę wino! Jutro 8:00 Sob. 10:00 Pon. 9:00 Inny… Data sob., 31 paź 2026 Godzina 10:00 Wyślij z SIM 1 · Prywatna S",
+        "style": "width:390px;height:844px;box-sizing:border-box;position:relative;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',Inter,system-ui,sans-serif;color:#0B0D14;background:radial-gradient(70% 40% at 0% 20%,#B9D3FF 0%,rgba(185,211,255,0) 70%),radial-gradient(60% 40% at 100% 55%,#FFD3C4 0%,rgba(255,211,196,0) 70%),radial-gradient(80% 40% at 30% 100%,#D6CBFF 0%,rgba(214,203,255,0) 70%),#EEF1F8",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "",
+        "style": "position:absolute;top:60px;left:14px;right:14px;display:flex;flex-direction:column;gap:8px",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "",
+        "style": "align-self:center;width:190px;height:48px;border-radius:24px;background:rgba(255,255,255,0.6)",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "",
+        "style": "align-self:flex-start;width:220px;height:40px;border-radius:20px;background:rgba(255,255,255,0.75);margin-top:20px",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "",
+        "style": "position:absolute;inset:0;background:rgba(14,18,32,0.28)",
+        "aria": null
+      },
+      {
+        "tag": "section",
+        "text": "Zaplanuj wysyłkę Do: Ola Nowak Przypomnienie: dziś o 18:00 u Ani. Wezmę wino! Jutro 8:00 Sob. 10:00 Pon. 9:00 Inny… Data sob., 31 paź 2026 Godzina 10:00 Wyślij z SIM 1 · Prywatna S",
+        "style": "position:absolute;left:8px;right:8px;bottom:8px;top:120px;border-radius:40px;padding:8px 18px 20px;box-sizing:border-box;display:flex;flex-direction:column;gap:14px;background:linear-gradient(170deg,rgba(255,255,255,0.86),rgba(255,255,255,0.7));backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border:1px solid rgba(255,255,255,0.95);box-shadow:inset 0 1px 0 rgba(255,255,255,1),0 -10px 40px rgba(14,18,32,0.18)",
+        "aria": "Zaplanuj wysyłkę"
+      },
+      {
+        "tag": "div",
+        "text": "",
+        "style": "align-self:center;width:38px;height:5px;border-radius:3px;background:rgba(11,13,20,0.22)",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Zaplanuj wysyłkę",
+        "style": "display:flex;align-items:center;justify-content:space-between",
+        "aria": null
+      },
+      {
+        "tag": "a",
+        "text": "",
+        "style": "width:36px;height:36px;border-radius:18px;background:rgba(11,13,20,0.07);color:#2A3042;display:flex;align-items:center;justify-content:center",
+        "aria": "Wróć"
+      },
+      {
+        "tag": "h2",
+        "text": "Zaplanuj wysyłkę",
+        "style": "margin:0;font-size:17px;font-weight:700",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "",
+        "style": "width:36px",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Do: Ola Nowak Przypomnienie: dziś o 18:00 u Ani. Wezmę wino!",
+        "style": "padding:12px 14px;border-radius:18px;background:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.95);display:flex;flex-direction:column;gap:4px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Do: Ola Nowak",
+        "style": "font-size:12px;font-weight:600;color:#3A4054;text-transform:uppercase;letter-spacing:0.04em",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Przypomnienie: dziś o 18:00 u Ani. Wezmę wino!",
+        "style": "font-size:15px;line-height:20px",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Jutro 8:00 Sob. 10:00 Pon. 9:00 Inny…",
+        "style": "display:flex;gap:6px;flex-wrap:wrap",
+        "aria": "Szybki wybór terminu"
+      },
+      {
+        "tag": "button",
+        "text": "Jutro 8:00",
+        "style": "height:36px;padding:0 14px;border-radius:18px;border:1px solid rgba(255,255,255,0.95);background:rgba(255,255,255,0.6);font-size:14px;font-weight:500;color:#0B0D14;cursor:pointer",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "Sob. 10:00",
+        "style": "height:36px;padding:0 14px;border-radius:18px;border:none;background:{{accent}};font-size:14px;font-weight:600;color:#FFFFFF;cursor:pointer",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "Pon. 9:00",
+        "style": "height:36px;padding:0 14px;border-radius:18px;border:1px solid rgba(255,255,255,0.95);background:rgba(255,255,255,0.6);font-size:14px;font-weight:500;color:#0B0D14;cursor:pointer",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "Inny…",
+        "style": "height:36px;padding:0 14px;border-radius:18px;border:1px solid rgba(255,255,255,0.95);background:rgba(255,255,255,0.6);font-size:14px;font-weight:500;color:#0B0D14;cursor:pointer",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Data sob., 31 paź 2026 Godzina 10:00 Wyślij z SIM 1 · Prywatna SIM 2 · Praca",
+        "style": "border-radius:18px;background:#FFFFFF;overflow:hidden",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Data sob., 31 paź 2026",
+        "style": "display:flex;align-items:center;justify-content:space-between;padding:0 14px;height:50px;border-bottom:1px solid rgba(11,13,20,0.07)",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Data",
+        "style": "font-size:16px",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "sob., 31 paź 2026",
+        "style": "height:34px;padding:0 12px;border-radius:10px;border:none;background:rgba(10,108,255,0.1);color:#0050C8;font-size:16px;font-weight:600;cursor:pointer",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Godzina 10:00",
+        "style": "display:flex;align-items:center;justify-content:space-between;padding:0 14px;height:50px;border-bottom:1px solid rgba(11,13,20,0.07)",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Godzina",
+        "style": "font-size:16px",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "10:00",
+        "style": "height:34px;padding:0 12px;border-radius:10px;border:none;background:rgba(10,108,255,0.1);color:#0050C8;font-size:16px;font-weight:600;cursor:pointer;font-variant-numeric:tabular-nums",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Wyślij z SIM 1 · Prywatna SIM 2 · Praca",
+        "style": "display:flex;align-items:center;justify-content:space-between;padding:0 14px;height:50px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Wyślij z",
+        "style": "font-size:16px",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "SIM 1 · Prywatna SIM 2 · Praca",
+        "style": "display:flex;gap:3px;padding:3px;border-radius:12px;background:rgba(11,13,20,0.06)",
+        "aria": "Karta SIM"
+      },
+      {
+        "tag": "button",
+        "text": "SIM 1 · Prywatna",
+        "style": "height:30px;padding:0 10px;border-radius:9px;border:none;background:#FFFFFF;font-size:13px;font-weight:600;color:#0B0D14;box-shadow:0 1px 4px rgba(27,35,74,0.15);cursor:pointer",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "SIM 2 · Praca",
+        "style": "height:30px;padding:0 10px;border-radius:9px;border:none;background:transparent;font-size:13px;font-weight:500;color:#2A3042;cursor:pointer",
+        "aria": null
+      },
+      {
+        "tag": "input",
+        "text": "",
+        "style": "margin:0;width:20px;height:20px;accent-color:{{accent}}",
+        "aria": null
+      },
+      {
+        "tag": "input",
+        "text": "",
+        "style": "margin:0;width:20px;height:20px;accent-color:{{accent}}",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Wiadomość wyśle ten telefon. Musi być włączony i mieć zasięg sieci komórkowej.",
+        "style": "display:flex;gap:10px;align-items:flex-start;padding:2px 4px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Wiadomość wyśle ten telefon. Musi być włączony i mieć zasięg sieci komórkowej.",
+        "style": "font-size:13px;line-height:18px;color:#3A4054",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "",
+        "style": "flex:1",
+        "aria": null
+      },
+      {
+        "tag": "a",
+        "text": "Zaplanuj na sob., 10:00",
+        "style": "height:54px;border-radius:27px;background:{{accent}};color:#FFFFFF;font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 1px 0 rgba(255,255,255,0.45),0 10px 24px rgba(10,60,160,0.26)",
+        "aria": null
+      }
+    ]
+  },
+  {
+    "screen": "S06",
+    "title": "Chatra — zaplanowane",
+    "elements": [
+      {
+        "tag": "div",
+        "text": "Zaplanowane Wysyła ten telefon — musi być włączony i w zasięgu. Wymaga decyzji Tomek Wiśniewski Pamiętaj o kluczach do piwnicy. Miało wyjść śr., 28 paź, 7:30. Telefon był wyłączony",
+        "style": "width:390px;height:844px;box-sizing:border-box;position:relative;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',Inter,system-ui,sans-serif;color:#0B0D14;background:radial-gradient(65% 38% at 92% 6%,#9CC3FF 0%,rgba(156,195,255,0) 70%),radial-gradient(55% 35% at 0% 40%,#FFC2AE 0%,rgba(255,194,174,0) 70%),radial-gradient(70% 40% at 90% 85%,#CDBFFF 0%,rgba(205,191,255,0) 70%),#EDF0F7",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Zaplanowane Wysyła ten telefon — musi być włączony i w zasięgu. Wymaga decyzji Tomek Wiśniewski Pamiętaj o kluczach do piwnicy. Miało wyjść śr., 28 paź, 7:30. Telefon był wyłączony",
+        "style": "padding:52px 16px 0;display:flex;flex-direction:column;gap:12px",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Zaplanowane Wysyła ten telefon — musi być włączony i w zasięgu.",
+        "style": "padding:0 4px;display:flex;flex-direction:column;gap:4px",
+        "aria": null
+      },
+      {
+        "tag": "h1",
+        "text": "Zaplanowane",
+        "style": "margin:0;font-size:34px;line-height:41px;font-weight:700;letter-spacing:-0.02em",
+        "aria": null
+      },
+      {
+        "tag": "p",
+        "text": "Wysyła ten telefon — musi być włączony i w zasięgu.",
+        "style": "margin:0;font-size:14px;line-height:19px;color:#3A4054",
+        "aria": null
+      },
+      {
+        "tag": "section",
+        "text": "Wymaga decyzji Tomek Wiśniewski Pamiętaj o kluczach do piwnicy. Miało wyjść śr., 28 paź, 7:30. Telefon był wyłączony — nic nie zostało wysłane. Wyślij teraz Zmień termin",
+        "style": "border-radius:26px;padding:14px 16px;display:flex;flex-direction:column;gap:10px;background:linear-gradient(160deg,rgba(255,244,236,0.92),rgba(255,255,255,0.62));backdrop-filter:blur(28px) saturate(170%);-webkit-backdrop-filter:blur(28px) saturate(170%);border:1px solid rgba(255,255,255,0.9);box-shadow:inset 0 1px 0 rgba(255,255,255,0.95),0 10px 30px rgba(27,35,74,0.12)",
+        "aria": "Wymaga decyzji"
+      },
+      {
+        "tag": "div",
+        "text": "Wymaga decyzji",
+        "style": "display:flex;align-items:center;gap:8px;color:#9A3A0B;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Tomek Wiśniewski Pamiętaj o kluczach do piwnicy. Miało wyjść śr., 28 paź, 7:30. Telefon był wyłączony — nic nie zostało wysłane.",
+        "style": "display:flex;flex-direction:column;gap:3px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Tomek Wiśniewski",
+        "style": "font-size:16px;font-weight:600",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Pamiętaj o kluczach do piwnicy.",
+        "style": "font-size:15px;line-height:20px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Miało wyjść śr., 28 paź, 7:30. Telefon był wyłączony — nic nie zostało wysłane.",
+        "style": "font-size:13px;line-height:18px;color:#3A4054",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Wyślij teraz Zmień termin",
+        "style": "display:flex;gap:8px",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "Wyślij teraz",
+        "style": "flex:1;height:44px;border-radius:22px;border:none;background:{{accent}};color:#FFFFFF;font-size:15px;font-weight:600;cursor:pointer",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "Zmień termin",
+        "style": "flex:1;height:44px;border-radius:22px;border:1px solid rgba(255,255,255,0.95);background:rgba(255,255,255,0.75);color:#0B0D14;font-size:15px;font-weight:600;cursor:pointer",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "",
+        "style": "flex:none;width:44px;height:44px;border-radius:22px;border:1px solid rgba(255,255,255,0.95);background:rgba(255,255,255,0.75);color:#A3141B;display:flex;align-items:center;justify-content:center;cursor:pointer",
+        "aria": "Usuń zaplanowaną wiadomość"
+      },
+      {
+        "tag": "section",
+        "text": "Czeka · 4 pt. 8:00 Mama Wszystkiego najlepszego z okazji imienin! 30 paź · SIM 1 · SMS pt. 20:00 Brygada rowerowa Jutro 9:00 pod mostem, nie spóźnijcie się! 30 paź · SIM 1 · grupow",
+        "style": "border-radius:26px;overflow:hidden;background:linear-gradient(160deg,rgba(255,255,255,0.78),rgba(255,255,255,0.52));backdrop-filter:blur(28px) saturate(170%);-webkit-backdrop-filter:blur(28px) saturate(170%);border:1px solid rgba(255,255,255,0.85);box-shadow:inset 0 1px 0 rgba(255,255,255,0.95),0 10px 30px rgba(27,35,74,0.10)",
+        "aria": "Czeka na wysłanie"
+      },
+      {
+        "tag": "h2",
+        "text": "Czeka · 4",
+        "style": "margin:0;padding:12px 18px 4px;font-size:13px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:#3A4054",
+        "aria": null
+      },
+      {
+        "tag": "a",
+        "text": "pt. 8:00 Mama Wszystkiego najlepszego z okazji imienin! 30 paź · SIM 1 · SMS",
+        "style": "display:flex;gap:12px;padding:10px 16px;color:#0B0D14;align-items:flex-start",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "pt. 8:00",
+        "style": "flex:none;width:52px;display:flex;flex-direction:column;align-items:center;padding-top:2px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "pt.",
+        "style": "font-size:12px;font-weight:600;color:#3A4054;text-transform:uppercase",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "8:00",
+        "style": "font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;line-height:24px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Mama Wszystkiego najlepszego z okazji imienin! 30 paź · SIM 1 · SMS",
+        "style": "flex:1;min-width:0;display:flex;flex-direction:column;gap:2px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Mama",
+        "style": "font-size:16px;font-weight:600",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Wszystkiego najlepszego z okazji imienin!",
+        "style": "font-size:14px;line-height:19px;color:#2A3042;white-space:nowrap;overflow:hidden;text-overflow:ellipsis",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "30 paź · SIM 1 · SMS",
+        "style": "font-size:12px;color:#3A4054",
+        "aria": null
+      },
+      {
+        "tag": "a",
+        "text": "pt. 20:00 Brygada rowerowa Jutro 9:00 pod mostem, nie spóźnijcie się! 30 paź · SIM 1 · grupowy MMS, 4 osoby",
+        "style": "display:flex;gap:12px;padding:10px 16px;color:#0B0D14;align-items:flex-start;border-top:1px solid rgba(11,13,20,0.06)",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "pt. 20:00",
+        "style": "flex:none;width:52px;display:flex;flex-direction:column;align-items:center;padding-top:2px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "pt.",
+        "style": "font-size:12px;font-weight:600;color:#3A4054;text-transform:uppercase",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "20:00",
+        "style": "font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;line-height:24px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Brygada rowerowa Jutro 9:00 pod mostem, nie spóźnijcie się! 30 paź · SIM 1 · grupowy MMS, 4 osoby",
+        "style": "flex:1;min-width:0;display:flex;flex-direction:column;gap:2px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Brygada rowerowa",
+        "style": "font-size:16px;font-weight:600",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Jutro 9:00 pod mostem, nie spóźnijcie się!",
+        "style": "font-size:14px;line-height:19px;color:#2A3042;white-space:nowrap;overflow:hidden;text-overflow:ellipsis",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "30 paź · SIM 1 · grupowy MMS, 4 osoby",
+        "style": "font-size:12px;color:#3A4054",
+        "aria": null
+      },
+      {
+        "tag": "a",
+        "text": "sob. 10:00 Ola Nowak Przypomnienie: dziś o 18:00 u Ani. Wezmę wino! 31 paź · SIM 1 · SMS",
+        "style": "display:flex;gap:12px;padding:10px 16px;color:#0B0D14;align-items:flex-start;border-top:1px solid rgba(11,13,20,0.06)",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "sob. 10:00",
+        "style": "flex:none;width:52px;display:flex;flex-direction:column;align-items:center;padding-top:2px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "sob.",
+        "style": "font-size:12px;font-weight:600;color:#3A4054;text-transform:uppercase",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "10:00",
+        "style": "font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;line-height:24px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Ola Nowak Przypomnienie: dziś o 18:00 u Ani. Wezmę wino! 31 paź · SIM 1 · SMS",
+        "style": "flex:1;min-width:0;display:flex;flex-direction:column;gap:2px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Ola Nowak",
+        "style": "font-size:16px;font-weight:600",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Przypomnienie: dziś o 18:00 u Ani. Wezmę wino!",
+        "style": "font-size:14px;line-height:19px;color:#2A3042;white-space:nowrap;overflow:hidden;text-overflow:ellipsis",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "31 paź · SIM 1 · SMS",
+        "style": "font-size:12px;color:#3A4054",
+        "aria": null
+      },
+      {
+        "tag": "a",
+        "text": "pon. 9:00 Marek (praca) Raport jest na dysku, omówimy po spotkaniu. 2 lis · SIM 2 Praca · SMS",
+        "style": "display:flex;gap:12px;padding:10px 16px 14px;color:#0B0D14;align-items:flex-start;border-top:1px solid rgba(11,13,20,0.06)",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "pon. 9:00",
+        "style": "flex:none;width:52px;display:flex;flex-direction:column;align-items:center;padding-top:2px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "pon.",
+        "style": "font-size:12px;font-weight:600;color:#3A4054;text-transform:uppercase",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "9:00",
+        "style": "font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;line-height:24px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Marek (praca) Raport jest na dysku, omówimy po spotkaniu. 2 lis · SIM 2 Praca · SMS",
+        "style": "flex:1;min-width:0;display:flex;flex-direction:column;gap:2px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Marek (praca)",
+        "style": "font-size:16px;font-weight:600",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Raport jest na dysku, omówimy po spotkaniu.",
+        "style": "font-size:14px;line-height:19px;color:#2A3042;white-space:nowrap;overflow:hidden;text-overflow:ellipsis",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "2 lis · SIM 2 Praca · SMS",
+        "style": "font-size:12px;color:#3A4054",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Wysłane ostatnio: Ola Nowak, wt. 12:00 — doręczono.",
+        "style": "padding:2px 6px;font-size:13px;color:#3A4054",
+        "aria": null
+      },
+      {
+        "tag": "nav",
+        "text": "Rozmowy Zaplanowane Ustawienia",
+        "style": "position:absolute;left:16px;right:16px;bottom:26px;display:flex;gap:10px;align-items:center",
+        "aria": "Główne sekcje"
+      },
+      {
+        "tag": "div",
+        "text": "Rozmowy Zaplanowane Ustawienia",
+        "style": "flex:1;height:62px;border-radius:31px;padding:4px;box-sizing:border-box;display:flex;gap:2px;background:linear-gradient(160deg,rgba(255,255,255,0.72),rgba(255,255,255,0.42));backdrop-filter:blur(30px) saturate(180%);-webkit-backdrop-filter:blur(30px) saturate(180%);border:1px solid rgba(255,255,255,0.85);box-shadow:inset 0 1px 0 rgba(255,255,255,0.95),0 12px 32px rgba(27,35,74,0.18)",
+        "aria": null
+      },
+      {
+        "tag": "a",
+        "text": "Rozmowy",
+        "style": "flex:1;border-radius:27px;color:#2A3042;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:11px;font-weight:500",
+        "aria": null
+      },
+      {
+        "tag": "a",
+        "text": "Zaplanowane",
+        "style": "flex:1;border-radius:27px;background:rgba(255,255,255,0.85);color:{{accent}};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:11px;font-weight:600",
+        "aria": null
+      },
+      {
+        "tag": "a",
+        "text": "Ustawienia",
+        "style": "flex:1;border-radius:27px;color:#2A3042;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:11px;font-weight:500",
+        "aria": null
+      },
+      {
+        "tag": "a",
+        "text": "",
+        "style": "flex:none;width:62px;height:62px;border-radius:31px;display:flex;align-items:center;justify-content:center;color:#FFFFFF;background:{{accent}};border:1px solid rgba(255,255,255,0.6);box-shadow:inset 0 1px 0 rgba(255,255,255,0.5),0 12px 28px rgba(10,60,160,0.32)",
+        "aria": "Nowa wiadomość"
+      }
+    ]
+  },
+  {
+    "screen": "S07",
+    "title": "Chatra — wyszukiwanie",
+    "elements": [
+      {
+        "tag": "div",
+        "text": "Szukaj w rozmowach Anuluj Kody Przesyłki Załączniki Od: wszyscy Kiedy: zawsze „paczk” znajdzie też „paczkę” i „PACZKA” — polskie znaki i wielkość liter nie mają znaczenia. Szukamy ",
+        "style": "width:390px;height:844px;box-sizing:border-box;position:relative;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',Inter,system-ui,sans-serif;color:#0B0D14;background:radial-gradient(65% 38% at 8% 6%,#9CC3FF 0%,rgba(156,195,255,0) 70%),radial-gradient(55% 35% at 100% 40%,#FFC2AE 0%,rgba(255,194,174,0) 70%),radial-gradient(70% 40% at 12% 90%,#CDBFFF 0%,rgba(205,191,255,0) 70%),#EDF0F7",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Szukaj w rozmowach Anuluj Kody Przesyłki Załączniki Od: wszyscy Kiedy: zawsze „paczk” znajdzie też „paczkę” i „PACZKA” — polskie znaki i wielkość liter nie mają znaczenia. Szukamy ",
+        "style": "padding:54px 16px 0;display:flex;flex-direction:column;gap:12px",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Szukaj w rozmowach Anuluj",
+        "style": "display:flex;align-items:center;gap:8px",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Szukaj w rozmowach",
+        "style": "flex:1;height:44px;border-radius:22px;display:flex;align-items:center;gap:8px;padding:0 6px 0 14px;background:linear-gradient(160deg,rgba(255,255,255,0.9),rgba(255,255,255,0.66));backdrop-filter:blur(28px) saturate(170%);-webkit-backdrop-filter:blur(28px) saturate(170%);border:1px solid rgba(255,255,255,0.95);box-shadow:inset 0 1px 0 rgba(255,255,255,0.95),0 6px 18px rgba(27,35,74,0.12)",
+        "aria": null
+      },
+      {
+        "tag": "input",
+        "text": "",
+        "style": "flex:1;min-width:0;border:none;background:transparent;font:inherit;font-size:17px;color:#0B0D14;outline:none",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "",
+        "style": "width:32px;height:32px;border-radius:16px;border:none;background:rgba(11,13,20,0.1);color:#2A3042;display:flex;align-items:center;justify-content:center;cursor:pointer",
+        "aria": "Wyczyść"
+      },
+      {
+        "tag": "a",
+        "text": "Anuluj",
+        "style": "min-height:44px;display:flex;align-items:center;padding:0 4px;font-size:17px;color:#0058D6",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Kody Przesyłki Załączniki Od: wszyscy Kiedy: zawsze",
+        "style": "display:flex;flex-wrap:wrap;gap:6px",
+        "aria": "Filtry"
+      },
+      {
+        "tag": "button",
+        "text": "Kody",
+        "style": "height:34px;padding:0 12px;border-radius:17px;border:1px solid rgba(255,255,255,0.95);background:rgba(255,255,255,0.6);font-size:14px;color:#0B0D14;cursor:pointer",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "Przesyłki",
+        "style": "height:34px;padding:0 12px 0 8px;border-radius:17px;border:none;background:#0B0D14;font-size:14px;font-weight:600;color:#FFFFFF;display:flex;align-items:center;gap:5px;cursor:pointer",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "Załączniki",
+        "style": "height:34px;padding:0 12px;border-radius:17px;border:1px solid rgba(255,255,255,0.95);background:rgba(255,255,255,0.6);font-size:14px;color:#0B0D14;cursor:pointer",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "Od: wszyscy",
+        "style": "height:34px;padding:0 10px 0 12px;border-radius:17px;border:1px solid rgba(255,255,255,0.95);background:rgba(255,255,255,0.6);font-size:14px;color:#0B0D14;display:flex;align-items:center;gap:4px;cursor:pointer",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "Kiedy: zawsze",
+        "style": "height:34px;padding:0 10px 0 12px;border-radius:17px;border:1px solid rgba(255,255,255,0.95);background:rgba(255,255,255,0.6);font-size:14px;color:#0B0D14;display:flex;align-items:center;gap:4px;cursor:pointer",
+        "aria": null
+      },
+      {
+        "tag": "p",
+        "text": "„paczk” znajdzie też „paczkę” i „PACZKA” — polskie znaki i wielkość liter nie mają znaczenia. Szukamy tylko na tym telefonie.",
+        "style": "margin:0 4px;font-size:13px;line-height:18px;color:#3A4054",
+        "aria": null
+      },
+      {
+        "tag": "section",
+        "text": "Kod odbioru · Paczka24 482 915 Kopiuj Automat KRA01M · ul. Długa 14 Kopiuj",
+        "style": "border-radius:24px;padding:6px;display:flex;flex-direction:column;gap:4px;background:linear-gradient(160deg,rgba(255,255,255,0.78),rgba(255,255,255,0.52));backdrop-filter:blur(28px) saturate(170%);-webkit-backdrop-filter:blur(28px) saturate(170%);border:1px solid rgba(255,255,255,0.85);box-shadow:inset 0 1px 0 rgba(255,255,255,0.95),0 10px 30px rgba(27,35,74,0.10)",
+        "aria": "Szybkie trafienia"
+      },
+      {
+        "tag": "div",
+        "text": "Kod odbioru · Paczka24 482 915 Kopiuj",
+        "style": "display:flex;align-items:center;gap:12px;padding:8px 8px 8px 12px;border-radius:18px;background:#FFFFFF",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Kod odbioru · Paczka24 482 915",
+        "style": "flex:1;display:flex;flex-direction:column",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Kod odbioru · Paczka24",
+        "style": "font-size:12px;font-weight:600;color:#3A4054;text-transform:uppercase;letter-spacing:0.04em",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "482 915",
+        "style": "font-size:24px;font-weight:700;letter-spacing:0.06em;font-variant-numeric:tabular-nums",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "Kopiuj",
+        "style": "height:40px;padding:0 14px;border-radius:20px;border:none;background:{{accent}};color:#FFFFFF;font-size:15px;font-weight:600;display:flex;align-items:center;gap:6px;cursor:pointer",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Automat KRA01M · ul. Długa 14 Kopiuj",
+        "style": "display:flex;align-items:center;gap:12px;padding:8px 8px 8px 12px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Automat KRA01M · ul. Długa 14",
+        "style": "flex:1;display:flex;flex-direction:column",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Automat",
+        "style": "font-size:12px;font-weight:600;color:#3A4054;text-transform:uppercase;letter-spacing:0.04em",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "KRA01M · ul. Długa 14",
+        "style": "font-size:16px;font-weight:600",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "Kopiuj",
+        "style": "height:40px;padding:0 14px;border-radius:20px;border:1px solid rgba(255,255,255,0.95);background:rgba(255,255,255,0.8);color:#0B0D14;font-size:15px;font-weight:600;cursor:pointer",
+        "aria": null
+      },
+      {
+        "tag": "section",
+        "text": "Wiadomości · 4 Paczka24 dziś Twoja paczk a czeka w automacie KRA01M. Kod odbioru: 482 915 +48 601 234 567 dziś Tu kurier, mam dla Pana paczk ę, będę za 20 min. Ola Nowak 22 paź Odb",
+        "style": "border-radius:24px;overflow:hidden;background:linear-gradient(160deg,rgba(255,255,255,0.78),rgba(255,255,255,0.52));backdrop-filter:blur(28px) saturate(170%);-webkit-backdrop-filter:blur(28px) saturate(170%);border:1px solid rgba(255,255,255,0.85);box-shadow:inset 0 1px 0 rgba(255,255,255,0.95),0 10px 30px rgba(27,35,74,0.10)",
+        "aria": "Wiadomości"
+      },
+      {
+        "tag": "h2",
+        "text": "Wiadomości · 4",
+        "style": "margin:0;padding:12px 16px 2px;font-size:13px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:#3A4054",
+        "aria": null
+      },
+      {
+        "tag": "a",
+        "text": "Paczka24 dziś Twoja paczk a czeka w automacie KRA01M. Kod odbioru: 482 915",
+        "style": "display:flex;flex-direction:column;gap:2px;padding:9px 16px;color:#0B0D14",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Paczka24 dziś",
+        "style": "display:flex;justify-content:space-between",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Paczka24",
+        "style": "font-size:15px;font-weight:600",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "dziś",
+        "style": "font-size:13px;color:#3A4054",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Twoja paczk a czeka w automacie KRA01M. Kod odbioru: 482 915",
+        "style": "font-size:14px;line-height:19px;color:#2A3042",
+        "aria": null
+      },
+      {
+        "tag": "a",
+        "text": "+48 601 234 567 dziś Tu kurier, mam dla Pana paczk ę, będę za 20 min.",
+        "style": "display:flex;flex-direction:column;gap:2px;padding:9px 16px;color:#0B0D14;border-top:1px solid rgba(11,13,20,0.06)",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "+48 601 234 567 dziś",
+        "style": "display:flex;justify-content:space-between",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "+48 601 234 567",
+        "style": "font-size:15px;font-weight:600",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "dziś",
+        "style": "font-size:13px;color:#3A4054",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Tu kurier, mam dla Pana paczk ę, będę za 20 min.",
+        "style": "font-size:14px;line-height:19px;color:#2A3042",
+        "aria": null
+      },
+      {
+        "tag": "a",
+        "text": "Ola Nowak 22 paź Odbierzesz paczk ę ode mnie w piątek?",
+        "style": "display:flex;flex-direction:column;gap:2px;padding:9px 16px;color:#0B0D14;border-top:1px solid rgba(11,13,20,0.06)",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Ola Nowak 22 paź",
+        "style": "display:flex;justify-content:space-between",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Ola Nowak",
+        "style": "font-size:15px;font-weight:600",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "22 paź",
+        "style": "font-size:13px;color:#3A4054",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Odbierzesz paczk ę ode mnie w piątek?",
+        "style": "font-size:14px;line-height:19px;color:#2A3042",
+        "aria": null
+      },
+      {
+        "tag": "a",
+        "text": "Paczka24 14 wrz PACZK A DORĘCZONA. Dziękujemy!",
+        "style": "display:flex;flex-direction:column;gap:2px;padding:9px 16px 13px;color:#0B0D14;border-top:1px solid rgba(11,13,20,0.06)",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Paczka24 14 wrz",
+        "style": "display:flex;justify-content:space-between",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Paczka24",
+        "style": "font-size:15px;font-weight:600",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "14 wrz",
+        "style": "font-size:13px;color:#3A4054",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "PACZK A DORĘCZONA. Dziękujemy!",
+        "style": "font-size:14px;line-height:19px;color:#2A3042",
+        "aria": null
+      }
+    ]
+  },
+  {
+    "screen": "S08",
+    "title": "Chatra — nowa wiadomość",
+    "elements": [
+      {
+        "tag": "div",
+        "text": "Anuluj Nowa wiadomość Do: Mama Ola Nowak Tomek W. Dodaj odbiorcę Jak wysłać do 3 osób? Wyślij osobno do każdego Każdy dostanie własny SMS. Odpowiedzi wrócą do osobnych rozmów. Nikt",
+        "style": "width:390px;height:844px;box-sizing:border-box;position:relative;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',Inter,system-ui,sans-serif;color:#0B0D14;background:radial-gradient(65% 38% at 8% 6%,#9CC3FF 0%,rgba(156,195,255,0) 70%),radial-gradient(55% 35% at 100% 50%,#FFC2AE 0%,rgba(255,194,174,0) 70%),radial-gradient(70% 40% at 12% 95%,#CDBFFF 0%,rgba(205,191,255,0) 70%),#EDF0F7",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Anuluj Nowa wiadomość Do: Mama Ola Nowak Tomek W. Dodaj odbiorcę Jak wysłać do 3 osób? Wyślij osobno do każdego Każdy dostanie własny SMS. Odpowiedzi wrócą do osobnych rozmów. Nikt",
+        "style": "padding:20px 16px 0;display:flex;flex-direction:column;gap:12px",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "",
+        "style": "align-self:center;width:38px;height:5px;border-radius:3px;background:rgba(11,13,20,0.22)",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Anuluj Nowa wiadomość",
+        "style": "display:flex;align-items:center;justify-content:space-between;margin-top:16px",
+        "aria": null
+      },
+      {
+        "tag": "a",
+        "text": "Anuluj",
+        "style": "min-height:44px;display:flex;align-items:center;font-size:17px;color:#0058D6;width:70px",
+        "aria": null
+      },
+      {
+        "tag": "h1",
+        "text": "Nowa wiadomość",
+        "style": "margin:0;font-size:17px;font-weight:700",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "",
+        "style": "width:70px",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Do: Mama Ola Nowak Tomek W. Dodaj odbiorcę",
+        "style": "border-radius:22px;padding:8px 10px 8px 14px;display:flex;flex-wrap:wrap;align-items:center;gap:6px;background:linear-gradient(160deg,rgba(255,255,255,0.88),rgba(255,255,255,0.62));backdrop-filter:blur(28px) saturate(170%);-webkit-backdrop-filter:blur(28px) saturate(170%);border:1px solid rgba(255,255,255,0.95);box-shadow:inset 0 1px 0 rgba(255,255,255,0.95),0 6px 18px rgba(27,35,74,0.10)",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Do:",
+        "style": "font-size:16px;color:#3A4054;margin-right:2px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Mama",
+        "style": "height:30px;padding:0 6px 0 12px;border-radius:15px;background:rgba(10,108,255,0.12);color:#0050C8;font-size:15px;font-weight:600;display:flex;align-items:center;gap:2px",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "",
+        "style": "width:24px;height:24px;border:none;background:none;color:#0050C8;cursor:pointer;display:flex;align-items:center;justify-content:center",
+        "aria": "Usuń: Mama"
+      },
+      {
+        "tag": "span",
+        "text": "Ola Nowak",
+        "style": "height:30px;padding:0 6px 0 12px;border-radius:15px;background:rgba(10,108,255,0.12);color:#0050C8;font-size:15px;font-weight:600;display:flex;align-items:center;gap:2px",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "",
+        "style": "width:24px;height:24px;border:none;background:none;color:#0050C8;cursor:pointer;display:flex;align-items:center;justify-content:center",
+        "aria": "Usuń: Ola Nowak"
+      },
+      {
+        "tag": "span",
+        "text": "Tomek W.",
+        "style": "height:30px;padding:0 6px 0 12px;border-radius:15px;background:rgba(10,108,255,0.12);color:#0050C8;font-size:15px;font-weight:600;display:flex;align-items:center;gap:2px",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "",
+        "style": "width:24px;height:24px;border:none;background:none;color:#0050C8;cursor:pointer;display:flex;align-items:center;justify-content:center",
+        "aria": "Usuń: Tomek Wiśniewski"
+      },
+      {
+        "tag": "input",
+        "text": "",
+        "style": "flex:1;min-width:90px;height:30px;border:none;background:transparent;font:inherit;font-size:16px;outline:none;color:#0B0D14",
+        "aria": null
+      },
+      {
+        "tag": "input",
+        "text": "",
+        "style": "margin:2px 0 0;width:20px;height:20px;accent-color:{{accent}}",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Wyślij osobno do każdego Każdy dostanie własny SMS. Odpowiedzi wrócą do osobnych rozmów. Nikt nie zobaczy numerów pozostałych.",
+        "style": "display:flex;flex-direction:column;gap:3px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Wyślij osobno do każdego",
+        "style": "font-size:16px;font-weight:600",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Każdy dostanie własny SMS. Odpowiedzi wrócą do osobnych rozmów. Nikt nie zobaczy numerów pozostałych.",
+        "style": "font-size:13px;line-height:18px;color:#3A4054",
+        "aria": null
+      },
+      {
+        "tag": "input",
+        "text": "",
+        "style": "margin:2px 0 0;width:20px;height:20px;accent-color:{{accent}}",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Rozmowa grupowa MMS Wszyscy zobaczą odpowiedzi i swoje numery telefonów. Działanie zależy od operatorów i telefonów uczestników.",
+        "style": "display:flex;flex-direction:column;gap:3px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Rozmowa grupowa MMS",
+        "style": "font-size:16px;font-weight:600",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Wszyscy zobaczą odpowiedzi i swoje numery telefonów. Działanie zależy od operatorów i telefonów uczestników.",
+        "style": "font-size:13px;line-height:18px;color:#3A4054",
+        "aria": null
+      },
+      {
+        "tag": "section",
+        "text": "Sugerowane KZ Kasia Zielińska komórka · +48 512 408 771 M Marek (praca) służbowy · zwykle z SIM 2",
+        "style": "border-radius:22px;overflow:hidden;background:linear-gradient(160deg,rgba(255,255,255,0.78),rgba(255,255,255,0.52));backdrop-filter:blur(28px) saturate(170%);-webkit-backdrop-filter:blur(28px) saturate(170%);border:1px solid rgba(255,255,255,0.85)",
+        "aria": "Sugerowane"
+      },
+      {
+        "tag": "h2",
+        "text": "Sugerowane",
+        "style": "margin:0;padding:12px 16px 4px;font-size:13px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:#3A4054",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "KZ Kasia Zielińska komórka · +48 512 408 771",
+        "style": "width:100%;display:flex;gap:12px;align-items:center;padding:8px 16px;border:none;background:none;text-align:left;cursor:pointer;color:#0B0D14",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "KZ",
+        "style": "flex:none;width:40px;height:40px;border-radius:20px;background:linear-gradient(180deg,#E7DCF2,#CDBDE3);color:#2A1A3E;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Kasia Zielińska komórka · +48 512 408 771",
+        "style": "flex:1;display:flex;flex-direction:column",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Kasia Zielińska",
+        "style": "font-size:16px;font-weight:500",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "komórka · +48 512 408 771",
+        "style": "font-size:13px;color:#3A4054",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "M Marek (praca) służbowy · zwykle z SIM 2",
+        "style": "width:100%;display:flex;gap:12px;align-items:center;padding:8px 16px 12px;border:none;background:none;text-align:left;cursor:pointer;color:#0B0D14",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "M",
+        "style": "flex:none;width:40px;height:40px;border-radius:20px;background:linear-gradient(180deg,#D6DDEE,#B7C1D9);color:#1E2433;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Marek (praca) służbowy · zwykle z SIM 2",
+        "style": "flex:1;display:flex;flex-direction:column",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Marek (praca)",
+        "style": "font-size:16px;font-weight:500",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "służbowy · zwykle z SIM 2",
+        "style": "font-size:13px;color:#3A4054",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "SIM 1 · Prywatna 3 osobne SMS Treść wiadomości",
+        "style": "position:absolute;left:12px;right:12px;bottom:26px;display:flex;flex-direction:column;gap:8px",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "SIM 1 · Prywatna 3 osobne SMS",
+        "style": "display:flex;align-items:center;justify-content:space-between;padding:0 4px",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "SIM 1 · Prywatna",
+        "style": "height:32px;border-radius:16px;padding:0 10px 0 8px;display:flex;align-items:center;gap:6px;color:#0B0D14;font-size:13px;font-weight:600;cursor:pointer;background:linear-gradient(160deg,rgba(255,255,255,0.8),rgba(255,255,255,0.5));backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.9)",
+        "aria": "Wyślij z karty SIM 1 Prywatna, zmień"
+      },
+      {
+        "tag": "span",
+        "text": "3 osobne SMS",
+        "style": "font-size:12px;color:#2A3042",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Treść wiadomości",
+        "style": "min-height:48px;border-radius:24px;padding:4px 4px 4px 16px;box-sizing:border-box;display:flex;align-items:center;gap:8px;background:linear-gradient(160deg,rgba(255,255,255,0.88),rgba(255,255,255,0.62));backdrop-filter:blur(28px) saturate(170%);-webkit-backdrop-filter:blur(28px) saturate(170%);border:1px solid rgba(255,255,255,0.95);box-shadow:inset 0 1px 0 rgba(255,255,255,0.95),0 6px 18px rgba(27,35,74,0.12)",
+        "aria": null
+      },
+      {
+        "tag": "input",
+        "text": "",
+        "style": "flex:1;min-width:0;border:none;background:transparent;font:inherit;font-size:16px;color:#0B0D14;outline:none",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "",
+        "style": "flex:none;width:40px;height:40px;border-radius:20px;border:none;background:rgba(11,13,20,0.12);color:#3A4054;display:flex;align-items:center;justify-content:center;cursor:pointer",
+        "aria": "Wyślij"
+      }
+    ]
+  },
+  {
+    "screen": "S09",
+    "title": "Chatra — wygląd",
+    "elements": [
+      {
+        "tag": "div",
+        "text": "Wygląd Ola Nowak Dotarły, wyglądają super! To w sobotę o 18:00? Wiadomość SMS Szkło Mgła Grafit Kontrast Tryb Jasny Ciemny Auto Gęstość Standardowa Kompaktowa Rozmiar tekstu A A Og",
+        "style": "width:390px;height:844px;box-sizing:border-box;position:relative;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',Inter,system-ui,sans-serif;color:#0B0D14;background:radial-gradient(65% 38% at 8% 6%,#9CC3FF 0%,rgba(156,195,255,0) 70%),radial-gradient(55% 35% at 100% 28%,#FFC2AE 0%,rgba(255,194,174,0) 70%),radial-gradient(70% 40% at 12% 80%,#CDBFFF 0%,rgba(205,191,255,0) 70%),radial-gradient(60% 35% at 96% 98%,#9FE3DA 0%,rgba(159,227,218,0) 70%),#EDF0F7",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Wygląd Ola Nowak Dotarły, wyglądają super! To w sobotę o 18:00? Wiadomość SMS Szkło Mgła Grafit Kontrast Tryb Jasny Ciemny Auto Gęstość Standardowa Kompaktowa Rozmiar tekstu A A Og",
+        "style": "padding:50px 16px 0;display:flex;flex-direction:column;gap:12px",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Wygląd",
+        "style": "display:flex;align-items:center;gap:12px",
+        "aria": null
+      },
+      {
+        "tag": "a",
+        "text": "",
+        "style": "flex:none;width:44px;height:44px;border-radius:22px;display:flex;align-items:center;justify-content:center;color:#0B0D14;background:linear-gradient(160deg,rgba(255,255,255,0.74),rgba(255,255,255,0.44));backdrop-filter:blur(28px) saturate(170%);-webkit-backdrop-filter:blur(28px) saturate(170%);border:1px solid rgba(255,255,255,0.85);box-shadow:inset 0 1px 0 rgba(255,255,255,0.95),0 6px 18px rgba(27,35,74,0.12)",
+        "aria": "Wróć do ustawień"
+      },
+      {
+        "tag": "h1",
+        "text": "Wygląd",
+        "style": "margin:0;font-size:28px;font-weight:700;letter-spacing:-0.02em",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Ola Nowak Dotarły, wyglądają super! To w sobotę o 18:00? Wiadomość SMS",
+        "style": "height:196px;border-radius:28px;position:relative;overflow:hidden;padding:14px;box-sizing:border-box;display:flex;flex-direction:column;gap:6px;background:radial-gradient(80% 60% at 0% 0%,#9CC3FF 0%,rgba(156,195,255,0) 70%),radial-gradient(70% 60% at 100% 100%,#FFC2AE 0%,rgba(255,194,174,0) 70%),#F2F4FA;border:1px solid rgba(255,255,255,0.95);box-shadow:0 10px 30px rgba(27,35,74,0.12)",
+        "aria": "Podgląd rozmowy w wybranym wyglądzie"
+      },
+      {
+        "tag": "div",
+        "text": "Ola Nowak",
+        "style": "align-self:center;height:30px;padding:0 12px 0 4px;border-radius:15px;display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;background:rgba(255,255,255,0.7);border:1px solid rgba(255,255,255,0.95)",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "",
+        "style": "width:22px;height:22px;border-radius:11px;background:linear-gradient(180deg,#F1D9D2,#DDB8AE)",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Dotarły, wyglądają super!",
+        "style": "align-self:flex-start;padding:7px 12px;border-radius:16px 16px 16px 5px;font-size:14px;background:rgba(255,255,255,0.85);border:1px solid rgba(255,255,255,0.95)",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "To w sobotę o 18:00?",
+        "style": "align-self:flex-end;padding:7px 12px;border-radius:16px 16px 5px 16px;font-size:14px;color:#FFFFFF;background:{{accent}}",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "",
+        "style": "flex:1",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Wiadomość SMS",
+        "style": "height:34px;border-radius:17px;background:rgba(255,255,255,0.75);border:1px solid rgba(255,255,255,0.95);display:flex;align-items:center;padding:0 12px;font-size:13px;color:#3A4054",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Szkło Mgła Grafit Kontrast",
+        "style": "display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px",
+        "aria": "Kompozycja"
+      },
+      {
+        "tag": "button",
+        "text": "Szkło",
+        "style": "height:84px;border-radius:20px;border:2px solid {{accent}};background:#FFFFFF;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;color:#0B0D14;font-size:12px;font-weight:600",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "",
+        "style": "width:36px;height:36px;border-radius:18px;background:linear-gradient(135deg,#9CC3FF,#FFC2AE);border:1px solid rgba(11,13,20,0.1)",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "Mgła",
+        "style": "height:84px;border-radius:20px;border:1px solid rgba(255,255,255,0.95);background:rgba(255,255,255,0.6);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;color:#0B0D14;font-size:12px;font-weight:500",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "",
+        "style": "width:36px;height:36px;border-radius:18px;background:linear-gradient(135deg,#E4E8F2,#F7F8FC);border:1px solid rgba(11,13,20,0.1)",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "Grafit",
+        "style": "height:84px;border-radius:20px;border:1px solid rgba(255,255,255,0.95);background:rgba(255,255,255,0.6);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;color:#0B0D14;font-size:12px;font-weight:500",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "",
+        "style": "width:36px;height:36px;border-radius:18px;background:linear-gradient(135deg,#1A1F2E,#3A3F5C);border:1px solid rgba(11,13,20,0.1)",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "Kontrast",
+        "style": "height:84px;border-radius:20px;border:1px solid rgba(255,255,255,0.95);background:rgba(255,255,255,0.6);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;color:#0B0D14;font-size:12px;font-weight:500",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "",
+        "style": "width:36px;height:36px;border-radius:18px;background:linear-gradient(90deg,#000000 50%,#FFFFFF 50%);border:1px solid rgba(11,13,20,0.3)",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Tryb Jasny Ciemny Auto Gęstość Standardowa Kompaktowa Rozmiar tekstu A A Ogranicz przezroczystość Panele staną się matowe, a tekst wyraźniejszy. Zwiększ kontrast",
+        "style": "border-radius:24px;overflow:hidden;background:linear-gradient(160deg,rgba(255,255,255,0.82),rgba(255,255,255,0.58));backdrop-filter:blur(28px) saturate(170%);-webkit-backdrop-filter:blur(28px) saturate(170%);border:1px solid rgba(255,255,255,0.9);box-shadow:inset 0 1px 0 rgba(255,255,255,0.95),0 10px 30px rgba(27,35,74,0.10)",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Tryb Jasny Ciemny Auto",
+        "style": "display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 10px 8px 16px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Tryb",
+        "style": "font-size:16px",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Jasny Ciemny Auto",
+        "style": "display:flex;gap:2px;padding:3px;border-radius:12px;background:rgba(11,13,20,0.06)",
+        "aria": "Tryb kolorów"
+      },
+      {
+        "tag": "button",
+        "text": "Jasny",
+        "style": "height:32px;padding:0 12px;border-radius:9px;border:none;background:#FFFFFF;font-size:14px;font-weight:600;color:#0B0D14;box-shadow:0 1px 4px rgba(27,35,74,0.15);cursor:pointer",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "Ciemny",
+        "style": "height:32px;padding:0 12px;border-radius:9px;border:none;background:transparent;font-size:14px;color:#2A3042;cursor:pointer",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "Auto",
+        "style": "height:32px;padding:0 12px;border-radius:9px;border:none;background:transparent;font-size:14px;color:#2A3042;cursor:pointer",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Gęstość Standardowa Kompaktowa",
+        "style": "display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 10px 8px 16px;border-top:1px solid rgba(11,13,20,0.06)",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Gęstość",
+        "style": "font-size:16px",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Standardowa Kompaktowa",
+        "style": "display:flex;gap:2px;padding:3px;border-radius:12px;background:rgba(11,13,20,0.06)",
+        "aria": "Gęstość listy"
+      },
+      {
+        "tag": "button",
+        "text": "Standardowa",
+        "style": "height:32px;padding:0 12px;border-radius:9px;border:none;background:#FFFFFF;font-size:14px;font-weight:600;color:#0B0D14;box-shadow:0 1px 4px rgba(27,35,74,0.15);cursor:pointer",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "Kompaktowa",
+        "style": "height:32px;padding:0 12px;border-radius:9px;border:none;background:transparent;font-size:14px;color:#2A3042;cursor:pointer",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Rozmiar tekstu A A",
+        "style": "display:flex;flex-direction:column;gap:4px;padding:10px 16px;border-top:1px solid rgba(11,13,20,0.06)",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "A A",
+        "style": "display:flex;align-items:center;gap:10px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "A",
+        "style": "font-size:13px;font-weight:600",
+        "aria": null
+      },
+      {
+        "tag": "input",
+        "text": "",
+        "style": "flex:1;accent-color:{{accent}}",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "A",
+        "style": "font-size:21px;font-weight:600",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Ogranicz przezroczystość Panele staną się matowe, a tekst wyraźniejszy.",
+        "style": "display:flex;align-items:center;gap:12px;padding:10px 16px;border-top:1px solid rgba(11,13,20,0.06)",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Ogranicz przezroczystość Panele staną się matowe, a tekst wyraźniejszy.",
+        "style": "flex:1;display:flex;flex-direction:column;gap:2px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Ogranicz przezroczystość",
+        "style": "font-size:16px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Panele staną się matowe, a tekst wyraźniejszy.",
+        "style": "font-size:13px;line-height:17px;color:#3A4054",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "",
+        "style": "flex:none;width:52px;height:32px;border-radius:16px;border:none;padding:2px;background:rgba(11,13,20,0.18);display:flex;justify-content:flex-start;cursor:pointer",
+        "aria": "Ogranicz przezroczystość"
+      },
+      {
+        "tag": "span",
+        "text": "",
+        "style": "width:28px;height:28px;border-radius:14px;background:#FFFFFF;box-shadow:0 2px 6px rgba(0,0,0,0.2)",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Zwiększ kontrast",
+        "style": "display:flex;align-items:center;gap:12px;padding:10px 16px 12px;border-top:1px solid rgba(11,13,20,0.06)",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Zwiększ kontrast",
+        "style": "flex:1;font-size:16px",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "",
+        "style": "flex:none;width:52px;height:32px;border-radius:16px;border:none;padding:2px;background:rgba(11,13,20,0.18);display:flex;justify-content:flex-start;cursor:pointer",
+        "aria": "Zwiększ kontrast"
+      },
+      {
+        "tag": "span",
+        "text": "",
+        "style": "width:28px;height:28px;border-radius:14px;background:#FFFFFF;box-shadow:0 2px 6px rgba(0,0,0,0.2)",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "Przywróć ustawienia domyślne",
+        "style": "align-self:center;min-height:44px;padding:0 16px;border:none;background:none;color:#0058D6;font-size:16px;cursor:pointer",
+        "aria": null
+      }
+    ]
+  },
+  {
+    "screen": "S10",
+    "title": "Chatra — ustawienia",
+    "elements": [
+      {
+        "tag": "div",
+        "text": "Ustawienia Chatra Pro Jednorazowo [CENA]. Dodatkowe kompozycje i reguły porządku. Podstawy zostają darmowe. Więcej Wysyłanie Karty SIM SIM 1 Prywatna — domyślna · SIM 2 Praca Opóźn",
+        "style": "width:390px;height:844px;box-sizing:border-box;position:relative;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',Inter,system-ui,sans-serif;color:#0B0D14;background:radial-gradient(65% 38% at 92% 4%,#9CC3FF 0%,rgba(156,195,255,0) 70%),radial-gradient(55% 35% at 0% 35%,#FFC2AE 0%,rgba(255,194,174,0) 70%),radial-gradient(70% 40% at 100% 75%,#CDBFFF 0%,rgba(205,191,255,0) 70%),radial-gradient(60% 35% at 0% 100%,#9FE3DA 0%,rgba(159,227,218,0) 70%),#EDF0F7",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Ustawienia Chatra Pro Jednorazowo [CENA]. Dodatkowe kompozycje i reguły porządku. Podstawy zostają darmowe. Więcej Wysyłanie Karty SIM SIM 1 Prywatna — domyślna · SIM 2 Praca Opóźn",
+        "style": "padding:52px 16px 0;display:flex;flex-direction:column;gap:12px",
+        "aria": null
+      },
+      {
+        "tag": "h1",
+        "text": "Ustawienia",
+        "style": "margin:0;padding:0 4px;font-size:34px;line-height:41px;font-weight:700;letter-spacing:-0.02em",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Chatra Pro Jednorazowo [CENA]. Dodatkowe kompozycje i reguły porządku. Podstawy zostają darmowe. Więcej",
+        "style": "border-radius:24px;padding:14px 14px 14px 16px;display:flex;align-items:center;gap:12px;background:linear-gradient(160deg,rgba(255,255,255,0.82),rgba(255,255,255,0.56));backdrop-filter:blur(28px) saturate(170%);-webkit-backdrop-filter:blur(28px) saturate(170%);border:1px solid rgba(255,255,255,0.9);box-shadow:inset 0 1px 0 rgba(255,255,255,0.95),0 10px 30px rgba(27,35,74,0.10)",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Chatra Pro Jednorazowo [CENA]. Dodatkowe kompozycje i reguły porządku. Podstawy zostają darmowe.",
+        "style": "flex:1;display:flex;flex-direction:column;gap:2px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Chatra Pro",
+        "style": "font-size:16px;font-weight:700",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Jednorazowo [CENA]. Dodatkowe kompozycje i reguły porządku. Podstawy zostają darmowe.",
+        "style": "font-size:13px;line-height:18px;color:#3A4054",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "Więcej",
+        "style": "flex:none;height:40px;padding:0 16px;border-radius:20px;border:none;background:{{accent}};color:#FFFFFF;font-size:15px;font-weight:600;cursor:pointer",
+        "aria": null
+      },
+      {
+        "tag": "section",
+        "text": "Wysyłanie Karty SIM SIM 1 Prywatna — domyślna · SIM 2 Praca Opóźnienie wysłania 3 s na anulowanie przed wysłaniem Licznik części SMS Wersję bez polskich znaków tylko na życzenie HD",
+        "style": "border-radius:24px;overflow:hidden;background:linear-gradient(160deg,rgba(255,255,255,0.82),rgba(255,255,255,0.58));backdrop-filter:blur(28px) saturate(170%);-webkit-backdrop-filter:blur(28px) saturate(170%);border:1px solid rgba(255,255,255,0.9);box-shadow:inset 0 1px 0 rgba(255,255,255,0.95),0 10px 30px rgba(27,35,74,0.10)",
+        "aria": "Wysyłanie"
+      },
+      {
+        "tag": "h2",
+        "text": "Wysyłanie",
+        "style": "margin:0;padding:12px 16px 2px;font-size:13px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:#3A4054",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "Karty SIM SIM 1 Prywatna — domyślna · SIM 2 Praca",
+        "style": "width:100%;min-height:52px;display:flex;align-items:center;gap:12px;padding:6px 14px 6px 16px;border:none;background:none;text-align:left;cursor:pointer;color:#0B0D14",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "",
+        "style": "flex:none;width:30px;height:30px;border-radius:8px;background:#0A6CFF;color:#FFFFFF;display:flex;align-items:center;justify-content:center",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Karty SIM SIM 1 Prywatna — domyślna · SIM 2 Praca",
+        "style": "flex:1;display:flex;flex-direction:column",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Karty SIM",
+        "style": "font-size:16px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "SIM 1 Prywatna — domyślna · SIM 2 Praca",
+        "style": "font-size:13px;color:#3A4054",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "Opóźnienie wysłania 3 s na anulowanie przed wysłaniem",
+        "style": "width:100%;min-height:52px;display:flex;align-items:center;gap:12px;padding:6px 14px 6px 16px;border:none;border-top:1px solid rgba(11,13,20,0.06);background:none;text-align:left;cursor:pointer;color:#0B0D14",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "",
+        "style": "flex:none;width:30px;height:30px;border-radius:8px;background:#C2570C;color:#FFFFFF;display:flex;align-items:center;justify-content:center",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Opóźnienie wysłania 3 s na anulowanie przed wysłaniem",
+        "style": "flex:1;display:flex;flex-direction:column",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Opóźnienie wysłania",
+        "style": "font-size:16px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "3 s na anulowanie przed wysłaniem",
+        "style": "font-size:13px;color:#3A4054",
+        "aria": null
+      },
+      {
+        "tag": "div",
+        "text": "Licznik części SMS Wersję bez polskich znaków tylko na życzenie",
+        "style": "min-height:52px;display:flex;align-items:center;gap:12px;padding:6px 14px 6px 16px;border-top:1px solid rgba(11,13,20,0.06)",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "",
+        "style": "flex:none;width:30px;height:30px;border-radius:8px;background:#5B6275;color:#FFFFFF;display:flex;align-items:center;justify-content:center",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Licznik części SMS Wersję bez polskich znaków tylko na życzenie",
+        "style": "flex:1;display:flex;flex-direction:column",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Licznik części SMS",
+        "style": "font-size:16px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Wersję bez polskich znaków tylko na życzenie",
+        "style": "font-size:13px;color:#3A4054",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "",
+        "style": "flex:none;width:52px;height:32px;border-radius:16px;border:none;padding:2px;background:#0B7A52;display:flex;justify-content:flex-end;cursor:pointer",
+        "aria": "Licznik części SMS"
+      },
+      {
+        "tag": "span",
+        "text": "",
+        "style": "width:28px;height:28px;border-radius:14px;background:#FFFFFF;box-shadow:0 2px 6px rgba(0,0,0,0.2)",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "HD Chatra HD Domyślnie oryginał · bez Chatra: pytaj o link",
+        "style": "width:100%;min-height:52px;display:flex;align-items:center;gap:12px;padding:6px 14px 8px 16px;border:none;border-top:1px solid rgba(11,13,20,0.06);background:none;text-align:left;cursor:pointer;color:#0B0D14",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "HD",
+        "style": "flex:none;width:30px;height:30px;border-radius:8px;background:#0B0D14;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;letter-spacing:0.04em",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Chatra HD Domyślnie oryginał · bez Chatra: pytaj o link",
+        "style": "flex:1;display:flex;flex-direction:column",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Chatra HD",
+        "style": "font-size:16px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Domyślnie oryginał · bez Chatra: pytaj o link",
+        "style": "font-size:13px;color:#3A4054",
+        "aria": null
+      },
+      {
+        "tag": "section",
+        "text": "Wygląd i porządek Wygląd Szkło · jasny · standardowa gęstość Nieznani nadawcy Zostają w skrzynce z oznaczeniem · to nie spam Zablokowani 3 numery · możesz przywrócić Kosz 4 rozmowy",
+        "style": "border-radius:24px;overflow:hidden;background:linear-gradient(160deg,rgba(255,255,255,0.82),rgba(255,255,255,0.58));backdrop-filter:blur(28px) saturate(170%);-webkit-backdrop-filter:blur(28px) saturate(170%);border:1px solid rgba(255,255,255,0.9);box-shadow:inset 0 1px 0 rgba(255,255,255,0.95),0 10px 30px rgba(27,35,74,0.10)",
+        "aria": "Porządek"
+      },
+      {
+        "tag": "h2",
+        "text": "Wygląd i porządek",
+        "style": "margin:0;padding:12px 16px 2px;font-size:13px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:#3A4054",
+        "aria": null
+      },
+      {
+        "tag": "a",
+        "text": "Wygląd Szkło · jasny · standardowa gęstość",
+        "style": "min-height:52px;display:flex;align-items:center;gap:12px;padding:6px 14px 6px 16px;color:#0B0D14",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "",
+        "style": "flex:none;width:30px;height:30px;border-radius:8px;background:#6A4FD8;color:#FFFFFF;display:flex;align-items:center;justify-content:center",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Wygląd Szkło · jasny · standardowa gęstość",
+        "style": "flex:1;display:flex;flex-direction:column",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Wygląd",
+        "style": "font-size:16px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Szkło · jasny · standardowa gęstość",
+        "style": "font-size:13px;color:#3A4054",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "Nieznani nadawcy Zostają w skrzynce z oznaczeniem · to nie spam",
+        "style": "width:100%;min-height:52px;display:flex;align-items:center;gap:12px;padding:6px 14px 6px 16px;border:none;border-top:1px solid rgba(11,13,20,0.06);background:none;text-align:left;cursor:pointer;color:#0B0D14",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "",
+        "style": "flex:none;width:30px;height:30px;border-radius:8px;background:#5B6275;color:#FFFFFF;display:flex;align-items:center;justify-content:center",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Nieznani nadawcy Zostają w skrzynce z oznaczeniem · to nie spam",
+        "style": "flex:1;display:flex;flex-direction:column",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Nieznani nadawcy",
+        "style": "font-size:16px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Zostają w skrzynce z oznaczeniem · to nie spam",
+        "style": "font-size:13px;color:#3A4054",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "Zablokowani 3 numery · możesz przywrócić",
+        "style": "width:100%;min-height:52px;display:flex;align-items:center;gap:12px;padding:6px 14px 6px 16px;border:none;border-top:1px solid rgba(11,13,20,0.06);background:none;text-align:left;cursor:pointer;color:#0B0D14",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "",
+        "style": "flex:none;width:30px;height:30px;border-radius:8px;background:#C0262D;color:#FFFFFF;display:flex;align-items:center;justify-content:center",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Zablokowani 3 numery · możesz przywrócić",
+        "style": "flex:1;display:flex;flex-direction:column",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Zablokowani",
+        "style": "font-size:16px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "3 numery · możesz przywrócić",
+        "style": "font-size:13px;color:#3A4054",
+        "aria": null
+      },
+      {
+        "tag": "button",
+        "text": "Kosz 4 rozmowy · odzyskasz przez 30 dni",
+        "style": "width:100%;min-height:52px;display:flex;align-items:center;gap:12px;padding:6px 14px 8px 16px;border:none;border-top:1px solid rgba(11,13,20,0.06);background:none;text-align:left;cursor:pointer;color:#0B0D14",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "",
+        "style": "flex:none;width:30px;height:30px;border-radius:8px;background:#5B6275;color:#FFFFFF;display:flex;align-items:center;justify-content:center",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Kosz 4 rozmowy · odzyskasz przez 30 dni",
+        "style": "flex:1;display:flex;flex-direction:column",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Kosz",
+        "style": "font-size:16px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "4 rozmowy · odzyskasz przez 30 dni",
+        "style": "font-size:13px;color:#3A4054",
+        "aria": null
+      },
+      {
+        "tag": "section",
+        "text": "Prywatność Bez konta · indeks wyszukiwania na telefonie",
+        "style": "border-radius:24px;overflow:hidden;background:linear-gradient(160deg,rgba(255,255,255,0.82),rgba(255,255,255,0.58));backdrop-filter:blur(28px) saturate(170%);-webkit-backdrop-filter:blur(28px) saturate(170%);border:1px solid rgba(255,255,255,0.9)",
+        "aria": "Prywatność"
+      },
+      {
+        "tag": "button",
+        "text": "Prywatność Bez konta · indeks wyszukiwania na telefonie",
+        "style": "width:100%;min-height:52px;display:flex;align-items:center;gap:12px;padding:6px 14px 6px 16px;border:none;background:none;text-align:left;cursor:pointer;color:#0B0D14",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "",
+        "style": "flex:none;width:30px;height:30px;border-radius:8px;background:#0B7A52;color:#FFFFFF;display:flex;align-items:center;justify-content:center",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Prywatność Bez konta · indeks wyszukiwania na telefonie",
+        "style": "flex:1;display:flex;flex-direction:column",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Prywatność",
+        "style": "font-size:16px",
+        "aria": null
+      },
+      {
+        "tag": "span",
+        "text": "Bez konta · indeks wyszukiwania na telefonie",
+        "style": "font-size:13px;color:#3A4054",
+        "aria": null
+      },
+      {
+        "tag": "nav",
+        "text": "Rozmowy Zaplanowane Ustawienia",
+        "style": "position:absolute;left:16px;right:16px;bottom:26px;display:flex;gap:10px;align-items:center",
+        "aria": "Główne sekcje"
+      },
+      {
+        "tag": "div",
+        "text": "Rozmowy Zaplanowane Ustawienia",
+        "style": "flex:1;height:62px;border-radius:31px;padding:4px;box-sizing:border-box;display:flex;gap:2px;background:linear-gradient(160deg,rgba(255,255,255,0.72),rgba(255,255,255,0.42));backdrop-filter:blur(30px) saturate(180%);-webkit-backdrop-filter:blur(30px) saturate(180%);border:1px solid rgba(255,255,255,0.85);box-shadow:inset 0 1px 0 rgba(255,255,255,0.95),0 12px 32px rgba(27,35,74,0.18)",
+        "aria": null
+      },
+      {
+        "tag": "a",
+        "text": "Rozmowy",
+        "style": "flex:1;border-radius:27px;color:#2A3042;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:11px;font-weight:500",
+        "aria": null
+      },
+      {
+        "tag": "a",
+        "text": "Zaplanowane",
+        "style": "flex:1;border-radius:27px;color:#2A3042;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:11px;font-weight:500",
+        "aria": null
+      },
+      {
+        "tag": "a",
+        "text": "Ustawienia",
+        "style": "flex:1;border-radius:27px;background:rgba(255,255,255,0.85);color:{{accent}};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:11px;font-weight:600",
+        "aria": null
+      },
+      {
+        "tag": "a",
+        "text": "",
+        "style": "flex:none;width:62px;height:62px;border-radius:31px;display:flex;align-items:center;justify-content:center;color:#FFFFFF;background:{{accent}};border:1px solid rgba(255,255,255,0.6);box-shadow:inset 0 1px 0 rgba(255,255,255,0.5),0 12px 28px rgba(10,60,160,0.32)",
+        "aria": "Nowa wiadomość"
+      }
+    ]
+  }
+]

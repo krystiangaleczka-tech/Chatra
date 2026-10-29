@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="pl"><head>
+<meta charset="utf-8">
+<title>Chatra — nowa wiadomość</title>
+<script src="f3c4201c-fa56-4c2c-a435-61dff9061769"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<style>/* cyrillic-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("ed458af9-d375-43b9-a6a4-b7ce884f1461") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("be48b2f9-cc63-407e-b292-ec4e47f7dbe5") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("bfe2c61c-00a4-4c0e-8c4f-d89a40700c86") format('woff2');
+  unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("a7cfb151-97a9-40af-a55f-db5d5aa167cb") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("f5a1930e-5697-4773-8e33-229eca990f03") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("e9a73119-71b4-4b7f-9e94-4c0bd360940c") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("9c2e37c4-ab13-40da-ab21-fbd38f7e1608") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("ed458af9-d375-43b9-a6a4-b7ce884f1461") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("be48b2f9-cc63-407e-b292-ec4e47f7dbe5") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("bfe2c61c-00a4-4c0e-8c4f-d89a40700c86") format('woff2');
+  unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("a7cfb151-97a9-40af-a55f-db5d5aa167cb") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("f5a1930e-5697-4773-8e33-229eca990f03") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("e9a73119-71b4-4b7f-9e94-4c0bd360940c") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("9c2e37c4-ab13-40da-ab21-fbd38f7e1608") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("ed458af9-d375-43b9-a6a4-b7ce884f1461") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("be48b2f9-cc63-407e-b292-ec4e47f7dbe5") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("bfe2c61c-00a4-4c0e-8c4f-d89a40700c86") format('woff2');
+  unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("a7cfb151-97a9-40af-a55f-db5d5aa167cb") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("f5a1930e-5697-4773-8e33-229eca990f03") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("e9a73119-71b4-4b7f-9e94-4c0bd360940c") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("9c2e37c4-ab13-40da-ab21-fbd38f7e1608") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("ed458af9-d375-43b9-a6a4-b7ce884f1461") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("be48b2f9-cc63-407e-b292-ec4e47f7dbe5") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("bfe2c61c-00a4-4c0e-8c4f-d89a40700c86") format('woff2');
+  unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("a7cfb151-97a9-40af-a55f-db5d5aa167cb") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("f5a1930e-5697-4773-8e33-229eca990f03") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("e9a73119-71b4-4b7f-9e94-4c0bd360940c") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("9c2e37c4-ab13-40da-ab21-fbd38f7e1608") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+</style>
+<style>
+body{margin:0}
+a{color:#0058D6;text-decoration:none}a:hover{color:#003F9E}
+button{font:inherit}
+</style>
+</helmet>
+<div style="width:390px;height:844px;box-sizing:border-box;position:relative;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',Inter,system-ui,sans-serif;color:#0B0D14;background:radial-gradient(65% 38% at 8% 6%,#9CC3FF 0%,rgba(156,195,255,0) 70%),radial-gradient(55% 35% at 100% 50%,#FFC2AE 0%,rgba(255,194,174,0) 70%),radial-gradient(70% 40% at 12% 95%,#CDBFFF 0%,rgba(205,191,255,0) 70%),#EDF0F7">
+
+  <div style="padding:20px 16px 0;display:flex;flex-direction:column;gap:12px">
+    <div aria-hidden="true" style="align-self:center;width:38px;height:5px;border-radius:3px;background:rgba(11,13,20,0.22)"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:16px">
+      <a href="Skrzynka.dc.html" style="min-height:44px;display:flex;align-items:center;font-size:17px;color:#0058D6;width:70px">Anuluj</a>
+      <h1 style="margin:0;font-size:17px;font-weight:700">Nowa wiadomość</h1>
+      <span style="width:70px"></span>
+    </div>
+
+    <div style="border-radius:22px;padding:8px 10px 8px 14px;display:flex;flex-wrap:wrap;align-items:center;gap:6px;background:linear-gradient(160deg,rgba(255,255,255,0.88),rgba(255,255,255,0.62));backdrop-filter:blur(28px) saturate(170%);-webkit-backdrop-filter:blur(28px) saturate(170%);border:1px solid rgba(255,255,255,0.95);box-shadow:inset 0 1px 0 rgba(255,255,255,0.95),0 6px 18px rgba(27,35,74,0.10)">
+      <span style="font-size:16px;color:#3A4054;margin-right:2px">Do:</span>
+      <span style="height:30px;padding:0 6px 0 12px;border-radius:15px;background:rgba(10,108,255,0.12);color:#0050C8;font-size:15px;font-weight:600;display:flex;align-items:center;gap:2px">Mama<button type="button" aria-label="Usuń: Mama" style="width:24px;height:24px;border:none;background:none;color:#0050C8;cursor:pointer;display:flex;align-items:center;justify-content:center"><svg width="12" height="12" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></span>
+      <span style="height:30px;padding:0 6px 0 12px;border-radius:15px;background:rgba(10,108,255,0.12);color:#0050C8;font-size:15px;font-weight:600;display:flex;align-items:center;gap:2px">Ola Nowak<button type="button" aria-label="Usuń: Ola Nowak" style="width:24px;height:24px;border:none;background:none;color:#0050C8;cursor:pointer;display:flex;align-items:center;justify-content:center"><svg width="12" height="12" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></span>
+      <span style="height:30px;padding:0 6px 0 12px;border-radius:15px;background:rgba(10,108,255,0.12);color:#0050C8;font-size:15px;font-weight:600;display:flex;align-items:center;gap:2px">Tomek W.<button type="button" aria-label="Usuń: Tomek Wiśniewski" style="width:24px;height:24px;border:none;background:none;color:#0050C8;cursor:pointer;display:flex;align-items:center;justify-content:center"><svg width="12" height="12" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></span>
+      <label for="to" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Dodaj odbiorcę</label>
+      <input id="to" type="text" placeholder="Imię lub numer" style="flex:1;min-width:90px;height:30px;border:none;background:transparent;font:inherit;font-size:16px;outline:none;color:#0B0D14">
+    </div>
+
+    <fieldset style="margin:0;padding:0;border:none;display:flex;flex-direction:column;gap:8px">
+      <legend style="padding:0 4px 8px;font-size:15px;font-weight:600">Jak wysłać do 3 osób?</legend>
+      <label style="display:flex;gap:12px;align-items:flex-start;padding:14px;border-radius:20px;background:#FFFFFF;border:1.5px solid {{accent}};cursor:pointer">
+        <input type="radio" name="tryb" checked="" style="margin:2px 0 0;width:20px;height:20px;accent-color:{{accent}}">
+        <span style="display:flex;flex-direction:column;gap:3px">
+          <span style="font-size:16px;font-weight:600">Wyślij osobno do każdego</span>
+          <span style="font-size:13px;line-height:18px;color:#3A4054">Każdy dostanie własny SMS. Odpowiedzi wrócą do osobnych rozmów. Nikt nie zobaczy numerów pozostałych.</span>
+        </span>
+      </label>
+      <label style="display:flex;gap:12px;align-items:flex-start;padding:14px;border-radius:20px;background:rgba(255,255,255,0.55);border:1px solid rgba(255,255,255,0.95);cursor:pointer">
+        <input type="radio" name="tryb" style="margin:2px 0 0;width:20px;height:20px;accent-color:{{accent}}">
+        <span style="display:flex;flex-direction:column;gap:3px">
+          <span style="font-size:16px;font-weight:600">Rozmowa grupowa MMS</span>
+          <span style="font-size:13px;line-height:18px;color:#3A4054">Wszyscy zobaczą odpowiedzi i swoje numery telefonów. Działanie zależy od operatorów i telefonów uczestników.</span>
+        </span>
+      </label>
+    </fieldset>
+
+    <section aria-label="Sugerowane" style="border-radius:22px;overflow:hidden;background:linear-gradient(160deg,rgba(255,255,255,0.78),rgba(255,255,255,0.52));backdrop-filter:blur(28px) saturate(170%);-webkit-backdrop-filter:blur(28px) saturate(170%);border:1px solid rgba(255,255,255,0.85)">
+      <h2 style="margin:0;padding:12px 16px 4px;font-size:13px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:#3A4054">Sugerowane</h2>
+      <button type="button" style="width:100%;display:flex;gap:12px;align-items:center;padding:8px 16px;border:none;background:none;text-align:left;cursor:pointer;color:#0B0D14">
+        <span style="flex:none;width:40px;height:40px;border-radius:20px;background:linear-gradient(180deg,#E7DCF2,#CDBDE3);color:#2A1A3E;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600">KZ</span>
+        <span style="flex:1;display:flex;flex-direction:column"><span style="font-size:16px;font-weight:500">Kasia Zielińska</span><span style="font-size:13px;color:#3A4054">komórka · +48 512 408 771</span></span>
+        <svg width="22" height="22" sc-camel-view-box="0 0 24 24" fill="none" stroke="#0058D6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"></circle><path d="M12 8.5v7M8.5 12h7"></path></svg>
+      </button>
+      <button type="button" style="width:100%;display:flex;gap:12px;align-items:center;padding:8px 16px 12px;border:none;background:none;text-align:left;cursor:pointer;color:#0B0D14">
+        <span style="flex:none;width:40px;height:40px;border-radius:20px;background:linear-gradient(180deg,#D6DDEE,#B7C1D9);color:#1E2433;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600">M</span>
+        <span style="flex:1;display:flex;flex-direction:column"><span style="font-size:16px;font-weight:500">Marek (praca)</span><span style="font-size:13px;color:#3A4054">służbowy · zwykle z SIM 2</span></span>
+        <svg width="22" height="22" sc-camel-view-box="0 0 24 24" fill="none" stroke="#0058D6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"></circle><path d="M12 8.5v7M8.5 12h7"></path></svg>
+      </button>
+    </section>
+  </div>
+
+  <div style="position:absolute;left:12px;right:12px;bottom:26px;display:flex;flex-direction:column;gap:8px">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:0 4px">
+      <button type="button" aria-label="Wyślij z karty SIM 1 Prywatna, zmień" style="height:32px;border-radius:16px;padding:0 10px 0 8px;display:flex;align-items:center;gap:6px;color:#0B0D14;font-size:13px;font-weight:600;cursor:pointer;background:linear-gradient(160deg,rgba(255,255,255,0.8),rgba(255,255,255,0.5));backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.9)">
+        <svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h7l4 4v14H7z"></path><rect x="9.5" y="11" width="6" height="6" rx="1"></rect></svg>
+        SIM 1 · Prywatna
+        <svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
+      </button>
+      <span style="font-size:12px;color:#2A3042">3 osobne SMS</span>
+    </div>
+    <div style="min-height:48px;border-radius:24px;padding:4px 4px 4px 16px;box-sizing:border-box;display:flex;align-items:center;gap:8px;background:linear-gradient(160deg,rgba(255,255,255,0.88),rgba(255,255,255,0.62));backdrop-filter:blur(28px) saturate(170%);-webkit-backdrop-filter:blur(28px) saturate(170%);border:1px solid rgba(255,255,255,0.95);box-shadow:inset 0 1px 0 rgba(255,255,255,0.95),0 6px 18px rgba(27,35,74,0.12)">
+      <label for="msg" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Treść wiadomości</label>
+      <input id="msg" type="text" placeholder="Wiadomość SMS" style="flex:1;min-width:0;border:none;background:transparent;font:inherit;font-size:16px;color:#0B0D14;outline:none">
+      <button type="button" aria-label="Wyślij" style="flex:none;width:40px;height:40px;border-radius:20px;border:none;background:rgba(11,13,20,0.12);color:#3A4054;display:flex;align-items:center;justify-content:center;cursor:pointer">
+        <svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"></path></svg>
+      </button>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#0A6CFF&quot;,&quot;options&quot;:[&quot;#0A6CFF&quot;,&quot;#5E5CE6&quot;,&quot;#0B7A52&quot;,&quot;#C8402B&quot;]},&quot;$preview&quot;:{&quot;width&quot;:390,&quot;height&quot;:844}}">
+class Component extends DCLogic {
+  renderVals() {
+    return { accent: this.props.accent ?? '#0A6CFF' };
+  }
+}
+</script>
+
+
+</body></html>
