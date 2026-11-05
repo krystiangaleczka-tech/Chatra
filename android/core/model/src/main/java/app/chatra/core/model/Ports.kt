@@ -1,0 +1,64 @@
+package app.chatra.core.model
+
+import kotlinx.coroutines.flow.Flow
+import java.time.Instant
+import java.time.ZoneId
+
+/**
+ * Granice architektury (CH005). UI zależy wyłącznie od tych kontraktów, więc działa z repozytorium
+ * demonstracyjnym (fixture CH006) albo z providerem Telephony; logika wysyłania działa bez UI.
+ */
+interface ConversationRepository {
+    fun inbox(): Flow<List<ConversationSummary>>
+    fun conversation(id: ConversationId): Flow<ConversationSummary?>
+    fun messages(id: ConversationId): Flow<List<Message>>
+    suspend fun markRead(id: ConversationId)
+    suspend fun setPinned(id: ConversationId, pinned: Boolean)
+    suspend fun moveToTrash(id: ConversationId)
+    suspend fun conversationFor(recipients: List<Address>): ConversationId
+}
+
+interface DraftRepository {
+    fun draft(conversationId: ConversationId): Flow<Draft?>
+    suspend fun save(draft: Draft)
+    suspend fun delete(id: DraftId)
+}
+
+interface SimRepository {
+    fun cards(): Flow<List<SimCard>>
+}
+
+interface ContactsDirectory {
+    fun suggestions(): Flow<List<Participant>>
+    suspend fun lookup(address: Address): Participant?
+}
+
+/** Kolejka wysyłek: jedyna droga do transportu z kompozytora, harmonogramu i powiadomień. */
+interface SendQueue {
+    fun operations(): Flow<List<SendOperation>>
+    suspend fun enqueue(draft: Draft, undoSeconds: Int): OperationId
+    suspend fun cancel(id: OperationId): Boolean
+    suspend fun retry(id: OperationId): Boolean
+}
+
+interface ScheduleRepository {
+    fun scheduled(): Flow<List<ScheduledItem>>
+}
+
+/** Pozycja listy S06: harmonogram + migawka operacji. */
+data class ScheduledItem(val schedule: ScheduledMessage, val operation: SendOperation, val title: String)
+
+/** Kontrolowany zegar: produkcyjny i stały 29.10.2026 w fixture (CH006). */
+interface Clock {
+    fun now(): Instant
+    fun zone(): ZoneId
+    /** Czas monotoniczny do odliczania okna anulowania w działającym procesie. */
+    fun elapsedRealtimeMillis(): Long
+}
+
+/** Wynik transportu dla jednej części / odbiorcy; HD ma osobne wyniki niż SIM (specyfikacja 7). */
+sealed interface TransportResult {
+    data object Accepted : TransportResult
+    data class Failed(val code: Int, val permanent: Boolean) : TransportResult
+    data class Uncertain(val reason: String) : TransportResult
+}
