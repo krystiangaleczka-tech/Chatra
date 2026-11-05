@@ -19,11 +19,11 @@
 
 ## 2. Rejestr G01–G10
 
-**Statusy:** „bazowa decyzja robocza” = zgodne z obecną specyfikacją i nadające się do prototypowania, **nie finalna zgoda**. „Otwarta bramka” = wymaga wyniku badania/akceptacji przed wskazanym zadaniem. Właściciel jest określony **rolą**, nie wymyśloną osobą.
+**Statusy:** „bazowa decyzja robocza” = zgodne z obecną specyfikacją i nadające się do prototypowania, **nie finalna zgoda**. „Otwarta bramka” = wymaga wyniku badania/akceptacji przed wskazanym zadaniem. „Zatwierdzona” = decyzja przyjęta przez właściciela na podstawie dowodu z taska. Właściciel jest określony **rolą**, nie wymyśloną osobą.
 
 | ID i obszar | Wariant roboczy | Właściciel decyzji | Zamknięcie / weryfikacja w tasku | Stan |
 | --- | --- | --- | --- | --- |
-| **G01** Typografia i renderer referencyjny | Inter 400–800 na Androidzie jako wariant roboczy; porównanie oryginalnego HTML na referencyjnym Androidzie. | UX + Android UI + QA | `CH002`, `CH007` | otwarta bramka techniczna |
+| **G01** Typografia i renderer referencyjny | Inter 400–700 (zmienny) na Androidzie; wzorcem są goldeny Androida z CH002. | UX + Android UI + QA | `CH002`, `CH007` | **zatwierdzona 05.11.2026** |
 | **G02** Zakres Androida / minSdk i SDK publikacji | minSdk 31; Android jako pierwsza platforma. targetSdk/compileSdk i toolchain wybrać zgodnie z bieżącą polityką sklepu, nie utożsamiać ich z minSdk. | Produkt + lider Android | `CH003`, `CH004` | bazowa decyzja robocza |
 | **G03** Szkło, Compose i technologia renderowania | Jetpack Compose z własnymi warstwami szkła i tła; pomiar S02 i S04. | Lider Android UI + QA wydajności | `CH003`, `CH008` | otwarta bramka techniczna |
 | **G04** Harmonogram i obsługa opóźnienia | Trwały Instant + LocalDateTime/ZoneId; domyślnie pytaj po spóźnieniu, świadoma opcja wysłania w ciągu 1 h; bez obietnicy wysłania z wyłączonego telefonu. | Produkt + Android platforma | `CH035`, `CH036`, `CH037` | bazowa decyzja robocza |
@@ -37,6 +37,8 @@
 ### Warianty alternatywne, warunki zamknięcia i dowody
 
 **G01 — Typografia i renderer referencyjny.** Alternatywy: Faktycznie użyty font z referencji; licencjonowany font o zgodnych metrykach. **Dowód zamknięcia:** Raport renderera i fontów, golden screenshot, pomiar metryk i licencji, zatwierdzenie przez UX/QA.
+
+**Zatwierdzenie G01 (05.11.2026):** Inter (font zmienny, OFL) w wagach 400, 500, 600, 700 jako font Androida; wzorcem 1:1 są goldeny Androida z CH002 (S26 Ultra, Chrome 156). Plakietka „HD” (S03, S04, S10) w wadze 700, tak jak w goldenie; waga 800 nie jest używana. Dowód: [raport CH002](CH002_Weryfikacja_wzorcow.md) (Rendered Fonts = Inter dla 100 % glifów, 2 stabilne przebiegi). Pozostaje w CH007: zasoby TTF/OTF, metryki i licencja OFL.
 
 **G02 — Zakres Androida / minSdk i SDK publikacji.** Alternatywy: Niższy minSdk po ocenie kosztu szkła i testów kompatybilności. **Dowód zamknięcia:** ADR kompatybilności, zbudowane warianty, test na minimalnym urządzeniu; zatwierdzony minSdk/targetSdk.
 
@@ -194,6 +196,6 @@ To **lista testów**, a nie lista już potwierdzonej zgodności. Dane konkretnyc
 - [x] Demo, pełne wydanie i dodatkowe badania mają odrębne definicje.
 - [x] Matryca 10 × 10 i mapa planów S01–S10 zawiera taski oraz CH065–CH072.
 - [x] Brakujące ekrany i otwarte polityki wskazane osobno; nie twierdzimy, że występują w referencji HTML.
-- [ ] **Do zamknięcia w kolejnych taskach:** fizyczne testy operatorów i ustalenia po spike'ach G01/G02/G03/G06/G07/G08/G10. Te bramki pozostają otwarte i nie blokują istnienia kompletnego rejestru CH001.
+- [ ] **Do zamknięcia w kolejnych taskach:** fizyczne testy operatorów i ustalenia po spike'ach G02/G03/G06/G07/G08/G10 (G01 zatwierdzona 05.11.2026). Te bramki pozostają otwarte i nie blokują istnienia kompletnego rejestru CH001.
 
 **Ograniczenie rezultatów CH001:** To zadanie ustanawia kontekst i dokumentację dla zespołu. Nie uruchamia implementacji aplikacji, testów na urządzeniach ani publicznej dystrybucji. Ostateczne „potwierdzenie” otwartych decyzji musi być dokonane przez wskazane role i udokumentowane w odpowiednich zadaniach.

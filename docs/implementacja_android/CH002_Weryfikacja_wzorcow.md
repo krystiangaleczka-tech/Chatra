@@ -1,6 +1,6 @@
 # CH002 — weryfikacja wzorców i typografii
 
-**Wynik (aktualizacja 29.10.2026, wieczór):** audyt źródeł i 10 wzorców macOS z pierwszej części, a teraz także **render oryginału na fizycznym Androidzie** (Samsung Galaxy S26 Ultra, Chrome 156): 10 ekranów × 2 przebiegi, manifest urządzenia, **Rendered Fonts** i pomiar 161 elementów. Font rzeczywiście użyty na Androidzie: **Inter (osadzony web font)**. Technicznie CH002 jest wykonany; **G01 czeka na zatwierdzenie UX/QA** (sekcja 7), więc bramka nie jest zamknięta automatycznie.
+**Wynik (aktualizacja 29.10.2026, wieczór):** audyt źródeł i 10 wzorców macOS z pierwszej części, a teraz także **render oryginału na fizycznym Androidzie** (Samsung Galaxy S26 Ultra, Chrome 156): 10 ekranów × 2 przebiegi, manifest urządzenia, **Rendered Fonts** i pomiar 161 elementów. Font rzeczywiście użyty na Androidzie: **Inter (osadzony web font)**. **05.11.2026: G01 zatwierdzona, CH002 ukończony** (sekcja 7).
 
 ## 1. Integralność oryginału
 
@@ -94,8 +94,8 @@ Potwierdzenie z DevTools (`CSS.getPlatformFontsForNode`, czyli Rendered Fonts, n
 | Dwa kolejne rendery, overlay stabilny | **ZALICZONE w tolerancji** (6/10 identyczne, reszta ≤ 39 px > 3/255) |
 | Ustalono faktycznie użyty font i geometrię na Androidzie | **ZALICZONE**: Inter (web font), 161/161 elementów |
 | Manifest warunków (API, density, fontScale, renderer, locale) | **ZALICZONE** |
-| Uzgodniony wariant fontu = zatwierdzenie G01 przez UX/QA | **CZEKA NA DECYZJĘ** |
+| Uzgodniony wariant fontu = zatwierdzenie G01 przez UX/QA | **ZALICZONE** (05.11.2026) |
 
-**Rekomendacja dla G01:** przyjąć **Inter (zmienny, 400–700, z jawnie dodaną wagą 800 dla „HD” albo świadomie 700)** jako font Androida i **goldeny z Androida** z tego raportu jako wzorzec testów 1:1. SF Pro nie jest alternatywą: licencja Apple ogranicza go do platform Apple. Jeżeli wymagana jest typografia identyczna z renderem macOS, potrzebny jest licencjonowany font o metrykach SF, co jest osobnym zadaniem (CH007).
+**Decyzja G01 (zatwierdzona 05.11.2026):** Inter (zmienny) w wagach 400–700 jako font Androida i goldeny Androida z tego raportu jako wzorzec testów 1:1; plakietka „HD” w wadze 700, tak jak w goldenie. Rekomendacja, na której oparto decyzję: przyjąć **Inter (zmienny, 400–700, z jawnie dodaną wagą 800 dla „HD” albo świadomie 700)** jako font Androida i **goldeny z Androida** z tego raportu jako wzorzec testów 1:1. SF Pro nie jest alternatywą: licencja Apple ogranicza go do platform Apple. Jeżeli wymagana jest typografia identyczna z renderem macOS, potrzebny jest licencjonowany font o metrykach SF, co jest osobnym zadaniem (CH007).
 
-**Status w backlogu:** `android_reference_verified_awaiting_g01_approval`. Po zatwierdzeniu G01 przez właściciela (UX + Android UI + QA) CH002 można oznaczyć jako ukończony, a CH003 może porównywać prototypy do goldenów Androida.
+**Status w backlogu:** `completed` (05.11.2026). CH003 może porównywać prototypy do goldenów Androida; zasoby fontu, metryki i licencję OFL przygotowuje CH007.

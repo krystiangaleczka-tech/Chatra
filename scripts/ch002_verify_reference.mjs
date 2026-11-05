@@ -41,7 +41,9 @@ if(fs.existsSync(androidReport)){
   chk(s.stability.pixels_over_tolerance<=0.0001*s.stability.pixels_total,"Android unstable "+s.id);
  }
  console.log("PASS Android golden: 10 PNG 1365x2954, Rendered Fonts = Inter, two-pass overlay within 3/255");
- console.log("PENDING: G01 approval by UX/QA");
+ const g01=JSON.parse(fs.readFileSync(path.resolve(process.cwd(),"docs/implementacja_android/CH001_Rejestr_decyzji.json"),"utf8")).decisions.find((g)=>g.id==="G01");
+ if(g01.status==="zatwierdzona")console.log("PASS G01 approved "+g01.approved_on+": CH002 complete");
+ else console.log("PENDING: G01 approval by UX/QA");
 }else{
  console.log("PENDING: Android actual font, viewport capture ×2, device manifest and visual review");
  if(process.argv.includes("--strict-android")){console.error("BLOCKED: no Android renderer evidence yet");process.exitCode=2;}

@@ -52,6 +52,8 @@ Odbiór: 10 wzorców, manifest warunków i uzgodniony wariant fontu. Każdy niej
 
 **Render Android CH002 (2026-10-29, wieczór):** oryginał wyrenderowano na Samsung Galaxy S26 Ultra (Android 17/API 37, Chrome 156, DPR 3.5): 10 ekranów × 2 przebiegi, overlay stabilny w tolerancji 3/255 (6/10 bajtowo identycznych). Rendered Fonts: **Inter (web font z bundla) dla 100 % glifów**; SF nie występuje. Zmierzono 161/161 elementów; metryki Inter przesuwają łamanie wierszy do +22 px (S04/S06), więc goldeny Androida zastępują geometrię macOS. [Raport CH002](CH002_Weryfikacja_wzorcow.md), [golden Android](CH002_Android/run1), [porównanie](CH002_Android/porownanie.json), [skrypt przechwytywania](../../scripts/ch002_android_capture.mjs). Status `android_reference_verified_awaiting_g01_approval`: do zamknięcia brakuje tylko zatwierdzenia G01 (Inter + goldeny Android) przez UX/QA.
 
+**CH002 ukończony (05.11.2026):** G01 zatwierdzona: Inter 400–700 (zmienny) jako font Androida, goldeny Androida z [CH002_Android/run1](CH002_Android/run1) jako wzorzec 1:1, plakietka „HD” w wadze 700. Status `completed`. CH003 i CH006 porównują wyniki z goldenami Androida, a CH007 dostarcza zasoby fontu i metryki.
+
 ### CH003 Sprawdzić wykonalność natywnego szkła
 
 **P0 · Android grafika · 3–5 osobodni · zależności CH002**

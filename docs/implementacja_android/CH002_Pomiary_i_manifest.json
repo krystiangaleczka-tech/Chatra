@@ -2,7 +2,7 @@
   "version": "0.2",
   "date": "2026-10-29",
   "task": "CH002",
-  "status": "android_reference_verified_awaiting_g01_approval",
+  "status": "completed_g01_approved",
   "source": {
     "file": "Chatra_Pakiet_referencyjny/Chatra — Liquid Glass.html",
     "sha256_verified_from_full_blob": "80e7652c4de8a483b39a38e6cd319524817af11986499f0f7aee28d4efa4cbe3",
@@ -457,6 +457,10 @@
     "android_render_390x844": true,
     "android_rendered_fonts": true,
     "android_two_pass_stability": "within_tolerance: 6/10 byte-identical, others max 39 px > 3/255",
-    "final_g01_approval": false
+    "final_g01_approval": true
+  },
+  "g01_approval": {
+    "date": "2026-11-05",
+    "decision": "Inter 400–700 (zmienny) jako font Androida; goldeny Androida z CH002 jako wzorzec 1:1; „HD” w wadze 700."
   }
 }
