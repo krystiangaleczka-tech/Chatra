@@ -34,9 +34,12 @@ W PDF uzupełnienie zaczyna się na stronie 24.
 
 - [CH001: kontrakt produktu, G01–G10 i macierz S01–S10](docs/implementacja_android/CH001_Kontrakt_produktu_i_rejestr_decyzji.md)
 - [CH001: rejestr decyzji w JSON](docs/implementacja_android/CH001_Rejestr_decyzji.json)
-- [CH002: raport integralności i otwarta bramka Android](docs/implementacja_android/CH002_Weryfikacja_wzorcow.md)
+- [CH002: raport integralności, render Android i bramka G01](docs/implementacja_android/CH002_Weryfikacja_wzorcow.md)
 - [CH002: manifest i punkty pomiarowe](docs/implementacja_android/CH002_Pomiary_i_manifest.json)
 - [CH002: skrypt walidacji](scripts/ch002_verify_reference.mjs)
+- [CH002: golden Android (S26 Ultra, Chrome 156) i porównanie z macOS](docs/implementacja_android/CH002_Android/porownanie.json)
+- [CH002: plansza macOS vs Android](docs/implementacja_android/CH002_Android/plansza_macos_vs_android.jpg)
+- [CH002: przechwytywanie na Androidzie](scripts/ch002_android_capture.mjs) i [porównanie](scripts/ch002_android_compare.py)
 
 Specyfikacja z 29 października 2026 opisuje odtworzenie 1:1 dziesięciu ekranów projektu Liquid Glass oraz docelowe zachowanie aplikacji SMS/MMS.
 
