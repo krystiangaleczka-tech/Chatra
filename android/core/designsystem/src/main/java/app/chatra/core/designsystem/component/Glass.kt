@@ -48,6 +48,13 @@ object GlassStyles {
     val Sheet = GlassStyle(40.dp, 1.8f, 170f, white(0.86f), white(0.70f), white(0.95f), topHighlight = Color.White)
     val Dock = GlassStyle(30.dp, 1.8f, 160f, white(0.72f), white(0.42f), white(0.85f), topHighlight = white(0.95f))
     val Segment = GlassStyle(28.dp, 1.7f, 160f, white(0.38f), white(0.38f), white(0.75f))
+
+    // S03 rozmowa
+    val Bubble = GlassStyle(24.dp, 1.7f, 160f, white(0.88f), white(0.66f), white(0.9f))
+    val HdCard = GlassStyle(24.dp, 1.7f, 160f, white(0.86f), white(0.60f), white(0.9f))
+    val DayChip = GlassStyle(20.dp, 1f, 180f, white(0.55f), white(0.55f), white(0.8f))
+    val SimChip = GlassStyle(24.dp, 1f, 160f, white(0.80f), white(0.50f), white(0.9f))
+    val Input = GlassStyle(28.dp, 1.7f, 160f, white(0.86f), white(0.60f), white(0.9f), topHighlight = white(0.95f))
 }
 
 /** Jeden cień CSS `box-shadow: x y blur spread color` (bez `inset`). */
@@ -62,6 +69,9 @@ object Shadows {
     val Fab = CssShadow(12.dp, 28.dp, Color(10, 60, 160).copy(alpha = 0.32f))
     val Sheet = CssShadow((-10).dp, 40.dp, Color(14, 18, 32).copy(alpha = 0.18f))
     val SegmentThumb = CssShadow(2.dp, 8.dp, Color(27, 35, 74).copy(alpha = 0.12f))
+    val Bubble = CssShadow(4.dp, 14.dp, Color(27, 35, 74).copy(alpha = 0.08f))
+    val BubbleOut = CssShadow(4.dp, 14.dp, Color(10, 60, 160).copy(alpha = 0.2f))
+    val HdCard = CssShadow(6.dp, 18.dp, Color(27, 35, 74).copy(alpha = 0.10f))
 }
 
 fun Modifier.cssShadow(shape: Shape, vararg shadows: CssShadow): Modifier =
