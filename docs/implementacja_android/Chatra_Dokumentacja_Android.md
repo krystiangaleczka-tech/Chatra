@@ -61,6 +61,8 @@ HTML deklaruje `-apple-system, BlinkMacSystemFont, 'SF Pro Text', Inter, system-
 
 **Decyzja G01:** roboczo użyć Inter na Androidzie, z wagami 400, 500, 600, 700 i 800. Przed zamrożeniem testów CH002 wyrenderować oryginalny HTML na referencyjnym Androidzie i ustalić font faktycznie użyty przez przeglądarkę. Osobno wykonać podgląd przy wymuszonym Inter, jeśli potrzebna jest ocena różnicy względem macOS. Nie uznawać zamiany fontu za zgodność bez porównania. Jeżeli wymagana jest dokładnie typografia z renderu macOS, pozyskanie odpowiedniego fontu i praw do jego dystrybucji staje się osobnym warunkiem, nie domyślną częścią eksportu.
 
+**G01 zatwierdzona (05.11.2026):** Inter (font zmienny, OFL) w wagach 400, 500, 600, 700 jako font Androida; wzorcem 1:1 są goldeny Androida z CH002 (S26 Ultra, Chrome 156). Plakietka „HD” (S03, S04, S10) w wadze 700, tak jak w goldenie; waga 800 nie jest używana. Render oryginału na Androidzie potwierdził, że przeglądarka używa osadzonego Inter (CH002). Zasoby fontu i metryki dostarcza CH007.
+
 W Compose ustawić jawne metryki tekstu, wysokości linii, odstępy liter, brak dodatkowego font paddingu i zasady przycinania. Zmierzyć baselines, polskie znaki, cyfry i pozycję wielokropka. Nie mapować wszystkich napisów na standardowe style Material. Pliki WOFF2 z pakietu są zasobami web; zasób Android TTF/OTF musi odpowiadać tym samym metrykom. Zweryfikować pokrycie polskich znaków i zachować OFL.
 
 ### Proponowane kryteria pomiaru
@@ -494,7 +496,7 @@ Przekazanie obejmuje kod aplikacji i backendu, konfigurację bez sekretów, migr
 
 | Decyzja | Wariant roboczy | Zamknięcie przed |
 | --- | --- | --- |
-| G01 Font i renderer odniesienia | Inter na Androidzie, porównanie oryginalnego HTML na docelowym środowisku | CH007 i zamrożenie goldenów |
+| G01 Font i renderer odniesienia | **Zatwierdzona 05.11.2026:** Inter 400–700, goldeny Androida z CH002 | Zasoby fontu w CH007 |
 | G02 Zakres Androida | minSdk 31, docelowe SDK zgodne z publikacją | CH004 |
 | G03 Szkło i technologia UI | Compose z osobną sceną tła, spike S02/S04 | CH008 i pełne UI |
 | G04 Harmonogram | Stały Instant, domyślnie pytaj po spóźnieniu | CH035 |

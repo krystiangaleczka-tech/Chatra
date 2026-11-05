@@ -34,7 +34,7 @@
     {
       "id": "G01",
       "name": "Typografia i renderer referencyjny",
-      "status": "otwarta_bramka_techniczna",
+      "status": "zatwierdzona",
       "owner": "UX + Android UI + QA",
       "working": "Inter 400–800 na Androidzie jako wariant roboczy; porównanie oryginalnego HTML na referencyjnym Androidzie.",
       "alternatives": "Faktycznie użyty font z referencji; licencjonowany font o zgodnych metrykach.",
@@ -42,7 +42,16 @@
         "CH002",
         "CH007"
       ],
-      "proof": "Raport renderera i fontów, golden screenshot, pomiar metryk i licencji, zatwierdzenie przez UX/QA."
+      "proof": "Raport renderera i fontów, golden screenshot, pomiar metryk i licencji, zatwierdzenie przez UX/QA.",
+      "approved_on": "2026-11-05",
+      "approved_by": "właściciel produktu (w roli UX + Android UI + QA)",
+      "decision": "Inter (font zmienny, OFL) w wagach 400, 500, 600, 700 jako font Androida; wzorcem 1:1 są goldeny Androida z CH002 (S26 Ultra, Chrome 156). Plakietka „HD” (S03, S04, S10) w wadze 700, tak jak w goldenie; waga 800 nie jest używana.",
+      "evidence": [
+        "CH002_Weryfikacja_wzorcow.md",
+        "CH002_Android/porownanie.json",
+        "CH002_Android/run1"
+      ],
+      "remaining": "CH007: zasoby TTF/OTF Inter, metryki i licencja OFL; weryfikacja baseline wobec goldenów Androida."
     },
     {
       "id": "G02",
