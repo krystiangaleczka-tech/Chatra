@@ -16,6 +16,8 @@ data class ConversationSummary(
     val muted: Boolean = false,
     val trashed: Boolean = false,
     val blocked: Boolean = false,
+    /** Odbiorca ma Chatrę i przyjmuje HD (wynik rejestru HD, CH047). */
+    val hdCapable: Boolean = false,
 ) {
     val isUnread: Boolean get() = unreadCount > 0
     val isUnknownSender: Boolean get() = Tag.UnknownNumber in tags

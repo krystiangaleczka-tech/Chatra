@@ -21,6 +21,8 @@ data class Message(
     val attachments: List<AttachmentSummary> = emptyList(),
     /** Wiadomość HD doręczona przez Chatrę: pobranie nie jest odczytem SMS. */
     val hd: HdInfo? = null,
+    /** Chwila ostatniej zmiany statusu (np. raportu doręczenia). */
+    val statusAt: Instant? = null,
 )
 
 /** Wiadomość jest z providera (SMS/MMS), z HD Chatry albo jeszcze lokalna (operacja w toku). */
@@ -32,4 +34,4 @@ sealed interface MessageRef {
 
 data class AttachmentSummary(val id: AttachmentId, val mimeType: String, val label: String)
 
-data class HdInfo(val itemCount: Int, val downloadedBy: String? = null)
+data class HdInfo(val itemCount: Int, val totalBytes: Long = 0, val downloadedBy: String? = null)
