@@ -4,6 +4,9 @@ on:
     paths: ["app/**", "core/model/**", "gradle/**", "*.gradle.kts", "gradle.properties", "gradlew*", "scripts/ch004_*", ".github/workflows/android.yml"]
   pull_request:
     paths: ["app/**", "core/model/**", "gradle/**", "*.gradle.kts", "gradle.properties", "gradlew*", "scripts/ch004_*", ".github/workflows/android.yml"]
+concurrency:
+  group: android-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
 jobs:
   build:
     runs-on: ubuntu-latest

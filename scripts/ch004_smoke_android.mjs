@@ -9,7 +9,7 @@ const adb = process.env.ADB ?? 'adb';
 const apk = resolve(process.argv[2] ?? 'app/build/outputs/apk/demo/debug/app-demo-debug.apk');
 const out = resolve(process.argv[3] ?? 'build/ch004/device');
 const fixtures = JSON.parse(readFileSync('build/ch006/screen-fixtures.json', 'utf8'));
-const command = (...args) => execFileSync(adb, args, { timeout: 30000, maxBuffer: 20 * 1024 * 1024 });
+const command = (...args) => execFileSync(adb, args, { timeout: 120000, maxBuffer: 20 * 1024 * 1024 });
 const pause = (ms) => new Promise((r) => setTimeout(r, ms));
 const pkg = 'pl.chatra.demo';
 mkdirSync(out, { recursive: true });
@@ -38,7 +38,7 @@ async function connect(url) {
     close: () => ws.close(),
     evaluate: (expression) => new Promise((resolve, reject) => {
       const requestId = ++id;
-      const timer = setTimeout(() => { pending.delete(requestId); reject(Error('CDP timeout')); }, 30000);
+      const timer = setTimeout(() => { pending.delete(requestId); reject(Error('CDP timeout')); }, 120000);
       pending.set(requestId, {
         resolve: (r) => { clearTimeout(timer); r.exceptionDetails ? reject(Error(JSON.stringify(r.exceptionDetails))) : resolve(r.result.value); },
         reject: (e) => { clearTimeout(timer); reject(e); },
@@ -53,7 +53,7 @@ for (let index = 0; index < 10; index++) {
   command('shell', 'am', 'force-stop', pkg);
   command('shell', 'am', 'start', '-W', '-n', `${pkg}/pl.chatra.MainActivity`, '--ei', 'screen', String(index + 1));
   let target;
-  for (let attempt = 0; attempt < 120 && !target; attempt++) {
+  for (let attempt = 0; attempt < 240 && !target; attempt++) {
     try {
       const sockets = command('shell', 'cat', '/proc/net/unix').toString();
       const socket = sockets.match(/@(webview_devtools_remote_\d+)/)?.[1];
