@@ -155,7 +155,17 @@
         "CH002",
         "CH005"
       ],
-      "description": "Wykonanie: przepisać fixture wszystkich 10 plansz, polskie teksty, liczby, daty, SIM i gradientowe miniatury. Dodać kontrolowany zegar 29 października 2026 i przypadki błędu/draft/HD. Przygotować komendę zapisu ekranów oraz raport overlay/mapa różnic. Zachować literalny błędny licznik 21/160 tylko w fixture, oznaczając wyjątek względem produkcyjnej logiki.\n\nOdbiór: stabilne ID i render bez sieci oraz kontaktów urządzenia. Weryfikacja: dwa uruchomienia generują te same dane i nie wysyłają SMS."
+      "description": "Wykonanie: przepisać fixture wszystkich 10 plansz, polskie teksty, liczby, daty, SIM i gradientowe miniatury. Dodać kontrolowany zegar 29 października 2026 i przypadki błędu/draft/HD. Przygotować komendę zapisu ekranów oraz raport overlay/mapa różnic. Zachować literalny błędny licznik 21/160 tylko w fixture, oznaczając wyjątek względem produkcyjnej logiki.\n\nOdbiór: stabilne ID i render bez sieci oraz kontaktów urządzenia. Weryfikacja: dwa uruchomienia generują te same dane i nie wysyłają SMS.",
+      "execution_status": "in_progress_fixture_catalog_ready_pending_android_render",
+      "evidence_files": [
+        "scripts/ch006_build_fixtures.mjs",
+        "scripts/ch006_verify_fixtures.mjs",
+        "scripts/ch006_compare_screens.py",
+        "scripts/ch006_test_compare.py",
+        "core/testing/README.md",
+        "docs/implementacja_android/CH006_Fixture_i_porownanie.md"
+      ],
+      "review_note": "Generator dla S01–S10 (500 elementów) z oryginalnych stylów i tekstów, stabilne ID, zegar/locale/SIM demo, markery draft/error/HD i wyjątek 21/160. Testy schematu oraz porównywarki na 10 sztucznych PNG PASS. Brak Androidowego renderera/urządzenia i przechwytywania ekranów; CH006 otwarte do odbioru wizualnego po CH004."
     },
     {
       "id": "CH007",
