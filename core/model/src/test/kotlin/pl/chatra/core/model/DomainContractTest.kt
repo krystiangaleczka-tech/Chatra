@@ -4,6 +4,36 @@ import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.UUID
+import kotlin.coroutines.Continuation
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
+import kotlin.coroutines.startCoroutine
+
+private fun <T> runImmediate(block: suspend () -> T): T {
+    var completed: Result<T>? = null
+    block.startCoroutine(object : Continuation<T> {
+        override val context: CoroutineContext = EmptyCoroutineContext
+        override fun resumeWith(result: Result<T>) { completed = result }
+    })
+    return checkNotNull(completed) { "Fake must complete synchronously" }.getOrThrow()
+}
+
+private class FakeOperations : SendOperationRepository {
+    private val records = mutableMapOf<OperationId, SendOperation>()
+    override suspend fun get(id: OperationId): SendOperation? = records[id]
+    override suspend fun insert(operation: SendOperation): Boolean =
+        records.putIfAbsent(operation.id, operation) == null
+    override suspend fun compareAndSet(
+        expectedVersion: Long, expectedState: SendState, next: SendOperation
+    ): Boolean {
+        val old = records[next.id] ?: return false
+        if (old.version != expectedVersion || old.state != expectedState ||
+            next.version != expectedVersion + 1) return false
+        records[next.id] = next
+        return true
+    }
+    override suspend fun recordAttempt(attempt: SendAttempt) = Unit
+}
 
 private fun id() = UUID.randomUUID()
 private fun checkThrows(block: () -> Unit) {
@@ -42,6 +72,9 @@ fun main() {
         null, AttachmentVariant.ORIGINAL, Sanitization.NOT_REQUESTED, LocalAccess.AVAILABLE, sms)
     check(attachment.sourceMessage == sms)
 
+    checkThrows { SendPart(-1, 1, PartStatus.PENDING, PartStatus.PENDING, "callback") }
+    checkThrows { SendPart(0, 1, PartStatus.PENDING, PartStatus.PENDING, "") }
+
     val pending = newOperation(SendState.PENDING_UNDO)
     val cancelled = SendTransitions.advance(pending, SendState.CANCELLED)
     check(cancelled.version == 1L && !SendTransitions.canCancel(cancelled))
@@ -57,6 +90,14 @@ fun main() {
     checkThrows { SendTransitions.advance(failed, SendState.DISPATCHING) }
     check(!pending.technicalSummary().contains("snapshot-key"))
 
+    val fakeStore = FakeOperations()
+    check(runImmediate { fakeStore.insert(pending) })
+    check(!runImmediate { fakeStore.insert(pending) })
+    check(runImmediate { fakeStore.compareAndSet(0, SendState.PENDING_UNDO, cancelled) })
+    check(!runImmediate { fakeStore.compareAndSet(0, SendState.PENDING_UNDO, dispatching) })
+    check(runImmediate { fakeStore.get(pending.id) }?.state == SendState.CANCELLED)
+    check(UiState.Inbox(listOf(conversationId), 0).conversationIds.single() == conversationId)
+
     val scheduled = newOperation(SendState.SCHEDULED)
     val due = SendTransitions.advance(scheduled, SendState.DUE)
     check(SendTransitions.advance(due, SendState.MISSED_NEEDS_DECISION).version == 2L)
@@ -68,5 +109,5 @@ fun main() {
     check(DispatchRequest(OperationId(id()), "snap", listOf(ParticipantKey("local-1")), null).sim == null)
     checkThrows { DispatchRequest(OperationId(id()), "snap", emptyList(), null) }
 
-    println("CH005 domain contract: 25 assertions PASS")
+    println("CH005 domain contract: 31 assertions PASS")
 }
