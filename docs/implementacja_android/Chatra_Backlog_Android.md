@@ -90,6 +90,9 @@ Odbiór: UI może działać z repozytorium testowym, a logika wysyłania bez UI.
 
 **P0 · Android i QA · 1–2 osobodni · zależności CH002 CH005**
 
+**Status 06.11.2026: częściowo wykonano.** [Generator 10 fixture i walidacja](../../core/testing/README.md) zachowują 500 elementów, polskie teksty, SIM, zegar, źródłowe stany błędu/szkicu/HD i wyjątek 21/160. [Raport techniczny](CH006_Fixture_i_porownanie.md) zawiera testy oraz skrypt overlay/diff z goldenami CH002. **Do zamknięcia:** renderer i dwa zrzuty 10 ekranów na Androidzie bez kontaktów/sieci, porównanie i odbiór.
+
+
 Wykonanie: przepisać fixture wszystkich 10 plansz, polskie teksty, liczby, daty, SIM i gradientowe miniatury. Dodać kontrolowany zegar 29 października 2026 i przypadki błędu/draft/HD. Przygotować komendę zapisu ekranów oraz raport overlay/mapa różnic. Zachować literalny błędny licznik 21/160 tylko w fixture, oznaczając wyjątek względem produkcyjnej logiki.
 
 Odbiór: stabilne ID i render bez sieci oraz kontaktów urządzenia. Weryfikacja: dwa uruchomienia generują te same dane i nie wysyłają SMS.
