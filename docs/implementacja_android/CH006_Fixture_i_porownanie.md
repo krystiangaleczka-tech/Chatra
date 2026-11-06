@@ -9,3 +9,7 @@
 5. Źródłowe `21/160 · 1 SMS` jest zachowane jako celowa niezgodność danych demonstracyjnych. CH025 wylicza licznik produkcyjnie i nie może używać tej wartości jako reguły.
 
 Instrukcja: [core/testing/README.md](../../core/testing/README.md). Nie wykonano pomiaru GPU, renderu Android ani testów wysyłki/odbioru SMS. Żaden screen referencyjny nie został zmieniony.
+
+## Podgląd APK po dodaniu szkieletu CH004
+
+[CH004](CH004_Build_i_demo.md) pakuje oryginalny HTML i wygenerowane fixture wyłącznie w wariancie demo. Natywna lista wybiera ekrany według katalogu fixture. Wygląd samych ekranów jest kontrolnym renderem oryginału w WebView, nie nową implementacją UI z modeli Kotlin. To nie zamyka CH006 ani odbioru 1:1 docelowego renderera.

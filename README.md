@@ -23,12 +23,24 @@ Dokumentacja zawiera:
 **Zakres:** aplikacja SMS i MMS z kierunkiem własnego transferu załączników przez internet.
 Połączenia głosowe i wideo pozostają poza zakresem.
 
-**Status:** dokumentacja i koncepcja. Nie oznacza zaimplementowanej obsługi RCS,
-iMessage ani transferu HD. Kotlin i Rust są rekomendacją do weryfikacji w prototypie.
+**Status:** dokumentacja, kontrakty domeny Kotlin/JVM i projekt Android z testowym podglądem offline. SMS/MMS, RCS, iMessage i transfer HD nie są zaimplementowane. Wybór docelowego renderera pozostaje w CH003/G03.
 
 Rozdziały 1-21 zawierają część bazową. Rozdziały 22-27 zawierają uzupełnienie rozmowy.
 W PDF uzupełnienie zaczyna się na stronie 24.
 
+
+## Zbudowanie testowego APK
+
+Wymagane: JDK 21 (z javac), Node 22+, Android SDK 36 i Build Tools 36.0.0. Ustaw `JAVA_HOME` i `ANDROID_HOME`.
+
+```bash
+./gradlew :core:model:test :app:assembleDemoDebug
+adb install -r app/build/outputs/apk/demo/debug/app-demo-debug.apk
+```
+
+**Weryfikacja uruchomienia: niezaliczona.** Instalacja przeszła, lecz na programowym emulatorze API 36 wystąpił SIGTRAP w WebView 133 przed odbiorem ekranów. APK wymaga dalszej diagnostyki; [wynik i ograniczenia](docs/implementacja_android/CH004_Build_i_demo.md#Wynik-testu-uruchomienia--niezaliczony).
+
+**Chatra Demo** zawiera podgląd 10 lokalnych wzorców w WebView z natywną listą Compose. To statyczny podgląd wyglądu; przyciski wzorców nie realizują SMS/MMS. Wariant produkcyjny nie zawiera danych demo. [Pełna instrukcja, warianty release i test na Androidzie](docs/implementacja_android/CH004_Build_i_demo.md).
 
 ## Dokumentacja implementacji Android
 
@@ -54,4 +66,4 @@ Specyfikacja z 29 października 2026 opisuje odtworzenie 1:1 dziesięciu ekranó
 - [Pakiet referencyjny ekranów i stylów](docs/implementacja_android/Chatra_Pakiet_referencyjny/README.md)
 - [Archiwalny pakiet ZIP (wersja 1.0, 64 zadania)](docs/implementacja_android/Chatra_Dokumentacja_i_taski.zip)
 
-Dokumentacja obejmuje wygląd, architekturę Androida, SMS/MMS, dual SIM, harmonogram, wyszukiwanie, Chatra HD, prywatność i kryteria odbioru. Aktualny backlog Markdown i JSON (wersja 1.1) obejmuje także szczegóły rozmowy, galerię, kolaże, personalizację per rozmowa, gesty oraz nieprzeczytane; dwie pozycje dotyczą opcjonalnego eksportu i badań platform. Zadania zawierają priorytety, role, zależności, orientacyjne nakłady i weryfikację. Braki źródłowego projektu i decyzje do zamknięcia oznaczono osobno. Pakiet jest dokumentacją do realizacji i nie zawiera gotowego APK.
+Dokumentacja obejmuje wygląd, architekturę Androida, SMS/MMS, dual SIM, harmonogram, wyszukiwanie, Chatra HD, prywatność i kryteria odbioru. Aktualny backlog Markdown i JSON (wersja 1.1) obejmuje także szczegóły rozmowy, galerię, kolaże, personalizację per rozmowa, gesty oraz nieprzeczytane; dwie pozycje dotyczą opcjonalnego eksportu i badań platform. Zadania zawierają priorytety, role, zależności, orientacyjne nakłady i weryfikację. Braki źródłowego projektu i decyzje do zamknięcia oznaczono osobno. Pakiet referencyjny jest dokumentacją do realizacji; testowe APK podglądu można zbudować z projektu według instrukcji powyżej.
