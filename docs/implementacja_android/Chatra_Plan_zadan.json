@@ -120,7 +120,7 @@
         "CH003"
       ],
       "description": "Wykonanie: ustalić stabilne kompatybilne wersje JDK/Kotlin/AGP/Compose BOM i aktualne target/compile SDK. Utworzyć katalog wersji, wrapper, moduły i warianty demo/debug/release. Dodać konfigurację podpisu poza repozytorium, przykładowe zmienne bez sekretów i instrukcję uruchomienia. Build demo nie ma prawdziwej wysyłki ani zakupów.\n\nOdbiór: czyste środowisko buduje demo i release testowy bez ręcznych zmian plików. Weryfikacja: odtworzenie według README i kontrola, że fixture nie trafiają do produkcyjnego źródła danych.",
-      "execution_status": "in_progress_build_scaffold_pending_ch003_g02_g03",
+      "execution_status": "in_progress_build_verified_runtime_failed_pending_ch003_g02_g03",
       "evidence_files": [
         "gradle/libs.versions.toml",
         "gradle/wrapper/gradle-wrapper.properties",
@@ -132,7 +132,7 @@
         ".github/workflows/android.yml",
         "docs/implementacja_android/CH004_Build_i_demo.md"
       ],
-      "review_note": "Projekt Android/JVM, przypięty toolchain, demo/production i debug/release, podpis z zewnętrznych zmiennych. Kontrolny podgląd oryginalnego HTML w WebView; nie zastępuje natywnego renderera ani decyzji CH003/G03. Finalne zamknięcie wymaga CH003 oraz decyzji G02/G03. Dowody lokalnej kompilacji i testów: CH004_Build_i_demo.md."
+      "review_note": "Projekt Android/JVM, przypięty toolchain, demo/production i debug/release, podpis z zewnętrznych zmiennych. Kontrolny podgląd oryginalnego HTML w WebView; nie zastępuje natywnego renderera ani decyzji CH003/G03. Finalne zamknięcie wymaga CH003 oraz decyzji G02/G03. Dowody lokalnej kompilacji i testów: CH004_Build_i_demo.md. Czysty build, 31 asercji JVM, lint i rozdzielenie assets PASS lokalnie i w CI. Instalacja emulator API36 PASS; podgląd FAIL (SIGTRAP w WebView 133), 0/10 ekranów odebranych. Wymaga diagnostyki i odbioru runtime."
     },
     {
       "id": "CH005",

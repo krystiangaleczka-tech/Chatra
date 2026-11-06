@@ -53,13 +53,16 @@ for (let index = 0; index < 10; index++) {
   command('shell', 'am', 'force-stop', pkg);
   command('shell', 'am', 'start', '-W', '-n', `${pkg}/pl.chatra.MainActivity`, '--ei', 'screen', String(index + 1));
   let target;
-  for (let attempt = 0; attempt < 240 && !target; attempt++) {
+  const deadline = Date.now() + 120000;
+  while (Date.now() < deadline && !target) {
+    try { command('shell', 'pidof', pkg); }
+    catch { throw Error(`${id}: demo process exited before WebView was ready`); }
     try {
       const sockets = command('shell', 'cat', '/proc/net/unix').toString();
       const socket = sockets.match(/@(webview_devtools_remote_\d+)/)?.[1];
       if (socket) {
         command('forward', 'tcp:9223', `localabstract:${socket}`);
-        const targets = await (await fetch('http://127.0.0.1:9223/json/list')).json();
+        const targets = await (await fetch('http://127.0.0.1:9223/json/list', { signal: AbortSignal.timeout(5000) })).json();
         target = targets.find((x) => x.url === 'https://demo.chatra.invalid/reference.html');
       }
     } catch { /* App/WebView may still be starting. */ }

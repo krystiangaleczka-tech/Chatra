@@ -38,7 +38,9 @@ Wymagane: JDK 21 (z javac), Node 22+, Android SDK 36 i Build Tools 36.0.0. Ustaw
 adb install -r app/build/outputs/apk/demo/debug/app-demo-debug.apk
 ```
 
-**Chatra Demo** otwiera 10 lokalnych wzorców w WebView z natywną listą Compose. To statyczny podgląd wyglądu; przyciski wzorców nie realizują SMS/MMS. Wariant produkcyjny nie zawiera danych demo. [Pełna instrukcja, warianty release i test na Androidzie](docs/implementacja_android/CH004_Build_i_demo.md).
+**Weryfikacja uruchomienia: niezaliczona.** Instalacja przeszła, lecz na programowym emulatorze API 36 wystąpił SIGTRAP w WebView 133 przed odbiorem ekranów. APK wymaga dalszej diagnostyki; [wynik i ograniczenia](docs/implementacja_android/CH004_Build_i_demo.md#Wynik-testu-uruchomienia--niezaliczony).
+
+**Chatra Demo** zawiera podgląd 10 lokalnych wzorców w WebView z natywną listą Compose. To statyczny podgląd wyglądu; przyciski wzorców nie realizują SMS/MMS. Wariant produkcyjny nie zawiera danych demo. [Pełna instrukcja, warianty release i test na Androidzie](docs/implementacja_android/CH004_Build_i_demo.md).
 
 ## Dokumentacja implementacji Android
 
