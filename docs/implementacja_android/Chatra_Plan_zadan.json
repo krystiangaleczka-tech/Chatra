@@ -131,7 +131,18 @@
       "dependencies": [
         "CH001"
       ],
-      "description": "Wykonanie: zdefiniować typowane identyfikatory, Conversation, MessageRef, Draft, SendOperation, Attempt, Schedule i Attachment. Rozdzielić transport SMS/MMS/HD, repozytoria, zegar i dostawcę SIM. Ustalić UiState/UiAction, błędy i kontrakt zapisu. Zapisać ADR o providerze jako historii SMS/MMS i Room jako metadanych/projekcji.\n\nOdbiór: UI może działać z repozytorium testowym, a logika wysyłania bez UI. Weryfikacja: przegląd zależności modułów oraz sekwencji send/cancel/retry; brak cyklicznej zależności feature→feature.\n\nUzupełnienie UX 29.10.2026: Rozszerzyć kontrakty modelu o trwałe ustawienia per conversationId (dziedziczenie z globalnego motywu), read/unread override, stan wyciszenia, lokalne metadane przypięć, identyfikator źródłowej wiadomości dla mediów oraz bezpieczne identyfikatory skrótów. Określić migracje i zachowanie po usunięciu wątku.\n\nOdbiór rozszerzony: Modele obsługują odtwarzalną galerię, skok do wiadomości i ustawienia per rozmowa bez duplikowania treści wiadomości w Room."
+      "description": "Wykonanie: zdefiniować typowane identyfikatory, Conversation, MessageRef, Draft, SendOperation, Attempt, Schedule i Attachment. Rozdzielić transport SMS/MMS/HD, repozytoria, zegar i dostawcę SIM. Ustalić UiState/UiAction, błędy i kontrakt zapisu. Zapisać ADR o providerze jako historii SMS/MMS i Room jako metadanych/projekcji.\n\nOdbiór: UI może działać z repozytorium testowym, a logika wysyłania bez UI. Weryfikacja: przegląd zależności modułów oraz sekwencji send/cancel/retry; brak cyklicznej zależności feature→feature.\n\nUzupełnienie UX 29.10.2026: Rozszerzyć kontrakty modelu o trwałe ustawienia per conversationId (dziedziczenie z globalnego motywu), read/unread override, stan wyciszenia, lokalne metadane przypięć, identyfikator źródłowej wiadomości dla mediów oraz bezpieczne identyfikatory skrótów. Określić migracje i zachowanie po usunięciu wątku.\n\nOdbiór rozszerzony: Modele obsługują odtwarzalną galerię, skok do wiadomości i ustawienia per rozmowa bez duplikowania treści wiadomości w Room.",
+      "execution_status": "completed",
+      "evidence_files": [
+        "core/model/src/main/kotlin/pl/chatra/core/model/Models.kt",
+        "core/model/src/main/kotlin/pl/chatra/core/model/Ports.kt",
+        "core/model/src/main/kotlin/pl/chatra/core/model/Transitions.kt",
+        "core/model/src/test/kotlin/pl/chatra/core/model/DomainContractTest.kt",
+        "scripts/ch005_test_domain.sh",
+        "docs/implementacja_android/CH005_ADR_Modele_i_granice.md"
+      ],
+      "review_note": "Kontrakty domeny Kotlin/JVM, porty, ADR i fake repozytorium testowe z CAS; 31 asercji PASS w lokalnym kotlinc 1.9/JDK 21. Integracje Gradle, Room, SMS/MMS i testy Androida pozostają w CH004/CH022–CH028.",
+      "completed_on": "2026-11-06"
     },
     {
       "id": "CH006",

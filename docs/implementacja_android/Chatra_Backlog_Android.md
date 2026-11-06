@@ -74,6 +74,9 @@ Odbiór: czyste środowisko buduje demo i release testowy bez ręcznych zmian pl
 
 **P0 · lider Android · 2–3 osobodni · zależności CH001**
 
+**Status 06.11.2026: wykonano CH005.** [Kontrakty Kotlin/JVM](../../core/model/README.md) obejmują typowane ID, modele, porty transportów, repozytoriów, zegara i SIM, UiState/UiAction, błędy, statusy wysyłki i testowy CAS. [ADR](CH005_ADR_Modele_i_granice.md) opisuje źródła prawdy oraz migracje. Lokalny test JVM: 31 asercji PASS. Integracje Android/Room i próby fizyczne należą do dalszych zadań.
+
+
 Wykonanie: zdefiniować typowane identyfikatory, Conversation, MessageRef, Draft, SendOperation, Attempt, Schedule i Attachment. Rozdzielić transport SMS/MMS/HD, repozytoria, zegar i dostawcę SIM. Ustalić UiState/UiAction, błędy i kontrakt zapisu. Zapisać ADR o providerze jako historii SMS/MMS i Room jako metadanych/projekcji.
 
 Odbiór: UI może działać z repozytorium testowym, a logika wysyłania bez UI. Weryfikacja: przegląd zależności modułów oraz sekwencji send/cancel/retry; brak cyklicznej zależności feature→feature.
