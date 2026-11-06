@@ -70,6 +70,8 @@ Wykonanie: ustalić stabilne kompatybilne wersje JDK/Kotlin/AGP/Compose BOM i ak
 
 Odbiór: czyste środowisko buduje demo i release testowy bez ręcznych zmian plików. Weryfikacja: odtworzenie według README i kontrola, że fixture nie trafiają do produkcyjnego źródła danych.
 
+**Postęp CH004 (06.11.2026):** projekt Android z katalogiem wersji i wrapperem, moduł domeny JVM, warianty demo/production i debug/release, zewnętrzny podpis. [Instrukcja budowania APK i testów](CH004_Build_i_demo.md). Demo jest kontrolnym podglądem HTML w WebView; nie zamyka natywnego szkła CH003. Status `in_progress_build_scaffold_pending_ch003_g02_g03` — zależności i decyzje G02/G03 nadal otwarte.
+
 ### CH005 Zdefiniować modele i granice architektury
 
 **P0 · lider Android · 2–3 osobodni · zależności CH001**

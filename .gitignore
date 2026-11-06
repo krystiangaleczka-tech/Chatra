@@ -1,2 +1,8 @@
 docs/implementacja_android/CH002_Android/run2/
-/build/ch006/
+.gradle/
+**/build/
+local.properties
+.env
+*.jks
+*.keystore
+__pycache__/
