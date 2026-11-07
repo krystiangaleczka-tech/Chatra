@@ -102,6 +102,9 @@ private class GlassNode(
     private var position = Offset.Unspecified
     private var effectFor: Triple<Float, Float, Float>? = null
 
+    /** Ostatnio nagrany wycinek sceny (przesunięcie, rozmiar, skala). */
+    private var recordedFor: RecordKey? = null
+
     override fun onAttach() {
         blurLayer = currentValueOf(LocalGraphicsContext).createGraphicsLayer()
     }
@@ -110,6 +113,7 @@ private class GlassNode(
         blurLayer?.let { currentValueOf(LocalGraphicsContext).releaseGraphicsLayer(it) }
         blurLayer = null
         effectFor = null
+        recordedFor = null
     }
 
     override fun onGloballyPositioned(coordinates: LayoutCoordinates) {
@@ -154,10 +158,18 @@ private class GlassNode(
             effectFor = key
         }
         val offset = position - source.positionInRoot
-        layer.record(IntSize(ceil((size.width + 2 * margin) * k).toInt(), ceil((size.height + 2 * margin) * k).toInt())) {
-            scale(k, k, pivot = Offset.Zero) {
-                translate(margin - offset.x, margin - offset.y) { drawLayer(source.layer) }
+        val layerSize = IntSize(ceil((size.width + 2 * margin) * k).toInt(), ceil((size.height + 2 * margin) * k).toInt())
+        // Nagrywać tylko po zmianie położenia lub rozmiaru panelu. Zmiany treści sceny przechodzą same przez
+        // odwołanie do jej RenderNode, a niezmieniona warstwa pozwala HWUI nie liczyć rozmycia od nowa,
+        // gdy przerysowuje się tylko treść panelu (np. przewijanie wariantów w arkuszu S04, CH003).
+        val recordKey = RecordKey(offset, layerSize, k, margin)
+        if (recordedFor != recordKey) {
+            layer.record(layerSize) {
+                scale(k, k, pivot = Offset.Zero) {
+                    translate(margin - offset.x, margin - offset.y) { drawLayer(source.layer) }
+                }
             }
+            recordedFor = recordKey
         }
         clipPath(clip) {
             translate(-margin, -margin) { scale(1f / k, 1f / k, pivot = Offset.Zero) { drawLayer(layer) } }
@@ -179,6 +191,8 @@ private class GlassNode(
         }
     }
 }
+
+private data class RecordKey(val offset: Offset, val size: IntSize, val scale: Float, val margin: Float)
 
 /**
  * Współczynnik próbkowania warstwy rozmycia: σ po zmniejszeniu ≥ 16 px (bez widocznych schodków przy
