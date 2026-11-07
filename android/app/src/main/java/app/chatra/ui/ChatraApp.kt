@@ -40,8 +40,9 @@ import app.chatra.ui.start.StartViewModel
 
 val LocalContainer = androidx.compose.runtime.staticCompositionLocalOf<AppContainer> { error("container") }
 
+/** [forceMatte]: demo/QA — panele matowe bez rozmycia, do porównania kosztu szkła (CH003). */
 @Composable
-fun ChatraApp(container: AppContainer, initial: Navigator?, onExit: () -> Unit) {
+fun ChatraApp(container: AppContainer, initial: Navigator?, onExit: () -> Unit, forceMatte: Boolean = false) {
     val navigator = remember { initial ?: Navigator(Tab.Conversations, startStack(container)) }
     val appearance by container.appearance.value.collectAsStateWithLifecycle()
     val keyboard = LocalSoftwareKeyboardController.current
@@ -56,7 +57,7 @@ fun ChatraApp(container: AppContainer, initial: Navigator?, onExit: () -> Unit) 
         LocalContainer provides container,
         LocalClock provides container.clock,
         LocalAvatarTones provides container::avatarTone,
-        LocalReduceTransparency provides appearance.reduceTransparency,
+        LocalReduceTransparency provides (appearance.reduceTransparency || forceMatte),
     ) {
         val screenBackdrop = rememberBackdrop()
         val listStates = remember { mutableMapOf<Tab, LazyListState>() }

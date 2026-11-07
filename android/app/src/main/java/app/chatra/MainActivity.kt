@@ -30,6 +30,7 @@ class MainActivity : ComponentActivity() {
         val reference = BuildConfig.DEMO && intent.getBooleanExtra(EXTRA_FRAME, false)
         val roleScenario = if (BuildConfig.DEMO) intent.getStringExtra(EXTRA_ROLE) else null
         val container = (application as ChatraApplication).container(reference, roleScenario)
+        val matte = BuildConfig.DEMO && intent.getBooleanExtra(EXTRA_MATTE, false)
         val initial = intent.getStringExtra(EXTRA_SCREEN)?.let(ReferenceScreens::navigatorFor)
         if (reference) {
             WindowInsetsControllerCompat(window, window.decorView).run {
@@ -45,10 +46,10 @@ class MainActivity : ComponentActivity() {
                     if (reference) {
                         // Obszar projektu 390 × 844 dp w lewym górnym rogu (porównanie z goldenem CH002).
                         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopStart) {
-                            Box(Modifier.requiredSize(390.dp, 844.dp)) { ChatraApp(container, initial, onExit = ::finish) }
+                            Box(Modifier.requiredSize(390.dp, 844.dp)) { ChatraApp(container, initial, onExit = ::finish, forceMatte = matte) }
                         }
                     } else {
-                        ChatraApp(container, initial, onExit = ::finish)
+                        ChatraApp(container, initial, onExit = ::finish, forceMatte = matte)
                     }
                 }
             }
@@ -62,6 +63,9 @@ class MainActivity : ComponentActivity() {
 
         /** Demo: scenariusz fałszywej roli SMS na S01, np. `--es screen S01 --es role denied`. */
         const val EXTRA_ROLE = "role"
+
+        /** Demo/QA: panele matowe bez rozmycia (`--ez matte true`) — porównanie kosztu szkła (CH003). */
+        const val EXTRA_MATTE = "matte"
     }
 }
 
