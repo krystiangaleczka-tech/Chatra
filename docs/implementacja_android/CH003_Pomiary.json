@@ -181,6 +181,91 @@
    },
    "graphics_kb": 118852,
    "total_pss_kb": 164812
+  },
+  {
+   "run": "S03-glass-downsampled-1",
+   "frames": 887,
+   "janky_pct": 0.34,
+   "deadline_missed": 3,
+   "frame_ms": {
+    "50": 15,
+    "90": 17,
+    "95": 18,
+    "99": 21
+   },
+   "gpu_ms": {
+    "50": 10,
+    "90": 12,
+    "95": 13,
+    "99": 14
+   },
+   "graphics_kb": 128508,
+   "total_pss_kb": 173775
+  },
+  {
+   "run": "S03-glass-downsampled-2",
+   "frames": 858,
+   "janky_pct": 0.35,
+   "deadline_missed": 3,
+   "frame_ms": {
+    "50": 13,
+    "90": 18,
+    "95": 19,
+    "99": 20
+   },
+   "gpu_ms": {
+    "50": 8,
+    "90": 12,
+    "95": 14,
+    "99": 16
+   },
+   "graphics_kb": 132376,
+   "total_pss_kb": 173909
+  },
+  {
+   "run": "S04-glass-downsampled-1",
+   "frames": 685,
+   "janky_pct": 2.34,
+   "deadline_missed": 16,
+   "frame_ms": {
+    "50": 12,
+    "90": 16,
+    "95": 18,
+    "99": 30
+   },
+   "gpu_ms": {
+    "50": 6,
+    "90": 10,
+    "95": 11,
+    "99": 14
+   },
+   "graphics_kb": 146040,
+   "total_pss_kb": 198513
+  },
+  {
+   "run": "S04-glass-downsampled-2",
+   "frames": 687,
+   "janky_pct": 2.47,
+   "deadline_missed": 17,
+   "frame_ms": {
+    "50": 12,
+    "90": 16,
+    "95": 17,
+    "99": 31
+   },
+   "gpu_ms": {
+    "50": 6,
+    "90": 10,
+    "95": 11,
+    "99": 13
+   },
+   "graphics_kb": 146144,
+   "total_pss_kb": 197934
   }
- ]
+ ],
+ "downsampling": {
+  "rule": "k = clamp(16 px / sigma_px, 0.25, 1); sigma <= 16 px bez zmian",
+  "image_change_vs_full_resolution_max_channel_delta": 1,
+  "image_vs_golden_unchanged": true
+ }
 }

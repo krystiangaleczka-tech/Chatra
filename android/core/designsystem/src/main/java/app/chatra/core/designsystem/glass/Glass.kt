@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipPath
+import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.layer.GraphicsLayer
 import androidx.compose.ui.graphics.layer.drawLayer
@@ -99,7 +100,7 @@ private class GlassNode(
 
     private var blurLayer: GraphicsLayer? = null
     private var position = Offset.Unspecified
-    private var effectFor: Pair<Float, Float>? = null
+    private var effectFor: Triple<Float, Float, Float>? = null
 
     override fun onAttach() {
         blurLayer = currentValueOf(LocalGraphicsContext).createGraphicsLayer()
@@ -140,19 +141,27 @@ private class GlassNode(
     private fun DrawScope.drawBackdrop(source: Backdrop, layer: GraphicsLayer, clip: Path) {
         val sigma = style.blur.toPx()
         val margin = ceil(sigma * 3f)
-        val key = sigma to style.saturation
+        // Scena próbkowana w obniżonej rozdzielczości: przy σ 28–40 dp (≈ 100–140 px) rozmycie i tak usuwa
+        // szczegóły, a warstwa zajmuje 1/16 pamięci i pracy GPU (CH003). Po rozmyciu skalowana z powrotem.
+        val k = downsample(sigma)
+        val key = Triple(sigma, style.saturation, k)
         if (effectFor != key) {
+            val r = sigmaToRadius(sigma * k)
             layer.renderEffect = RenderEffect.createColorFilterEffect(
                 ColorMatrixColorFilter(ColorMatrix().apply { setToSaturation(style.saturation) }.values),
-                RenderEffect.createBlurEffect(sigmaToRadius(sigma), sigmaToRadius(sigma), Shader.TileMode.CLAMP),
+                RenderEffect.createBlurEffect(r, r, Shader.TileMode.CLAMP),
             ).asComposeRenderEffect()
             effectFor = key
         }
         val offset = position - source.positionInRoot
-        layer.record(IntSize((size.width + 2 * margin).toInt(), (size.height + 2 * margin).toInt())) {
-            translate(margin - offset.x, margin - offset.y) { drawLayer(source.layer) }
+        layer.record(IntSize(ceil((size.width + 2 * margin) * k).toInt(), ceil((size.height + 2 * margin) * k).toInt())) {
+            scale(k, k, pivot = Offset.Zero) {
+                translate(margin - offset.x, margin - offset.y) { drawLayer(source.layer) }
+            }
         }
-        clipPath(clip) { translate(-margin, -margin) { drawLayer(layer) } }
+        clipPath(clip) {
+            translate(-margin, -margin) { scale(1f / k, 1f / k, pivot = Offset.Zero) { drawLayer(layer) } }
+        }
     }
 
     private fun DrawScope.drawTopHighlight(clip: Path) {
@@ -170,6 +179,12 @@ private class GlassNode(
         }
     }
 }
+
+/**
+ * Współczynnik próbkowania warstwy rozmycia: σ po zmniejszeniu ≥ 16 px (bez widocznych schodków przy
+ * powiększeniu), najwyżej 4 × w każdej osi. Małe rozmycia zostają w pełnej rozdzielczości.
+ */
+internal fun downsample(sigmaPx: Float): Float = if (sigmaPx <= 16f) 1f else (16f / sigmaPx).coerceIn(0.25f, 1f)
 
 /** HWUI zamienia „radius” RenderEffect na sigma = 0.57735 · r + 0.5; CSS blur() podaje sigma. */
 internal fun sigmaToRadius(sigma: Float): Float = if (sigma <= 0.5f) 0f else (sigma - 0.5f) / 0.57735f
