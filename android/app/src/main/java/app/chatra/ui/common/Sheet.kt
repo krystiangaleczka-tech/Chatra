@@ -56,7 +56,8 @@ fun SheetSurface(top: Dp, label: String, modifier: Modifier = Modifier, content:
                 .semantics { contentDescription = label },
             shadows = listOf(Shadows.Sheet),
         ) {
-            Column(Modifier.fillMaxSize().padding(start = 18.dp, end = 18.dp, top = 8.dp, bottom = 20.dp), verticalArrangement = Arrangement.spacedBy(14.dp), content = content)
+            // border-box: obramowanie 1 leży wewnątrz, padding 8/18/20 liczony od niego (treść S04: y 205, szerokość 336).
+            Column(Modifier.fillMaxSize().padding(start = 19.dp, end = 19.dp, top = 9.dp, bottom = 21.dp), verticalArrangement = Arrangement.spacedBy(14.dp), content = content)
         }
     }
 }
@@ -97,8 +98,9 @@ fun PrimaryButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifi
 }
 
 /**
- * Opcja z radiem (S04 „Jak wysłać?”, S05, S08): wybrana — białe tło i obramowanie 1.5 akcentu,
- * pozostałe — biel 0.55 i obramowanie 1 bieli 0.95; padding 12/14, promień 18.
+ * Opcja z radiem (S04 „Jak wysłać?”, S08): wybrana — białe tło i obramowanie 1.5 akcentu,
+ * pozostałe — biel 0.55 i obramowanie 1 bieli 0.95; padding 12/14 (S08: 14/14), promień 18.
+ * Obramowanie jak w CSS `content-box` leży poza paddingiem, więc opcja jest o 2 × obramowanie wyższa.
  */
 @Composable
 fun RadioOption(
@@ -106,16 +108,19 @@ fun RadioOption(
     onSelect: () -> Unit,
     modifier: Modifier = Modifier,
     radius: Dp = 18.dp,
+    horizontalPadding: Dp = 14.dp,
+    verticalPadding: Dp = 12.dp,
     content: @Composable () -> Unit,
 ) {
     val shape = RoundedCornerShape(radius)
+    val border = if (selected) 1.5.dp else 1.dp
     Row(
         modifier.fillMaxWidth().clip(shape)
             .background(if (selected) Color.White else ChatraColors.white(0.55f))
-            .border(if (selected) 1.5.dp else 1.dp, if (selected) ChatraColors.Accent else ChatraColors.white(0.95f), shape)
+            .border(border, if (selected) ChatraColors.Accent else ChatraColors.white(0.95f), shape)
             .semantics(mergeDescendants = true) { role = Role.RadioButton; this.selected = selected }
             .pressable(onSelect)
-            .padding(horizontal = 14.dp, vertical = 12.dp),
+            .padding(horizontal = horizontalPadding + border, vertical = verticalPadding + border),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Radio(selected, Modifier.padding(top = 3.dp))
@@ -123,12 +128,17 @@ fun RadioOption(
     }
 }
 
-/** Radio 20 × 20 w stylu Chrome Android (accent-color): obręcz i kropka. */
+/**
+ * Radio w stylu Chrome Android (accent-color): CSS 20 × 20, ale Chrome rysuje je w polu 16 × 20
+ * (pomiar CH002, S04), więc tekst opcji zaczyna się 16 + gap od radia.
+ */
 @Composable
 fun Radio(selected: Boolean, modifier: Modifier = Modifier) {
-    Box(
-        modifier.size(20.dp).clip(CircleShape)
-            .border(if (selected) 2.dp else 1.5.dp, if (selected) ChatraColors.Accent else ChatraColors.ink(0.45f), CircleShape),
-        contentAlignment = Alignment.Center,
-    ) { if (selected) Box(Modifier.size(10.dp).clip(CircleShape).background(ChatraColors.Accent)) }
+    Box(modifier.size(16.dp, 20.dp), contentAlignment = Alignment.Center) {
+        Box(
+            Modifier.size(16.dp).clip(CircleShape)
+                .border(if (selected) 2.dp else 1.5.dp, if (selected) ChatraColors.Accent else ChatraColors.ink(0.45f), CircleShape),
+            contentAlignment = Alignment.Center,
+        ) { if (selected) Box(Modifier.size(8.dp).clip(CircleShape).background(ChatraColors.Accent)) }
+    }
 }

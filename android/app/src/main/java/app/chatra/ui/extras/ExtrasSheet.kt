@@ -58,7 +58,6 @@ import app.chatra.core.model.MediaVariant
 import app.chatra.ui.LocalContainer
 import app.chatra.ui.common.PrimaryButton
 import app.chatra.ui.common.RadioOption
-import app.chatra.ui.common.SheetHandle
 import app.chatra.ui.common.SheetSurface
 import app.chatra.ui.common.SheetTitle
 import app.chatra.ui.conversation.ConversationViewModel
@@ -103,9 +102,12 @@ fun ExtrasSheet(model: ConversationViewModel, onClose: () -> Unit, onSchedule: (
     val n = picked.size
 
     SheetSurface(196.dp, "Dodaj do wiadomości") {
-        SheetHandle()
+        // Uchwyt 38 × 5 ze wzorca: treść S04 przepełnia arkusz, więc Chrome skurczył go do 0 (flex-shrink),
+        // a odstęp 14 został — golden ma tytuł 22 pod górną krawędzią treści.
+        Spacer(Modifier.height(0.dp))
         SheetTitle("Dodaj do wiadomości", onClose)
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        // Wiersz siatki ma 75,71: „Zaplanuj” to <a> z content-box (74 + obramowanie, skurczone przez Chrome).
+        Row(Modifier.height(75.71.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             ActionTile(ChatraIcons.Photo, "Zdjęcie", mode == Mode.Photo) { if (mode == Mode.Photo) pick() else mode = Mode.Photo }
             ActionTile(ChatraIcons.Camera, "Aparat", false) { pick() }
             ActionTile(ChatraIcons.Clock, "Zaplanuj", false, onSchedule)
@@ -136,7 +138,9 @@ fun ExtrasSheet(model: ConversationViewModel, onClose: () -> Unit, onSchedule: (
                 repeat(4 - picked.take(4).size) { Spacer(Modifier.weight(1f)) }
             }
         }
-        Column(Modifier.weight(1f, fill = false).verticalScroll(rememberScrollState())) {
+        // Warianty zajmują całe wolne miejsce (odpowiednik flex: 1 pod nimi) i przewijają się, gdy się nie mieszczą.
+        // Golden ściska CTA do 20,6 dp i wypycha go poza arkusz — tu CTA zostaje 54 dp i przypięte (odstępstwo, cel dotyku).
+        Column(Modifier.weight(1f).verticalScroll(rememberScrollState())) {
             BasicText("Jak wysłać?", Modifier.padding(bottom = 8.dp), style = chatraText(15f, 600))
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 RadioOption(variant == MediaVariant.OriginalHd, { variant = MediaVariant.OriginalHd }) {
@@ -154,7 +158,6 @@ fun ExtrasSheet(model: ConversationViewModel, onClose: () -> Unit, onSchedule: (
                 }
             }
         }
-        Spacer(Modifier.weight(1f))
         PrimaryButton(ctaText(variant, n), {
             model.sendMedia(picked.map { it.id }, bytes, variant)
             onClose()

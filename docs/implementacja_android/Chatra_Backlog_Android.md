@@ -161,6 +161,8 @@ Wykonanie: sheet 374×640, dim, uchwyt, cztery akcje, miniatury, Zmień i trzy o
 
 Odbiór: zgodny S04; opcje wyboru wzajemnie się wykluczają i aktualizują wariant zlecenia. Weryfikacja: 4 pliki, brak plików i wiele plików, zamknięcie bez utraty danych i TalkBack po otwarciu arkusza.
 
+**Korekta zgodności S04 (07.11.2026):** porównanie z goldenem `android-S04.png` (S26 Ultra, tryb referencyjny) 18,9 % → 15,9 % pikseli > 16/255; sam arkusz (y 196–760) 3,6 %, położenie elementów ±0,6 dp. Poprawki: warianty „Kopia bez lokalizacji” i „MMS” były niewidoczne (lista i odstęp dzieliły miejsce wagą po połowie), obramowania `content-box` opcji radiowych, padding arkusza `border-box` (treść y 205, szerokość 336), uchwyt skurczony do 0 jak w Chrome, wiersz kafelków 75,71, radio 16 × 20 jak w Chrome Android. **Świadome odstępstwa** (≈80 % pozostałej różnicy): pod arkuszem rysowana jest prawdziwa rozmowa S03, a nie abstrakcyjne placeholdery szablonu; CTA ma 54 dp i jest przypięte na dole (lista przewija się nad nim), podczas gdy golden ściska je do 20,6 dp i wypycha poza arkusz — nie spełniałoby celu dotyku.
+
 ### CH014 Odtworzyć S05 Formularz harmonogramu
 
 **P1 · Android UI · 2–3 osobodni · zależności CH006 CH008 CH009**
