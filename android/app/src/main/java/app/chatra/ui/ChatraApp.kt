@@ -35,6 +35,8 @@ import app.chatra.ui.conversation.ConversationViewModel
 import app.chatra.ui.extras.ExtrasSheet
 import app.chatra.ui.inbox.InboxScreen
 import app.chatra.ui.inbox.InboxViewModel
+import app.chatra.ui.start.StartScreen
+import app.chatra.ui.start.StartViewModel
 
 val LocalContainer = androidx.compose.runtime.staticCompositionLocalOf<AppContainer> { error("container") }
 
@@ -70,14 +72,20 @@ fun ChatraApp(container: AppContainer, initial: Navigator?, onExit: () -> Unit) 
     }
 }
 
-/** Start pojawia się, dopóki nie ma roli SMS (wariant full); demo zaczyna od Skrzynki. */
-private fun startStack(container: AppContainer): List<Route> = listOf(Route.Inbox)
+/** Start pojawia się, dopóki nie ma roli SMS (wariant full); demo zaczyna od Skrzynki (S01: `--es screen S01`). */
+private fun startStack(container: AppContainer): List<Route> =
+    if (container.isDemo || container.smsRole.isHeld()) listOf(Route.Inbox) else listOf(Route.Start)
 
 @Composable
 private fun Screen(route: Route, navigator: Navigator, listStates: MutableMap<Tab, LazyListState>) {
     val c = LocalContainer.current
     val dock = MainDock(navigator.tab, navigator::select) { navigator.push(Route.NewMessage()) }
     when (route) {
+        Route.Start -> {
+            val model = viewModel { StartViewModel(c.smsRole) }
+            // Po nadaniu roli Start nie zostaje pod Skrzynką.
+            StartScreen(model, { navigator.resetTo(Route.Inbox) }, { navigator.push(Route.Privacy) }, { navigator.push(Route.Help) })
+        }
         Route.Inbox -> {
             val model = viewModel { InboxViewModel(c.conversations) }
             val list = listStates.getOrPut(Tab.Conversations) { rememberLazyListState() }

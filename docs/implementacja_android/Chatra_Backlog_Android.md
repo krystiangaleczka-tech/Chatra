@@ -125,6 +125,8 @@ Wykonanie: logo, dekoracyjne koła, treści obu sekcji, informacja o historii, C
 
 Odbiór: obraz S01 zgodny ze wzorcem; naciśnięcia mają określone rezultaty i nie żądają galerii/aparatu. Weryfikacja: fixture, kontrola tekstów oraz odmowa/anulowanie/sukces fałszywego role adaptera.
 
+**Wynik CH010 (07.11.2026):** S01 w Compose ([StartScreen.kt](../../android/app/src/main/java/app/chatra/ui/start/StartScreen.kt)): logo szklane, koła dekoracyjne jako część sceny (rozmywane przez karty), obie karty, informacja o historii, CTA i dwa przyciski pomocnicze (Prywatność, Pomoc → trasy CH044). Tymczasowy kontrakt `SmsRoleGate` + maszyna stanów `SmsSetup` w `core:model` (sprawdzanie, gotowość, prośba, sukces, anulowanie, odmowa trwała → ustawienia systemu, brak telefonii, brak roli; ponowne sprawdzenie po powrocie na ekran); adapter systemowy dostarcza CH021. Demo: `FakeSmsRoleGate`, scenariusz z intencji `--es screen S01 --es role cancelled|denied|unavailable|no-telephony|held`. Po sukcesie stos sekcji zastępowany Skrzynką (Start nie zostaje pod spodem). Treść przewija się przy małym ekranie i dużym foncie; CTA rośnie z tekstem. Ekran nie prosi o aparat ani zdjęcia. Testy: `SmsSetupTest` (7 przypadków, w tym podwójne kliknięcie). **Do domknięcia:** porównanie obrazu z goldenem `android-S01.png` na urządzeniu referencyjnym.
+
 ### CH011 Odtworzyć S02 Skrzynka
 
 **P1 · Android UI · 2–3 osobodni · zależności CH006 CH008 CH009**

@@ -13,6 +13,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -58,6 +59,8 @@ fun ProvideChrome(referenceFrame: Boolean, content: @Composable () -> Unit) {
 fun ChatraScreen(
     background: CssBackground,
     modifier: Modifier = Modifier,
+    /** Elementy sceny rysowane nad tłem (np. dekoracyjne koła S01) — próbkowane przez szkło. */
+    sceneDecoration: DrawScope.() -> Unit = {},
     floating: @Composable BoxScope.() -> Unit = {},
     content: @Composable BoxScope.() -> Unit,
 ) {
@@ -65,7 +68,7 @@ fun ChatraScreen(
     val page = rememberBackdrop()
     Box(modifier.fillMaxSize()) {
         Box(Modifier.fillMaxSize().backdropSource(page)) {
-            Box(Modifier.fillMaxSize().backdropSource(scene).drawBehind { drawCssBackground(background) })
+            Box(Modifier.fillMaxSize().backdropSource(scene).drawBehind { drawCssBackground(background); sceneDecoration() })
             ProvideBackdrop(scene) { content() }
         }
         ProvideBackdrop(page) { floating() }

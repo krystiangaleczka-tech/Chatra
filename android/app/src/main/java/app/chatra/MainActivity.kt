@@ -28,7 +28,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         val reference = BuildConfig.DEMO && intent.getBooleanExtra(EXTRA_FRAME, false)
-        val container = (application as ChatraApplication).container(reference)
+        val roleScenario = if (BuildConfig.DEMO) intent.getStringExtra(EXTRA_ROLE) else null
+        val container = (application as ChatraApplication).container(reference, roleScenario)
         val initial = intent.getStringExtra(EXTRA_SCREEN)?.let(ReferenceScreens::navigatorFor)
         if (reference) {
             WindowInsetsControllerCompat(window, window.decorView).run {
@@ -58,6 +59,9 @@ class MainActivity : ComponentActivity() {
         /** Tryb referencyjny (demo): `adb shell am start … --ez frame true --es screen S02`. */
         const val EXTRA_FRAME = "frame"
         const val EXTRA_SCREEN = "screen"
+
+        /** Demo: scenariusz fałszywej roli SMS na S01, np. `--es screen S01 --es role denied`. */
+        const val EXTRA_ROLE = "role"
     }
 }
 

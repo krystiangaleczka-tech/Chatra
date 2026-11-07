@@ -5,6 +5,7 @@ import app.chatra.core.model.AppearancePrefs
 import app.chatra.core.model.Clock
 import app.chatra.core.model.ConversationId
 import app.chatra.core.model.SendingPrefs
+import app.chatra.core.testing.FakeSmsRoleGate
 import app.chatra.core.testing.FixedClock
 import app.chatra.core.testing.Fixture
 import app.chatra.core.testing.InMemoryChatra
@@ -18,7 +19,8 @@ import java.time.Instant
 import java.time.ZoneId
 
 /** Wariant demo: fixture 29.10.2026, bez prawdziwej wysyłki, kontaktów i zakupów (CH006). */
-fun createContainer(app: Application, referenceFrame: Boolean): AppContainer {
+/** [roleScenario]: scenariusz fałszywej roli SMS dla S01 (`--es role cancelled|denied|unavailable|no-telephony|held`). */
+fun createContainer(app: Application, referenceFrame: Boolean, roleScenario: String? = null): AppContainer {
     val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     val clock: Clock = if (referenceFrame) FixedClock() else DemoClock()
     val repo = InMemoryChatra(clock, scope, frozen = referenceFrame)
@@ -31,6 +33,7 @@ fun createContainer(app: Application, referenceFrame: Boolean): AppContainer {
         override val sendQueue = repo
         override val schedules = repo
         override val clock = clock
+        override val smsRole = FakeSmsRoleGate.scenario(roleScenario, delayMillis = if (referenceFrame) 0 else 600)
         // Tryb referencyjny zawsze startuje z ustawień domyślnych wzorca.
         override val appearance = if (referenceFrame) InMemoryStore(AppearancePrefs.Default) else prefs.appearance
         override val sending = if (referenceFrame) InMemoryStore(SendingPrefs()) else prefs.sending

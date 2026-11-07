@@ -10,6 +10,7 @@ import app.chatra.core.model.ScheduleRepository
 import app.chatra.core.model.SendQueue
 import app.chatra.core.model.SendingPrefs
 import app.chatra.core.model.SimRepository
+import app.chatra.core.model.SmsRoleGate
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -25,6 +26,9 @@ interface AppContainer {
     val sendQueue: SendQueue
     val schedules: ScheduleRepository
     val clock: Clock
+
+    /** Rola domyślnej aplikacji SMS (S01). Tymczasowy kontrakt CH010; adapter systemowy w CH021. */
+    val smsRole: SmsRoleGate
     val appearance: PreferenceStore<AppearancePrefs>
     val sending: PreferenceStore<SendingPrefs>
     val housekeeping: Flow<Housekeeping>
