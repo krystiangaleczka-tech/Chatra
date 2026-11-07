@@ -8,9 +8,17 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
+import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Dp
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -100,17 +108,14 @@ internal fun StartContent(state: SetupState, onPrimary: () -> Unit, onPrivacy: (
             val viewport = maxHeight
             // Treść przewija się na małym ekranie i przy dużym foncie; na wzorcu 844 dp mieści się z odstępem (flex: 1).
             Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-                Column(
-                    Modifier
-                        .fillMaxWidth()
-                        .heightIn(min = viewport)
-                        .padding(start = 20.dp, end = 20.dp, top = chrome.top(60.dp), bottom = chrome.bottom(28.dp)),
-                    verticalArrangement = Arrangement.SpaceBetween,
-                ) {
-                    Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
-                        Logo()
+                FlexColumn(viewport, chrome.top(60.dp), chrome.bottom(28.dp), 14.dp, Modifier.padding(horizontal = 20.dp)) {
+                        // height: 60px + border 1px (content-box) → 62 na zewnątrz; waga kurczenia = 60.
+                        Logo(Modifier.layoutId(FlexItem.Shrink(62.dp, weight = 60f)))
                         Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                            BasicText("Chatra", Modifier.semantics { heading() }, style = chatraText(36f, 700, 40f, -0.02f))
+                            // line-height 40 < naturalna wysokość Inter 36 (43,6): CSS centruje glif w linii 40, Compose by jej nie skrócił.
+                            Box(Modifier.height(40.dp), contentAlignment = Alignment.CenterStart) {
+                                BasicText("Chatra", Modifier.wrapContentHeight(unbounded = true).semantics { heading() }, style = chatraText(36f, 700, 40f, -0.02f))
+                            }
                             BasicText(
                                 "Spokojne SMS i MMS. Bez reklam w rozmowach i bez zakładania konta.",
                                 style = chatraText(17f, 400, 23f, color = Secondary),
@@ -120,15 +125,12 @@ internal fun StartContent(state: SetupState, onPrimary: () -> Unit, onPrivacy: (
                         ListCard("Czego nie obsługuje", Unsupported, ChatraIcons.Minus, 14f, ChatraColors.ink(0.08f), Secondary)
                         BasicText(History, Modifier.padding(start = 4.dp, end = 4.dp, top = 2.dp), style = chatraText(13f, 400, 18f, color = Secondary))
                         Notice(state)
-                    }
-                    // gap 14 + flex: 1 + gap 14
-                    Column(Modifier.padding(top = 28.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
-                        PrimaryButton(state, onPrimary)
+                        Spacer(Modifier.layoutId(FlexItem.Grow))
+                        PrimaryButton(state, onPrimary, Modifier.layoutId(FlexItem.Shrink(54.dp, weight = 54f)))
                         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)) {
                             LinkButton("Prywatność", onPrivacy)
                             LinkButton("Pomoc i kontakt", onHelp)
                         }
-                    }
                 }
             }
         }
@@ -136,8 +138,8 @@ internal fun StartContent(state: SetupState, onPrimary: () -> Unit, onPrivacy: (
 }
 
 @Composable
-private fun Logo() {
-    GlassSurface(LogoGlass, RoundedCornerShape(19.dp), Modifier.size(60.dp), shadows = listOf(LogoShadow), contentAlignment = Alignment.Center) {
+private fun Logo(modifier: Modifier) {
+    GlassSurface(LogoGlass, RoundedCornerShape(19.dp), modifier.width(62.dp), shadows = listOf(LogoShadow), contentAlignment = Alignment.Center) {
         Icon(ChatraIcons.Chat, 30.dp, ChatraColors.Accent, 1.8f)
     }
 }
@@ -145,7 +147,8 @@ private fun Logo() {
 @Composable
 private fun ListCard(title: String, items: List<String>, icon: ChatraIcon, iconSize: Float, bulletColor: Color, iconColor: Color) {
     GlassSurface(GlassStyles.Control, RoundedCornerShape(26.dp), Modifier.fillMaxWidth(), shadows = listOf(CardShadow)) {
-        Column(Modifier.padding(horizontal = 18.dp, vertical = 16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        // padding 16/18 + border 1px (content-box): treść 312 × …, karta o 2 wyższa niż sama treść z paddingiem.
+        Column(Modifier.padding(horizontal = 19.dp, vertical = 17.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             BasicText(title.uppercase(Polish), Modifier.semantics { heading() }, style = chatraText(13f, 600, 16f, 0.05f, Secondary))
             items.forEach { text ->
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -181,7 +184,7 @@ private fun Notice(state: SetupState) {
 }
 
 @Composable
-private fun PrimaryButton(state: SetupState, onClick: () -> Unit) {
+private fun PrimaryButton(state: SetupState, onClick: () -> Unit, modifier: Modifier) {
     val label = when (state) {
         SetupState.Requesting -> "Czekam na odpowiedź systemu…"
         SetupState.Ready(SetupState.Notice.Denied) -> "Otwórz ustawienia systemu"
@@ -192,9 +195,8 @@ private fun PrimaryButton(state: SetupState, onClick: () -> Unit) {
     val dimmed = state is SetupState.Requesting || state is SetupState.Blocked
     val shape = RoundedCornerShape(27.dp)
     Box(
-        Modifier
+        modifier
             .fillMaxWidth()
-            .heightIn(min = 54.dp)
             .alpha(if (dimmed) 0.55f else 1f)
             .cssShadow(shape, CtaShadow)
             .background(ChatraColors.Accent, shape)
@@ -218,6 +220,77 @@ private fun LinkButton(text: String, onClick: () -> Unit) {
         contentAlignment = Alignment.Center,
     ) {
         BasicText(text, style = chatraText(15f, color = ChatraColors.Link))
+    }
+}
+
+/** Rola elementu w [FlexColumn]: `flex-shrink` z bazową wysokością CSS albo `flex: 1`. */
+private sealed interface FlexItem {
+    /** [base] — wysokość zewnętrzna; [weight] — `flex-shrink` × wewnętrzna baza CSS (bez obramowania). */
+    data class Shrink(val base: Dp, val weight: Float) : FlexItem
+    data object Grow : FlexItem
+}
+
+/**
+ * Kolumna jak `display: flex; flex-direction: column; gap` korzenia S01 o wysokości ekranu.
+ * Gdy treść się nie mieści, Chrome kurczy elementy o stałej wysokości (logo 60, CTA 54) proporcjonalnie
+ * do bazy, najwyżej do ich min-content — golden S01 ma przez to logo ≈47 i CTA ≈41. Nadmiar miejsca
+ * trafia do [FlexItem.Grow]. Gdy nawet po skurczeniu się nie mieści, kolumna rośnie i ekran się przewija.
+ */
+@Composable
+private fun FlexColumn(viewport: Dp, top: Dp, bottom: Dp, gap: Dp, modifier: Modifier, content: @Composable () -> Unit) {
+    Layout(content, modifier.fillMaxWidth()) { measurables, constraints ->
+        val width = constraints.maxWidth
+        val free = Constraints(maxWidth = width)
+        val roles = measurables.map { it.layoutId as? FlexItem }
+        // Stałe elementy mierzone raz; dla Shrink min-content z intrynsyki, a baza to max(CSS, min-content).
+        val fixed = measurables.mapIndexed { i, m -> if (roles[i] == null) m.measure(free) else null }
+        val natural = measurables.mapIndexed { i, m ->
+            when (roles[i]) {
+                null -> fixed[i]!!.height
+                is FlexItem.Shrink -> m.minIntrinsicHeight(width)
+                FlexItem.Grow -> 0
+            }
+        }
+        val minimum = natural.toMutableList()
+        val heights = measurables.indices.map { i ->
+            when (val r = roles[i]) {
+                is FlexItem.Shrink -> maxOf(r.base.roundToPx(), natural[i])
+                FlexItem.Grow -> 0
+                null -> natural[i]
+            }
+        }.toMutableList()
+        val gaps = gap.roundToPx() * (measurables.size - 1).coerceAtLeast(0)
+        val available = viewport.roundToPx() - top.roundToPx() - bottom.roundToPx()
+        // Algorytm CSS: kurczenie ważone bazą, z zamrażaniem elementów, które osiągnęły min-content.
+        val frozen = BooleanArray(measurables.size) { roles[it] !is FlexItem.Shrink }
+        repeat(measurables.size) {
+            val overflow = heights.sum() + gaps - available
+            val open = measurables.indices.filter { !frozen[it] }
+            if (overflow <= 0 || open.isEmpty()) return@repeat
+            val weights = open.sumOf { (roles[it] as FlexItem.Shrink).weight.toDouble() }
+            open.forEach { i ->
+                val target = (heights[i] - overflow * (roles[i] as FlexItem.Shrink).weight / weights).toInt()
+                if (target <= minimum[i]) {
+                    heights[i] = minimum[i]
+                    frozen[i] = true
+                } else {
+                    heights[i] = target
+                }
+            }
+        }
+        val rest = available - heights.sum() - gaps
+        roles.indexOf(FlexItem.Grow).takeIf { it >= 0 && rest > 0 }?.let { heights[it] = rest }
+        val placeables = measurables.mapIndexed { i, m ->
+            fixed[i] ?: m.measure(Constraints(maxWidth = width, minHeight = heights[i], maxHeight = heights[i]))
+        }
+        val contentHeight = top.roundToPx() + placeables.sumOf { it.height } + gaps + bottom.roundToPx()
+        layout(width, maxOf(viewport.roundToPx(), contentHeight)) {
+            var y = top.roundToPx()
+            placeables.forEach {
+                it.place(0, y)
+                y += it.height + gap.roundToPx()
+            }
+        }
     }
 }
 
