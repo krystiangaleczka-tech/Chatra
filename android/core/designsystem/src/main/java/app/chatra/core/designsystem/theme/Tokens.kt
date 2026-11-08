@@ -5,6 +5,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextMotion
 import androidx.compose.ui.unit.TextUnit
@@ -66,6 +67,8 @@ fun chatraText(
     lineHeightStyle = CssLineHeight,
     // Ułamkowe szerokości glifów jak w Chrome (TextMotion.Static zaokrągla je do pikseli i zmienia łamanie wierszy).
     textMotion = TextMotion.Animated,
+    // Chrome łamie wiersze zachłannie; domyślna strategia Compose wyrównuje ich długość i przenosi słowa wcześniej.
+    lineBreak = LineBreak.Simple,
 )
 
 /** Role tekstu ze specyfikacji 4; wartości pochodzą ze stylów inline plansz. */

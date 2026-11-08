@@ -1,5 +1,6 @@
 package app.chatra.ui.schedule
 
+import app.chatra.core.designsystem.theme.cssBorder
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import androidx.compose.foundation.background
@@ -208,9 +209,10 @@ private fun Header(onBack: () -> Unit) {
 private fun RecipientCard(recipient: String, body: String) {
     val shape = RoundedCornerShape(18.dp)
     // padding 12/14 + obramowanie 1 (content-box).
+    val b = cssBorder()
     Column(
-        Modifier.fillMaxWidth().clip(shape).background(ChatraColors.white(0.6f)).border(1.dp, ChatraColors.white(0.95f), shape)
-            .padding(horizontal = 15.dp, vertical = 13.dp),
+        Modifier.fillMaxWidth().clip(shape).background(ChatraColors.white(0.6f)).border(b, ChatraColors.white(0.95f), shape)
+            .padding(horizontal = 14.dp + b, vertical = 12.dp + b),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         BasicText("Do: $recipient".uppercase(java.util.Locale.forLanguageTag("pl-PL")), style = chatraText(12f, 600, letterSpacingEm = 0.04f, color = Secondary))
@@ -277,7 +279,7 @@ private fun FieldRow(label: String, divider: Boolean, value: @Composable () -> U
             value()
         }
         // border-bottom 1 w content-box: wiersz 50 + linia 1.
-        if (divider) Box(Modifier.fillMaxWidth().height(1.dp).background(ChatraColors.Ink07))
+        if (divider) Box(Modifier.fillMaxWidth().height(cssBorder()).background(ChatraColors.Ink07))
     }
 }
 

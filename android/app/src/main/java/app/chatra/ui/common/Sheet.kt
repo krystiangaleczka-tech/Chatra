@@ -1,5 +1,6 @@
 package app.chatra.ui.common
 
+import app.chatra.core.designsystem.theme.cssBorder
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -57,7 +58,8 @@ fun SheetSurface(top: Dp, label: String, modifier: Modifier = Modifier, content:
             shadows = listOf(Shadows.Sheet),
         ) {
             // border-box: obramowanie 1 leży wewnątrz, padding 8/18/20 liczony od niego (treść S04: y 205, szerokość 336).
-            Column(Modifier.fillMaxSize().padding(start = 19.dp, end = 19.dp, top = 9.dp, bottom = 21.dp), verticalArrangement = Arrangement.spacedBy(14.dp), content = content)
+            val b = cssBorder()
+            Column(Modifier.fillMaxSize().padding(start = 18.dp + b, end = 18.dp + b, top = 8.dp + b, bottom = 20.dp + b), verticalArrangement = Arrangement.spacedBy(14.dp), content = content)
         }
     }
 }
