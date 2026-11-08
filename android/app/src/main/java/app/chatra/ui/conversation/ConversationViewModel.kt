@@ -16,6 +16,8 @@ import app.chatra.core.model.OperationId
 import app.chatra.core.model.RecipientMode
 import app.chatra.core.model.SendOperation
 import app.chatra.core.model.SendQueue
+import app.chatra.core.model.LatenessPolicy
+import app.chatra.core.model.ScheduleRepository
 import app.chatra.core.model.SendingPrefs
 import app.chatra.core.model.SimCard
 import app.chatra.core.model.SimChoice
@@ -52,6 +54,7 @@ class ConversationViewModel(
     private val drafts: DraftRepository,
     simRepository: SimRepository,
     private val queue: SendQueue,
+    private val schedules: ScheduleRepository,
     private val sending: StateFlow<SendingPrefs>,
     val clock: Clock,
 ) : ViewModel() {
@@ -146,6 +149,34 @@ class ConversationViewModel(
                 Draft(DraftId.new(), id, recipients, "", mode(s), attachments, sim.id, clock.now(), mediaVariant = variant, attachmentBytes = bytes),
                 sending.value.undoSeconds,
             )
+        }
+    }
+
+    /**
+     * Zapis S05: treść [body] (szkic rozmowy albo preset planszy), odbiorcy i SIM rozmowy.
+     * Gdy treść pochodzi z kompozytora, szkic przechodzi do harmonogramu i pole się czyści.
+     */
+    fun schedule(
+        body: String,
+        fromComposer: Boolean,
+        instant: java.time.Instant,
+        local: java.time.LocalDateTime,
+        policy: LatenessPolicy,
+        onDone: () -> Unit,
+    ) {
+        val s = state.value
+        val sim = (s.sim as? SimChoice.Ready)?.sim ?: return
+        val recipients = s.summary?.participants?.map { it.address } ?: return
+        if (body.isBlank()) return
+        saveJob?.cancel()
+        viewModelScope.launch {
+            val draft = Draft(draftId ?: DraftId.new(), id, recipients, body, mode(s), emptyList(), sim.id, clock.now())
+            schedules.schedule(draft, instant, local, clock.zone(), policy)
+            if (fromComposer) {
+                draftId = null
+                text.value = ""
+            }
+            onDone()
         }
     }
 

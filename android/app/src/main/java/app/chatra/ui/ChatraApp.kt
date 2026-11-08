@@ -33,6 +33,7 @@ import app.chatra.ui.common.MainDock
 import app.chatra.ui.conversation.ConversationScreen
 import app.chatra.ui.conversation.ConversationViewModel
 import app.chatra.ui.extras.ExtrasSheet
+import app.chatra.ui.schedule.ScheduleSheet
 import app.chatra.ui.inbox.InboxScreen
 import app.chatra.ui.inbox.InboxViewModel
 import app.chatra.ui.start.StartScreen
@@ -106,7 +107,15 @@ private fun Sheet(sheet: Route.Sheet, navigator: Navigator) {
     when (sheet) {
         is Route.Extras -> {
             val model = conversationModel(c, sheet.id)
-            ExtrasSheet(model, navigator::popSheets) { navigator.replaceTop(Route.Schedule(sheet.id)) }
+            // Zaplanuj nad Dodatkami: „Wróć” w S05 wraca do Dodatków (wzorzec), Back systemowy tak samo.
+            ExtrasSheet(model, navigator::popSheets) { navigator.push(Route.Schedule(sheet.id)) }
+        }
+        is Route.Schedule -> {
+            val model = conversationModel(c, sheet.id)
+            ScheduleSheet(model, if (sheet.preset) c.schedulePreset else null, c.exactAlarms, onBack = { navigator.back() }) {
+                navigator.popSheets()
+                navigator.select(Tab.Scheduled)
+            }
         }
         else -> Placeholder(sheet.toString())
     }
@@ -115,7 +124,7 @@ private fun Sheet(sheet: Route.Sheet, navigator: Navigator) {
 /** Rozmowa i jej arkusze dzielą jeden ViewModel (szkic, SIM, zdjęcia). */
 @Composable
 private fun conversationModel(c: AppContainer, id: app.chatra.core.model.ConversationId) = viewModel(key = "conv-${id.value}") {
-    ConversationViewModel(id, c.conversations, c.drafts, c.sims, c.sendQueue, c.sending.value, c.clock)
+    ConversationViewModel(id, c.conversations, c.drafts, c.sims, c.sendQueue, c.schedules, c.sending.value, c.clock)
 }
 
 @Composable

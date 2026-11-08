@@ -2,6 +2,7 @@ package app.chatra.core.model
 
 import kotlinx.coroutines.flow.Flow
 import java.time.Instant
+import java.time.LocalDateTime
 import java.time.ZoneId
 
 /**
@@ -43,6 +44,18 @@ interface SendQueue {
 
 interface ScheduleRepository {
     fun scheduled(): Flow<List<ScheduledItem>>
+
+    /**
+     * Zapis z formularza S05: operacja SCHEDULED + harmonogram (Instant, pierwotny LocalDateTime, strefa).
+     * Kontrakt testowy CH014; trwały zapis z alarmem i rekoncyliacją dostarcza CH035.
+     */
+    suspend fun schedule(draft: Draft, instant: Instant, local: LocalDateTime, zone: ZoneId, policy: LatenessPolicy): ScheduleId
+}
+
+/** Zgoda na dokładne alarmy (SCHEDULE_EXACT_ALARM). Bez niej S05 nie obiecuje wysyłki o czasie (CH014, CH035). */
+interface ExactAlarmGate {
+    fun canScheduleExact(): Boolean
+    fun openSettings()
 }
 
 /** Pozycja listy S06: harmonogram + migawka operacji. */

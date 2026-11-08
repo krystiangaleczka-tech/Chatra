@@ -29,7 +29,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val reference = BuildConfig.DEMO && intent.getBooleanExtra(EXTRA_FRAME, false)
         val roleScenario = if (BuildConfig.DEMO) intent.getStringExtra(EXTRA_ROLE) else null
-        val container = (application as ChatraApplication).container(reference, roleScenario)
+        val container = (application as ChatraApplication).container(reference, roleScenario, !BuildConfig.DEMO || intent.getBooleanExtra(EXTRA_EXACT_ALARMS, true))
         val matte = BuildConfig.DEMO && intent.getBooleanExtra(EXTRA_MATTE, false)
         val initial = intent.getStringExtra(EXTRA_SCREEN)?.let(ReferenceScreens::navigatorFor)
         if (reference) {
@@ -66,6 +66,9 @@ class MainActivity : ComponentActivity() {
 
         /** Demo/QA: panele matowe bez rozmycia (`--ez matte true`) — porównanie kosztu szkła (CH003). */
         const val EXTRA_MATTE = "matte"
+
+        /** Demo: brak zgody na dokładne alarmy w S05 (`--ez exactAlarms false`). */
+        const val EXTRA_EXACT_ALARMS = "exactAlarms"
     }
 }
 

@@ -14,7 +14,7 @@ object ReferenceScreens {
         "S02" -> Navigator(Tab.Conversations)
         "S03" -> Navigator(Tab.Conversations, listOf(Route.Inbox, Route.Conversation(ola)))
         "S04" -> Navigator(Tab.Conversations, listOf(Route.Inbox, Route.Conversation(ola), Route.Extras(ola)))
-        "S05" -> Navigator(Tab.Conversations, listOf(Route.Inbox, Route.Conversation(ola), Route.Schedule(ola)))
+        "S05" -> Navigator(Tab.Conversations, listOf(Route.Inbox, Route.Conversation(ola), Route.Schedule(ola, preset = true)))
         "S06" -> Navigator(Tab.Scheduled)
         "S07" -> Navigator(Tab.Conversations, listOf(Route.Inbox, Route.Search("paczk", "parcels")))
         "S08" -> Navigator(Tab.Conversations, listOf(Route.Inbox, Route.NewMessage(preset = true)))

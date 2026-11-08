@@ -1,6 +1,10 @@
 package app.chatra.core.testing
 
 import app.chatra.core.model.Address
+import kotlinx.coroutines.flow.combine
+import app.chatra.core.model.ScheduledMessage
+import app.chatra.core.model.ScheduleId
+import app.chatra.core.model.LatenessPolicy
 import app.chatra.core.model.AttachmentSummary
 import app.chatra.core.model.HdInfo
 import app.chatra.core.model.MediaVariant
@@ -248,7 +252,26 @@ class InMemoryChatra(
 
     // --- ScheduleRepository ------------------------------------------------------------------------
 
-    override fun scheduled(): Flow<List<ScheduledItem>> = schedules.map { list -> list.map { ScheduledItem(it.schedule, it.operation, it.title) } }
+    override fun scheduled(): Flow<List<ScheduledItem>> = combine(schedules, ops) { list, current ->
+        list.map { f -> ScheduledItem(f.schedule, current.firstOrNull { it.id == f.operation.id } ?: f.operation, f.title) }
+    }
+
+    override suspend fun schedule(
+        draft: Draft,
+        instant: java.time.Instant,
+        local: java.time.LocalDateTime,
+        zone: java.time.ZoneId,
+        policy: LatenessPolicy,
+    ): ScheduleId {
+        val c = draft.conversationId ?: conversationFor(draft.recipients)
+        val op = SendOperation(OperationId.new(), c, Transport.SMS, draft.recipientMode, draft.recipients, draft.text, draft.attachmentIds,
+            draft.subscriptionId, SendState.SCHEDULED, 1, clock.now())
+        val schedule = ScheduledMessage(ScheduleId.new(), op.id, instant, local, zone, policy, 1)
+        ops.update { it + op }
+        schedules.update { it + Fixture.ScheduledFixture(schedule, op, summaries.value[c]?.title ?: draft.recipients.joinToString { a -> a.raw }) }
+        drafts.update { it - c }
+        return schedule.id
+    }
 }
 
 /** Uczestnicy znani fixture (kontakty demonstracyjne, bez kontaktów urządzenia). */

@@ -20,7 +20,8 @@ sealed interface Route {
     /** Arkusze rysowane nad poprzednim ekranem z przyciemnieniem. */
     sealed interface Sheet : Route
     data class Extras(val id: ConversationId) : Sheet
-    data class Schedule(val id: ConversationId) : Sheet
+    /** [preset]: plansza S05 z treścią i terminem fixture (tryb referencyjny). */
+    data class Schedule(val id: ConversationId, val preset: Boolean = false) : Sheet
     data class NewMessage(val preset: Boolean = false) : Sheet
 }
 

@@ -129,16 +129,16 @@ fun RadioOption(
 }
 
 /**
- * Radio w stylu Chrome Android (accent-color): CSS 20 × 20, ale Chrome rysuje je w polu 16 × 20
- * (pomiar CH002, S04), więc tekst opcji zaczyna się 16 + gap od radia.
+ * Radio w stylu Chrome Android (accent-color), CSS 20 × 20. Jako element flex obok długiego tekstu Chrome
+ * kurczy jego szerokość (S04: 16, pomiar CH002); S05 ma pełne 20 — stąd [width].
  */
 @Composable
-fun Radio(selected: Boolean, modifier: Modifier = Modifier) {
-    Box(modifier.size(16.dp, 20.dp), contentAlignment = Alignment.Center) {
+fun Radio(selected: Boolean, modifier: Modifier = Modifier, width: Dp = 16.dp) {
+    Box(modifier.size(width, 20.dp), contentAlignment = Alignment.Center) {
         Box(
-            Modifier.size(16.dp).clip(CircleShape)
+            Modifier.size(width).clip(CircleShape)
                 .border(if (selected) 2.dp else 1.5.dp, if (selected) ChatraColors.Accent else ChatraColors.ink(0.45f), CircleShape),
             contentAlignment = Alignment.Center,
-        ) { if (selected) Box(Modifier.size(8.dp).clip(CircleShape).background(ChatraColors.Accent)) }
+        ) { if (selected) Box(Modifier.size(width / 2).clip(CircleShape).background(ChatraColors.Accent)) }
     }
 }

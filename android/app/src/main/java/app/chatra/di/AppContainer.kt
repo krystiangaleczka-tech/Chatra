@@ -6,6 +6,7 @@ import app.chatra.core.model.ContactsDirectory
 import app.chatra.core.model.ConversationId
 import app.chatra.core.model.ConversationRepository
 import app.chatra.core.model.DraftRepository
+import app.chatra.core.model.ExactAlarmGate
 import app.chatra.core.model.ScheduleRepository
 import app.chatra.core.model.SendQueue
 import app.chatra.core.model.SendingPrefs
@@ -29,6 +30,12 @@ interface AppContainer {
 
     /** Rola domyślnej aplikacji SMS (S01). Tymczasowy kontrakt CH010; adapter systemowy w CH021. */
     val smsRole: SmsRoleGate
+
+    /** Zgoda na dokładne alarmy dla S05 (adapter AlarmManager w CH035). */
+    val exactAlarms: ExactAlarmGate
+
+    /** Treść i termin planszy S05 w trybie referencyjnym (wyjątek fixture); null poza demo. */
+    val schedulePreset: SchedulePreset?
     val appearance: PreferenceStore<AppearancePrefs>
     val sending: PreferenceStore<SendingPrefs>
     val housekeeping: Flow<Housekeeping>
@@ -42,6 +49,9 @@ interface AppContainer {
     /** Wariant demonstracyjny: bez prawdziwej wysyłki i zakupów. */
     val isDemo: Boolean
 }
+
+/** Formularz S05 ze wzorca: treść różni się od kompozytora S03, więc plansza ma własny preset. */
+data class SchedulePreset(val text: String, val local: java.time.LocalDateTime)
 
 /** Liczniki porządku do podsumowań S10 — wynikają ze stanu, nie są stałymi. */
 data class Housekeeping(val blockedCount: Int, val trashCount: Int, val trashDays: Int)

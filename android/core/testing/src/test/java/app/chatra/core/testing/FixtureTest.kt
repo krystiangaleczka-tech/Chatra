@@ -3,6 +3,7 @@ package app.chatra.core.testing
 import app.chatra.core.model.DeliveryStatus
 import app.chatra.core.model.Draft
 import app.chatra.core.model.DraftId
+import app.chatra.core.model.LatenessPolicy
 import app.chatra.core.model.RecipientMode
 import app.chatra.core.model.SendState
 import app.chatra.core.model.inboxOrder
@@ -58,5 +59,26 @@ class FixtureTest {
         assertEquals(SendState.CANCELLED, repo.operations().first().first { it.id == id }.state)
         assertEquals("Odbiorę cię.", repo.draft(Fixture.Ids.Mama).first()?.text)
         assertTrue(repo.messages(Fixture.Ids.Mama).first().none { it.operationId == id })
+    }
+
+    @Test fun scheduleFromS05AddsScheduledItemAndConsumesDraft() = runTest {
+        val repo = InMemoryChatra(FixedClock(), backgroundScope, frozen = true)
+        val before = repo.scheduled().first().size
+        val draft = repo.draft(Fixture.Ids.Ola).first()!!
+        val local = Fixture.ScheduleFormDate
+        val instant = local.atZone(FixedClock.WARSAW).toInstant()
+        val id = repo.schedule(draft, instant, local, FixedClock.WARSAW, LatenessPolicy.SendWithinHour)
+        val items = repo.scheduled().first()
+        assertEquals(before + 1, items.size)
+        val item = items.single { it.schedule.id == id }
+        assertEquals(SendState.SCHEDULED, item.operation.state)
+        assertEquals(instant, item.schedule.instant)
+        assertEquals(LatenessPolicy.SendWithinHour, item.schedule.latenessPolicy)
+        assertEquals("Ola Nowak", item.title)
+        assertEquals(draft.text, item.operation.body)
+        assertEquals(Fixture.SIM1.id, item.operation.subscriptionId)
+        // Szkic przeszedł do harmonogramu.
+        assertEquals(null, repo.draft(Fixture.Ids.Ola).first())
+        assertTrue(repo.operations().first().any { it.id == item.operation.id })
     }
 }
