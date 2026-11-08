@@ -51,6 +51,8 @@ object GlassStyles {
 
     // S03 rozmowa
     val Bubble = GlassStyle(24.dp, 1.7f, 160f, white(0.88f), white(0.66f), white(0.9f))
+    /** S06 „Wymaga decyzji”: ciepły gradient rgba(255,244,236,.92) → biel .62. */
+    val Decision = GlassStyle(28.dp, 1.7f, 160f, Color(255, 244, 236).copy(alpha = 0.92f), white(0.62f), white(0.9f), topHighlight = white(0.95f))
     val HdCard = GlassStyle(24.dp, 1.7f, 160f, white(0.86f), white(0.60f), white(0.9f))
     val DayChip = GlassStyle(20.dp, 1f, 180f, white(0.55f), white(0.55f), white(0.8f))
     val SimChip = GlassStyle(24.dp, 1f, 160f, white(0.80f), white(0.50f), white(0.9f))
@@ -71,6 +73,7 @@ object Shadows {
     val SegmentThumb = CssShadow(2.dp, 8.dp, Color(27, 35, 74).copy(alpha = 0.12f))
     val Bubble = CssShadow(4.dp, 14.dp, Color(27, 35, 74).copy(alpha = 0.08f))
     val BubbleOut = CssShadow(4.dp, 14.dp, Color(10, 60, 160).copy(alpha = 0.2f))
+    val Decision = CssShadow(10.dp, 30.dp, Color(27, 35, 74).copy(alpha = 0.12f))
     val HdCard = CssShadow(6.dp, 18.dp, Color(27, 35, 74).copy(alpha = 0.10f))
 }
 

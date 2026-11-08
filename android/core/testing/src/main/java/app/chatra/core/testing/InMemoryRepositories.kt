@@ -25,6 +25,8 @@ import app.chatra.core.model.Participant
 import app.chatra.core.model.RecipientMode
 import app.chatra.core.model.ScheduleRepository
 import app.chatra.core.model.ScheduledItem
+import app.chatra.core.model.LastScheduledSent
+import app.chatra.core.model.SubscriptionId
 import app.chatra.core.model.SendOperation
 import app.chatra.core.model.SendQueue
 import app.chatra.core.model.SendState
@@ -72,6 +74,9 @@ class InMemoryChatra(
         ) + Fixture.scheduled.map { it.operation },
     )
     private val schedules = MutableStateFlow(Fixture.scheduled)
+    private val lastScheduled = MutableStateFlow<LastScheduledSent?>(
+        Fixture.lastScheduledSent.let { LastScheduledSent(it.title, it.at, it.delivered) },
+    )
 
     init {
         if (!frozen) scope.launch { dispatchAfterUndo(Fixture.OlaPending) }
@@ -214,6 +219,7 @@ class InMemoryChatra(
         advance(id, SendState.SENT, DeliveryStatus.Sent)
         delay(1200)
         advance(id, SendState.DELIVERED, DeliveryStatus.Delivered)
+        schedules.value.firstOrNull { it.operation.id == id }?.let { lastScheduled.value = LastScheduledSent(it.title, clock.now(), delivered = true) }
     }
 
     private fun advance(id: OperationId, state: SendState, status: DeliveryStatus) {
@@ -271,6 +277,53 @@ class InMemoryChatra(
         schedules.update { it + Fixture.ScheduledFixture(schedule, op, summaries.value[c]?.title ?: draft.recipients.joinToString { a -> a.raw }) }
         drafts.update { it - c }
         return schedule.id
+    }
+
+    override fun lastSent(): Flow<LastScheduledSent?> = lastScheduled.asStateFlow()
+
+    private fun scheduledEntry(id: ScheduleId) = schedules.value.firstOrNull { it.schedule.id == id }
+
+    override suspend fun sendNow(id: ScheduleId, sim: SubscriptionId?): Boolean {
+        val entry = scheduledEntry(id) ?: return false
+        val op = ops.value.firstOrNull { it.id == entry.operation.id } ?: return false
+        val card = Fixture.sims.firstOrNull { it.available && it.id == (sim ?: op.subscriptionId) } ?: return false
+        val started = op.transition(op.state, op.version, SendState.DISPATCHING) { it.copy(subscriptionId = card.id) }
+        if (started !is Transition.Applied) return false
+        replace(started.operation)
+        val c = op.conversationId
+        if (c != null) {
+            val now = clock.now()
+            history.update { all ->
+                val list = all[c].orEmpty()
+                if (list.any { it.operationId == op.id }) all
+                else all + (c to list + Message(MessageRef.Local(op.id), c, Direction.Outgoing, null, op.body, now, true, card.id, DeliveryStatus.Sending, op.id))
+            }
+            summaries.update { all -> all[c]?.let { all + (c to it.copy(lastActivity = now, preview = ConversationSummary.Preview.Text(op.body))) } ?: all }
+        }
+        setStatus(started.operation, DeliveryStatus.Sending)
+        if (!frozen) scope.launch { completeDispatch(op.id) }
+        return true
+    }
+
+    override suspend fun reschedule(id: ScheduleId, instant: java.time.Instant, local: java.time.LocalDateTime, zone: java.time.ZoneId): Boolean {
+        val entry = scheduledEntry(id) ?: return false
+        val op = ops.value.firstOrNull { it.id == entry.operation.id } ?: return false
+        val moved = op.transition(op.state, op.version, SendState.SCHEDULED)
+        if (moved !is Transition.Applied) return false
+        replace(moved.operation)
+        val updated = entry.schedule.copy(instant = instant, localDateTime = local, zoneId = zone, version = entry.schedule.version + 1, nextAlarmToken = null)
+        schedules.update { list -> list.map { if (it.schedule.id == id) it.copy(schedule = updated, operation = moved.operation) else it } }
+        return true
+    }
+
+    override suspend fun delete(id: ScheduleId): Boolean {
+        val entry = scheduledEntry(id) ?: return false
+        val op = ops.value.firstOrNull { it.id == entry.operation.id } ?: return false
+        val cancelled = op.transition(op.state, op.version, SendState.CANCELLED)
+        if (cancelled !is Transition.Applied) return false
+        replace(cancelled.operation)
+        schedules.update { list -> list.filterNot { it.schedule.id == id } }
+        return true
     }
 }
 

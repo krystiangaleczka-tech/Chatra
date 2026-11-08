@@ -50,6 +50,21 @@ interface ScheduleRepository {
      * Kontrakt testowy CH014; trwały zapis z alarmem i rekoncyliacją dostarcza CH035.
      */
     suspend fun schedule(draft: Draft, instant: Instant, local: LocalDateTime, zone: ZoneId, policy: LatenessPolicy): ScheduleId
+
+    /** Stopka S06; null, gdy nic zaplanowanego jeszcze nie wyszło. */
+    fun lastSent(): Flow<LastScheduledSent?>
+
+    /**
+     * „Wyślij teraz” (S06) przez tę samą kolejkę co kompozytor. Jedno uruchomienie na wersję zlecenia:
+     * drugie wywołanie po przejściu do DISPATCHING zwraca false. [sim] wymagane, gdy zapisana karta zniknęła.
+     */
+    suspend fun sendNow(id: ScheduleId, sim: SubscriptionId? = null): Boolean
+
+    /** Zmiana terminu: nowa wersja zlecenia, stary alarm unieważniony (token alarmu czyszczony). */
+    suspend fun reschedule(id: ScheduleId, instant: Instant, local: LocalDateTime, zone: ZoneId): Boolean
+
+    /** Usuwa harmonogram i anuluje jego operację; rozmowa i wcześniejsze wiadomości zostają. */
+    suspend fun delete(id: ScheduleId): Boolean
 }
 
 /** Zgoda na dokładne alarmy (SCHEDULE_EXACT_ALARM). Bez niej S05 nie obiecuje wysyłki o czasie (CH014, CH035). */

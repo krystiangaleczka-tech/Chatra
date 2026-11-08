@@ -34,6 +34,8 @@ import app.chatra.ui.conversation.ConversationScreen
 import app.chatra.ui.conversation.ConversationViewModel
 import app.chatra.ui.extras.ExtrasSheet
 import app.chatra.ui.schedule.ScheduleSheet
+import app.chatra.ui.scheduled.ScheduledScreen
+import app.chatra.ui.scheduled.ScheduledViewModel
 import app.chatra.ui.inbox.InboxScreen
 import app.chatra.ui.inbox.InboxViewModel
 import app.chatra.ui.start.StartScreen
@@ -96,6 +98,11 @@ private fun Screen(route: Route, navigator: Navigator, listStates: MutableMap<Ta
         is Route.Conversation -> {
             val model = conversationModel(c, route.id)
             ConversationScreen(model, { navigator.back() }, {}, { navigator.push(Route.Extras(route.id)) }, {})
+        }
+        Route.Scheduled -> {
+            val model = viewModel { ScheduledViewModel(c.schedules, c.sims, c.clock) }
+            val list = listStates.getOrPut(Tab.Scheduled) { rememberLazyListState() }
+            ScheduledScreen(model, c.exactAlarms, list, { navigator.push(Route.Conversation(it)) }, dock)
         }
         else -> Placeholder(route.toString())
     }
