@@ -32,6 +32,7 @@ W PDF uzupełnienie zaczyna się na stronie 24.
 
 ## Dokumentacja implementacji Android
 
+- [CH016–CH018: S07–S09, wyniki testów i otwarty odbiór na telefonie](docs/implementacja_android/CH016_CH018_Wdrozenie_i_weryfikacja.md)
 - [CH001: kontrakt produktu, G01–G10 i macierz S01–S10](docs/implementacja_android/CH001_Kontrakt_produktu_i_rejestr_decyzji.md)
 - [CH001: rejestr decyzji w JSON](docs/implementacja_android/CH001_Rejestr_decyzji.json)
 - [CH002: raport integralności, render Android i zatwierdzona G01](docs/implementacja_android/CH002_Weryfikacja_wzorcow.md)

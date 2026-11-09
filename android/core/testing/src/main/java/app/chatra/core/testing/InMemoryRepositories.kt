@@ -1,6 +1,12 @@
 package app.chatra.core.testing
 
 import app.chatra.core.model.Address
+import app.chatra.core.model.SearchRepository
+import app.chatra.core.model.SearchQuery
+import app.chatra.core.model.SearchHit
+import app.chatra.core.model.SearchResults
+import app.chatra.core.model.QuickHit
+import app.chatra.core.model.matches
 import kotlinx.coroutines.flow.combine
 import app.chatra.core.model.ScheduledMessage
 import app.chatra.core.model.ScheduleId
@@ -56,7 +62,7 @@ class InMemoryChatra(
     private val scope: CoroutineScope,
     /** Zamrożony zegar (zrzuty referencyjne): okno anulowania nie upływa samo. */
     private val frozen: Boolean = false,
-) : ConversationRepository, DraftRepository, SimRepository, ContactsDirectory, SendQueue, ScheduleRepository {
+) : ConversationRepository, DraftRepository, SimRepository, ContactsDirectory, SendQueue, ScheduleRepository, SearchRepository {
 
     private val summaries = MutableStateFlow((Fixture.inbox + Fixture.hiddenConversations).associateBy { it.id })
     private val hidden = Fixture.hiddenConversations.map { it.id }.toMutableSet()
@@ -96,6 +102,16 @@ class InMemoryChatra(
     override fun conversation(id: ConversationId): Flow<ConversationSummary?> = summaries.map { it[id] }
 
     override fun messages(id: ConversationId): Flow<List<Message>> = history.map { it[id].orEmpty().sortedBy { m -> m.timestamp } }
+
+    override fun search(query: SearchQuery): Flow<SearchResults> = combine(summaries, history) { all, messages ->
+        val hits = messages.values.flatten().mapNotNull { m ->
+            all[m.conversationId]?.takeUnless { it.trashed }?.let { SearchHit(m, it.title) }
+        }.filter { it.matches(query) }.sortedByDescending { it.message.timestamp }
+        val source = hits.firstOrNull { it.message.conversationId == Fixture.Ids.Paczka24 && "482 915" in it.message.body }
+        // Adres automatu to metadane wyłącznie fixture S07; nie wnioskujemy go z numeru automatu.
+        val quick = source?.let { listOf(QuickHit("Kod odbioru · Paczka24", "482 915", it.message.ref), QuickHit("Automat", "KRA01M · ul. Długa 14", it.message.ref)) }.orEmpty()
+        SearchResults(hits, quick)
+    }
 
     override suspend fun markRead(id: ConversationId) {
         history.update { all -> all + (id to all[id].orEmpty().map { it.copy(read = true) }) }
@@ -158,6 +174,7 @@ class InMemoryChatra(
         val id = OperationId.new()
         val now = clock.now()
         val transport = when {
+            draft.recipientMode == RecipientMode.GroupMms -> Transport.MMS
             draft.attachmentIds.isEmpty() -> Transport.SMS
             draft.mediaVariant == MediaVariant.Mms -> Transport.MMS
             else -> Transport.HD

@@ -26,6 +26,7 @@ interface AppContainer {
     val contacts: ContactsDirectory
     val sendQueue: SendQueue
     val schedules: ScheduleRepository
+    val search: app.chatra.core.model.SearchRepository
     val clock: Clock
 
     /** Rola domyślnej aplikacji SMS (S01). Tymczasowy kontrakt CH010; adapter systemowy w CH021. */
@@ -36,6 +37,7 @@ interface AppContainer {
 
     /** Treść i termin planszy S05 w trybie referencyjnym (wyjątek fixture); null poza demo. */
     val schedulePreset: SchedulePreset?
+    val newMessagePreset: List<app.chatra.core.model.Participant> get() = emptyList()
     val appearance: PreferenceStore<AppearancePrefs>
     val sending: PreferenceStore<SendingPrefs>
     val housekeeping: Flow<Housekeeping>

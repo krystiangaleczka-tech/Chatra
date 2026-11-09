@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
@@ -120,8 +121,8 @@ fun ChatraSwitch(checked: Boolean, onCheckedChange: (Boolean) -> Unit, label: St
             }
             .size(52.dp, 32.dp)
             .clip(RoundedCornerShape(16.dp))
-            .background(if (checked) ChatraColors.Success else ChatraColors.ink(0.16f))
-            .pressable({ onCheckedChange(!checked) })
+            .background(if (checked) ChatraColors.Success else ChatraColors.ink(0.18f))
+            .toggleable(value = checked, role = Role.Switch, onValueChange = onCheckedChange)
             .padding(2.dp),
         contentAlignment = if (checked) Alignment.CenterEnd else Alignment.CenterStart,
     ) {

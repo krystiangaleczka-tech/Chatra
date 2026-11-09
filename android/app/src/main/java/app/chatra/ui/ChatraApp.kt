@@ -11,6 +11,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveableStateHolder
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.lifecycle.createSavedStateHandle
+import app.chatra.ui.search.SearchScreen
+import app.chatra.ui.search.SearchViewModel
+import app.chatra.ui.newmessage.NewMessageScreen
+import app.chatra.ui.newmessage.NewMessageViewModel
+import app.chatra.ui.appearance.AppearanceScreen
+import app.chatra.ui.common.TextAction
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
@@ -46,15 +58,16 @@ val LocalContainer = androidx.compose.runtime.staticCompositionLocalOf<AppContai
 /** [forceMatte]: demo/QA — panele matowe bez rozmycia, do porównania kosztu szkła (CH003). */
 @Composable
 fun ChatraApp(container: AppContainer, initial: Navigator?, onExit: () -> Unit, forceMatte: Boolean = false) {
-    val navigator = remember { initial ?: Navigator(Tab.Conversations, startStack(container)) }
+    val navigator = rememberSaveable(saver = Navigator.Saver) { initial ?: Navigator(Tab.Conversations, startStack(container)) }
     val appearance by container.appearance.value.collectAsStateWithLifecycle()
     val keyboard = LocalSoftwareKeyboardController.current
     val focus = LocalFocusManager.current
+    val imeVisible = LocalChrome.current.ime > 0.dp
     // Back: najpierw IME, potem arkusz, potem ekran (specyfikacja 5).
     BackHandler {
         focus.clearFocus()
         keyboard?.hide()
-        if (!navigator.back()) onExit()
+        if (!imeVisible && !navigator.back()) onExit()
     }
     CompositionLocalProvider(
         LocalContainer provides container,
@@ -64,9 +77,10 @@ fun ChatraApp(container: AppContainer, initial: Navigator?, onExit: () -> Unit, 
     ) {
         val screenBackdrop = rememberBackdrop()
         val listStates = remember { mutableMapOf<Tab, LazyListState>() }
+        val savedScreens = rememberSaveableStateHolder()
         Box(Modifier.fillMaxSize()) {
             Box(Modifier.fillMaxSize().backdropSource(screenBackdrop)) {
-                Screen(navigator.screen, navigator, listStates)
+                savedScreens.SaveableStateProvider(navigator.screen.toString()) { Screen(navigator.screen, navigator, listStates) }
             }
             navigator.sheet?.let { sheet ->
                 Box(Modifier.fillMaxSize().background(Backgrounds.SheetScrim))
@@ -97,12 +111,24 @@ private fun Screen(route: Route, navigator: Navigator, listStates: MutableMap<Ta
         }
         is Route.Conversation -> {
             val model = conversationModel(c, route.id)
-            ConversationScreen(model, { navigator.back() }, {}, { navigator.push(Route.Extras(route.id)) }, {})
+            ConversationScreen(model, { navigator.back() }, {}, { navigator.push(Route.Extras(route.id)) }, {}, target = route.message)
         }
         Route.Scheduled -> {
             val model = viewModel { ScheduledViewModel(c.schedules, c.sims, c.clock) }
             val list = listStates.getOrPut(Tab.Scheduled) { rememberLazyListState() }
             ScheduledScreen(model, c.exactAlarms, list, { navigator.push(Route.Conversation(it)) }, dock)
+        }
+        is Route.Search -> {
+            val model = viewModel(key = "search") { SearchViewModel(createSavedStateHandle(), c.search, route.initialQuery, route.initialFilter) }
+            SearchScreen(model, { navigator.back() }) { navigator.push(Route.Conversation(it.conversationId, it.ref)) }
+        }
+        Route.Appearance -> AppearanceScreen(c.appearance) { navigator.back() }
+        // Pełna plansza S10 w CH019; na razie dostęp do S09 z korzenia Ustawień.
+        Route.Settings -> ChatraScreen(Backgrounds.Settings, floating = { dock.Render(Modifier.align(Alignment.BottomStart)) }) {
+            Column(Modifier.padding(start = 16.dp, end = 16.dp, top = LocalChrome.current.top(54.dp))) {
+                BasicText("Ustawienia", style = ChatraType.ListTitle)
+                TextAction("Wygląd", { navigator.push(Route.Appearance) })
+            }
         }
         else -> Placeholder(route.toString())
     }
@@ -124,7 +150,10 @@ private fun Sheet(sheet: Route.Sheet, navigator: Navigator) {
                 navigator.select(Tab.Scheduled)
             }
         }
-        else -> Placeholder(sheet.toString())
+        is Route.NewMessage -> {
+            val model = viewModel(key = "new-message") { NewMessageViewModel(createSavedStateHandle(), c, if (sheet.preset) c.newMessagePreset else emptyList()) }
+            NewMessageScreen(model, navigator::popSheets) { id -> navigator.popSheets(); navigator.push(Route.Conversation(id)) }
+        }
     }
 }
 

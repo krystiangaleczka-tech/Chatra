@@ -1,0 +1,39 @@
+{
+  "date": "2026-11-09",
+  "stage": "first_pass_before_geometry_highlight_and_swatch_corrections",
+  "final_visual_acceptance": "pending_adb_reconnection",
+  "device": "Samsung S26 Ultra SM-S948B, API 37, density 560 / DPR 3.5",
+  "reference_frame": "390 x 844 dp",
+  "screens": [
+    {
+      "screen": "S07",
+      "reference": "docs/implementacja_android/CH002_Android/run1/android-S07.png",
+      "actual": "docs/implementacja_android/CH016_CH018_Android/przed_korektami_S07.png",
+      "reference_sha256": "dfe1d351f08e54059596943d2bd3381165ad119bd83b285e2ee77ce56b7d6fa7",
+      "actual_sha256": "a9d149c28a26192e3ab916c32f499808341a4e35e5efee89280fe1754f663dba",
+      "pixels": 4032210,
+      "pixels_above_16": 340228,
+      "percent_above_16": 8.4378
+    },
+    {
+      "screen": "S08",
+      "reference": "docs/implementacja_android/CH002_Android/run1/android-S08.png",
+      "actual": "docs/implementacja_android/CH016_CH018_Android/przed_korektami_S08.png",
+      "reference_sha256": "47836a419ebc987908a92ee0fee066e630715c1d54392f4ca81e4968f5b6bbcb",
+      "actual_sha256": "fc2c3c9c1401f91660880fdf601c0a7e2705a25252fe42d698ba3351ef69b4bc",
+      "pixels": 4032210,
+      "pixels_above_16": 552129,
+      "percent_above_16": 13.693
+    },
+    {
+      "screen": "S09",
+      "reference": "docs/implementacja_android/CH002_Android/run1/android-S09.png",
+      "actual": "docs/implementacja_android/CH016_CH018_Android/przed_korektami_S09.png",
+      "reference_sha256": "5d99aa5d246d1244196cd136ad57b21e05894eedf4301285f81a99e40f364605",
+      "actual_sha256": "1b0e4f7d0356fd0562ce1d7b9ef72320f8d8e58db62740443ef31df754cbf15c",
+      "pixels": 4032210,
+      "pixels_above_16": 175296,
+      "percent_above_16": 4.3474
+    }
+  ]
+}
