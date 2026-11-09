@@ -1,0 +1,92 @@
+package app.chatra.core.model
+
+import kotlinx.coroutines.flow.Flow
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+
+/**
+ * Granice architektury (CH005). UI zależy wyłącznie od tych kontraktów, więc działa z repozytorium
+ * demonstracyjnym (fixture CH006) albo z providerem Telephony; logika wysyłania działa bez UI.
+ */
+interface ConversationRepository {
+    fun inbox(): Flow<List<ConversationSummary>>
+    fun conversation(id: ConversationId): Flow<ConversationSummary?>
+    fun messages(id: ConversationId): Flow<List<Message>>
+    suspend fun markRead(id: ConversationId)
+    suspend fun setPinned(id: ConversationId, pinned: Boolean)
+    suspend fun moveToTrash(id: ConversationId)
+    suspend fun conversationFor(recipients: List<Address>): ConversationId
+}
+
+interface DraftRepository {
+    fun draft(conversationId: ConversationId): Flow<Draft?>
+    suspend fun save(draft: Draft)
+    suspend fun delete(id: DraftId)
+}
+
+interface SimRepository {
+    fun cards(): Flow<List<SimCard>>
+}
+
+interface ContactsDirectory {
+    fun suggestions(): Flow<List<Participant>>
+    suspend fun lookup(address: Address): Participant?
+}
+
+/** Kolejka wysyłek: jedyna droga do transportu z kompozytora, harmonogramu i powiadomień. */
+interface SendQueue {
+    fun operations(): Flow<List<SendOperation>>
+    suspend fun enqueue(draft: Draft, undoSeconds: Int): OperationId
+    suspend fun cancel(id: OperationId): Boolean
+    suspend fun retry(id: OperationId): Boolean
+}
+
+interface ScheduleRepository {
+    fun scheduled(): Flow<List<ScheduledItem>>
+
+    /**
+     * Zapis z formularza S05: operacja SCHEDULED + harmonogram (Instant, pierwotny LocalDateTime, strefa).
+     * Kontrakt testowy CH014; trwały zapis z alarmem i rekoncyliacją dostarcza CH035.
+     */
+    suspend fun schedule(draft: Draft, instant: Instant, local: LocalDateTime, zone: ZoneId, policy: LatenessPolicy): ScheduleId
+
+    /** Stopka S06; null, gdy nic zaplanowanego jeszcze nie wyszło. */
+    fun lastSent(): Flow<LastScheduledSent?>
+
+    /**
+     * „Wyślij teraz” (S06) przez tę samą kolejkę co kompozytor. Jedno uruchomienie na wersję zlecenia:
+     * drugie wywołanie po przejściu do DISPATCHING zwraca false. [sim] wymagane, gdy zapisana karta zniknęła.
+     */
+    suspend fun sendNow(id: ScheduleId, sim: SubscriptionId? = null): Boolean
+
+    /** Zmiana terminu: nowa wersja zlecenia, stary alarm unieważniony (token alarmu czyszczony). */
+    suspend fun reschedule(id: ScheduleId, instant: Instant, local: LocalDateTime, zone: ZoneId): Boolean
+
+    /** Usuwa harmonogram i anuluje jego operację; rozmowa i wcześniejsze wiadomości zostają. */
+    suspend fun delete(id: ScheduleId): Boolean
+}
+
+/** Zgoda na dokładne alarmy (SCHEDULE_EXACT_ALARM). Bez niej S05 nie obiecuje wysyłki o czasie (CH014, CH035). */
+interface ExactAlarmGate {
+    fun canScheduleExact(): Boolean
+    fun openSettings()
+}
+
+/** Pozycja listy S06: harmonogram + migawka operacji. */
+data class ScheduledItem(val schedule: ScheduledMessage, val operation: SendOperation, val title: String)
+
+/** Kontrolowany zegar: produkcyjny i stały 29.10.2026 w fixture (CH006). */
+interface Clock {
+    fun now(): Instant
+    fun zone(): ZoneId
+    /** Czas monotoniczny do odliczania okna anulowania w działającym procesie. */
+    fun elapsedRealtimeMillis(): Long
+}
+
+/** Wynik transportu dla jednej części / odbiorcy; HD ma osobne wyniki niż SIM (specyfikacja 7). */
+sealed interface TransportResult {
+    data object Accepted : TransportResult
+    data class Failed(val code: Int, val permanent: Boolean) : TransportResult
+    data class Uncertain(val reason: String) : TransportResult
+}
