@@ -73,7 +73,7 @@ fun NewMessageScreen(model: NewMessageViewModel, onCancel: () -> Unit, onSent: (
                             Box(Modifier.size(24.dp).semantics { role = Role.Button; contentDescription = "Usuń: ${p.label}" }.pressable({ model.remove(i) }), contentAlignment = Alignment.Center) { Icon(ChatraIcons.Close, 12.dp, Color(0xFF0050C8), 2.4f) }
                         }
                     }
-                    BasicTextField(state.input, model::input, Modifier.widthIn(min = 100.dp).weight(1f).heightIn(min = 30.dp).semantics { contentDescription = "Dodaj odbiorcę" }, singleLine = true, textStyle = chatraText(16f), keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone, imeAction = ImeAction.Done), keyboardActions = KeyboardActions(onDone = { model.addInput() }), decorationBox = { field -> Box(contentAlignment = Alignment.CenterStart) { if (state.input.isEmpty()) BasicText("Imię lub numer", style = chatraText(16f, color = ChatraColors.TextSecondary)); field() } })
+                    BasicTextField(state.input, model::input, Modifier.widthIn(min = 100.dp).weight(1f).heightIn(min = 30.dp).semantics { contentDescription = "Dodaj odbiorcę" }, singleLine = true, textStyle = chatraText(16f), keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Done), keyboardActions = KeyboardActions(onDone = { model.addInput() }), decorationBox = { field -> Box(contentAlignment = Alignment.CenterStart) { if (state.input.isEmpty()) BasicText("Imię lub numer", style = chatraText(16f, color = ChatraColors.TextSecondary)); field() } })
                 }
             }
             if (state.input.isNotBlank()) TextAction("Dodaj numer", model::addInput)

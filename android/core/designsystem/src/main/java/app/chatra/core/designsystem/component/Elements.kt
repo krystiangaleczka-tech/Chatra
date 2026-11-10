@@ -31,6 +31,9 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.semantics.toggleableState
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -114,14 +117,16 @@ fun SectionLabel(text: String, modifier: Modifier = Modifier, color: Color = Cha
 fun ChatraSwitch(checked: Boolean, onCheckedChange: (Boolean) -> Unit, label: String, modifier: Modifier = Modifier) {
     Box(
         modifier
-            .semantics {
-                role = Role.Switch
-                contentDescription = label
-                stateDescription = if (checked) "włączone" else "wyłączone"
-            }
             .size(52.dp, 32.dp)
             .clip(RoundedCornerShape(16.dp))
             .background(if (checked) ChatraColors.Success else ChatraColors.ink(0.18f))
+            .clearAndSetSemantics {
+                role = Role.Switch
+                contentDescription = label
+                stateDescription = if (checked) "włączone" else "wyłączone"
+                toggleableState = if (checked) ToggleableState.On else ToggleableState.Off
+                onClick { onCheckedChange(!checked); true }
+            }
             .toggleable(value = checked, role = Role.Switch, onValueChange = onCheckedChange)
             .padding(2.dp),
         contentAlignment = if (checked) Alignment.CenterEnd else Alignment.CenterStart,

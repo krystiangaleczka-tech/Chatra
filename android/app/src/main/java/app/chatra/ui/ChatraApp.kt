@@ -2,6 +2,7 @@ package app.chatra.ui
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyListState
@@ -27,6 +28,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.paneTitle
+import androidx.compose.ui.semantics.semantics
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import app.chatra.core.designsystem.background.Backgrounds
@@ -79,12 +83,22 @@ fun ChatraApp(container: AppContainer, initial: Navigator?, onExit: () -> Unit, 
         val listStates = remember { mutableMapOf<Tab, LazyListState>() }
         val savedScreens = rememberSaveableStateHolder()
         Box(Modifier.fillMaxSize()) {
-            Box(Modifier.fillMaxSize().backdropSource(screenBackdrop)) {
+            Box(Modifier.fillMaxSize().backdropSource(screenBackdrop).then(
+                if (navigator.sheet != null) Modifier.clearAndSetSemantics {} else Modifier,
+            )) {
                 savedScreens.SaveableStateProvider(navigator.screen.toString()) { Screen(navigator.screen, navigator, listStates) }
             }
             navigator.sheet?.let { sheet ->
-                Box(Modifier.fillMaxSize().background(Backgrounds.SheetScrim))
-                ProvideBackdrop(screenBackdrop) { Sheet(sheet, navigator) }
+                Box(Modifier.fillMaxSize().background(Backgrounds.SheetScrim)
+                    .clickable(interactionSource = null, indication = null) {}
+                    .clearAndSetSemantics {})
+                ProvideBackdrop(screenBackdrop) {
+                    Box(Modifier.fillMaxSize().semantics { paneTitle = when (sheet) {
+                        is Route.NewMessage -> "Nowa wiadomość"
+                        is Route.Extras -> "Dodatki"
+                        is Route.Schedule -> "Zaplanuj wysyłkę"
+                    } }) { Sheet(sheet, navigator) }
+                }
             }
         }
     }

@@ -1,8 +1,9 @@
 # CH016–CH018: S07 Wyszukiwanie, S08 Nowa wiadomość, S09 Wygląd
 
 Data: 09.11.2026. Baza: `main` po scaleniu PR #9 (`bc39e54`).
-Implementacja jest gotowa do przeglądu. Końcowy odbiór wizualny i interakcyjny
-na telefonie pozostaje otwarty: ADB rozłączyło się po pierwszym porównaniu.
+Implementacja jest gotowa do przeglądu. [Sprawdzenie działającego demo w emulatorze
+10.11.2026](CH016_CH018_Emulator_QA_2026-11-10.md) obejmuje poprawki, próby interakcji
+i świeże zrzuty po zmianach. Końcowy odbiór na fizycznym telefonie pozostaje otwarty.
 
 ## CH016 — S07
 
@@ -103,8 +104,9 @@ Wzorców CH002 nie zmieniano.
 zbędną zewnętrzną kartę formularza S08, poprawiono wyróżnienia S07, placeholder
 numeru, akcje dodawania sugestii, próbkę Kontrastu i tło wyłączonych przełączników.
 Pozostawiono w pełni widoczny przycisk Anuluj w S07, podczas gdy golden częściowo
-wypycha go poza ramkę. Po korektach ADB przestało widzieć urządzenie; ponowne
-zrzuty, overlay i regresja S01–S06 nie zostały wykonane.
+wypycha go poza ramkę. Na 09.11 po korektach ADB przestało widzieć urządzenie;
+ponowne zrzuty i sprawdzenie S01–S06 wykonano 10.11 w emulatorze API 35, zgodnie
+z [nowym raportem](CH016_CH018_Emulator_QA_2026-11-10.md).
 
 Do odbioru na telefonie: oba przyciski Kopiuj i powrót z wyniku ze scrollem;
 1/3/wielu odbiorców, długa nazwa, IME, MMS i zmiana SIM; suwak 1/4/7, reset,

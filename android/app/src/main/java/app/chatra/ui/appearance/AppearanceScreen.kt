@@ -16,12 +16,14 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.semantics.*
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import app.chatra.core.designsystem.background.*
 import app.chatra.core.designsystem.component.*
@@ -66,11 +68,11 @@ fun AppearanceScreen(store: PreferenceStore<AppearancePrefs>, onBack: () -> Unit
             }
             GlassSurface(GlassStyles.Card.copy(from = ChatraColors.white(.82f), to = ChatraColors.white(.58f), border = ChatraColors.white(.9f)), RoundedCornerShape(24.dp), Modifier.fillMaxWidth(), shadows = listOf(Shadows.Card)) {
                 Column(Modifier.padding(cssBorder())) {
-                    SettingRow("Tryb") {
-                        Segments(listOf("Jasny", "Ciemny", "Auto"), prefs.mode.ordinal, "Tryb kolorów") { index -> update { it.copy(mode = ThemeMode.entries[index]) } }
+                    SettingRow("Tryb") { stacked ->
+                        Segments(listOf("Jasny", "Ciemny", "Auto"), prefs.mode.ordinal, "Tryb kolorów", expanded = stacked) { index -> update { it.copy(mode = ThemeMode.entries[index]) } }
                     }
-                    SettingRow("Gęstość", line = true) {
-                        Segments(listOf("Standardowa", "Kompaktowa"), prefs.density.ordinal, "Gęstość listy") { index -> update { it.copy(density = ListDensity.entries[index]) } }
+                    SettingRow("Gęstość", line = true) { stacked ->
+                        Segments(listOf("Standardowa", "Kompaktowa"), prefs.density.ordinal, "Gęstość listy", expanded = stacked) { index -> update { it.copy(density = ListDensity.entries[index]) } }
                     }
                     Column(Modifier.fillMaxWidth().drawTopLine(ChatraColors.Ink06).padding(horizontal = 16.dp, vertical = 10.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         BasicText("Rozmiar tekstu", style = chatraText(16f))
@@ -101,22 +103,53 @@ fun AppearanceScreen(store: PreferenceStore<AppearancePrefs>, onBack: () -> Unit
 }
 
 @Composable
-private fun SettingRow(label: String, line: Boolean = false, control: @Composable () -> Unit) {
-    Row(Modifier.fillMaxWidth().then(if (line) Modifier.drawTopLine(ChatraColors.Ink06) else Modifier).padding(start = 16.dp, end = 10.dp, top = 8.dp, bottom = 8.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-        BasicText(label, Modifier.weight(1f), style = chatraText(16f))
-        control()
+private fun SettingRow(label: String, line: Boolean = false, control: @Composable (Boolean) -> Unit) {
+    val fontScale = LocalDensity.current.fontScale
+    BoxWithConstraints(Modifier.fillMaxWidth().then(if (line) Modifier.drawTopLine(ChatraColors.Ink06) else Modifier).padding(start = 16.dp, end = 10.dp, top = 8.dp, bottom = 8.dp)) {
+        if (fontScale > 1.1f || maxWidth < 310.dp) {
+            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                BasicText(label, style = chatraText(16f))
+                control(true)
+            }
+        } else Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            BasicText(label, Modifier.weight(1f), style = chatraText(16f))
+            control(false)
+        }
     }
 }
 
 @Composable
-private fun Segments(labels: List<String>, selected: Int, label: String, onSelect: (Int) -> Unit) {
-    Row(Modifier.clip(RoundedCornerShape(12.dp)).background(ChatraColors.Ink06).padding(3.dp).semantics { contentDescription = label; selectableGroup() }, horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-        labels.forEachIndexed { i, text ->
-            val shape = RoundedCornerShape(9.dp)
-            Box(Modifier.height(32.dp).then(if (i == selected) Modifier.cssShadow(shape, CssShadow(1.dp, 4.dp, Color(27,35,74).copy(alpha = .15f))) else Modifier).clip(shape).then(if (i == selected) Modifier.background(Color.White) else Modifier).selectable(i == selected, role = Role.RadioButton, onClick = { onSelect(i) }).padding(horizontal = 12.dp), contentAlignment = Alignment.Center) {
-                BasicText(text, style = chatraText(14f, if (i == selected) 600 else 400, color = if (i == selected) ChatraColors.TextPrimary else ChatraColors.TextTertiary))
+private fun Segments(labels: List<String>, selected: Int, label: String, expanded: Boolean = false, onSelect: (Int) -> Unit) {
+    val density = LocalDensity.current
+    val measurer = rememberTextMeasurer()
+    val requiredWidth = labels.sumOf { measurer.measure(it, chatraText(14f, 600)).size.width } +
+        with(density) { (labels.size * 24 + (labels.size - 1) * 2 + 6).dp.toPx() }
+    BoxWithConstraints(Modifier.then(if (expanded) Modifier.fillMaxWidth() else Modifier)) {
+        val group = Modifier.clip(RoundedCornerShape(12.dp)).background(ChatraColors.Ink06).padding(3.dp)
+            .semantics { contentDescription = label; selectableGroup() }
+        if (expanded && with(density) { maxWidth.toPx() } < requiredWidth) {
+            Column(group.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                labels.forEachIndexed { i, text -> SegmentButton(text, i == selected, { onSelect(i) }, Modifier.fillMaxWidth()) }
+            }
+        } else Row(group, horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+            labels.forEachIndexed { i, text ->
+                SegmentButton(text, i == selected, { onSelect(i) }, if (expanded) Modifier.weight(1f) else Modifier)
             }
         }
+    }
+}
+
+@Composable
+private fun SegmentButton(text: String, selected: Boolean, onSelect: () -> Unit, modifier: Modifier) {
+    val shape = RoundedCornerShape(9.dp)
+    Box(modifier.heightIn(min = 32.dp)
+        .then(if (selected) Modifier.cssShadow(shape, CssShadow(1.dp, 4.dp, Color(27,35,74).copy(alpha = .15f))) else Modifier)
+        .clip(shape).then(if (selected) Modifier.background(Color.White) else Modifier)
+        .selectable(selected, role = Role.RadioButton, onClick = onSelect).padding(horizontal = 12.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        BasicText(text, maxLines = 1, style = chatraText(14f, if (selected) 600 else 400,
+            color = if (selected) ChatraColors.TextPrimary else ChatraColors.TextTertiary))
     }
 }
 

@@ -199,7 +199,7 @@ Wykonanie: pole, wyczyść/anuluj, filtry, objaśnienie, dwa szybkie trafienia, 
 
 Odbiór: zgodny S07 i poprawny powrót z wyniku. Weryfikacja: długie zapytanie, wiele wyróżnień, duży font, dwa różne przyciski Kopiuj i czyszczenie pola.
 
-**Implementacja CH016 (09.11.2026):** S07 zaimplementowany: lokalny kontrakt wyszukiwania, filtry, wyróżnienia, dwa Kopiuj, kotwica MessageRef, stan zapisywalny. Testy JVM zaliczone. Końcowy odbiór obrazu i interakcji oczekuje na ponowne połączenie ADB. [Zakres, testy i ograniczenia odbioru](CH016_CH018_Wdrozenie_i_weryfikacja.md).
+**Implementacja CH016 (09.11.2026):** S07 zaimplementowany: lokalny kontrakt wyszukiwania, filtry, wyróżnienia, dwa Kopiuj, kotwica MessageRef, stan zapisywalny. Testy JVM zaliczone. Końcowy odbiór obrazu i interakcji oczekuje na ponowne połączenie ADB. [Zakres, testy i ograniczenia odbioru](CH016_CH018_Wdrozenie_i_weryfikacja.md). Weryfikacja działającego demo w emulatorze i poprawki z 10.11: [raport QA](CH016_CH018_Emulator_QA_2026-11-10.md).
 
 ### CH017 Odtworzyć S08 Nowa wiadomość
 
@@ -209,7 +209,7 @@ Wykonanie: chipy, wpisywanie numeru, tryby wysyłki, ostrzeżenie grupowe, suges
 
 Odbiór: zgodny S08 dla 3 osób; usuwanie konkretnego chipa zachowuje resztę. Weryfikacja: 1 osoba, 3 osoby i duża liczba osób, IME, długi kontakt i powrót do szkicu po anulowaniu.
 
-**Implementacja CH017 (09.11.2026):** S08 zaimplementowany: odbiorcy, walidacja, osobne SMS/MMS, wybór SIM i szkic. Testy obejmują podwójne Wyślij i częściowy błąd bez ponawiania przyjętych zleceń. Końcowy odbiór na telefonie pozostaje otwarty. [Zakres, testy i ograniczenia odbioru](CH016_CH018_Wdrozenie_i_weryfikacja.md).
+**Implementacja CH017 (09.11.2026):** S08 zaimplementowany: odbiorcy, walidacja, osobne SMS/MMS, wybór SIM i szkic. Testy obejmują podwójne Wyślij i częściowy błąd bez ponawiania przyjętych zleceń. Końcowy odbiór na telefonie pozostaje otwarty. [Zakres, testy i ograniczenia odbioru](CH016_CH018_Wdrozenie_i_weryfikacja.md). Weryfikacja działającego demo w emulatorze i poprawki z 10.11: [raport QA](CH016_CH018_Emulator_QA_2026-11-10.md).
 
 ### CH018 Odtworzyć S09 Wygląd
 
@@ -219,7 +219,7 @@ Wykonanie: nagłówek, podgląd o wysokości 196 jednostek projektu, cztery pró
 
 Odbiór: zgodny domyślny S09; role radio/switch/slider i bieżący stan dostępne dla czytnika. Weryfikacja: suwak 1/4/7, reset i przejście wstecz bez utraty wyboru.
 
-**Implementacja CH018 (09.11.2026):** S09 zaimplementowany: podgląd 196 dp, wybory, slider, dostępne przełączniki i reset. Niezatwierdzone warianty opisane jako podgląd roboczy do CH020/CH040. Końcowy odbiór obrazu i interakcji pozostaje otwarty. [Zakres, testy i ograniczenia odbioru](CH016_CH018_Wdrozenie_i_weryfikacja.md).
+**Implementacja CH018 (09.11.2026):** S09 zaimplementowany: podgląd 196 dp, wybory, slider, dostępne przełączniki i reset. Niezatwierdzone warianty opisane jako podgląd roboczy do CH020/CH040. Końcowy odbiór obrazu i interakcji pozostaje otwarty. [Zakres, testy i ograniczenia odbioru](CH016_CH018_Wdrozenie_i_weryfikacja.md). Weryfikacja działającego demo w emulatorze i poprawki z 10.11: [raport QA](CH016_CH018_Emulator_QA_2026-11-10.md).
 
 ### CH019 Odtworzyć S10 Ustawienia
 
