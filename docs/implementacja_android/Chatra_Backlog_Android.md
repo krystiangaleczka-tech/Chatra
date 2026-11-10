@@ -229,6 +229,8 @@ Wykonanie: karta Pro, sekcje Wysyłanie/Wygląd i porządek/Prywatność, ikony 
 
 Odbiór: zgodny S10 z fixture oraz poprawny routing wszystkich pozycji. Weryfikacja: krótki ekran, duży font, brak produktu sklepu i różne liczniki kosza/blokad.
 
+**Wynik CH019 (10.11.2026):** S10 i routing zaimplementowane, podsumowania z modelu, cena wyłącznie w fixture. Sprawdzone w emulatorze: zmiana opóźnienia, przełącznik i liczniki blokad/kosza. [Zakres i granice odbioru](CH019_CH021_Wdrozenie_i_weryfikacja.md).
+
 ### CH020 Uzupełnić brakujące projekty i stany
 
 **P0 · UX i produkt · 4–6 osobodni · zależności CH001 CH002 CH008**
@@ -242,6 +244,8 @@ Odbiór: katalog projektów i mapa do zadań; nowe widoki rozpoznawalne jako uzu
 **Odbiór rozszerzony:** Zatwierdzone interakcje, empty/loading/error, ograniczenia numerów i protokołów oraz dostępność dla CH065–CH071 mają mapę do zadania i dowodu odbioru.
 
 
+**Wynik CH020 (10.11.2026):** [Katalog 18 projektów i siedmiu stanów](CH020_Katalog_projektow_i_stanow.md), plansza SVG, podgląd w aplikacji i osiem palet tokenów. Walidacja automatyczna przeszła. Akceptacja UX/produktu G09 pozostaje otwarta.
+
 ## 4 Telefonia dane i media
 
 ### CH021 Wdrożyć rolę SMS i uprawnienia
@@ -251,6 +255,8 @@ Odbiór: katalog projektów i mapa do zadań; nowe widoki rozpoznawalne jako uzu
 Wykonanie: manifest pełnego klienta SMS, RoleManager, kontrola dostępności i wyników. Oddzielić nadanie roli od uprawnień przyznawanych podczas działania aplikacji. Wdrożyć utratę roli podczas działania, blokadę automatycznej wysyłki i bezpieczne powroty z ustawień. Pytać o dostęp do kontaktów, SIM, powiadomień i mediów w kontekście użycia danej funkcji.
 
 Odbiór: aplikacja pojawia się jako kandydat roli i nie odczytuje chronionej historii przed dostępem. Weryfikacja: świeża instalacja, odmowa, ponowienie, cofnięcie roli oraz bezpieczny stan każdego receivera po zmianie.
+
+**Wynik CH021 (10.11.2026):** Pełny manifest, RoleManager, osobne zgody kontekstowe, rewalidacja po powrocie i utracie roli, chronione odbiorniki oraz prywatne wejście SENDTO/RESPOND. `full` kompiluje się; historia i transporty są kolejnymi zadaniami. [Raport i otwarte próby systemowe](CH019_CH021_Wdrozenie_i_weryfikacja.md).
 
 ### CH022 Zintegrować historię providera i projekcję Room
 

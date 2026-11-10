@@ -1,0 +1,22 @@
+[
+  {
+    "case": "S10-delay",
+    "result": "PASS",
+    "detail": "Zmiana 3→5 s widoczna w podsumowaniu"
+  },
+  {
+    "case": "S10-counter",
+    "result": "PASS",
+    "detail": ""
+  },
+  {
+    "case": "S10-blocked-count",
+    "result": "PASS",
+    "detail": ""
+  },
+  {
+    "case": "S10-trash-count",
+    "result": "PASS",
+    "detail": ""
+  }
+]

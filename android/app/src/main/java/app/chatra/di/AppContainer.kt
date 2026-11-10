@@ -41,6 +41,13 @@ interface AppContainer {
     val appearance: PreferenceStore<AppearancePrefs>
     val sending: PreferenceStore<SendingPrefs>
     val housekeeping: Flow<Housekeeping>
+    val organization: OrganizationPreview get() = MemoryOrganizationPreview()
+    val proOffer: app.chatra.core.model.ProOffer get() = app.chatra.core.model.ProOffer.Unavailable
+    /** Transporty full są dopiero w CH026/CH032; nigdy nie zastępujemy ich atrapą. */
+    val canSendMessages: Boolean get() = isDemo
+    val platform: app.chatra.platform.PlatformAccess? get() = null
+    /** Wejście SENDTO/RESPOND_VIA_MESSAGE, odczytane dopiero przez edytor. */
+    fun externalDraft(id: String): app.chatra.core.model.ExternalCompose? = null
 
     /** Odcień awatara wskazany przez dane (fixture); null → odcień z hasha uczestników. */
     fun avatarTone(id: ConversationId): String?

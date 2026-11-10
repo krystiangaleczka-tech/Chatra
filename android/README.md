@@ -23,8 +23,8 @@
 | Wariant | Dane | Wysyłka i zakupy |
 | --- | --- | --- |
 | `demoDebug` | fixture CH006 (29.10.2026, 10 plansz) | brak prawdziwej wysyłki i zakupów |
-| `fullDebug` | Telephony Provider, rola SMS | prawdziwe transporty |
-| `fullRelease` | jak wyżej, R8 | podpis z `keystore.properties` |
+| `fullDebug` | systemowa rola i zgody (CH021); historia w CH022 | transport SMS w CH026, MMS w CH032 |
+| `fullRelease` | ten sam zakres platformowy, R8 | podpis z `keystore.properties` |
 
 `demo` ma osobny `applicationId` (`app.chatra.demo`), więc nie koliduje z wersją pełną.
 
@@ -40,14 +40,18 @@ cd android
 
 Wydanie testowe: skopiuj `keystore.properties.example` do `keystore.properties`, wskaż własny keystore poza repozytorium, potem `./gradlew :app:assembleFullRelease`. Bez tego pliku release buduje się niepodpisany.
 
-Aktualne ograniczenie: wariant `full` nie ma jeszcze adaptera `createContainer`,
-więc jego kompilacja (oraz zbiorcze `test` obejmujące ten wariant) nie przechodzi.
-Powyższe komendy testują i budują istniejącą implementację `demo`.
+Wariant `full` kompiluje się od CH021. Obsługuje rzeczywistą rolę SMS, osobne zgody
+i wejścia systemowe, ale historia i transporty wymagają CH022–CH026/CH032.
+Nie używaj tego etapu jako codziennego klienta SMS.
+
+```bash
+./gradlew :app:assembleFullDebug :app:testFullDebugUnitTest :app:lintFullDebug
+```
 
 ## Ekrany S07–S09 (CH016–CH018)
 
 Wyszukiwanie jest dostępne ze Skrzynki, Nowa wiadomość z przycisku docka,
-a Wygląd z tymczasowego wejścia w Ustawieniach (pełne S10 należy do CH019).
+a Wygląd z pełnego S10 Ustawienia (CH019).
 Demo obsługuje lokalne wyniki, szkic nowych odbiorców i ustawienia wyglądu.
 Pozostałe kompozycje i tryby S09 mają oznaczony podgląd roboczy do CH020/CH040.
 
@@ -67,3 +71,11 @@ Zobacz [ADR-001](../docs/implementacja_android/adr/ADR-001_Provider_i_Room.md): 
 ## Font
 
 Inter 4.001 (OFL, `core/designsystem/INTER_OFL.txt`) w wagach 400–700, ten sam build co web font w pakiecie referencyjnym (G01).
+
+## CH019–CH021
+
+S10 pokazuje podsumowania z preferencji, aktywnych kart i liczników porządku.
+Pro ma własny stan braku oferty; `[CENA]` występuje tylko w ramce fixture.
+[Zakres i weryfikacja](../docs/implementacja_android/CH019_CH021_Wdrozenie_i_weryfikacja.md).
+[18 projektów i kontrakty stanów CH020](../docs/implementacja_android/CH020_Katalog_projektow_i_stanow.md)
+pozostają do akceptacji G09. Katalog dostępny z menu Skrzynki i Pomocy.

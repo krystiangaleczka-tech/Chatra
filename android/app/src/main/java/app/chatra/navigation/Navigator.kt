@@ -84,11 +84,12 @@ private fun encodeRoute(route: Route): String {
         Route.Appearance -> listOf("appearance")
         Route.Privacy -> listOf("privacy")
         Route.Help -> listOf("help")
+        Route.DesignCatalog -> listOf("catalog")
         is Route.SettingsDetail -> listOf("detail", route.kind.name)
         is Route.Search -> listOf("search", route.initialQuery, route.initialFilter.orEmpty())
         is Route.Extras -> listOf("extras", route.id.value)
         is Route.Schedule -> listOf("schedule", route.id.value, route.preset.toString())
-        is Route.NewMessage -> listOf("new", route.preset.toString())
+        is Route.NewMessage -> listOf("new", route.preset.toString(), route.externalId.orEmpty())
         is Route.Conversation -> listOf("conversation", route.id.value) + when (val m = route.message) {
             null -> listOf("none")
             is MessageRef.Provider -> listOf("provider", m.ref.transport.name, m.ref.providerId.toString())
@@ -109,11 +110,12 @@ private fun decodeRoute(value: String): Route {
         "appearance" -> Route.Appearance
         "privacy" -> Route.Privacy
         "help" -> Route.Help
+        "catalog" -> Route.DesignCatalog
         "detail" -> Route.SettingsDetail(Route.SettingsDetail.Kind.valueOf(p[1]))
         "search" -> Route.Search(p[1], p[2].ifEmpty { null })
         "extras" -> Route.Extras(ConversationId(p[1]))
         "schedule" -> Route.Schedule(ConversationId(p[1]), p[2].toBoolean())
-        "new" -> Route.NewMessage(p[1].toBoolean())
+        "new" -> Route.NewMessage(p[1].toBoolean(), p.getOrNull(2)?.ifEmpty { null })
         "conversation" -> Route.Conversation(ConversationId(p[1]), when (p[2]) {
             "provider" -> MessageRef.Provider(ProviderRef(ProviderTransport.valueOf(p[3]), p[4].toLong()))
             "hd" -> MessageRef.Hd(p[3])

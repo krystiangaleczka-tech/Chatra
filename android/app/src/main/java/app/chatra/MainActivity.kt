@@ -22,6 +22,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.chatra.navigation.ReferenceScreens
 import app.chatra.ui.ChatraApp
 import app.chatra.ui.ProvideChrome
+import app.chatra.platform.ActivityPlatform
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,8 +31,9 @@ class MainActivity : ComponentActivity() {
         val reference = BuildConfig.DEMO && intent.getBooleanExtra(EXTRA_FRAME, false)
         val roleScenario = if (BuildConfig.DEMO) intent.getStringExtra(EXTRA_ROLE) else null
         val container = (application as ChatraApplication).container(reference, roleScenario, !BuildConfig.DEMO || intent.getBooleanExtra(EXTRA_EXACT_ALARMS, true))
+        (container.platform as? ActivityPlatform)?.apply { bindActivity(this@MainActivity); acceptIntent(intent) }
         val matte = BuildConfig.DEMO && intent.getBooleanExtra(EXTRA_MATTE, false)
-        val initial = intent.getStringExtra(EXTRA_SCREEN)?.let(ReferenceScreens::navigatorFor)
+        val initial = if (BuildConfig.DEMO) intent.getStringExtra(EXTRA_SCREEN)?.let(ReferenceScreens::navigatorFor) else null
         if (reference) {
             WindowInsetsControllerCompat(window, window.decorView).run {
                 hide(WindowInsetsCompat.Type.systemBars())
@@ -54,6 +56,17 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        (application as ChatraApplication).container(false).platform?.refresh()
+    }
+
+    override fun onNewIntent(intent: android.content.Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        ((application as ChatraApplication).container(false).platform as? ActivityPlatform)?.acceptIntent(intent)
     }
 
     companion object {

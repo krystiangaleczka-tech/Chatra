@@ -29,6 +29,8 @@ import app.chatra.core.designsystem.theme.*
 import app.chatra.core.model.*
 import app.chatra.ui.*
 import app.chatra.ui.common.*
+import app.chatra.ui.settings.PermissionCard
+import app.chatra.platform.AccessFeature
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -78,6 +80,8 @@ fun NewMessageScreen(model: NewMessageViewModel, onCancel: () -> Unit, onSent: (
             }
             if (state.input.isNotBlank()) TextAction("Dodaj numer", model::addInput)
             state.error?.let { BasicText(it, Modifier.semantics { liveRegion = LiveRegionMode.Polite }, style = chatraText(14f, color = ChatraColors.ErrorText)) }
+            if (!state.sendingAvailable) BasicText("Wersja rozwojowa: szkic jest zachowany, ale wysyłanie wiadomości nie jest jeszcze dostępne.", style = chatraText(14f, color = ChatraColors.TextSecondary))
+            PermissionCard(AccessFeature.Contacts)
             if (state.recipients.size > 1) {
                     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         BasicText("Jak wysłać do ${state.recipients.size} osób?", Modifier.padding(start = 4.dp), style = chatraText(15f, 600))
@@ -102,7 +106,16 @@ fun NewMessageScreen(model: NewMessageViewModel, onCancel: () -> Unit, onSent: (
             }
         }
     }
-    if (simPicker) ChoiceDialog("Karta SIM", state.sims.filter { it.available }.map { it.label }, { model.sim(state.sims.filter { it.available }[it].id) }, { simPicker = false })
+    if (simPicker) {
+        if (LocalContainer.current.platform == null) ChoiceDialog("Karta SIM", state.sims.filter { it.available }.map { it.label }, { model.sim(state.sims.filter { it.available }[it].id) }, { simPicker = false })
+        else androidx.compose.ui.window.Dialog(onDismissRequest = { simPicker = false }) {
+            Column(Modifier.background(Color.White, RoundedCornerShape(24.dp)).padding(16.dp)) {
+                PermissionCard(AccessFeature.Sims)
+                state.sims.filter { it.available }.forEach { card -> TextAction(card.label, { model.sim(card.id); simPicker = false }) }
+                TextAction("Anuluj", { simPicker = false })
+            }
+        }
+    }
 }
 
 @Composable

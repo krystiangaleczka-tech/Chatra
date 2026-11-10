@@ -73,6 +73,7 @@ fun InboxScreen(
 ) {
     val state by model.state.collectAsStateWithLifecycle()
     val chrome = LocalChrome.current
+    val container = app.chatra.ui.LocalContainer.current
     ChatraScreen(
         Backgrounds.Inbox,
         floating = { dock.Render(Modifier.align(Alignment.BottomStart)) },
@@ -84,6 +85,9 @@ fun InboxScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             item("header") { Header(onMore) }
+            if (!container.isDemo) item("development") {
+                BasicText("Wersja rozwojowa: odczyt historii i wysyłanie nie są jeszcze dostępne. Nie używaj jej jako głównej aplikacji SMS.", style = chatraText(14f, 600, color = ChatraColors.ErrorText))
+            }
             item("search") { SearchField(onSearch) }
             item("filter") { Filter(state.filter, state.unreadConversations, model::setFilter) }
             item("list") { ConversationCard(state, onOpen) }

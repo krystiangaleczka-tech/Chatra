@@ -372,7 +372,9 @@
         "CH008",
         "CH009"
       ],
-      "description": "Wykonanie: karta Pro, sekcje Wysyłanie/Wygląd i porządek/Prywatność, ikony i dock. Podsumowania z modelu zamiast stałych 3/4. Placeholder ceny wyłącznie w fixture; produkcyjny brak oferty ma własny tekst. Każdy wiersz emituje oddzielną akcję.\n\nOdbiór: zgodny S10 z fixture oraz poprawny routing wszystkich pozycji. Weryfikacja: krótki ekran, duży font, brak produktu sklepu i różne liczniki kosza/blokad."
+      "description": "Wykonanie: karta Pro, sekcje Wysyłanie/Wygląd i porządek/Prywatność, ikony i dock. Podsumowania z modelu zamiast stałych 3/4. Placeholder ceny wyłącznie w fixture; produkcyjny brak oferty ma własny tekst. Każdy wiersz emituje oddzielną akcję.\n\nOdbiór: zgodny S10 z fixture oraz poprawny routing wszystkich pozycji. Weryfikacja: krótki ekran, duży font, brak produktu sklepu i różne liczniki kosza/blokad.",
+      "status": "implemented_final_device_acceptance_pending",
+      "evidence": "CH019_CH021_Wdrozenie_i_weryfikacja.md"
     },
     {
       "id": "CH020",
@@ -386,7 +388,9 @@
         "CH002",
         "CH008"
       ],
-      "description": "Wykonanie: zaprojektować menu skrzynki, szczegóły rozmowy, SIM, pickery, szablony, ustawienia HD, blokady, kosz, pomoc, prywatność, paywall i stronę linku. Opisać empty/loading/error/disabled/permission dla wszystkich ekranów. Dokończyć Mgłę/Grafit/Kontrast, dark i compact z tokenami. Każdy widok ma komplet akcji, fokusu i tekstów.\n\nOdbiór: katalog projektów i mapa do zadań; nowe widoki rozpoznawalne jako uzupełnienie, domyślne 10 plansz nie przeprojektowane. Weryfikacja: przegląd scenariuszy bez martwych końców.\n\nUzupełnienie UX 29.10.2026: Uzupełnić katalog brakujących ekranów o szczegóły kontaktu/grupy (CH065), galerię rozmowy (CH066), gesty i menu (CH069), ustawienia lokalnego wyglądu (CH068), nieprzeczytane (CH070), opcjonalny eksport i skrót (CH071). Wszystkie podwidoki zgodne z językiem Liquid Glass; wzorzec S01–S10 pozostaje bez zmian.\n\nOdbiór rozszerzony: Zatwierdzone interakcje, empty/loading/error, ograniczenia numerów i protokołów oraz dostępność dla CH065–CH071 mają mapę do zadania i dowodu odbioru."
+      "description": "Wykonanie: zaprojektować menu skrzynki, szczegóły rozmowy, SIM, pickery, szablony, ustawienia HD, blokady, kosz, pomoc, prywatność, paywall i stronę linku. Opisać empty/loading/error/disabled/permission dla wszystkich ekranów. Dokończyć Mgłę/Grafit/Kontrast, dark i compact z tokenami. Każdy widok ma komplet akcji, fokusu i tekstów.\n\nOdbiór: katalog projektów i mapa do zadań; nowe widoki rozpoznawalne jako uzupełnienie, domyślne 10 plansz nie przeprojektowane. Weryfikacja: przegląd scenariuszy bez martwych końców.\n\nUzupełnienie UX 29.10.2026: Uzupełnić katalog brakujących ekranów o szczegóły kontaktu/grupy (CH065), galerię rozmowy (CH066), gesty i menu (CH069), ustawienia lokalnego wyglądu (CH068), nieprzeczytane (CH070), opcjonalny eksport i skrót (CH071). Wszystkie podwidoki zgodne z językiem Liquid Glass; wzorzec S01–S10 pozostaje bez zmian.\n\nOdbiór rozszerzony: Zatwierdzone interakcje, empty/loading/error, ograniczenia numerów i protokołów oraz dostępność dla CH065–CH071 mają mapę do zadania i dowodu odbioru.",
+      "status": "design_ready_product_approval_pending",
+      "evidence": "CH020_Katalog_projektow_i_stanow.md"
     },
     {
       "id": "CH021",
@@ -400,7 +404,9 @@
         "CH005",
         "CH010"
       ],
-      "description": "Wykonanie: manifest pełnego klienta SMS, RoleManager, kontrola dostępności i wyników. Oddzielić nadanie roli od uprawnień przyznawanych podczas działania aplikacji. Wdrożyć utratę roli podczas działania, blokadę automatycznej wysyłki i bezpieczne powroty z ustawień. Pytać o dostęp do kontaktów, SIM, powiadomień i mediów w kontekście użycia danej funkcji.\n\nOdbiór: aplikacja pojawia się jako kandydat roli i nie odczytuje chronionej historii przed dostępem. Weryfikacja: świeża instalacja, odmowa, ponowienie, cofnięcie roli oraz bezpieczny stan każdego receivera po zmianie."
+      "description": "Wykonanie: manifest pełnego klienta SMS, RoleManager, kontrola dostępności i wyników. Oddzielić nadanie roli od uprawnień przyznawanych podczas działania aplikacji. Wdrożyć utratę roli podczas działania, blokadę automatycznej wysyłki i bezpieczne powroty z ustawień. Pytać o dostęp do kontaktów, SIM, powiadomień i mediów w kontekście użycia danej funkcji.\n\nOdbiór: aplikacja pojawia się jako kandydat roli i nie odczytuje chronionej historii przed dostępem. Weryfikacja: świeża instalacja, odmowa, ponowienie, cofnięcie roli oraz bezpieczny stan każdego receivera po zmianie.",
+      "status": "implemented_final_device_acceptance_pending",
+      "evidence": "CH019_CH021_Wdrozenie_i_weryfikacja.md"
     },
     {
       "id": "CH022",

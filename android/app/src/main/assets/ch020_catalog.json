@@ -1,0 +1,565 @@
+{
+  "version": 1,
+  "date": "2026-11-10",
+  "approval": "projekt_do_akceptacji_G09",
+  "reference": "S01–S10 bez zmian; nowe widoki są propozycjami",
+  "designs": [
+    {
+      "id": "inbox-menu",
+      "title": "Menu skrzynki",
+      "purpose": "Oznaczenie wszystkich jako przeczytane, akcje wątku i alternatywa dla gestów.",
+      "states": {
+        "ready": "Dane są dostępne. Wybór nie uruchamia działania bez świadomego potwierdzenia.",
+        "empty": "Brak pozycji. Wyjaśnij stan i pokaż dostępną drogę powrotu lub dodania danych.",
+        "loading": "Wczytywanie. Zachowaj poprzedni wybór i nie pozwalaj uruchamiać tej samej operacji ponownie.",
+        "error": "Nie udało się wczytać lub zapisać. Zachowaj dane formularza, pokaż Powtórz i Anuluj.",
+        "disabled": "Działanie jest niedostępne. Podaj powód; nie symuluj skutku ani sukcesu.",
+        "permission": "Brak dostępu. Wyjaśnij konkretną potrzebę, pokaż Zezwól oraz opcję dalszego używania bez zgody.",
+        "confirmation": "Pokaż dokładny skutek i zakres. Domyślnie wybierz Anuluj. Po akceptacji blokuj drugi klik."
+      },
+      "actions": [
+        "Oznacz wszystkie jako przeczytane",
+        "Przypnij / odepnij",
+        "Przenieś do kosza",
+        "Anuluj"
+      ],
+      "focus": {
+        "initial": "Tytuł panelu, następnie bieżący wybór",
+        "order": "Opis → pola/lista → akcja główna → Anuluj",
+        "dismiss": "Back/Anuluj zachowuje szkic i przywraca fokus elementowi otwierającemu",
+        "announcements": "Błąd i zmiana stanu: liveRegion polite; pola mają etykietę, radio/switch/slider rolę i wartość"
+      },
+      "tasks": [
+        "CH011",
+        "CH069",
+        "CH070"
+      ],
+      "approval": "projekt_do_akceptacji"
+    },
+    {
+      "id": "conversation",
+      "title": "Szczegóły rozmowy",
+      "purpose": "Kontakt lub uczestnicy, wyciszenie, galeria, lokalny wygląd i pierwsza nieprzeczytana.",
+      "states": {
+        "ready": "Dane są dostępne. Wybór nie uruchamia działania bez świadomego potwierdzenia.",
+        "empty": "Brak pozycji. Wyjaśnij stan i pokaż dostępną drogę powrotu lub dodania danych.",
+        "loading": "Wczytywanie. Zachowaj poprzedni wybór i nie pozwalaj uruchamiać tej samej operacji ponownie.",
+        "error": "Nie udało się wczytać lub zapisać. Zachowaj dane formularza, pokaż Powtórz i Anuluj.",
+        "disabled": "Działanie jest niedostępne. Podaj powód; nie symuluj skutku ani sukcesu.",
+        "permission": "Brak dostępu. Wyjaśnij konkretną potrzebę, pokaż Zezwól oraz opcję dalszego używania bez zgody.",
+        "confirmation": "Pokaż dokładny skutek i zakres. Domyślnie wybierz Anuluj. Po akceptacji blokuj drugi klik."
+      },
+      "actions": [
+        "Media",
+        "Wygląd tej rozmowy",
+        "Wycisz",
+        "Wróć do wiadomości"
+      ],
+      "focus": {
+        "initial": "Tytuł panelu, następnie bieżący wybór",
+        "order": "Opis → pola/lista → akcja główna → Anuluj",
+        "dismiss": "Back/Anuluj zachowuje szkic i przywraca fokus elementowi otwierającemu",
+        "announcements": "Błąd i zmiana stanu: liveRegion polite; pola mają etykietę, radio/switch/slider rolę i wartość"
+      },
+      "tasks": [
+        "CH065",
+        "CH068",
+        "CH070"
+      ],
+      "approval": "projekt_do_akceptacji"
+    },
+    {
+      "id": "sim",
+      "title": "Wybór karty SIM",
+      "purpose": "Szkic > rozmowa > domyślna; utraconej karty nigdy nie zastępujemy po cichu.",
+      "states": {
+        "ready": "Dane są dostępne. Wybór nie uruchamia działania bez świadomego potwierdzenia.",
+        "empty": "Brak dostępnych kart. Wysyłanie zablokowane; można zachować szkic.",
+        "loading": "Wczytywanie. Zachowaj poprzedni wybór i nie pozwalaj uruchamiać tej samej operacji ponownie.",
+        "error": "Zapamiętana karta zniknęła. Pokaż poprzedni opis oraz dostępne karty i wymagaj nowego wyboru.",
+        "disabled": "Działanie jest niedostępne. Podaj powód; nie symuluj skutku ani sukcesu.",
+        "permission": "Brak dostępu. Wyjaśnij konkretną potrzebę, pokaż Zezwól oraz opcję dalszego używania bez zgody.",
+        "confirmation": "Pokaż dokładny skutek i zakres. Domyślnie wybierz Anuluj. Po akceptacji blokuj drugi klik."
+      },
+      "actions": [
+        "SIM 1",
+        "SIM 2",
+        "Zezwól na odczyt kart",
+        "Anuluj"
+      ],
+      "focus": {
+        "initial": "Tytuł panelu, następnie bieżący wybór",
+        "order": "Opis → pola/lista → akcja główna → Anuluj",
+        "dismiss": "Back/Anuluj zachowuje szkic i przywraca fokus elementowi otwierającemu",
+        "announcements": "Błąd i zmiana stanu: liveRegion polite; pola mają etykietę, radio/switch/slider rolę i wartość"
+      },
+      "tasks": [
+        "CH021",
+        "CH024"
+      ],
+      "approval": "projekt_do_akceptacji"
+    },
+    {
+      "id": "date",
+      "title": "Wybór daty",
+      "purpose": "Kalendarz poniedziałek–niedziela z miesiącem i rokiem. Miniony dzień niedostępny.",
+      "states": {
+        "ready": "Dane są dostępne. Wybór nie uruchamia działania bez świadomego potwierdzenia.",
+        "empty": "Brak pozycji. Wyjaśnij stan i pokaż dostępną drogę powrotu lub dodania danych.",
+        "loading": "Wczytywanie. Zachowaj poprzedni wybór i nie pozwalaj uruchamiać tej samej operacji ponownie.",
+        "error": "Wybrany termin jest w przeszłości albo godzina nie istnieje. Waliduj przed potwierdzeniem.",
+        "disabled": "Działanie jest niedostępne. Podaj powód; nie symuluj skutku ani sukcesu.",
+        "permission": "Brak dostępu. Wyjaśnij konkretną potrzebę, pokaż Zezwól oraz opcję dalszego używania bez zgody.",
+        "confirmation": "Pokaż dokładny skutek i zakres. Domyślnie wybierz Anuluj. Po akceptacji blokuj drugi klik."
+      },
+      "actions": [
+        "Poprzedni miesiąc",
+        "Następny miesiąc",
+        "Wybierz dzień",
+        "Zatwierdź",
+        "Anuluj"
+      ],
+      "focus": {
+        "initial": "Tytuł panelu, następnie bieżący wybór",
+        "order": "Opis → pola/lista → akcja główna → Anuluj",
+        "dismiss": "Back/Anuluj zachowuje szkic i przywraca fokus elementowi otwierającemu",
+        "announcements": "Błąd i zmiana stanu: liveRegion polite; pola mają etykietę, radio/switch/slider rolę i wartość"
+      },
+      "tasks": [
+        "CH014",
+        "CH015",
+        "CH035"
+      ],
+      "approval": "projekt_do_akceptacji"
+    },
+    {
+      "id": "time",
+      "title": "Wybór godziny",
+      "purpose": "Format 24 h, osobne pola godziny i minuty. Wyraźna informacja o DST przed zapisaniem.",
+      "states": {
+        "ready": "Dane są dostępne. Wybór nie uruchamia działania bez świadomego potwierdzenia.",
+        "empty": "Brak pozycji. Wyjaśnij stan i pokaż dostępną drogę powrotu lub dodania danych.",
+        "loading": "Wczytywanie. Zachowaj poprzedni wybór i nie pozwalaj uruchamiać tej samej operacji ponownie.",
+        "error": "Nie udało się wczytać lub zapisać. Zachowaj dane formularza, pokaż Powtórz i Anuluj.",
+        "disabled": "Działanie jest niedostępne. Podaj powód; nie symuluj skutku ani sukcesu.",
+        "permission": "Brak dostępu. Wyjaśnij konkretną potrzebę, pokaż Zezwól oraz opcję dalszego używania bez zgody.",
+        "confirmation": "Pokaż dokładny skutek i zakres. Domyślnie wybierz Anuluj. Po akceptacji blokuj drugi klik."
+      },
+      "actions": [
+        "Godzina",
+        "Minuta",
+        "Zatwierdź",
+        "Anuluj"
+      ],
+      "focus": {
+        "initial": "Tytuł panelu, następnie bieżący wybór",
+        "order": "Opis → pola/lista → akcja główna → Anuluj",
+        "dismiss": "Back/Anuluj zachowuje szkic i przywraca fokus elementowi otwierającemu",
+        "announcements": "Błąd i zmiana stanu: liveRegion polite; pola mają etykietę, radio/switch/slider rolę i wartość"
+      },
+      "tasks": [
+        "CH014",
+        "CH015",
+        "CH036"
+      ],
+      "approval": "projekt_do_akceptacji"
+    },
+    {
+      "id": "templates",
+      "title": "Szablony",
+      "purpose": "Lista, podgląd i wstawienie do bieżącego szkicu. Dodawanie/edycja/usuwanie z potwierdzeniem.",
+      "states": {
+        "ready": "Dane są dostępne. Wybór nie uruchamia działania bez świadomego potwierdzenia.",
+        "empty": "Brak pozycji. Wyjaśnij stan i pokaż dostępną drogę powrotu lub dodania danych.",
+        "loading": "Wczytywanie. Zachowaj poprzedni wybór i nie pozwalaj uruchamiać tej samej operacji ponownie.",
+        "error": "Nie udało się wczytać lub zapisać. Zachowaj dane formularza, pokaż Powtórz i Anuluj.",
+        "disabled": "Działanie jest niedostępne. Podaj powód; nie symuluj skutku ani sukcesu.",
+        "permission": "Brak dostępu. Wyjaśnij konkretną potrzebę, pokaż Zezwól oraz opcję dalszego używania bez zgody.",
+        "confirmation": "Pokaż dokładny skutek i zakres. Domyślnie wybierz Anuluj. Po akceptacji blokuj drugi klik."
+      },
+      "actions": [
+        "Wstaw",
+        "Dodaj",
+        "Edytuj",
+        "Usuń",
+        "Anuluj"
+      ],
+      "focus": {
+        "initial": "Tytuł panelu, następnie bieżący wybór",
+        "order": "Opis → pola/lista → akcja główna → Anuluj",
+        "dismiss": "Back/Anuluj zachowuje szkic i przywraca fokus elementowi otwierającemu",
+        "announcements": "Błąd i zmiana stanu: liveRegion polite; pola mają etykietę, radio/switch/slider rolę i wartość"
+      },
+      "tasks": [
+        "CH034"
+      ],
+      "approval": "projekt_do_akceptacji"
+    },
+    {
+      "id": "hd",
+      "title": "Ustawienia Chatra HD",
+      "purpose": "Oryginał, kopia bez GPS, MMS; link tylko po zgodzie, aktywacja i limity z backendu.",
+      "states": {
+        "ready": "Dane są dostępne. Wybór nie uruchamia działania bez świadomego potwierdzenia.",
+        "empty": "Brak pozycji. Wyjaśnij stan i pokaż dostępną drogę powrotu lub dodania danych.",
+        "loading": "Wczytywanie. Zachowaj poprzedni wybór i nie pozwalaj uruchamiać tej samej operacji ponownie.",
+        "error": "Nie udało się wczytać lub zapisać. Zachowaj dane formularza, pokaż Powtórz i Anuluj.",
+        "disabled": "Działanie jest niedostępne. Podaj powód; nie symuluj skutku ani sukcesu.",
+        "permission": "Brak dostępu. Wyjaśnij konkretną potrzebę, pokaż Zezwól oraz opcję dalszego używania bez zgody.",
+        "confirmation": "Pokaż dokładny skutek i zakres. Domyślnie wybierz Anuluj. Po akceptacji blokuj drugi klik."
+      },
+      "actions": [
+        "Wybierz wariant",
+        "Aktywuj HD",
+        "Potwierdź link",
+        "Anuluj"
+      ],
+      "focus": {
+        "initial": "Tytuł panelu, następnie bieżący wybór",
+        "order": "Opis → pola/lista → akcja główna → Anuluj",
+        "dismiss": "Back/Anuluj zachowuje szkic i przywraca fokus elementowi otwierającemu",
+        "announcements": "Błąd i zmiana stanu: liveRegion polite; pola mają etykietę, radio/switch/slider rolę i wartość"
+      },
+      "tasks": [
+        "CH033",
+        "CH046",
+        "CH049",
+        "CH051"
+      ],
+      "approval": "projekt_do_akceptacji"
+    },
+    {
+      "id": "blocked",
+      "title": "Zablokowani",
+      "purpose": "Lokalne ukrycie i brak powiadomień; bez blokowania połączeń i kasowania historii.",
+      "states": {
+        "ready": "Dane są dostępne. Wybór nie uruchamia działania bez świadomego potwierdzenia.",
+        "empty": "Brak pozycji. Wyjaśnij stan i pokaż dostępną drogę powrotu lub dodania danych.",
+        "loading": "Wczytywanie. Zachowaj poprzedni wybór i nie pozwalaj uruchamiać tej samej operacji ponownie.",
+        "error": "Nie udało się wczytać lub zapisać. Zachowaj dane formularza, pokaż Powtórz i Anuluj.",
+        "disabled": "Działanie jest niedostępne. Podaj powód; nie symuluj skutku ani sukcesu.",
+        "permission": "Brak dostępu. Wyjaśnij konkretną potrzebę, pokaż Zezwól oraz opcję dalszego używania bez zgody.",
+        "confirmation": "Pokaż dokładny skutek i zakres. Domyślnie wybierz Anuluj. Po akceptacji blokuj drugi klik."
+      },
+      "actions": [
+        "Odblokuj",
+        "Dodaj numer",
+        "Potwierdź",
+        "Anuluj"
+      ],
+      "focus": {
+        "initial": "Tytuł panelu, następnie bieżący wybór",
+        "order": "Opis → pola/lista → akcja główna → Anuluj",
+        "dismiss": "Back/Anuluj zachowuje szkic i przywraca fokus elementowi otwierającemu",
+        "announcements": "Błąd i zmiana stanu: liveRegion polite; pola mają etykietę, radio/switch/slider rolę i wartość"
+      },
+      "tasks": [
+        "CH042"
+      ],
+      "approval": "projekt_do_akceptacji"
+    },
+    {
+      "id": "trash",
+      "title": "Kosz",
+      "purpose": "Lokalne ukrycie wiadomości na 30 dni; przywrócenie i osobne potwierdzenie trwałego usunięcia.",
+      "states": {
+        "ready": "Dane są dostępne. Wybór nie uruchamia działania bez świadomego potwierdzenia.",
+        "empty": "Brak pozycji. Wyjaśnij stan i pokaż dostępną drogę powrotu lub dodania danych.",
+        "loading": "Wczytywanie. Zachowaj poprzedni wybór i nie pozwalaj uruchamiać tej samej operacji ponownie.",
+        "error": "Nie udało się wczytać lub zapisać. Zachowaj dane formularza, pokaż Powtórz i Anuluj.",
+        "disabled": "Działanie jest niedostępne. Podaj powód; nie symuluj skutku ani sukcesu.",
+        "permission": "Brak dostępu. Wyjaśnij konkretną potrzebę, pokaż Zezwól oraz opcję dalszego używania bez zgody.",
+        "confirmation": "Pokaż dokładny skutek i zakres. Domyślnie wybierz Anuluj. Po akceptacji blokuj drugi klik."
+      },
+      "actions": [
+        "Odzyskaj",
+        "Usuń trwale",
+        "Anuluj"
+      ],
+      "focus": {
+        "initial": "Tytuł panelu, następnie bieżący wybór",
+        "order": "Opis → pola/lista → akcja główna → Anuluj",
+        "dismiss": "Back/Anuluj zachowuje szkic i przywraca fokus elementowi otwierającemu",
+        "announcements": "Błąd i zmiana stanu: liveRegion polite; pola mają etykietę, radio/switch/slider rolę i wartość"
+      },
+      "tasks": [
+        "CH043",
+        "CH061"
+      ],
+      "approval": "projekt_do_akceptacji"
+    },
+    {
+      "id": "help",
+      "title": "Pomoc",
+      "purpose": "Różnice SMS/MMS/HD, brak RCS/iMessage/rozmów, harmonogram zależny od telefonu.",
+      "states": {
+        "ready": "Dane są dostępne. Wybór nie uruchamia działania bez świadomego potwierdzenia.",
+        "empty": "Brak pozycji. Wyjaśnij stan i pokaż dostępną drogę powrotu lub dodania danych.",
+        "loading": "Wczytywanie. Zachowaj poprzedni wybór i nie pozwalaj uruchamiać tej samej operacji ponownie.",
+        "error": "Nie udało się wczytać lub zapisać. Zachowaj dane formularza, pokaż Powtórz i Anuluj.",
+        "disabled": "Działanie jest niedostępne. Podaj powód; nie symuluj skutku ani sukcesu.",
+        "permission": "Brak dostępu. Wyjaśnij konkretną potrzebę, pokaż Zezwól oraz opcję dalszego używania bez zgody.",
+        "confirmation": "Pokaż dokładny skutek i zakres. Domyślnie wybierz Anuluj. Po akceptacji blokuj drugi klik."
+      },
+      "actions": [
+        "Prywatność",
+        "Ustawienia roli SMS",
+        "Wróć"
+      ],
+      "focus": {
+        "initial": "Tytuł panelu, następnie bieżący wybór",
+        "order": "Opis → pola/lista → akcja główna → Anuluj",
+        "dismiss": "Back/Anuluj zachowuje szkic i przywraca fokus elementowi otwierającemu",
+        "announcements": "Błąd i zmiana stanu: liveRegion polite; pola mają etykietę, radio/switch/slider rolę i wartość"
+      },
+      "tasks": [
+        "CH044"
+      ],
+      "approval": "projekt_do_akceptacji"
+    },
+    {
+      "id": "privacy",
+      "title": "Prywatność i zgody",
+      "purpose": "Osobne karty: SMS, kontakty, SIM, powiadomienia, wybrane media; odmowa nie blokuje reszty.",
+      "states": {
+        "ready": "Dane są dostępne. Wybór nie uruchamia działania bez świadomego potwierdzenia.",
+        "empty": "Brak pozycji. Wyjaśnij stan i pokaż dostępną drogę powrotu lub dodania danych.",
+        "loading": "Wczytywanie. Zachowaj poprzedni wybór i nie pozwalaj uruchamiać tej samej operacji ponownie.",
+        "error": "Nie udało się wczytać lub zapisać. Zachowaj dane formularza, pokaż Powtórz i Anuluj.",
+        "disabled": "Działanie jest niedostępne. Podaj powód; nie symuluj skutku ani sukcesu.",
+        "permission": "Brak dostępu. Wyjaśnij konkretną potrzebę, pokaż Zezwól oraz opcję dalszego używania bez zgody.",
+        "confirmation": "Pokaż dokładny skutek i zakres. Domyślnie wybierz Anuluj. Po akceptacji blokuj drugi klik."
+      },
+      "actions": [
+        "Zezwól",
+        "Otwórz ustawienia",
+        "Wybierz zdjęcia",
+        "Anuluj"
+      ],
+      "focus": {
+        "initial": "Tytuł panelu, następnie bieżący wybór",
+        "order": "Opis → pola/lista → akcja główna → Anuluj",
+        "dismiss": "Back/Anuluj zachowuje szkic i przywraca fokus elementowi otwierającemu",
+        "announcements": "Błąd i zmiana stanu: liveRegion polite; pola mają etykietę, radio/switch/slider rolę i wartość"
+      },
+      "tasks": [
+        "CH021",
+        "CH044",
+        "CH057"
+      ],
+      "approval": "projekt_do_akceptacji"
+    },
+    {
+      "id": "pro",
+      "title": "Chatra Pro",
+      "purpose": "Oferta i cena tylko ze sklepu. SMS/MMS, harmonogram, wyszukiwanie i dostępność bez paywalla.",
+      "states": {
+        "ready": "Dane są dostępne. Wybór nie uruchamia działania bez świadomego potwierdzenia.",
+        "empty": "Brak oferty sklepu: nie pokazuj ceny, Kup ani obietnicy przywrócenia.",
+        "loading": "Pobieranie oferty. Zakup zablokowany do zweryfikowania ceny i identyfikatora produktu.",
+        "error": "Sklep niedostępny lub zakup odrzucony. Bez naliczenia uprawnienia; ponowienie jest jawne.",
+        "disabled": "Działanie jest niedostępne. Podaj powód; nie symuluj skutku ani sukcesu.",
+        "permission": "Brak dostępu. Wyjaśnij konkretną potrzebę, pokaż Zezwól oraz opcję dalszego używania bez zgody.",
+        "confirmation": "Pokaż dokładny skutek i zakres. Domyślnie wybierz Anuluj. Po akceptacji blokuj drugi klik."
+      },
+      "actions": [
+        "Kup przy dostępnej ofercie",
+        "Przywróć zakup",
+        "Wróć"
+      ],
+      "focus": {
+        "initial": "Tytuł panelu, następnie bieżący wybór",
+        "order": "Opis → pola/lista → akcja główna → Anuluj",
+        "dismiss": "Back/Anuluj zachowuje szkic i przywraca fokus elementowi otwierającemu",
+        "announcements": "Błąd i zmiana stanu: liveRegion polite; pola mają etykietę, radio/switch/slider rolę i wartość"
+      },
+      "tasks": [
+        "CH040",
+        "CH045"
+      ],
+      "approval": "projekt_do_akceptacji"
+    },
+    {
+      "id": "link",
+      "title": "Odbiór z linku HD",
+      "purpose": "Zaufana strona z nazwą pliku, rozmiarem, terminem ważności i pobraniem po autoryzacji.",
+      "states": {
+        "ready": "Dane są dostępne. Wybór nie uruchamia działania bez świadomego potwierdzenia.",
+        "empty": "Link wygasł lub został cofnięty. Nie ujawniaj listy plików.",
+        "loading": "Wczytywanie. Zachowaj poprzedni wybór i nie pozwalaj uruchamiać tej samej operacji ponownie.",
+        "error": "Nie udało się wczytać lub zapisać. Zachowaj dane formularza, pokaż Powtórz i Anuluj.",
+        "disabled": "Limit transferu lub niewspierany plik. Pokaż rozmiar i przyczynę bez pobierania.",
+        "permission": "Link wymaga uprawnienia do konkretnego zasobu. Nigdy nie umieszczaj tokenu w logach.",
+        "confirmation": "Pokaż dokładny skutek i zakres. Domyślnie wybierz Anuluj. Po akceptacji blokuj drugi klik."
+      },
+      "actions": [
+        "Pobierz",
+        "Otwórz w Chatrze",
+        "Zgłoś problem"
+      ],
+      "focus": {
+        "initial": "Tytuł panelu, następnie bieżący wybór",
+        "order": "Opis → pola/lista → akcja główna → Anuluj",
+        "dismiss": "Back/Anuluj zachowuje szkic i przywraca fokus elementowi otwierającemu",
+        "announcements": "Błąd i zmiana stanu: liveRegion polite; pola mają etykietę, radio/switch/slider rolę i wartość"
+      },
+      "tasks": [
+        "CH050",
+        "CH051",
+        "CH052"
+      ],
+      "approval": "projekt_do_akceptacji"
+    },
+    {
+      "id": "gallery",
+      "title": "Galeria rozmowy",
+      "purpose": "Zdjęcia i pliki pochodzą z tej rozmowy. Wybrany element prowadzi do oryginalnej wiadomości bez resetowania historii.",
+      "states": {
+        "ready": "Dane są dostępne. Wybór nie uruchamia działania bez świadomego potwierdzenia.",
+        "empty": "Brak pozycji. Wyjaśnij stan i pokaż dostępną drogę powrotu lub dodania danych.",
+        "loading": "Wczytywanie. Zachowaj poprzedni wybór i nie pozwalaj uruchamiać tej samej operacji ponownie.",
+        "error": "Nie udało się wczytać lub zapisać. Zachowaj dane formularza, pokaż Powtórz i Anuluj.",
+        "disabled": "Działanie jest niedostępne. Podaj powód; nie symuluj skutku ani sukcesu.",
+        "permission": "Brak dostępu. Wyjaśnij konkretną potrzebę, pokaż Zezwól oraz opcję dalszego używania bez zgody.",
+        "confirmation": "Pokaż dokładny skutek i zakres. Domyślnie wybierz Anuluj. Po akceptacji blokuj drugi klik."
+      },
+      "actions": [
+        "Otwórz plik",
+        "Przejdź do wiadomości",
+        "Wróć"
+      ],
+      "focus": {
+        "initial": "Tytuł panelu, następnie bieżący wybór",
+        "order": "Opis → pola/lista → akcja główna → Anuluj",
+        "dismiss": "Back/Anuluj zachowuje szkic i przywraca fokus elementowi otwierającemu",
+        "announcements": "Błąd i zmiana stanu: liveRegion polite; pola mają etykietę, radio/switch/slider rolę i wartość"
+      },
+      "tasks": [
+        "CH066",
+        "CH067"
+      ],
+      "approval": "projekt_do_akceptacji",
+      "source_message_required": true
+    },
+    {
+      "id": "local-appearance",
+      "title": "Wygląd rozmowy",
+      "purpose": "Dziedziczenie globalnego motywu albo jawne lokalne nadpisanie. Reset dotyczy tylko tej rozmowy.",
+      "states": {
+        "ready": "Dane są dostępne. Wybór nie uruchamia działania bez świadomego potwierdzenia.",
+        "empty": "Brak pozycji. Wyjaśnij stan i pokaż dostępną drogę powrotu lub dodania danych.",
+        "loading": "Wczytywanie. Zachowaj poprzedni wybór i nie pozwalaj uruchamiać tej samej operacji ponownie.",
+        "error": "Nie udało się wczytać lub zapisać. Zachowaj dane formularza, pokaż Powtórz i Anuluj.",
+        "disabled": "Działanie jest niedostępne. Podaj powód; nie symuluj skutku ani sukcesu.",
+        "permission": "Brak dostępu. Wyjaśnij konkretną potrzebę, pokaż Zezwól oraz opcję dalszego używania bez zgody.",
+        "confirmation": "Pokaż dokładny skutek i zakres. Domyślnie wybierz Anuluj. Po akceptacji blokuj drugi klik."
+      },
+      "actions": [
+        "Dziedzicz globalny",
+        "Zapisz lokalny",
+        "Przywróć globalny",
+        "Anuluj"
+      ],
+      "focus": {
+        "initial": "Tytuł panelu, następnie bieżący wybór",
+        "order": "Opis → pola/lista → akcja główna → Anuluj",
+        "dismiss": "Back/Anuluj zachowuje szkic i przywraca fokus elementowi otwierającemu",
+        "announcements": "Błąd i zmiana stanu: liveRegion polite; pola mają etykietę, radio/switch/slider rolę i wartość"
+      },
+      "tasks": [
+        "CH068"
+      ],
+      "approval": "projekt_do_akceptacji"
+    },
+    {
+      "id": "gestures",
+      "title": "Gesty i menu",
+      "purpose": "Przypisania gestów z dostępną alternatywą menu. Akcje destrukcyjne wymagają potwierdzenia.",
+      "states": {
+        "ready": "Dane są dostępne. Wybór nie uruchamia działania bez świadomego potwierdzenia.",
+        "empty": "Brak pozycji. Wyjaśnij stan i pokaż dostępną drogę powrotu lub dodania danych.",
+        "loading": "Wczytywanie. Zachowaj poprzedni wybór i nie pozwalaj uruchamiać tej samej operacji ponownie.",
+        "error": "Nie udało się wczytać lub zapisać. Zachowaj dane formularza, pokaż Powtórz i Anuluj.",
+        "disabled": "Działanie jest niedostępne. Podaj powód; nie symuluj skutku ani sukcesu.",
+        "permission": "Brak dostępu. Wyjaśnij konkretną potrzebę, pokaż Zezwól oraz opcję dalszego używania bez zgody.",
+        "confirmation": "Pokaż dokładny skutek i zakres. Domyślnie wybierz Anuluj. Po akceptacji blokuj drugi klik."
+      },
+      "actions": [
+        "Wybierz gest",
+        "Wybierz akcję",
+        "Przywróć domyślne",
+        "Anuluj"
+      ],
+      "focus": {
+        "initial": "Tytuł panelu, następnie bieżący wybór",
+        "order": "Opis → pola/lista → akcja główna → Anuluj",
+        "dismiss": "Back/Anuluj zachowuje szkic i przywraca fokus elementowi otwierającemu",
+        "announcements": "Błąd i zmiana stanu: liveRegion polite; pola mają etykietę, radio/switch/slider rolę i wartość"
+      },
+      "tasks": [
+        "CH069"
+      ],
+      "approval": "projekt_do_akceptacji"
+    },
+    {
+      "id": "unread",
+      "title": "Nieprzeczytane",
+      "purpose": "Ręczne nadpisanie i znacznik pierwszej nieprzeczytanej; odczyt dopiero po pokazaniu wiadomości.",
+      "states": {
+        "ready": "Dane są dostępne. Wybór nie uruchamia działania bez świadomego potwierdzenia.",
+        "empty": "Brak pozycji. Wyjaśnij stan i pokaż dostępną drogę powrotu lub dodania danych.",
+        "loading": "Wczytywanie. Zachowaj poprzedni wybór i nie pozwalaj uruchamiać tej samej operacji ponownie.",
+        "error": "Nie udało się wczytać lub zapisać. Zachowaj dane formularza, pokaż Powtórz i Anuluj.",
+        "disabled": "Działanie jest niedostępne. Podaj powód; nie symuluj skutku ani sukcesu.",
+        "permission": "Brak dostępu. Wyjaśnij konkretną potrzebę, pokaż Zezwól oraz opcję dalszego używania bez zgody.",
+        "confirmation": "Pokaż dokładny skutek i zakres. Domyślnie wybierz Anuluj. Po akceptacji blokuj drugi klik."
+      },
+      "actions": [
+        "Oznacz jako nieprzeczytane",
+        "Pierwsza nieprzeczytana",
+        "Oznacz wszystkie jako przeczytane",
+        "Wróć"
+      ],
+      "focus": {
+        "initial": "Tytuł panelu, następnie bieżący wybór",
+        "order": "Opis → pola/lista → akcja główna → Anuluj",
+        "dismiss": "Back/Anuluj zachowuje szkic i przywraca fokus elementowi otwierającemu",
+        "announcements": "Błąd i zmiana stanu: liveRegion polite; pola mają etykietę, radio/switch/slider rolę i wartość"
+      },
+      "tasks": [
+        "CH070"
+      ],
+      "approval": "projekt_do_akceptacji"
+    },
+    {
+      "id": "export",
+      "title": "Eksport i skrót — opcjonalne",
+      "purpose": "Wybierz zakres eksportu i aplikację docelową. Skrót prowadzi bezpośrednio do rozmowy.",
+      "states": {
+        "ready": "Dane są dostępne. Wybór nie uruchamia działania bez świadomego potwierdzenia.",
+        "empty": "Brak pozycji. Wyjaśnij stan i pokaż dostępną drogę powrotu lub dodania danych.",
+        "loading": "Wczytywanie. Zachowaj poprzedni wybór i nie pozwalaj uruchamiać tej samej operacji ponownie.",
+        "error": "Nie udało się wczytać lub zapisać. Zachowaj dane formularza, pokaż Powtórz i Anuluj.",
+        "disabled": "Funkcja opcjonalna CH071. Nie blokuje wydania i nie jest włączona bez osobnego zakresu.",
+        "permission": "Brak dostępu. Wyjaśnij konkretną potrzebę, pokaż Zezwól oraz opcję dalszego używania bez zgody.",
+        "confirmation": "Pokaż dokładny skutek i zakres. Domyślnie wybierz Anuluj. Po akceptacji blokuj drugi klik."
+      },
+      "actions": [
+        "Wybierz zakres",
+        "Udostępnij",
+        "Dodaj skrót",
+        "Anuluj"
+      ],
+      "focus": {
+        "initial": "Tytuł panelu, następnie bieżący wybór",
+        "order": "Opis → pola/lista → akcja główna → Anuluj",
+        "dismiss": "Back/Anuluj zachowuje szkic i przywraca fokus elementowi otwierającemu",
+        "announcements": "Błąd i zmiana stanu: liveRegion polite; pola mają etykietę, radio/switch/slider rolę i wartość"
+      },
+      "tasks": [
+        "CH071"
+      ],
+      "approval": "projekt_do_akceptacji"
+    }
+  ]
+}

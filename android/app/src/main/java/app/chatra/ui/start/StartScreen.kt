@@ -70,13 +70,14 @@ import java.util.Locale
 @Composable
 fun StartScreen(model: StartViewModel, onDone: () -> Unit, onPrivacy: () -> Unit, onHelp: () -> Unit) {
     val state by model.state.collectAsStateWithLifecycle()
-    LaunchedEffect(state) { if (state == SetupState.Done) onDone() }
+    LaunchedEffect(state) { if (state == SetupState.Done && model.isRoleHeld()) onDone() }
     // Po powrocie z ustawień systemu rola mogła zostać nadana poza aplikacją.
     LifecycleResumeEffect(model) {
         model.onResume()
         onPauseOrDispose { }
     }
-    StartContent(state, model::onPrimary, onPrivacy, onHelp)
+    StartContent(state, model::onPrimary, onPrivacy, onHelp,
+        if (!app.chatra.ui.LocalContainer.current.isDemo) "Wersja rozwojowa. Historia i wysyłanie wiadomości nie są jeszcze gotowe. Nadanie roli zastąpi obecną aplikację SMS. Używaj tej wersji tylko do testów." else null)
 }
 
 private val Polish = Locale.forLanguageTag("pl-PL")
@@ -101,7 +102,7 @@ private const val History =
         "O aparat i zdjęcia zapytamy dopiero, gdy będą potrzebne."
 
 @Composable
-internal fun StartContent(state: SetupState, onPrimary: () -> Unit, onPrivacy: () -> Unit, onHelp: () -> Unit) {
+internal fun StartContent(state: SetupState, onPrimary: () -> Unit, onPrivacy: () -> Unit, onHelp: () -> Unit, developmentNotice: String? = null) {
     val chrome = LocalChrome.current
     ChatraScreen(Backgrounds.Start, sceneDecoration = { drawStartCircles() }) {
         BoxWithConstraints(Modifier.fillMaxSize()) {
@@ -125,6 +126,7 @@ internal fun StartContent(state: SetupState, onPrimary: () -> Unit, onPrivacy: (
                         ListCard("Czego nie obsługuje", Unsupported, ChatraIcons.Minus, 14f, ChatraColors.ink(0.08f), Secondary)
                         BasicText(History, Modifier.padding(start = 4.dp, end = 4.dp, top = 2.dp), style = chatraText(13f, 400, 18f, color = Secondary))
                         Notice(state)
+                        if (developmentNotice != null) BasicText(developmentNotice, style = chatraText(14f, 600, 19f, color = ChatraColors.ErrorText))
                         Spacer(Modifier.layoutId(FlexItem.Grow))
                         PrimaryButton(state, onPrimary, Modifier.layoutId(FlexItem.Shrink(54.dp, weight = 54f)))
                         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)) {

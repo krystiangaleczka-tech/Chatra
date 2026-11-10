@@ -1,0 +1,126 @@
+{
+  "version": 1,
+  "palettes": [
+    {
+      "composition": "Glass",
+      "mode": "Light",
+      "background": "#EDF0F7",
+      "text": "#0B0D14",
+      "secondary": "#3A4054",
+      "accent": "#0058D6",
+      "surface": "#FFFFFF",
+      "opaque": false,
+      "status": "projekt_do_akceptacji",
+      "onAccent": "#FFFFFF"
+    },
+    {
+      "composition": "Glass",
+      "mode": "Dark",
+      "background": "#141A2A",
+      "text": "#FFFFFF",
+      "secondary": "#C7CEDF",
+      "accent": "#91BFFF",
+      "surface": "#252C3E",
+      "opaque": false,
+      "status": "projekt_do_akceptacji",
+      "onAccent": "#0B0D14"
+    },
+    {
+      "composition": "Mist",
+      "mode": "Light",
+      "background": "#F2F4F8",
+      "text": "#0B0D14",
+      "secondary": "#3A4054",
+      "accent": "#0058D6",
+      "surface": "#FFFFFF",
+      "opaque": false,
+      "status": "projekt_do_akceptacji",
+      "onAccent": "#FFFFFF"
+    },
+    {
+      "composition": "Mist",
+      "mode": "Dark",
+      "background": "#1B202A",
+      "text": "#FFFFFF",
+      "secondary": "#C7CEDF",
+      "accent": "#91BFFF",
+      "surface": "#252C3E",
+      "opaque": false,
+      "status": "projekt_do_akceptacji",
+      "onAccent": "#0B0D14"
+    },
+    {
+      "composition": "Graphite",
+      "mode": "Light",
+      "background": "#E9EBF0",
+      "text": "#0B0D14",
+      "secondary": "#3A4054",
+      "accent": "#0058D6",
+      "surface": "#FFFFFF",
+      "opaque": false,
+      "status": "projekt_do_akceptacji",
+      "onAccent": "#FFFFFF"
+    },
+    {
+      "composition": "Graphite",
+      "mode": "Dark",
+      "background": "#171B25",
+      "text": "#FFFFFF",
+      "secondary": "#C7CEDF",
+      "accent": "#91BFFF",
+      "surface": "#252C3E",
+      "opaque": false,
+      "status": "projekt_do_akceptacji",
+      "onAccent": "#0B0D14"
+    },
+    {
+      "composition": "Contrast",
+      "mode": "Light",
+      "background": "#FFFFFF",
+      "text": "#0B0D14",
+      "secondary": "#3A4054",
+      "accent": "#0058D6",
+      "surface": "#FFFFFF",
+      "opaque": true,
+      "status": "projekt_do_akceptacji",
+      "onAccent": "#FFFFFF"
+    },
+    {
+      "composition": "Contrast",
+      "mode": "Dark",
+      "background": "#000000",
+      "text": "#FFFFFF",
+      "secondary": "#C7CEDF",
+      "accent": "#91BFFF",
+      "surface": "#252C3E",
+      "opaque": true,
+      "status": "projekt_do_akceptacji",
+      "onAccent": "#0B0D14"
+    }
+  ],
+  "density": {
+    "Standard": {
+      "rowMinDp": 52,
+      "touchMinDp": 48
+    },
+    "Compact": {
+      "rowMinDp": 48,
+      "touchMinDp": 48
+    }
+  },
+  "accessibility": {
+    "textSteps": [
+      0.85,
+      0.9,
+      0.95,
+      1,
+      1.1,
+      1.2,
+      1.3
+    ],
+    "minimumTextContrast": 4.5,
+    "reduceTransparency": "Nieprzezroczysta powierzchnia zamiast wyłączenia tekstu lub ikon",
+    "increaseContrast": "Najciemniejszy tekst / najjaśniejszy tekst oraz jawne obramowanie, bez kodowania stanu wyłącznie kolorem"
+  },
+  "implementation": "CH040; katalog nie oznacza globalnego wdrożenia ani zatwierdzenia motywów"
+}

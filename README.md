@@ -32,6 +32,9 @@ W PDF uzupełnienie zaczyna się na stronie 24.
 
 ## Dokumentacja implementacji Android
 
+- [CH019–CH021: S10, katalog projektów, rola SMS i uprawnienia](docs/implementacja_android/CH019_CH021_Wdrozenie_i_weryfikacja.md)
+- [CH020: 18 projektów, stany i tokeny do akceptacji G09](docs/implementacja_android/CH020_Katalog_projektow_i_stanow.md)
+
 - [CH016–CH018: S07–S09, wyniki testów i otwarty odbiór na telefonie](docs/implementacja_android/CH016_CH018_Wdrozenie_i_weryfikacja.md)
 - [CH016–CH018: sprawdzenie demo w emulatorze i poprawki z 10.11.2026](docs/implementacja_android/CH016_CH018_Emulator_QA_2026-11-10.md)
 - [CH001: kontrakt produktu, G01–G10 i macierz S01–S10](docs/implementacja_android/CH001_Kontrakt_produktu_i_rejestr_decyzji.md)
