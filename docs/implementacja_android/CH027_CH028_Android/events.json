@@ -1,0 +1,32 @@
+[
+  {
+    "case": "process-death-draft-restoration",
+    "result": "PASS",
+    "detail": "Fresh process restores text, recipient and SIM from Room; no saved instance state"
+  },
+  {
+    "case": "rotation-preserves-draft",
+    "result": "PASS",
+    "detail": ""
+  },
+  {
+    "case": "back-and-reopen-preserves-draft",
+    "result": "PASS",
+    "detail": ""
+  },
+  {
+    "case": "ui-cancel-before-dispatch-final",
+    "result": "PASS",
+    "detail": "CANCELLED with zero transport attempts; full snapshot retained"
+  },
+  {
+    "case": "cancelled-draft-survives-fresh-process",
+    "result": "PASS",
+    "detail": "Restored text remains active after process restart; no empty draft shadows it"
+  },
+  {
+    "case": "native-worker-without-active-ui",
+    "result": "PASS",
+    "detail": "Emulator SmsManager to port 5556 while launcher visible: DELIVERED, one attempt, 87 ms after deadline; sent=-1"
+  }
+]

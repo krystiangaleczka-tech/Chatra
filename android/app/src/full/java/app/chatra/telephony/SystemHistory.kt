@@ -196,9 +196,13 @@ class SystemHistory(
     override fun inbox(): Flow<List<ConversationSummary>> = combine(dao.indices(), platform.changes, dao.operations()) { rows, _, ops -> rows to ops }.map { (rows, ops) ->
         if (!context.smsRead(platform)) { previousInbox = emptyList(); emptyList() }
         else try {
-            val visibleOperations = ops.filter { it.state in activeStates || it.state == "FAILED" && dao.recipients(it.id).any { recipient -> recipient.providerId == null } }
-            summaries(rows.filter { r -> r.lastAt != null || visibleOperations.any { it.conversationId == r.meta.id } }).map { summary ->
-                val pending = visibleOperations.filter { it.conversationId == summary.id.value }.maxByOrNull { it.createdAt }
+            val visibleOperations = ops.flatMap { operation ->
+                dao.recipients(operation.id).filter { recipient ->
+                    operation.state in activeStates || operation.state != "CANCELLED" && recipient.state == "FAILED" && recipient.providerId == null
+                }.map { it.conversationId to operation }
+            }.groupBy({ it.first }, { it.second })
+            summaries(rows.filter { r -> r.lastAt != null || visibleOperations.containsKey(r.meta.id) }).map { summary ->
+                val pending = visibleOperations[summary.id.value]?.maxByOrNull { it.createdAt }
                 if (pending != null && pending.createdAt >= summary.lastActivity.toEpochMilli()) summary.copy(lastActivity = Instant.ofEpochMilli(pending.createdAt),
                     preview = if (pending.state in listOf("FAILED", "PARTIALLY_SENT")) ConversationSummary.Preview.SendFailed else ConversationSummary.Preview.Text(pending.body.take(250))) else summary
             }.also { previousInbox = it }

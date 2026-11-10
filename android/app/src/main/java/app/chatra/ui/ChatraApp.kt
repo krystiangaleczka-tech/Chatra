@@ -221,7 +221,7 @@ private fun Sheet(sheet: Route.Sheet, navigator: Navigator) {
 /** Rozmowa i jej arkusze dzielą jeden ViewModel (szkic, SIM, zdjęcia). */
 @Composable
 private fun conversationModel(c: AppContainer, id: app.chatra.core.model.ConversationId) = viewModel(key = "conv-${id.value}") {
-    ConversationViewModel(id, c.conversations, c.drafts, c.sims, c.sendQueue, c.schedules, c.sending.value, c.clock, c.smsText, c.isDemo, c.sendAccess)
+    ConversationViewModel(id, c.conversations, c.drafts, c.sims, c.sendQueue, c.schedules, c.sending.value, c.clock, c.smsText, c.isDemo, c.sendAccess, c.draftWriteScope)
 }
 
 @Composable

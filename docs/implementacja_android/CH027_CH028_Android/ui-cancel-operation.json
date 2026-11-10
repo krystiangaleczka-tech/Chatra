@@ -1,0 +1,10 @@
+[
+  {
+    "id": "2b52fc6f-1e21-4d7b-8f2f-47afa92f1084",
+    "state": "CANCELLED",
+    "body": "QA_CH028_CANCEL_FINAL_20261110",
+    "createdAt": 1794342149116,
+    "undoUntil": 1794342159116,
+    "transport_attempts": 0
+  }
+]

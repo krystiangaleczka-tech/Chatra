@@ -21,7 +21,7 @@ enum class SendState {
             SCHEDULED to setOf(SCHEDULED, DUE, CANCELLED, MISSED_NEEDS_DECISION),
             DUE to setOf(DISPATCHING, MISSED_NEEDS_DECISION, CANCELLED, SCHEDULED),
             DISPATCHING to setOf(SENT, FAILED, PARTIALLY_SENT, DISPATCH_UNCERTAIN, DELIVERED),
-            SENT to setOf(DELIVERED, FAILED, PARTIALLY_SENT),
+            SENT to setOf(DELIVERED),
             DELIVERED to emptySet(), // callbacki nie cofają DELIVERED do SENT
             FAILED to setOf(PENDING_UNDO, DISPATCHING, CANCELLED),
             PARTIALLY_SENT to setOf(DISPATCHING, DELIVERED, CANCELLED),
@@ -54,6 +54,10 @@ data class SendOperation(
     /** Identyfikator uruchomienia urządzenia z chwili zapisu terminu (granica po restarcie). */
     val bootId: String? = null,
     val failureCode: Int? = null,
+    val canRetry: Boolean = false,
+    val deliveryFailed: Boolean = false,
+    val undoElapsedDeadline: Long? = null,
+    val retryOf: OperationId? = null,
 )
 
 /** Wynik przejścia stanu: odrzucony, gdy stan lub wersja nie zgadzają się z oczekiwanymi. */
@@ -84,7 +88,7 @@ data class SendAttempt(
     val uncertaintyReason: String? = null,
 )
 
-enum class PartStatus { Pending, Sent, Failed }
+enum class PartStatus { Pending, Sent, Failed, Unknown }
 enum class PartDelivery { Unknown, Delivered, Failed }
 
 data class SendPart(
@@ -99,8 +103,14 @@ data class SendPart(
 fun aggregate(parts: List<SendPart>): SendState? = when {
     parts.isEmpty() -> null
     parts.all { it.delivery == PartDelivery.Delivered } -> SendState.DELIVERED
-    parts.any { it.sent == PartStatus.Failed } && parts.any { it.sent == PartStatus.Sent } -> SendState.PARTIALLY_SENT
-    parts.any { it.sent == PartStatus.Failed } -> SendState.FAILED
-    parts.all { it.sent == PartStatus.Sent } -> SendState.SENT
+    parts.all { it.sent == PartStatus.Sent || it.delivery == PartDelivery.Delivered } -> SendState.SENT
+    parts.any { it.sent == PartStatus.Pending && it.delivery != PartDelivery.Delivered } -> null
+    parts.any { it.sent == PartStatus.Unknown && it.delivery != PartDelivery.Delivered } -> SendState.DISPATCH_UNCERTAIN
+    parts.any { it.sent == PartStatus.Sent || it.delivery == PartDelivery.Delivered } -> SendState.PARTIALLY_SENT
+    parts.all { it.sent == PartStatus.Failed } -> SendState.FAILED
     else -> null
 }
+
+/** Wall clock is for display only. Reboot or legacy rows need an explicit decision. */
+fun undoRemaining(deadline: Long?, savedBoot: Int, boot: Int, elapsed: Long): Long? =
+    if (deadline == null || boot < 0 || savedBoot != boot) null else (deadline - elapsed).coerceAtLeast(0)

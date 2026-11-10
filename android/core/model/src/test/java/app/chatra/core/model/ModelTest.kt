@@ -1,5 +1,7 @@
 package app.chatra.core.model
 
+import org.junit.Assert.assertNull
+
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -120,5 +122,30 @@ class AddressAndSimTest {
         assertTrue(chooseSim(listOf(sim1), null, null, SubscriptionId(2)) is SimChoice.NeedsConfirmation)
         assertTrue(chooseSim(listOf(sim1, sim2), null, null, null) is SimChoice.NeedsConfirmation)
         assertEquals(SimChoice.Ready(sim1), chooseSim(listOf(sim1), null, null, null))
+    }
+}
+
+class DurableSendingPolicyTest {
+    private val a = AttemptId("attempt")
+    @Test fun pendingPartDoesNotTurnAnEarlyFailureIntoAWholeMessageFailure() {
+        assertNull(aggregate(listOf(SendPart(a, 0, 2, PartStatus.Failed), SendPart(a, 1, 2))))
+    }
+    @Test fun uncertainSubmissionIsNeverAnOrdinaryFailure() {
+        assertEquals(SendState.DISPATCH_UNCERTAIN, aggregate(listOf(SendPart(a, 0, 2, PartStatus.Unknown), SendPart(a, 1, 2, PartStatus.Failed))))
+    }
+    @Test fun deliveryProofAlsoSettlesMissingSentCallbacks() {
+        assertEquals(SendState.SENT, aggregate(listOf(SendPart(a, 0, 2, delivery = PartDelivery.Delivered), SendPart(a, 1, 2, PartStatus.Sent))))
+    }
+    @Test fun exactUndoBoundaryAndRebootAreConservative() {
+        assertEquals(100L, undoRemaining(4000, 3, 3, 3900))
+        assertEquals(0L, undoRemaining(4000, 3, 3, 4000))
+        assertEquals(0L, undoRemaining(4000, 3, 3, 4100))
+        assertNull(undoRemaining(4000, 3, 4, 10))
+        assertNull(undoRemaining(null, 3, 3, 4100))
+        assertNull(undoRemaining(4000, -1, -1, 4100))
+    }
+    @Test fun sentAndDeliveredNeverRegressAfterLateErrors() {
+        assertFalse(SendState.SENT.canMoveTo(SendState.FAILED))
+        assertFalse(SendState.DELIVERED.canMoveTo(SendState.SENT))
     }
 }

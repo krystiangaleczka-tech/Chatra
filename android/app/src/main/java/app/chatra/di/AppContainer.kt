@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.StateFlow
  */
 interface AppContainer {
     val conversations: ConversationRepository
+    val draftWriteScope: kotlinx.coroutines.CoroutineScope? get() = null
     val drafts: DraftRepository
     val sims: SimRepository
     val contacts: ContactsDirectory

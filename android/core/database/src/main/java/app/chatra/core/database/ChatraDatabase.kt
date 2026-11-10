@@ -40,11 +40,12 @@ data class MediaRef(
 /** Dziennik wejścia zamyka zwykłe duplikaty; writing wymaga rekoncyliacji po awarii. */
 @Entity data class InboundReceipt(@PrimaryKey val fingerprint: String, val state: String, val baselineId: Long, val providerId: Long? = null)
 
-@Entity(indices = [Index(value = ["draftKey"], unique = true)])
+@Entity(indices = [Index(value = ["draftKey"], unique = true), Index(value = ["retryOf"], unique = true)])
 data class OutgoingOperation(
     @PrimaryKey val id: String, val draftKey: String, val conversationId: String?, val recipients: String,
     val body: String, val mode: String, val subscriptionId: Int, val subscriptionLabel: String,
     val state: String, val version: Int, val createdAt: Long, val undoUntil: Long, @ColumnInfo(defaultValue = "0") val bootCount: Int = 0,
+    val undoElapsed: Long? = null, val snapshot: String? = null, val retryOf: String? = null,
 )
 @Entity(primaryKeys = ["operationId", "address"], indices = [Index("operationId")], foreignKeys = [
     ForeignKey(entity = OutgoingOperation::class, parentColumns = ["id"], childColumns = ["operationId"], onDelete = ForeignKey.CASCADE),
@@ -57,13 +58,17 @@ data class OutgoingRecipient(val operationId: String, val address: String, val c
 data class OutgoingAttempt(
     @PrimaryKey val id: String, val operationId: String, val address: String, val subscriptionId: Int,
     val subscriptionLabel: String, val startedAt: Long, val callbackToken: String, val partCount: Int,
+    @ColumnInfo(defaultValue = "'LEGACY_UNKNOWN'") val phase: String = "LEGACY_UNKNOWN",
+    val providerId: Long? = null,
 )
 @Entity(primaryKeys = ["attemptId", "partIndex"], indices = [Index("attemptId")], foreignKeys = [
     ForeignKey(entity = OutgoingAttempt::class, parentColumns = ["id"], childColumns = ["attemptId"], onDelete = ForeignKey.CASCADE),
 ])
 data class OutgoingPart(val attemptId: String, val partIndex: Int, val sent: String = "Pending", val delivery: String = "Unknown", val resultCode: Int? = null)
 
-@Entity data class SavedDraft(@PrimaryKey val id: String, val conversationId: String?, val payload: String)
+@Entity data class SavedDraft(@PrimaryKey val id: String, val conversationId: String?, val payload: String,
+    @ColumnInfo(defaultValue = "0") val revision: Long = 0, @ColumnInfo(defaultValue = "0") val updatedAt: Long = 0)
+@Entity data class ClosedDraft(@PrimaryKey val id: String)
 
 data class ConversationIndex(
     @Embedded val meta: ConversationMeta, val lastAt: Long?, val unreadCount: Int,
@@ -105,25 +110,32 @@ interface ChatraDao {
     @Query("SELECT * FROM OutgoingOperation WHERE state IN ('PENDING_UNDO','DISPATCHING')") suspend fun recoverable(): List<OutgoingOperation>
     @Insert(onConflict = OnConflictStrategy.IGNORE) suspend fun insertOperation(row: OutgoingOperation): Long
     @Query("UPDATE OutgoingOperation SET state=:next, version=version+1 WHERE id=:id AND state=:expected AND version=:version") suspend fun transition(id: String, expected: String, version: Int, next: String): Int
-    @Query("UPDATE OutgoingOperation SET state=:state, version=version+1 WHERE id=:id AND state!='CANCELLED' AND state!='DELIVERED'") suspend fun result(id: String, state: String)
+    @Query("UPDATE OutgoingOperation SET state=:state, version=version+1 WHERE id=:id AND state!='CANCELLED' AND state!='DELIVERED' AND (state!='SENT' OR :state IN ('SENT','DELIVERED'))") suspend fun result(id: String, state: String)
     @Upsert suspend fun recipient(row: OutgoingRecipient)
     @Query("SELECT * FROM OutgoingRecipient WHERE operationId=:id") suspend fun recipients(id: String): List<OutgoingRecipient>
     @Query("SELECT * FROM OutgoingRecipient WHERE conversationId=:id") fun conversationRecipients(id: String): Flow<List<OutgoingRecipient>>
     @Query("SELECT * FROM OutgoingRecipient WHERE providerId IN (:ids)") suspend fun outgoingLinks(ids: List<Long>): List<OutgoingRecipient>
+    @Query("SELECT * FROM OutgoingOperation WHERE retryOf=:id LIMIT 1") suspend fun retryChild(id: String): OutgoingOperation?
     @Insert suspend fun attempt(row: OutgoingAttempt)
+    @Query("UPDATE OutgoingAttempt SET phase=:phase WHERE id=:id") suspend fun phase(id: String, phase: String)
+    @Query("UPDATE OutgoingAttempt SET providerId=:provider WHERE id=:id") suspend fun attemptProvider(id: String, provider: Long)
     @Query("SELECT * FROM OutgoingAttempt WHERE id=:id") suspend fun attempt(id: String): OutgoingAttempt?
     @Query("SELECT * FROM OutgoingAttempt WHERE operationId=:id") suspend fun attempts(id: String): List<OutgoingAttempt>
     @Insert suspend fun parts(rows: List<OutgoingPart>)
     @Query("SELECT * FROM OutgoingPart WHERE attemptId=:id ORDER BY partIndex") suspend fun parts(id: String): List<OutgoingPart>
-    @Query("UPDATE OutgoingPart SET sent=:state, resultCode=:code WHERE attemptId=:id AND partIndex=:part AND sent='Pending'") suspend fun sent(id: String, part: Int, state: String, code: Int)
+    @Query("UPDATE OutgoingPart SET sent=:state, resultCode=:code WHERE attemptId=:id AND partIndex=:part AND sent!='Sent' AND (:state='Sent' OR sent IN ('Pending','Unknown'))") suspend fun sent(id: String, part: Int, state: String, code: Int)
     @Query("UPDATE OutgoingPart SET delivery=:state WHERE attemptId=:id AND partIndex=:part AND delivery!='Delivered'") suspend fun delivered(id: String, part: Int, state: String)
-    @Query("SELECT * FROM SavedDraft WHERE conversationId=:id LIMIT 1") fun draft(id: String): Flow<SavedDraft?>
+    @Query("SELECT * FROM SavedDraft WHERE conversationId=:id ORDER BY updatedAt DESC, id LIMIT 1") fun draft(id: String): Flow<SavedDraft?>
+    @Query("SELECT * FROM SavedDraft ORDER BY updatedAt DESC, id") fun drafts(): Flow<List<SavedDraft>>
+    @Query("SELECT * FROM SavedDraft WHERE id=:id") suspend fun savedDraft(id: String): SavedDraft?
+    @Query("SELECT COUNT(*) FROM ClosedDraft WHERE id=:id") suspend fun closedDraft(id: String): Int
+    @Insert(onConflict = OnConflictStrategy.IGNORE) suspend fun closeDraft(row: ClosedDraft)
     @Upsert suspend fun saveDraft(row: SavedDraft)
     @Query("DELETE FROM SavedDraft WHERE id=:id") suspend fun deleteDraft(id: String)
 }
 
 @Database(entities = [ConversationMeta::class, ProviderMessageRef::class, MediaRef::class, InboundReceipt::class,
-    OutgoingOperation::class, OutgoingRecipient::class, OutgoingAttempt::class, OutgoingPart::class, SavedDraft::class], version = 2, exportSchema = true)
+    OutgoingOperation::class, OutgoingRecipient::class, OutgoingAttempt::class, OutgoingPart::class, SavedDraft::class, ClosedDraft::class], version = 3, exportSchema = true)
 abstract class ChatraDatabase : RoomDatabase() {
     abstract fun dao(): ChatraDao
     companion object {
@@ -133,7 +145,25 @@ abstract class ChatraDatabase : RoomDatabase() {
                 db.execSQL("ALTER TABLE ConversationMeta ADD COLUMN manualUnread INTEGER NOT NULL DEFAULT 0")
             }
         }
+        val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE OutgoingOperation ADD COLUMN undoElapsed INTEGER")
+                db.execSQL("ALTER TABLE OutgoingOperation ADD COLUMN snapshot TEXT")
+                db.execSQL("ALTER TABLE OutgoingOperation ADD COLUMN retryOf TEXT")
+                db.execSQL("CREATE UNIQUE INDEX index_OutgoingOperation_retryOf ON OutgoingOperation(retryOf)")
+                db.execSQL("ALTER TABLE OutgoingAttempt ADD COLUMN phase TEXT NOT NULL DEFAULT 'LEGACY_UNKNOWN'")
+                db.execSQL("ALTER TABLE OutgoingAttempt ADD COLUMN providerId INTEGER")
+                db.execSQL("UPDATE OutgoingAttempt SET providerId=(SELECT providerId FROM OutgoingRecipient r WHERE r.operationId=OutgoingAttempt.operationId AND r.address=OutgoingAttempt.address)")
+                // v2 classified every negative callback as Failed; that is not sufficient proof for retry.
+                db.execSQL("UPDATE OutgoingPart SET sent='Unknown' WHERE sent='Failed'")
+                db.execSQL("UPDATE OutgoingRecipient SET state='DISPATCH_UNCERTAIN' WHERE state IN ('FAILED','PARTIALLY_SENT') AND EXISTS(SELECT 1 FROM OutgoingAttempt a WHERE a.operationId=OutgoingRecipient.operationId AND a.address=OutgoingRecipient.address)")
+                db.execSQL("UPDATE OutgoingOperation SET state='DISPATCH_UNCERTAIN',version=version+1 WHERE state IN ('FAILED','PARTIALLY_SENT') AND EXISTS(SELECT 1 FROM OutgoingRecipient r WHERE r.operationId=OutgoingOperation.id AND r.state='DISPATCH_UNCERTAIN')")
+                db.execSQL("ALTER TABLE SavedDraft ADD COLUMN revision INTEGER NOT NULL DEFAULT 0")
+                db.execSQL("ALTER TABLE SavedDraft ADD COLUMN updatedAt INTEGER NOT NULL DEFAULT 0")
+                db.execSQL("CREATE TABLE IF NOT EXISTS ClosedDraft (id TEXT NOT NULL PRIMARY KEY)")
+            }
+        }
         fun open(context: Context): ChatraDatabase = Room.databaseBuilder(context.applicationContext, ChatraDatabase::class.java, "chatra.db")
-            .addMigrations(MIGRATION_1_2).build()
+            .addMigrations(MIGRATION_1_2, MIGRATION_2_3).build()
     }
 }
