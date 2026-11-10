@@ -45,3 +45,11 @@ cd android
 Odbiór na fizycznym telefonie, dual SIM, G03, pełny TalkBack oraz G09 pozostają otwarte. Testy jednostkowe i kwalifikujący manifest nie zastępują prób telefonii.
 
 Podstawy adaptera: [Telephony](https://developer.android.com/reference/android/provider/Telephony), [RoleManager](https://developer.android.com/reference/android/app/role/RoleManager), [prośby o uprawnienia](https://developer.android.com/training/permissions/requesting), [Photo Picker](https://developer.android.com/training/data-storage/shared/photopicker).
+
+## Uzupełnienie podczas CH022–CH026
+
+Wykonano porównanie S10 w tej samej ramce 390×844 dp i DPR 3,5: **6,1180% pikseli z różnicą >16/255** względem goldena CH002. Zrzut pochodzi z emulatora API35, golden z S26 API37. Wynik obejmuje różnice geometrii, ikon i renderera; nie stanowi odbioru 1:1. [Zrzut i pomiar](CH022_CH026_Android/s10-comparison.json).
+
+Potwierdzono w emulatorze rzeczywisty dialog roli, anulowanie i ponowne nadanie; po cofnięciu do Messages oraz ponownym wejściu Start blokuje chroniony interfejs. Po próbach przywrócono Messages. Rozwinięcie pełnego klienta, testy platformowe i dalsze dowody są w [raporcie CH022–CH026](CH022_CH026_Wdrozenie_i_weryfikacja.md). G09 i odbiór fizyczny pozostają otwarte.
+
+Sprawdzono także wszystkie osiem tras S10 na 320×640 dp przy fontScale 1,3, w tym dotarcie do Prywatności nad dockiem. Pro poza ramką fixture nie pokazuje `[CENA]`. Rejestr prób i zrzut małego ekranu są w katalogu QA CH022–CH026.

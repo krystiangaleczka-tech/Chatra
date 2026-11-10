@@ -271,6 +271,8 @@ Odbiór: istniejące wiadomości pozostają nienaruszone; ponowny odczyt nie two
 **Odbiór rozszerzony:** Indeks galerii i ustawienia nadal działają po rekoncyliacji, zmianie kontaktu, ponownej instalacji w granicach istniejącej polityki oraz aktualizacji providera.
 
 
+**Wynik CH022 (10.11.2026):** Provider SMS/MMS, typowane referencje i relacje części w Room, migracja, odczyt stronami i odtwarzanie projekcji po zmianach. Emulator: historia 450 rekordów, aktualizacja istniejącego MMS, błąd providera, zachowanie metadanych. [Raport CH022–CH026](CH022_CH026_Wdrozenie_i_weryfikacja.md).
+
 ### CH023 Obsłużyć odbiór SMS i status przeczytania
 
 **P0 · Android telefonia · 2–3 osobodni · zależności CH021 CH022**
@@ -284,6 +286,8 @@ Odbiór: przychodzący SMS jest w historii systemowej i właściwym wątku, bez 
 **Odbiór rozszerzony:** Powiadomienia, liczniki i ręczny stan nieprzeczytania nie rozjeżdżają się po odczycie, ponownym wejściu, przyjściu nowego SMS ani zmianie roli.
 
 
+**Wynik CH023 (10.11.2026):** Trwałe PDU, składanie multipart, zapis do providera, deduplikacja i rekoncyliacja przerwy zapisu; pokazane wiadomości, ręczny stan odczytu, badge i powiadomienie. Sprawdzono receiver przez konsolę AVD oraz testy integracyjne. Odbiór fizyczny pozostaje otwarty. [Raport](CH022_CH026_Wdrozenie_i_weryfikacja.md).
+
 ### CH024 Wdrożyć subskrypcje i wybór SIM
 
 **P0 · Android telefonia · 2–3 osobodni · zależności CH020 CH021 CH005**
@@ -291,6 +295,8 @@ Odbiór: przychodzący SMS jest w historii systemowej i właściwym wątku, bez 
 Wykonanie: lista aktywnych subskrypcji, obserwacja zmian, nazwy i domyślna karta. Ustalić pierwszeństwo wybór szkicu→preferencja rozmowy→domyślna, z walidacją dostępności. Zapisywać ID i migawkę opisu, nie sam slot. Wybór jawny w rozmowie, edytorze i harmonogramie.
 
 Odbiór: brak cichego przełączenia po wyjęciu karty; jedna karta nie uruchamia zbędnego pytania. Weryfikacja: dwie karty SIM i eSIM, brak dostępu do listy, SIM usunięta po zapisaniu szkicu i zmiana systemowej domyślnej.
+
+**Wynik CH024 (10.11.2026):** Lista i obserwacja subskrypcji, systemowa domyślna, pierwszeństwo szkic/rozmowa/aplikacja/system; ID i migawki opisów. Wysyłka sprawdza aktualną kartę. Dual SIM i eSIM wymagają fizycznego odbioru. [Raport](CH022_CH026_Wdrozenie_i_weryfikacja.md).
 
 ### CH025 Zaimplementować licznik i kodowanie SMS
 
@@ -300,6 +306,8 @@ Wykonanie: adapter platformowego dzielenia tekstu, model encoding/units/parts i 
 
 Odbiór: treść nigdy nie jest zmieniana samoczynnie, wynik nie korzysta z prostego length/160. Weryfikacja: granice części, GSM extension, polskie znaki, emoji i źródłowy tekst 20 znaków z niepoprawnym fixture 21/160.
 
+**Wynik CH025 (10.11.2026):** Adapter calculateLength/divideMessage, jednostki ostatniej części, jawna transliteracja i przywrócenie oryginału. Platformowe testy ASCII, rozszerzeń GSM, polskich znaków i emoji przeszły; brak samoczynnej zmiany tekstu. [Raport](CH022_CH026_Wdrozenie_i_weryfikacja.md).
+
 ### CH026 Wdrożyć wysyłanie SMS
 
 **P0 · Android telefonia · 3–4 osobodni · zależności CH022 CH024 CH025**
@@ -307,6 +315,8 @@ Odbiór: treść nigdy nie jest zmieniana samoczynnie, wynik nie korzysta z pros
 Wykonanie: utworzyć trwałe operacje, próby, per recipient i per part. Przekazać do SmsManager właściwej SIM, z unikalnymi callbackami. Zapisać i uzgadniać rekordy providera zgodnie z obowiązkami domyślnego klienta. Wysyłka niezależna od aktualnego ekranu.
 
 Odbiór: drugi klik nie tworzy tej samej operacji, sent nie oznacza delivered. Weryfikacja: rzeczywisty SMS i multipart z obu kart SIM, brak zasięgu, tryb samolotowy i brak uprawnienia w chwili wykonania.
+
+**Wynik CH026 (10.11.2026):** Trwałe operacje/odbiorcy/próby/części, unikalne zadania, CAS i callbacki, natywny transport wybranej SIM oraz własne rekordy providera. W emulatorze potwierdzono pojedynczy SMS i dwie części przez prawdziwy SmsManager, z odrębnym sent/delivered. Próby niepewne nie są automatycznie powtarzane. Fizyczna telefonia pozostaje do odbioru. [Raport](CH022_CH026_Wdrozenie_i_weryfikacja.md).
 
 ### CH027 Uzgodnić statusy ponawianie i niepewne próby
 

@@ -419,7 +419,9 @@
         "CH005",
         "CH021"
       ],
-      "description": "Wykonanie: DAO, migracje i klucze z typem SMS/MMS. Stronicowany odczyt historii, rozpoznanie uczestników i ThreadID, ContentObserver oraz odtwarzanie projekcji. Nie duplikować kanonicznej historii. Wspierać odczyt MMS z częściami i leniwe miniatury. Zasilać UI przez Flow.\n\nOdbiór: istniejące wiadomości pozostają nienaruszone; ponowny odczyt nie tworzy duplikatów. Weryfikacja: duża historia, identyczne ID w różnych tabelach, zewnętrzna zmiana, błąd providera i brak roli.\n\nUzupełnienie UX 29.10.2026: Zapewnić stabilne relacje załącznik→wiadomość→wątek, klucze do galerii mediów i bezpieczne zapytania po conversationId. Przechowywać jedynie ustawienia i indeksy lokalne, nie tworzyć drugiej kanonicznej kopii SMS/MMS. Zastosować migracje dla zmian wyciszenia i oznaczenia nieprzeczytane.\n\nOdbiór rozszerzony: Indeks galerii i ustawienia nadal działają po rekoncyliacji, zmianie kontaktu, ponownej instalacji w granicach istniejącej polityki oraz aktualizacji providera."
+      "description": "Wykonanie: DAO, migracje i klucze z typem SMS/MMS. Stronicowany odczyt historii, rozpoznanie uczestników i ThreadID, ContentObserver oraz odtwarzanie projekcji. Nie duplikować kanonicznej historii. Wspierać odczyt MMS z częściami i leniwe miniatury. Zasilać UI przez Flow.\n\nOdbiór: istniejące wiadomości pozostają nienaruszone; ponowny odczyt nie tworzy duplikatów. Weryfikacja: duża historia, identyczne ID w różnych tabelach, zewnętrzna zmiana, błąd providera i brak roli.\n\nUzupełnienie UX 29.10.2026: Zapewnić stabilne relacje załącznik→wiadomość→wątek, klucze do galerii mediów i bezpieczne zapytania po conversationId. Przechowywać jedynie ustawienia i indeksy lokalne, nie tworzyć drugiej kanonicznej kopii SMS/MMS. Zastosować migracje dla zmian wyciszenia i oznaczenia nieprzeczytane.\n\nOdbiór rozszerzony: Indeks galerii i ustawienia nadal działają po rekoncyliacji, zmianie kontaktu, ponownej instalacji w granicach istniejącej polityki oraz aktualizacji providera.",
+      "status": "implemented_emulator_verified_physical_acceptance_pending",
+      "evidence": "CH022_CH026_Wdrozenie_i_weryfikacja.md"
     },
     {
       "id": "CH023",
@@ -432,7 +434,9 @@
         "CH021",
         "CH022"
       ],
-      "description": "Wykonanie: odbiornik SMS_DELIVER, składanie części, trwały zapis zgodnie z obowiązkami klienta i aktualizacja projekcji. Odróżnić nową wiadomość od ponownego zdarzenia; zachować adres, czas i SIM. Oznaczanie przeczytania przez właściwy use case, synchronizacja badge oraz powiadomienia.\n\nOdbiór: przychodzący SMS jest w historii systemowej i właściwym wątku, bez podwojenia. Weryfikacja: pojedynczy/multipart, ekran zamknięty, proces nieaktywny, aktywna rozmowa oraz wielokrotne odświeżenie obserwatora.\n\nUzupełnienie UX 29.10.2026: Rozszerzyć use case o ręczne 'oznacz jako nieprzeczytane', 'oznacz wszystkie jako przeczytane' i semantykę pierwszej nieprzeczytanej, bez oznaczania wiadomości przed realnym pokazaniem treści. Zdefiniować synchronizację badge, provider i powiadomień także po restarcie (CH070).\n\nOdbiór rozszerzony: Powiadomienia, liczniki i ręczny stan nieprzeczytania nie rozjeżdżają się po odczycie, ponownym wejściu, przyjściu nowego SMS ani zmianie roli."
+      "description": "Wykonanie: odbiornik SMS_DELIVER, składanie części, trwały zapis zgodnie z obowiązkami klienta i aktualizacja projekcji. Odróżnić nową wiadomość od ponownego zdarzenia; zachować adres, czas i SIM. Oznaczanie przeczytania przez właściwy use case, synchronizacja badge oraz powiadomienia.\n\nOdbiór: przychodzący SMS jest w historii systemowej i właściwym wątku, bez podwojenia. Weryfikacja: pojedynczy/multipart, ekran zamknięty, proces nieaktywny, aktywna rozmowa oraz wielokrotne odświeżenie obserwatora.\n\nUzupełnienie UX 29.10.2026: Rozszerzyć use case o ręczne 'oznacz jako nieprzeczytane', 'oznacz wszystkie jako przeczytane' i semantykę pierwszej nieprzeczytanej, bez oznaczania wiadomości przed realnym pokazaniem treści. Zdefiniować synchronizację badge, provider i powiadomień także po restarcie (CH070).\n\nOdbiór rozszerzony: Powiadomienia, liczniki i ręczny stan nieprzeczytania nie rozjeżdżają się po odczycie, ponownym wejściu, przyjściu nowego SMS ani zmianie roli.",
+      "status": "implemented_emulator_verified_physical_acceptance_pending",
+      "evidence": "CH022_CH026_Wdrozenie_i_weryfikacja.md"
     },
     {
       "id": "CH024",
@@ -446,7 +450,9 @@
         "CH021",
         "CH005"
       ],
-      "description": "Wykonanie: lista aktywnych subskrypcji, obserwacja zmian, nazwy i domyślna karta. Ustalić pierwszeństwo wybór szkicu→preferencja rozmowy→domyślna, z walidacją dostępności. Zapisywać ID i migawkę opisu, nie sam slot. Wybór jawny w rozmowie, edytorze i harmonogramie.\n\nOdbiór: brak cichego przełączenia po wyjęciu karty; jedna karta nie uruchamia zbędnego pytania. Weryfikacja: dwie karty SIM i eSIM, brak dostępu do listy, SIM usunięta po zapisaniu szkicu i zmiana systemowej domyślnej."
+      "description": "Wykonanie: lista aktywnych subskrypcji, obserwacja zmian, nazwy i domyślna karta. Ustalić pierwszeństwo wybór szkicu→preferencja rozmowy→domyślna, z walidacją dostępności. Zapisywać ID i migawkę opisu, nie sam slot. Wybór jawny w rozmowie, edytorze i harmonogramie.\n\nOdbiór: brak cichego przełączenia po wyjęciu karty; jedna karta nie uruchamia zbędnego pytania. Weryfikacja: dwie karty SIM i eSIM, brak dostępu do listy, SIM usunięta po zapisaniu szkicu i zmiana systemowej domyślnej.",
+      "status": "implemented_emulator_verified_physical_acceptance_pending",
+      "evidence": "CH022_CH026_Wdrozenie_i_weryfikacja.md"
     },
     {
       "id": "CH025",
@@ -459,7 +465,9 @@
         "CH005",
         "CH024"
       ],
-      "description": "Wykonanie: adapter platformowego dzielenia tekstu, model encoding/units/parts i prezentacja licznika. Ustalić opis dla Unicode i multipart. Dodać opt in transliteracji z podglądem i możliwością przywrócenia. Zaktualizować licznik podczas edycji i po zmianie transportu.\n\nOdbiór: treść nigdy nie jest zmieniana samoczynnie, wynik nie korzysta z prostego length/160. Weryfikacja: granice części, GSM extension, polskie znaki, emoji i źródłowy tekst 20 znaków z niepoprawnym fixture 21/160."
+      "description": "Wykonanie: adapter platformowego dzielenia tekstu, model encoding/units/parts i prezentacja licznika. Ustalić opis dla Unicode i multipart. Dodać opt in transliteracji z podglądem i możliwością przywrócenia. Zaktualizować licznik podczas edycji i po zmianie transportu.\n\nOdbiór: treść nigdy nie jest zmieniana samoczynnie, wynik nie korzysta z prostego length/160. Weryfikacja: granice części, GSM extension, polskie znaki, emoji i źródłowy tekst 20 znaków z niepoprawnym fixture 21/160.",
+      "status": "implemented_emulator_verified_physical_acceptance_pending",
+      "evidence": "CH022_CH026_Wdrozenie_i_weryfikacja.md"
     },
     {
       "id": "CH026",
@@ -473,7 +481,9 @@
         "CH024",
         "CH025"
       ],
-      "description": "Wykonanie: utworzyć trwałe operacje, próby, per recipient i per part. Przekazać do SmsManager właściwej SIM, z unikalnymi callbackami. Zapisać i uzgadniać rekordy providera zgodnie z obowiązkami domyślnego klienta. Wysyłka niezależna od aktualnego ekranu.\n\nOdbiór: drugi klik nie tworzy tej samej operacji, sent nie oznacza delivered. Weryfikacja: rzeczywisty SMS i multipart z obu kart SIM, brak zasięgu, tryb samolotowy i brak uprawnienia w chwili wykonania."
+      "description": "Wykonanie: utworzyć trwałe operacje, próby, per recipient i per part. Przekazać do SmsManager właściwej SIM, z unikalnymi callbackami. Zapisać i uzgadniać rekordy providera zgodnie z obowiązkami domyślnego klienta. Wysyłka niezależna od aktualnego ekranu.\n\nOdbiór: drugi klik nie tworzy tej samej operacji, sent nie oznacza delivered. Weryfikacja: rzeczywisty SMS i multipart z obu kart SIM, brak zasięgu, tryb samolotowy i brak uprawnienia w chwili wykonania.",
+      "status": "implemented_emulator_verified_physical_acceptance_pending",
+      "evidence": "CH022_CH026_Wdrozenie_i_weryfikacja.md"
     },
     {
       "id": "CH027",

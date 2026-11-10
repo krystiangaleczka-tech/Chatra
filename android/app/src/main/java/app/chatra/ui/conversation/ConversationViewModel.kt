@@ -34,6 +34,9 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import app.chatra.core.model.SmsTextAnalyzer
+import app.chatra.core.model.ModelSmsTextAnalyzer
+import app.chatra.core.model.MessageRef
 
 data class ConversationState(
     val summary: ConversationSummary? = null,
@@ -44,8 +47,12 @@ data class ConversationState(
     val text: String = "",
     val counter: SmsCounter.Count = SmsCounter.count(""),
     val counterEnabled: Boolean = true,
+    val busy: Boolean = false,
+    val error: String? = null,
+    val sendingAvailable: Boolean = true,
+    val hasOlder: Boolean = false,
 ) {
-    val canSend: Boolean get() = text.isNotBlank() && sim is SimChoice.Ready && summary?.participants?.any { it.address.canReply } == true
+    val canSend: Boolean get() = sendingAvailable && !busy && text.isNotBlank() && text.length <= 16384 && counter.preservesText && sim is SimChoice.Ready && summary?.participants?.any { it.address.canReply } == true
 }
 
 class ConversationViewModel(
@@ -57,11 +64,17 @@ class ConversationViewModel(
     private val schedules: ScheduleRepository,
     private val sending: StateFlow<SendingPrefs>,
     val clock: Clock,
+    private val smsText: SmsTextAnalyzer = ModelSmsTextAnalyzer,
+    private val mmsAvailable: Boolean = true,
+    sendAccess: kotlinx.coroutines.flow.Flow<Boolean> = kotlinx.coroutines.flow.flowOf(true),
 ) : ViewModel() {
     private val text = MutableStateFlow<String?>(null)
     private val chosenSim = MutableStateFlow<SubscriptionId?>(null)
     private var draftId: DraftId? = null
     private var saveJob: Job? = null
+    private val busy = MutableStateFlow(false)
+    private val error = MutableStateFlow<String?>(null)
+    private var selectedLabel: String? = null
 
     init {
         viewModelScope.launch {
@@ -69,30 +82,38 @@ class ConversationViewModel(
             draftId = d?.id
             if (text.value == null) text.value = d?.text.orEmpty()
             chosenSim.value = chosenSim.value ?: d?.subscriptionId
+            selectedLabel = d?.subscriptionLabel
         }
     }
 
-    private val base = combine(conversations.conversation(id), conversations.messages(id), queue.operations(), simRepository.cards()) { s, m, ops, sims ->
-        ConversationState(summary = s, messages = m, operations = ops.associateBy { it.id }, sims = sims)
+    private val base = combine(conversations.conversation(id), conversations.messages(id), queue.operations(), simRepository.cards(), conversations.hasOlder(id)) { s, m, ops, sims, older ->
+        ConversationState(summary = s, messages = m, operations = ops.associateBy { it.id }, sims = sims, hasOlder = older)
     }
 
-    val state: StateFlow<ConversationState> = combine(base, text, chosenSim, sending) { b, t, sim, prefs ->
+    private val simSettings = combine(chosenSim, conversations.preferredSim(id), simRepository.defaultSubscription()) { chosen, preferred, default -> Triple(chosen, preferred, default) }
+    private val form = combine(base, text, simSettings, sending) { b, t, selection, prefs ->
         val txt = t.orEmpty()
+        val sim = chooseSim(b.sims, selection.first, selection.second, prefs.defaultSubscriptionId ?: selection.third)
         b.copy(
-            sim = chooseSim(b.sims, sim, null, prefs.defaultSubscriptionId),
+            sim = sim,
             text = txt,
-            counter = SmsCounter.count(txt),
+            counter = smsText.count(txt, (sim as? SimChoice.Ready)?.sim?.id),
             counterEnabled = prefs.smsCounterEnabled,
+            sendingAvailable = mmsAvailable || b.summary?.isGroupMms != true,
         )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ConversationState())
+    }
+    val state: StateFlow<ConversationState> = combine(form, busy, error, sendAccess) { form, b, e, allowed -> form.copy(busy = b, error = e, sendingAvailable = form.sendingAvailable && allowed) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ConversationState())
 
     /** Otwarty wątek oznaczamy po rzeczywistym pokazaniu treści (S02). */
-    fun onShown() {
-        viewModelScope.launch { conversations.markRead(id) }
+    fun onShown(refs: Set<MessageRef>) {
+        viewModelScope.launch { runCatching { conversations.markShown(id, refs) } }
     }
+    fun loadOlder() { viewModelScope.launch { conversations.loadOlder(id) } }
 
     fun onText(value: String) {
         text.value = value
+        error.value = null
         saveJob?.cancel()
         saveJob = viewModelScope.launch {
             delay(400)
@@ -102,7 +123,8 @@ class ConversationViewModel(
 
     fun selectSim(sim: SubscriptionId) {
         chosenSim.value = sim
-        viewModelScope.launch { persistDraft() }
+        selectedLabel = state.value.sims.firstOrNull { it.id == sim }?.label
+        viewModelScope.launch { conversations.preferSim(id, sim, selectedLabel.orEmpty()); persistDraft() }
     }
 
     private suspend fun persistDraft() {
@@ -114,7 +136,8 @@ class ConversationViewModel(
             drafts.delete(did)
             return
         }
-        drafts.save(Draft(did, id, recipients, t, mode(s), emptyList(), (s.sim as? SimChoice.Ready)?.sim?.id ?: chosenSim.value, clock.now()))
+        if (chosenSim.value == null) (s.sim as? SimChoice.Ready)?.sim?.let { chosenSim.value = it.id; selectedLabel = it.label }
+        drafts.save(Draft(did, id, recipients, t, mode(s), emptyList(), (s.sim as? SimChoice.Ready)?.sim?.id ?: chosenSim.value, clock.now(), subscriptionLabel = selectedLabel ?: (s.sim as? SimChoice.Ready)?.sim?.label))
     }
 
     private fun mode(s: ConversationState) = when {
@@ -126,20 +149,27 @@ class ConversationViewModel(
     /** Kliknięcie Wyślij utrwala operację PENDING_UNDO; szkic usuwamy dopiero po przyjęciu zlecenia. */
     fun send() {
         val s = state.value
-        if (!s.canSend) return
+        if (!s.canSend || busy.value) return
         val sim = (s.sim as SimChoice.Ready).sim
         val recipients = s.summary?.participants?.map { it.address } ?: return
         saveJob?.cancel()
+        busy.value = true
+        val did = draftId ?: DraftId.new().also { draftId = it }
         viewModelScope.launch {
-            val draft = Draft(draftId ?: DraftId.new(), id, recipients, s.text, mode(s), emptyList(), sim.id, clock.now())
-            queue.enqueue(draft, sending.value.undoSeconds)
-            draftId = null
-            text.value = ""
+            try {
+                val draft = Draft(did, id, recipients, s.text, mode(s), emptyList(), sim.id, clock.now(), subscriptionLabel = sim.label)
+                queue.enqueue(draft, sending.value.undoSeconds)
+                draftId = null
+                if (text.value == s.text) text.value = ""
+            } catch (cancelled: kotlinx.coroutines.CancellationException) { throw cancelled }
+            catch (_: Exception) { error.value = "Nie udało się dodać SMS do kolejki. Treść pozostała w szkicu; sprawdź rolę, zgody i SIM." }
+            finally { busy.value = false }
         }
     }
 
     /** Zdjęcia z S04: osobna operacja z wariantem; tekst z pola zostaje w szkicu. */
     fun sendMedia(attachments: List<AttachmentId>, bytes: Long, variant: MediaVariant) {
+        if (!mmsAvailable) { error.value = "Wysyłanie MMS i HD nie jest jeszcze dostępne."; return }
         val s = state.value
         val sim = (s.sim as? SimChoice.Ready)?.sim ?: return
         val recipients = s.summary?.participants?.map { it.address } ?: return
@@ -193,7 +223,7 @@ class ConversationViewModel(
     }
 
     fun retry(op: OperationId) {
-        viewModelScope.launch { queue.retry(op) }
+        viewModelScope.launch { if (!queue.retry(op)) error.value = "Nie można jeszcze bezpiecznie ponowić tej wiadomości. Sprawdź jej status przed kolejną wysyłką." }
     }
 
     override fun onCleared() {

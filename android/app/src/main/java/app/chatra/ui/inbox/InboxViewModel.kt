@@ -11,6 +11,8 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import app.chatra.core.model.HistoryStatus
+import kotlinx.coroutines.launch
 
 enum class InboxFilter { All, Unread }
 
@@ -20,15 +22,17 @@ data class InboxState(
     val pinned: List<ConversationSummary> = emptyList(),
     val others: List<ConversationSummary> = emptyList(),
     val unreadConversations: Int = 0,
+    val history: HistoryStatus = HistoryStatus.Loading,
 )
 
-class InboxViewModel(repository: ConversationRepository) : ViewModel() {
+class InboxViewModel(private val repository: ConversationRepository) : ViewModel() {
     private val filter = MutableStateFlow(InboxFilter.All)
 
-    val state: StateFlow<InboxState> = combine(repository.inbox(), filter) { all, f ->
+    val state: StateFlow<InboxState> = combine(repository.inbox(), filter, repository.historyStatus()) { all, f, history ->
         val visible = all.inboxOrder().filter { !it.blocked && (f == InboxFilter.All || it.isUnread) }
         InboxState(
-            loading = false,
+            loading = history == HistoryStatus.Loading && all.isEmpty(),
+            history = history,
             filter = f,
             pinned = visible.filter { it.pinned },
             others = visible.filterNot { it.pinned },
@@ -39,4 +43,5 @@ class InboxViewModel(repository: ConversationRepository) : ViewModel() {
     fun setFilter(f: InboxFilter) {
         filter.value = f
     }
+    fun refresh() { viewModelScope.launch { repository.refresh() } }
 }

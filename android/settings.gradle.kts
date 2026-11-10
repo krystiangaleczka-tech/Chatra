@@ -14,4 +14,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Chatra"
-include(":app", ":core:model", ":core:designsystem", ":core:testing")
+include(":app", ":core:model", ":core:designsystem", ":core:testing", ":core:database")

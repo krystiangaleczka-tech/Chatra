@@ -1,0 +1,18 @@
+-- Zamrożony schemat v1: przed kolumnami muted i manualUnread.
+CREATE TABLE IF NOT EXISTS `ConversationMeta` (`id` TEXT NOT NULL, `threadId` INTEGER NOT NULL, `participantsKey` TEXT NOT NULL, `participants` TEXT NOT NULL, `pinned` INTEGER NOT NULL, `preferredSim` INTEGER, `preferredSimLabel` TEXT, `trashed` INTEGER NOT NULL, PRIMARY KEY(`id`));
+CREATE UNIQUE INDEX IF NOT EXISTS `index_ConversationMeta_threadId_participantsKey` ON `ConversationMeta` (`threadId`, `participantsKey`);
+CREATE TABLE IF NOT EXISTS `ProviderMessageRef` (`kind` TEXT NOT NULL, `providerId` INTEGER NOT NULL, `conversationId` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, `incoming` INTEGER NOT NULL, `read` INTEGER NOT NULL, `generation` TEXT NOT NULL, PRIMARY KEY(`kind`, `providerId`), FOREIGN KEY(`conversationId`) REFERENCES `ConversationMeta`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE );
+CREATE INDEX IF NOT EXISTS `index_ProviderMessageRef_conversationId` ON `ProviderMessageRef` (`conversationId`);
+CREATE TABLE IF NOT EXISTS `MediaRef` (`partId` INTEGER NOT NULL, `messageKind` TEXT NOT NULL, `messageId` INTEGER NOT NULL, `conversationId` TEXT NOT NULL, `mimeType` TEXT NOT NULL, `label` TEXT NOT NULL, `contentUri` TEXT NOT NULL, PRIMARY KEY(`partId`), FOREIGN KEY(`messageKind`, `messageId`) REFERENCES `ProviderMessageRef`(`kind`, `providerId`) ON UPDATE NO ACTION ON DELETE CASCADE );
+CREATE INDEX IF NOT EXISTS `index_MediaRef_messageKind_messageId` ON `MediaRef` (`messageKind`, `messageId`);
+CREATE INDEX IF NOT EXISTS `index_MediaRef_conversationId` ON `MediaRef` (`conversationId`);
+CREATE TABLE IF NOT EXISTS `InboundReceipt` (`fingerprint` TEXT NOT NULL, `state` TEXT NOT NULL, `baselineId` INTEGER NOT NULL, `providerId` INTEGER, PRIMARY KEY(`fingerprint`));
+CREATE TABLE IF NOT EXISTS `OutgoingOperation` (`id` TEXT NOT NULL, `draftKey` TEXT NOT NULL, `conversationId` TEXT, `recipients` TEXT NOT NULL, `body` TEXT NOT NULL, `mode` TEXT NOT NULL, `subscriptionId` INTEGER NOT NULL, `subscriptionLabel` TEXT NOT NULL, `state` TEXT NOT NULL, `version` INTEGER NOT NULL, `createdAt` INTEGER NOT NULL, `undoUntil` INTEGER NOT NULL, `bootCount` INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(`id`));
+CREATE UNIQUE INDEX IF NOT EXISTS `index_OutgoingOperation_draftKey` ON `OutgoingOperation` (`draftKey`);
+CREATE TABLE IF NOT EXISTS `OutgoingRecipient` (`operationId` TEXT NOT NULL, `address` TEXT NOT NULL, `conversationId` TEXT NOT NULL, `state` TEXT NOT NULL, `providerId` INTEGER, PRIMARY KEY(`operationId`, `address`), FOREIGN KEY(`operationId`) REFERENCES `OutgoingOperation`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE );
+CREATE INDEX IF NOT EXISTS `index_OutgoingRecipient_operationId` ON `OutgoingRecipient` (`operationId`);
+CREATE TABLE IF NOT EXISTS `OutgoingAttempt` (`id` TEXT NOT NULL, `operationId` TEXT NOT NULL, `address` TEXT NOT NULL, `subscriptionId` INTEGER NOT NULL, `subscriptionLabel` TEXT NOT NULL, `startedAt` INTEGER NOT NULL, `callbackToken` TEXT NOT NULL, `partCount` INTEGER NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`operationId`) REFERENCES `OutgoingOperation`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE );
+CREATE INDEX IF NOT EXISTS `index_OutgoingAttempt_operationId` ON `OutgoingAttempt` (`operationId`);
+CREATE TABLE IF NOT EXISTS `OutgoingPart` (`attemptId` TEXT NOT NULL, `partIndex` INTEGER NOT NULL, `sent` TEXT NOT NULL, `delivery` TEXT NOT NULL, `resultCode` INTEGER, PRIMARY KEY(`attemptId`, `partIndex`), FOREIGN KEY(`attemptId`) REFERENCES `OutgoingAttempt`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE );
+CREATE INDEX IF NOT EXISTS `index_OutgoingPart_attemptId` ON `OutgoingPart` (`attemptId`);
+CREATE TABLE IF NOT EXISTS `SavedDraft` (`id` TEXT NOT NULL, `conversationId` TEXT, `payload` TEXT NOT NULL, PRIMARY KEY(`id`));

@@ -49,7 +49,10 @@ fun NewMessageScreen(model: NewMessageViewModel, onCancel: () -> Unit, onSent: (
                         Icon(ChatraIcons.ChevronDown, 14.dp, ChatraColors.TextPrimary)
                     }
                 }
-                BasicText(state.operationLabel, style = chatraText(12f, color = ChatraColors.TextTertiary))
+                Column(horizontalAlignment = Alignment.End) {
+                    BasicText(state.operationLabel, style = chatraText(12f, color = ChatraColors.TextTertiary))
+                    if (!LocalContainer.current.referenceFrame && state.counterEnabled && state.text.isNotEmpty() && state.mode != RecipientMode.GroupMms) app.chatra.ui.common.SmsCounterAction(state.text, (state.sim as? SimChoice.Ready)?.sim?.id, model::text)
+                }
             }
             GlassSurface(GlassStyles.Input.copy(from = ChatraColors.white(.88f), to = ChatraColors.white(.62f)), RoundedCornerShape(24.dp), Modifier.fillMaxWidth(), shadows = listOf(Shadows.Control)) {
                 Row(Modifier.fillMaxWidth().heightIn(min = 50.dp).padding(start = 16.dp, end = 4.dp, top = 4.dp, bottom = 4.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -80,8 +83,11 @@ fun NewMessageScreen(model: NewMessageViewModel, onCancel: () -> Unit, onSent: (
             }
             if (state.input.isNotBlank()) TextAction("Dodaj numer", model::addInput)
             state.error?.let { BasicText(it, Modifier.semantics { liveRegion = LiveRegionMode.Polite }, style = chatraText(14f, color = ChatraColors.ErrorText)) }
-            if (!state.sendingAvailable) BasicText("Wersja rozwojowa: szkic jest zachowany, ale wysyłanie wiadomości nie jest jeszcze dostępne.", style = chatraText(14f, color = ChatraColors.TextSecondary))
-            PermissionCard(AccessFeature.Contacts)
+            if (!state.sendingAvailable) BasicText("Wysyłanie jest niedostępne. Treść pozostaje w szkicu.", style = chatraText(14f, color = ChatraColors.TextSecondary))
+            if (!state.counter.preservesText) BasicText("System zmieniłby treść. Zmień ją świadomie i sprawdź podgląd licznika.", style = chatraText(14f, color = ChatraColors.ErrorText))
+            if (state.text.length > 16384) BasicText("Wiadomość jest zbyt długa. Podziel ją przed wysłaniem.", style = chatraText(14f, color = ChatraColors.ErrorText))
+            app.chatra.ui.settings.PermissionPrompt(AccessFeature.Contacts)
+            app.chatra.ui.settings.PermissionPrompt(AccessFeature.Sms)
             if (state.recipients.size > 1) {
                     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         BasicText("Jak wysłać do ${state.recipients.size} osób?", Modifier.padding(start = 4.dp), style = chatraText(15f, 600))
@@ -106,16 +112,7 @@ fun NewMessageScreen(model: NewMessageViewModel, onCancel: () -> Unit, onSent: (
             }
         }
     }
-    if (simPicker) {
-        if (LocalContainer.current.platform == null) ChoiceDialog("Karta SIM", state.sims.filter { it.available }.map { it.label }, { model.sim(state.sims.filter { it.available }[it].id) }, { simPicker = false })
-        else androidx.compose.ui.window.Dialog(onDismissRequest = { simPicker = false }) {
-            Column(Modifier.background(Color.White, RoundedCornerShape(24.dp)).padding(16.dp)) {
-                PermissionCard(AccessFeature.Sims)
-                state.sims.filter { it.available }.forEach { card -> TextAction(card.label, { model.sim(card.id); simPicker = false }) }
-                TextAction("Anuluj", { simPicker = false })
-            }
-        }
-    }
+    if (simPicker) app.chatra.ui.common.SimPicker(state.sims, (state.sim as? SimChoice.Ready)?.sim?.id, model::sim, { simPicker = false })
 }
 
 @Composable

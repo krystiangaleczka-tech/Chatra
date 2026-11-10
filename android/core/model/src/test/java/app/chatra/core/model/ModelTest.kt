@@ -26,6 +26,10 @@ class SendStateTest {
         assertTrue(SendState.DELIVERED.isTerminal)
     }
 
+    @Test fun deliveryProofWinsOverConflictingSentFailure() {
+        assertEquals(SendState.DELIVERED, aggregate(listOf(SendPart(AttemptId("a"), 0, 1, PartStatus.Failed, PartDelivery.Delivered))))
+    }
+
     @Test fun uncertainNeverRetriesAutomaticallyButAllowsDecision() {
         assertTrue(SendState.DISPATCH_UNCERTAIN.canMoveTo(SendState.DISPATCHING))
         assertTrue(SendState.DISPATCH_UNCERTAIN.canMoveTo(SendState.CANCELLED))
@@ -113,6 +117,7 @@ class AddressAndSimTest {
 
     @Test fun missingSimNeedsConfirmation() {
         assertTrue(chooseSim(listOf(sim1), SubscriptionId(2), null, null) is SimChoice.NeedsConfirmation)
+        assertTrue(chooseSim(listOf(sim1), null, null, SubscriptionId(2)) is SimChoice.NeedsConfirmation)
         assertTrue(chooseSim(listOf(sim1, sim2), null, null, null) is SimChoice.NeedsConfirmation)
         assertEquals(SimChoice.Ready(sim1), chooseSim(listOf(sim1), null, null, null))
     }

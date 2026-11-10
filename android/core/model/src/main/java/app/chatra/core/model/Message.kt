@@ -32,6 +32,6 @@ sealed interface MessageRef {
     data class Local(val operationId: OperationId) : MessageRef
 }
 
-data class AttachmentSummary(val id: AttachmentId, val mimeType: String, val label: String)
+data class AttachmentSummary(val id: AttachmentId, val mimeType: String, val label: String, val contentUri: String? = null)
 
 data class HdInfo(val itemCount: Int, val totalBytes: Long = 0, val downloadedBy: String? = null)

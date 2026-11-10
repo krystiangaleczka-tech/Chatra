@@ -1,0 +1,53 @@
+{
+  "operations": [
+    {
+      "id": "76ef12e1-483b-4d8d-91aa-1dcaa5ffa7e8",
+      "state": "FAILED",
+      "subscriptionId": 1,
+      "subscriptionLabel": "SIM 1 · T-Mobile"
+    },
+    {
+      "id": "cfc0f57a-b074-43a0-a42c-08c215ea5a76",
+      "state": "DELIVERED",
+      "subscriptionId": 1,
+      "subscriptionLabel": "SIM 1 · T-Mobile"
+    },
+    {
+      "id": "babff492-213e-4864-b172-93504aeaaf8e",
+      "state": "DELIVERED",
+      "subscriptionId": 1,
+      "subscriptionLabel": "SIM 1 · T-Mobile"
+    }
+  ],
+  "parts": [
+    {
+      "partIndex": 0,
+      "sent": "Failed",
+      "delivery": "Delivered",
+      "resultCode": 0,
+      "operationId": "76ef12e1-483b-4d8d-91aa-1dcaa5ffa7e8"
+    },
+    {
+      "partIndex": 0,
+      "sent": "Sent",
+      "delivery": "Delivered",
+      "resultCode": -1,
+      "operationId": "cfc0f57a-b074-43a0-a42c-08c215ea5a76"
+    },
+    {
+      "partIndex": 0,
+      "sent": "Sent",
+      "delivery": "Delivered",
+      "resultCode": -1,
+      "operationId": "babff492-213e-4864-b172-93504aeaaf8e"
+    },
+    {
+      "partIndex": 1,
+      "sent": "Sent",
+      "delivery": "Delivered",
+      "resultCode": -1,
+      "operationId": "babff492-213e-4864-b172-93504aeaaf8e"
+    }
+  ],
+  "note": "Pierwsza FAILED to zachowany rekord próby przed naprawą resultCode/goAsync; dwie następne próby po poprawce DELIVERED."
+}

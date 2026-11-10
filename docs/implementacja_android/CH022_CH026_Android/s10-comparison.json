@@ -1,0 +1,7 @@
+{
+  "screen": "S10",
+  "width": 1365,
+  "height": 2954,
+  "different_pixels_gt16_percent": 6.118009726675942,
+  "renderer": "emulator API35 vs golden S26 API37"
+}

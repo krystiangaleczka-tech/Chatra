@@ -32,6 +32,8 @@ W PDF uzupełnienie zaczyna się na stronie 24.
 
 ## Dokumentacja implementacji Android
 
+- [CH022–CH026: provider SMS/MMS, Room, odbiór, SIM, licznik i transport SMS](docs/implementacja_android/CH022_CH026_Wdrozenie_i_weryfikacja.md)
+
 - [CH019–CH021: S10, katalog projektów, rola SMS i uprawnienia](docs/implementacja_android/CH019_CH021_Wdrozenie_i_weryfikacja.md)
 - [CH020: 18 projektów, stany i tokeny do akceptacji G09](docs/implementacja_android/CH020_Katalog_projektow_i_stanow.md)
 

@@ -1,0 +1,135 @@
+{
+  "date": "2026-11-10",
+  "device": "ChatraDesktop, emulator-5554, API35 arm64, jedna SIM T-Mobile subscriptionId=1",
+  "jvm": {
+    "executions": 67,
+    "failures": 0,
+    "suites": [
+      {
+        "suite": "app.chatra.core.designsystem.glass.DownsampleTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0
+      },
+      {
+        "suite": "app.chatra.core.testing.ScheduledActionsTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0
+      },
+      {
+        "suite": "app.chatra.core.testing.SearchAndComposeTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0
+      },
+      {
+        "suite": "app.chatra.core.testing.FixtureTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0
+      },
+      {
+        "suite": "app.chatra.core.model.SmsSetupTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0
+      },
+      {
+        "suite": "app.chatra.core.model.SendStateTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0
+      },
+      {
+        "suite": "app.chatra.core.model.ScheduleTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0
+      },
+      {
+        "suite": "app.chatra.core.model.ScheduleFormTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0
+      },
+      {
+        "suite": "app.chatra.core.model.SmsCounterTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0
+      },
+      {
+        "suite": "app.chatra.core.model.SearchAndRecipientsTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0
+      },
+      {
+        "suite": "app.chatra.core.model.SettingsAndPlatformTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0
+      },
+      {
+        "suite": "app.chatra.core.model.AddressAndSimTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0
+      },
+      {
+        "suite": "app.chatra.core.model.InboxTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0
+      },
+      {
+        "suite": "app.chatra.di.OrganizationPreviewTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0
+      },
+      {
+        "suite": "app.chatra.ui.RoleResumeTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0
+      },
+      {
+        "suite": "app.chatra.ui.ScreenModelsTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0
+      },
+      {
+        "suite": "app.chatra.di.OrganizationPreviewTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0
+      }
+    ]
+  },
+  "android": {
+    "app": 15,
+    "database": 3,
+    "failures": 0,
+    "skipped": 0
+  },
+  "build": [
+    "assembleDemoDebug",
+    "assembleFullDebug",
+    "assembleFullDebugAndroidTest",
+    "database:assembleDebugAndroidTest"
+  ],
+  "lint": [
+    "lintDemoDebug",
+    "lintFullDebug"
+  ],
+  "apk_sha256": {
+    "android/app/build/outputs/apk/full/debug/app-full-debug.apk": "1b008321c1b396c5b01008194e26fe0ca0259a1213e1a855c60bc87b276282a0",
+    "android/app/build/outputs/apk/demo/debug/app-demo-debug.apk": "73a334dcfc82241c2a495438a80af05baa4132dd6a555099480ae7d850ea552f"
+  },
+  "physical_acceptance": "pending",
+  "G03": "pending",
+  "G09": "pending"
+}
