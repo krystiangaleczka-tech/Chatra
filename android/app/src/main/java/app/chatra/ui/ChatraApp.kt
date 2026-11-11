@@ -84,10 +84,16 @@ fun ChatraApp(container: AppContainer, initial: Navigator?, onExit: () -> Unit, 
     val platform = container.platform as? ActivityPlatform
     val incomingState = remember(container) { platform?.incomingDraftId ?: kotlinx.coroutines.flow.MutableStateFlow<String?>(null) }
     val incoming by incomingState.collectAsStateWithLifecycle()
-    LaunchedEffect(held, incoming, navigator.screen) {
+    val conversationState = remember(container) { platform?.incomingConversationId ?: kotlinx.coroutines.flow.MutableStateFlow(null) }
+    val incomingConversation by conversationState.collectAsStateWithLifecycle()
+    LaunchedEffect(held, incoming, incomingConversation, navigator.screen) {
         if (!container.isDemo && !held && navigator.screen !in listOf(Route.Start, Route.Help, Route.Privacy, Route.DesignCatalog)) {
             navigator.select(Tab.Conversations)
             navigator.resetTo(Route.Start)
+        } else if (held && incomingConversation != null && platform != null) {
+            navigator.select(Tab.Conversations)
+            navigator.resetTo(Route.Inbox, Route.Conversation(incomingConversation!!))
+            platform.acknowledgeConversation(incomingConversation!!)
         } else if (held && incoming != null && platform != null && navigator.screen != Route.Start) {
             navigator.push(Route.NewMessage(externalId = incoming))
             platform.acknowledgeCompose(incoming!!)

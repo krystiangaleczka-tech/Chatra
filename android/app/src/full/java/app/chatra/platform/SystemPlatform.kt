@@ -21,6 +21,10 @@ import kotlin.coroutines.resume
 
 /** Launchery rejestrowane przed STARTED; wynik zawsze sprawdza faktyczny stan systemu. */
 class SystemPlatform(private val context: Context) : ActivityPlatform, ObservableSmsRoleGate {
+    companion object {
+        const val ACTION_OPEN_CONVERSATION = "app.chatra.action.OPEN_CONVERSATION"
+        const val EXTRA_CONVERSATION_ID = "app.chatra.extra.CONVERSATION_ID"
+    }
     private val manager = context.getSystemService(RoleManager::class.java)
     private var activity = WeakReference<ComponentActivity>(null)
     private var roleLauncher: ActivityResultLauncher<Intent>? = null
@@ -33,7 +37,20 @@ class SystemPlatform(private val context: Context) : ActivityPlatform, Observabl
     override val changes = MutableStateFlow(0)
     override val held = MutableStateFlow(isHeld())
     override val incomingDraftId = MutableStateFlow(external.pendingId())
-    override fun acceptIntent(intent: Intent): String? = parseComposeIntent(intent)?.let { external.save(it); incomingDraftId.value = it.id; it.id }
+    override val incomingConversationId = MutableStateFlow<ConversationId?>(null)
+    override fun acceptIntent(intent: Intent): String? {
+        if (intent.action == ACTION_OPEN_CONVERSATION) {
+            val id = intent.getStringExtra(EXTRA_CONVERSATION_ID)
+                ?.takeIf { it.matches(Regex("[a-zA-Z0-9_-]{1,80}")) }
+                ?.let(::ConversationId)
+            if (id != null) incomingConversationId.value = id
+            return null
+        }
+        return parseComposeIntent(intent)?.let { external.save(it); incomingDraftId.value = it.id; it.id }
+    }
+    override fun acknowledgeConversation(id: ConversationId) {
+        if (incomingConversationId.value == id) incomingConversationId.value = null
+    }
     override fun pendingComposeId(): String? = external.pendingId()
     override fun acknowledgeCompose(id: String) { external.acknowledge(id); if (incomingDraftId.value == id) incomingDraftId.value = null }
     fun externalDraft(id: String): ExternalCompose? = external.read(id)
