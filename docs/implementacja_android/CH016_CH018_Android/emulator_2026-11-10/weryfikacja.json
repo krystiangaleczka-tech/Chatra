@@ -1,0 +1,344 @@
+{
+  "date": "2026-11-10",
+  "device": "Android Emulator arm64, API 35",
+  "apk_sha256": "5bad566d011070c3ef7eefda603f44c0991be7ae4eec872f219c0f8b7e645fb1",
+  "frame": "390×844 dp, DPR 3.5, fontScale 1.0",
+  "scope_note": "Porównanie do goldenów z S26 API 37. Emulator nie zastępuje zatwierdzenia fizycznego urządzenia ani G03. S01–S06 sprawdzone wizualnie, bez porównania do osobnego APK sprzed zmiany.",
+  "runtime_viewports": [
+    "411×914 dp fontScale 1.0",
+    "320×640 dp fontScale 1.3"
+  ],
+  "ui_checks_passed": 50,
+  "checks": [
+    {
+      "case": "S07 wejście ze Skrzynki, zapytanie paczk, cztery trafienia",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "S07 filtr Kody",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "S07 brak wyników",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "S07 Kopiuj kod: odczyt przez wklejenie",
+      "result": "PASS",
+      "detail": "482 915"
+    },
+    {
+      "case": "S07 Kopiuj automat: odczyt przez wklejenie",
+      "result": "PASS",
+      "detail": "KRA01M · ul. Długa 14"
+    },
+    {
+      "case": "S07 filtr nadawcy",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "S07 filtr ostatniego tygodnia",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "S07 otwarcie trafienia Oli: znaleziony dymek widoczny",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "S07 powrót zachowuje zapytanie i filtry",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "S07 Wyczyść",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "S07 Anuluj wraca do Skrzynki",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "S08 pusty formularz blokuje Wyślij",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "S08 ręczny numer rozpoznaje Mamę",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "S08 trzy osoby: osobne SMS domyślne",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "S08 świadomy wybór MMS zmienia transport i liczbę operacji",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "S08 usunięcie jednego chipa zachowuje pozostałe",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "S08 Back z klawiaturą pozostawia edytor i treść",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "S08 wybór SIM 2 odblokowuje wysyłkę",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "S08 anulowanie i powrót odtwarzają odbiorców treść i SIM",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "S08 podwójne stuknięcie Wyślij: jeden dymek w pierwszej rozmowie",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "S08 osobny SMS widoczny u Mamy",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "S08 osobny SMS widoczny u Marka",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "S08 przyjęty szkic wyczyszczony po wysłaniu",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "S08 grupowy MMS otwiera wspólną rozmowę dwóch odbiorców",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "S09 ograniczenie przezroczystości zapisane w DataStore",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "S09 zwiększenie kontrastu zapisane w DataStore",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "S09 suwak zapisuje krok 1",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "S09 suwak zapisuje krok 4",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "S09 suwak zapisuje krok 7",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "S09 reset odtwarza domyślne preferencje",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "S09 Grafit/Ciemny zapisane i oznaczone jako podgląd roboczy",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "S09 powrót z Ustawień zachowuje wybór",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "S09 preferencje przetrwały force-stop",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "S09 przywrócone ustawienia po sprawdzeniu",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "POPRAWKA: arkusz ukrywa Skrzynkę i dock przed dostępnością",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "POPRAWKA: tło arkusza nie przekazuje stuknięć do docka",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "POPRAWKA: wpisanie kasia przez pięć stuknięć w klawiaturę ekranową",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "S08 rzeczywista śmierć procesu w tle odtwarza arkusz, szkic, odbiorcę i SIM",
+      "result": "PASS",
+      "detail": "9595 -> 10016"
+    },
+    {
+      "case": "POPRAWKA: duży tekst nie łamie etykiety Gęstość w środku słowa",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "POPRAWKA: jeden nazwany i klikalny przełącznik dostępności ze stanem checked",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "S09 dostępny przełącznik publikuje zmianę true na false",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "S09 na 320×640 dp i fontScale 1.3: czytelna etykieta i osiągalny reset",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "S07 powrót z trafienia zachowuje rzeczywisty scroll na małym ekranie",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "S07 zapytanie 300 znaków i czyszczenie na małym ekranie z fontScale 1.3",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "Przywrócono rozmiar i skalę tekstu emulatora po próbach",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "S08 osiem odbiorców: zawijane chipy i dynamiczna liczba operacji",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "S08 usunięcie środkowego numeru z ośmiu zachowuje sąsiadów",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "S09 etykiety trybu pozostają w całości na 320×640 dp przy fontScale 1.3",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "S09 etykiety gęstości pozostają w całości na małym ekranie z większym tekstem",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "Świeże zrzuty referencyjne S01–S09 po poprawkach",
+      "result": "PASS",
+      "detail": "API 35, density 560, frame 390×844 dp"
+    }
+  ],
+  "screens": [
+    {
+      "screen": "S01",
+      "reference": "docs/implementacja_android/CH002_Android/run1/android-S01.png",
+      "reference_sha256": "4cdd7a4b2268da2060a70d9be14da5c5860e944f93ec37dc6f5e9ca8d6f3c13f",
+      "percent_above_16": 3.4441,
+      "pixels_above_16": 138872,
+      "pixels": 4032210
+    },
+    {
+      "screen": "S02",
+      "reference": "docs/implementacja_android/CH002_Android/run1/android-S02.png",
+      "reference_sha256": "a2342dc6740f1b5df8bada79c247a6f9d0b185eb7d6b753b3f1aa2f7aed5e61b",
+      "percent_above_16": 6.4698,
+      "pixels_above_16": 260874,
+      "pixels": 4032210
+    },
+    {
+      "screen": "S03",
+      "reference": "docs/implementacja_android/CH002_Android/run1/android-S03.png",
+      "reference_sha256": "2d1ceefc921024e0a63f7ff999f5db8d55bad63c39764c8773e01bc7740bb2d2",
+      "percent_above_16": 7.0034,
+      "pixels_above_16": 282391,
+      "pixels": 4032210
+    },
+    {
+      "screen": "S04",
+      "reference": "docs/implementacja_android/CH002_Android/run1/android-S04.png",
+      "reference_sha256": "908f32193d121ad05d0c1fa6e35a708b85b3bc20e0533f24e28ee4ddc69168ea",
+      "percent_above_16": 18.0231,
+      "pixels_above_16": 726729,
+      "pixels": 4032210
+    },
+    {
+      "screen": "S05",
+      "reference": "docs/implementacja_android/CH002_Android/run1/android-S05.png",
+      "reference_sha256": "b36aa00c711f7756631c3ec5bbc4f11215e82cb718937a796768c347bb733423",
+      "percent_above_16": 4.5,
+      "pixels_above_16": 181450,
+      "pixels": 4032210
+    },
+    {
+      "screen": "S06",
+      "reference": "docs/implementacja_android/CH002_Android/run1/android-S06.png",
+      "reference_sha256": "595a8c646c95e2906d5b73d4fee447386f33818df137c37ac83d05849584a632",
+      "percent_above_16": 4.9202,
+      "pixels_above_16": 198392,
+      "pixels": 4032210
+    },
+    {
+      "screen": "S07",
+      "reference": "docs/implementacja_android/CH002_Android/run1/android-S07.png",
+      "reference_sha256": "dfe1d351f08e54059596943d2bd3381165ad119bd83b285e2ee77ce56b7d6fa7",
+      "percent_above_16": 4.968,
+      "pixels_above_16": 200321,
+      "pixels": 4032210,
+      "actual": "docs/implementacja_android/CH016_CH018_Android/emulator_2026-11-10/android-S07.png",
+      "actual_sha256": "0b5bb522e4082a401bc68a6c71597b3c1b25c5c0c3c3edfcc651e71e7addfe6d"
+    },
+    {
+      "screen": "S08",
+      "reference": "docs/implementacja_android/CH002_Android/run1/android-S08.png",
+      "reference_sha256": "47836a419ebc987908a92ee0fee066e630715c1d54392f4ca81e4968f5b6bbcb",
+      "percent_above_16": 6.3597,
+      "pixels_above_16": 256437,
+      "pixels": 4032210,
+      "actual": "docs/implementacja_android/CH016_CH018_Android/emulator_2026-11-10/android-S08.png",
+      "actual_sha256": "5461f52cf25036729823c78a97801c01fc798f99936b6ca9216e856e0fc538ff"
+    },
+    {
+      "screen": "S09",
+      "reference": "docs/implementacja_android/CH002_Android/run1/android-S09.png",
+      "reference_sha256": "5d99aa5d246d1244196cd136ad57b21e05894eedf4301285f81a99e40f364605",
+      "percent_above_16": 4.0273,
+      "pixels_above_16": 162390,
+      "pixels": 4032210,
+      "actual": "docs/implementacja_android/CH016_CH018_Android/emulator_2026-11-10/android-S09.png",
+      "actual_sha256": "cd77bf467d1ae6f0c745f1ad32471c24a52fc530c70df6146ad4269e566a6bfe"
+    }
+  ]
+}

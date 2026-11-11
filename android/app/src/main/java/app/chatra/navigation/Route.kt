@@ -6,7 +6,7 @@ import app.chatra.core.model.ConversationId
 sealed interface Route {
     data object Start : Route
     data object Inbox : Route
-    data class Conversation(val id: ConversationId) : Route
+    data class Conversation(val id: ConversationId, val message: app.chatra.core.model.MessageRef? = null) : Route
     data class Search(val initialQuery: String = "", val initialFilter: String? = null) : Route
     data object Scheduled : Route
     data object Settings : Route

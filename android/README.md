@@ -34,10 +34,31 @@
 cd android
 ./gradlew :app:assembleDemoDebug          # APK demonstracyjny
 ./gradlew :app:installDemoDebug           # instalacja na podłączonym urządzeniu
-./gradlew test                            # testy JVM
+./gradlew :core:model:test :core:testing:test :core:designsystem:testDebugUnitTest :app:testDemoDebugUnitTest
+./gradlew :app:lintDemoDebug               # lint wariantu demo
 ```
 
 Wydanie testowe: skopiuj `keystore.properties.example` do `keystore.properties`, wskaż własny keystore poza repozytorium, potem `./gradlew :app:assembleFullRelease`. Bez tego pliku release buduje się niepodpisany.
+
+Aktualne ograniczenie: wariant `full` nie ma jeszcze adaptera `createContainer`,
+więc jego kompilacja (oraz zbiorcze `test` obejmujące ten wariant) nie przechodzi.
+Powyższe komendy testują i budują istniejącą implementację `demo`.
+
+## Ekrany S07–S09 (CH016–CH018)
+
+Wyszukiwanie jest dostępne ze Skrzynki, Nowa wiadomość z przycisku docka,
+a Wygląd z tymczasowego wejścia w Ustawieniach (pełne S10 należy do CH019).
+Demo obsługuje lokalne wyniki, szkic nowych odbiorców i ustawienia wyglądu.
+Pozostałe kompozycje i tryby S09 mają oznaczony podgląd roboczy do CH020/CH040.
+
+[Zakres i wyniki weryfikacji CH016–CH018](../docs/implementacja_android/CH016_CH018_Wdrozenie_i_weryfikacja.md),
+w tym otwarty końcowy odbiór na telefonie. Plansze referencyjne:
+
+```bash
+adb shell am force-stop app.chatra.demo
+adb shell am start -n app.chatra.demo/app.chatra.MainActivity --ez frame true --es screen S07
+# Analogicznie S08 i S09.
+```
 
 ## Moduły
 

@@ -303,7 +303,16 @@
         "CH008",
         "CH009"
       ],
-      "description": "Wykonanie: pole, wyczyść/anuluj, filtry, objaśnienie, dwa szybkie trafienia, lista i mark. Zapytanie, filtry i scroll w stanie możliwym do odtworzenia. Dodać brak wyników, indeksowanie i błąd. Kopiowanie przez systemowy schowek bez logowania wartości.\n\nOdbiór: zgodny S07 i poprawny powrót z wyniku. Weryfikacja: długie zapytanie, wiele wyróżnień, duży font, dwa różne przyciski Kopiuj i czyszczenie pola."
+      "description": "Wykonanie: pole, wyczyść/anuluj, filtry, objaśnienie, dwa szybkie trafienia, lista i mark. Zapytanie, filtry i scroll w stanie możliwym do odtworzenia. Dodać brak wyników, indeksowanie i błąd. Kopiowanie przez systemowy schowek bez logowania wartości.\n\nOdbiór: zgodny S07 i poprawny powrót z wyniku. Weryfikacja: długie zapytanie, wiele wyróżnień, duży font, dwa różne przyciski Kopiuj i czyszczenie pola.",
+      "execution_status": "implementation_completed_emulator_verified_physical_acceptance_pending",
+      "implemented_on": "2026-11-09",
+      "evidence_files": [
+        "docs/implementacja_android/CH016_CH018_Wdrozenie_i_weryfikacja.md",
+        "docs/implementacja_android/CH016_CH018_Android/pierwszy_pomiar.json",
+        "docs/implementacja_android/CH016_CH018_Emulator_QA_2026-11-10.md",
+        "docs/implementacja_android/CH016_CH018_Android/emulator_2026-11-10/weryfikacja.json"
+      ],
+      "review_note": "S07 zaimplementowany: lokalny kontrakt wyszukiwania, filtry, wyróżnienia, dwa Kopiuj, kotwica MessageRef, stan zapisywalny. Testy JVM zaliczone. Końcowy odbiór obrazu i interakcji oczekuje na ponowne połączenie ADB. 10.11: sprawdzenie interakcji w emulatorze API 35 i świeże zrzuty po poprawkach; 57 testów JVM, build i lint demo zaliczone. Odbiór fizyczny oraz G03 pozostają otwarte."
     },
     {
       "id": "CH017",
@@ -317,7 +326,16 @@
         "CH008",
         "CH009"
       ],
-      "description": "Wykonanie: chipy, wpisywanie numeru, tryby wysyłki, ostrzeżenie grupowe, sugestie i kompozytor. Puste i niepoprawne dane blokują wysłanie. Chipy muszą zawijać się zgodnie z projektem. Widoczny transport i liczba operacji zmieniają się wraz z odbiorcami.\n\nOdbiór: zgodny S08 dla 3 osób; usuwanie konkretnego chipa zachowuje resztę. Weryfikacja: 1 osoba, 3 osoby i duża liczba osób, IME, długi kontakt i powrót do szkicu po anulowaniu."
+      "description": "Wykonanie: chipy, wpisywanie numeru, tryby wysyłki, ostrzeżenie grupowe, sugestie i kompozytor. Puste i niepoprawne dane blokują wysłanie. Chipy muszą zawijać się zgodnie z projektem. Widoczny transport i liczba operacji zmieniają się wraz z odbiorcami.\n\nOdbiór: zgodny S08 dla 3 osób; usuwanie konkretnego chipa zachowuje resztę. Weryfikacja: 1 osoba, 3 osoby i duża liczba osób, IME, długi kontakt i powrót do szkicu po anulowaniu.",
+      "execution_status": "implementation_completed_emulator_verified_physical_acceptance_pending",
+      "implemented_on": "2026-11-09",
+      "evidence_files": [
+        "docs/implementacja_android/CH016_CH018_Wdrozenie_i_weryfikacja.md",
+        "docs/implementacja_android/CH016_CH018_Android/pierwszy_pomiar.json",
+        "docs/implementacja_android/CH016_CH018_Emulator_QA_2026-11-10.md",
+        "docs/implementacja_android/CH016_CH018_Android/emulator_2026-11-10/weryfikacja.json"
+      ],
+      "review_note": "S08 zaimplementowany: odbiorcy, walidacja, osobne SMS/MMS, wybór SIM i szkic. Testy obejmują podwójne Wyślij i częściowy błąd bez ponawiania przyjętych zleceń. Końcowy odbiór na telefonie pozostaje otwarty. 10.11: sprawdzenie interakcji w emulatorze API 35 i świeże zrzuty po poprawkach; 57 testów JVM, build i lint demo zaliczone. Odbiór fizyczny oraz G03 pozostają otwarte."
     },
     {
       "id": "CH018",
@@ -331,7 +349,16 @@
         "CH008",
         "CH009"
       ],
-      "description": "Wykonanie: nagłówek, podgląd o wysokości 196 jednostek projektu, cztery próbki, segmenty, suwak i switche 52×32 oraz reset. Przenosić stan do podglądu bez zapisu demonstracyjnych danych. Tryby niezaprojektowane w pełni kierować do kontraktu tokenów CH020/CH040, bez fikcyjnego działania.\n\nOdbiór: zgodny domyślny S09; role radio/switch/slider i bieżący stan dostępne dla czytnika. Weryfikacja: suwak 1/4/7, reset i przejście wstecz bez utraty wyboru."
+      "description": "Wykonanie: nagłówek, podgląd o wysokości 196 jednostek projektu, cztery próbki, segmenty, suwak i switche 52×32 oraz reset. Przenosić stan do podglądu bez zapisu demonstracyjnych danych. Tryby niezaprojektowane w pełni kierować do kontraktu tokenów CH020/CH040, bez fikcyjnego działania.\n\nOdbiór: zgodny domyślny S09; role radio/switch/slider i bieżący stan dostępne dla czytnika. Weryfikacja: suwak 1/4/7, reset i przejście wstecz bez utraty wyboru.",
+      "execution_status": "implementation_completed_emulator_verified_physical_acceptance_pending",
+      "implemented_on": "2026-11-09",
+      "evidence_files": [
+        "docs/implementacja_android/CH016_CH018_Wdrozenie_i_weryfikacja.md",
+        "docs/implementacja_android/CH016_CH018_Android/pierwszy_pomiar.json",
+        "docs/implementacja_android/CH016_CH018_Emulator_QA_2026-11-10.md",
+        "docs/implementacja_android/CH016_CH018_Android/emulator_2026-11-10/weryfikacja.json"
+      ],
+      "review_note": "S09 zaimplementowany: podgląd 196 dp, wybory, slider, dostępne przełączniki i reset. Niezatwierdzone warianty opisane jako podgląd roboczy do CH020/CH040. Końcowy odbiór obrazu i interakcji pozostaje otwarty. 10.11: sprawdzenie interakcji w emulatorze API 35 i świeże zrzuty po poprawkach; 57 testów JVM, build i lint demo zaliczone. Odbiór fizyczny oraz G03 pozostają otwarte."
     },
     {
       "id": "CH019",

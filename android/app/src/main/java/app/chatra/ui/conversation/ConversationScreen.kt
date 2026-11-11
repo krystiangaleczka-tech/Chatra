@@ -86,6 +86,7 @@ fun ConversationScreen(
     onDetails: () -> Unit,
     onExtras: () -> Unit,
     onPickSim: () -> Unit,
+    target: app.chatra.core.model.MessageRef? = null,
 ) {
     val state by model.state.collectAsStateWithLifecycle()
     val chrome = LocalChrome.current
@@ -101,6 +102,13 @@ fun ConversationScreen(
     ) {
         val list = rememberLazyListState()
         val rows = remember(state.messages) { buildRows(state.messages) }
+        var anchored by remember(target) { androidx.compose.runtime.mutableStateOf(false) }
+        LaunchedEffect(target, rows) {
+            if (target != null && !anchored) {
+                val index = rows.asReversed().indexOfFirst { it is Row.Bubble && it.message.ref == target }
+                if (index >= 0) { list.scrollToItem(index); anchored = true }
+            }
+        }
         // Wzorzec przycina historię do obszaru 108…(844−150); nagłówek nie leży nad wiadomościami.
         LazyColumn(
             Modifier.fillMaxSize().padding(top = top, bottom = bottom).clipToBounds(),
