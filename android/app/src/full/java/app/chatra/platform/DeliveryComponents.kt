@@ -18,6 +18,8 @@ import org.json.JSONObject
 import java.io.File
 import java.security.MessageDigest
 import java.util.concurrent.Executors
+import app.chatra.telephony.IncomingSms
+import android.telephony.SubscriptionManager
 
 /** CH021: trwała skrzynka wejściowych PDU. Składanie i projekcja do providera w CH023/CH032. */
 private object DeliverySpool {
@@ -32,13 +34,17 @@ private object DeliverySpool {
         }
         if (pdus.isEmpty() || pdus.sumOf { it.size } > 1_048_576) return
         val json = JSONObject().put("kind", if (mms) "mms-notification" else "sms")
-            .put("format", intent.getStringExtra("format")).put("subscription", intent.getIntExtra("subscription", -1))
+            .put("format", intent.getStringExtra("format") ?: "3gpp").put("subscription", intent.getIntExtra(SubscriptionManager.EXTRA_SUBSCRIPTION_INDEX, intent.getIntExtra("subscription", -1)))
             .put("pdus", JSONArray(pdus.map { Base64.encodeToString(it, Base64.NO_WRAP) }))
         val payload = json.toString().toByteArray()
         val key = MessageDigest.getInstance("SHA-256").digest(payload).joinToString("") { "%02x".format(it) }
         val directory = File(context.filesDir, "pending-deliveries").apply { mkdirs() }
-        val file = AtomicFile(File(directory, "$key.json")); val stream = file.startWrite()
-        try { stream.write(payload); file.finishWrite(stream) } catch (error: Exception) { file.failWrite(stream); throw error }
+        val target = File(directory, "$key.json")
+        if (!target.exists()) {
+            val file = AtomicFile(target); val stream = file.startWrite()
+            try { stream.write(json.put("receivedAt", System.currentTimeMillis()).toString().toByteArray()); file.finishWrite(stream) } catch (error: Exception) { file.failWrite(stream); throw error }
+        }
+        if (!mms) IncomingSms.schedule(context, key)
     }
 }
 
@@ -49,6 +55,7 @@ abstract class DeliveryReceiver(private val action: String, private val mms: Boo
         val pending = goAsync()
         DeliverySpool.executor.execute {
             try { DeliverySpool.save(context.applicationContext, intent, mms) }
+            catch (_: Exception) { /* Odbiornik nie kończy procesu; nie potwierdzamy zapisu w UI. */ }
             finally { pending.finish() }
         }
     }

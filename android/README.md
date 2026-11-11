@@ -23,7 +23,7 @@
 | Wariant | Dane | Wysyłka i zakupy |
 | --- | --- | --- |
 | `demoDebug` | fixture CH006 (29.10.2026, 10 plansz) | brak prawdziwej wysyłki i zakupów |
-| `fullDebug` | systemowa rola i zgody (CH021); historia w CH022 | transport SMS w CH026, MMS w CH032 |
+| `fullDebug` | historia systemowa SMS/MMS i metadane Room | SMS przez SmsManager; transport MMS w CH032 |
 | `fullRelease` | ten sam zakres platformowy, R8 | podpis z `keystore.properties` |
 
 `demo` ma osobny `applicationId` (`app.chatra.demo`), więc nie koliduje z wersją pełną.
@@ -40,9 +40,10 @@ cd android
 
 Wydanie testowe: skopiuj `keystore.properties.example` do `keystore.properties`, wskaż własny keystore poza repozytorium, potem `./gradlew :app:assembleFullRelease`. Bez tego pliku release buduje się niepodpisany.
 
-Wariant `full` kompiluje się od CH021. Obsługuje rzeczywistą rolę SMS, osobne zgody
-i wejścia systemowe, ale historia i transporty wymagają CH022–CH026/CH032.
-Nie używaj tego etapu jako codziennego klienta SMS.
+Wariant `full` kompiluje się i od CH022–CH026 odczytuje historię oraz wysyła SMS.
+Pozostaje wersją testową: nowe MMS, Chatra HD, harmonogram, produkcyjny indeks
+wyszukiwania i pełne ponawianie wymagają kolejnych zadań.
+[Zakres, testy i otwarty odbiór fizyczny](../docs/implementacja_android/CH022_CH026_Wdrozenie_i_weryfikacja.md).
 
 ```bash
 ./gradlew :app:assembleFullDebug :app:testFullDebugUnitTest :app:lintFullDebug

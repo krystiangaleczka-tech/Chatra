@@ -30,6 +30,7 @@ fun chooseSim(cards: List<SimCard>, draft: SubscriptionId?, conversation: Subscr
         if (match != null) return SimChoice.Ready(match)
         return SimChoice.NeedsConfirmation(wanted, available)
     }
-    available.firstOrNull { it.id == default }?.let { return SimChoice.Ready(it) }
+    if (default != null) return available.firstOrNull { it.id == default }?.let { SimChoice.Ready(it) }
+        ?: SimChoice.NeedsConfirmation(default, available)
     return if (available.size == 1) SimChoice.Ready(available[0]) else SimChoice.NeedsConfirmation(null, available)
 }

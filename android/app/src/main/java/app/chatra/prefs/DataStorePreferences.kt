@@ -60,6 +60,7 @@ class DataStorePreferences(context: Context, scope: CoroutineScope, name: String
         val reduceTransparency = booleanPreferencesKey("reduce_transparency")
         val increaseContrast = booleanPreferencesKey("increase_contrast")
         val defaultSim = intPreferencesKey("default_sim")
+        val defaultSimLabel = stringPreferencesKey("default_sim_label")
         val undoSeconds = intPreferencesKey("undo_seconds")
         val smsCounter = booleanPreferencesKey("sms_counter")
         val hdDefault = stringPreferencesKey("hd_default")
@@ -88,10 +89,12 @@ class DataStorePreferences(context: Context, scope: CoroutineScope, name: String
         (p[K.undoSeconds] ?: 3).takeIf { it in SendingPrefs.UNDO_OPTIONS } ?: 3,
         p[K.smsCounter] ?: true,
         enumOr(p[K.hdDefault], MediaVariant.OriginalHd),
+        p[K.defaultSimLabel],
     )
 
     private fun writeSending(p: androidx.datastore.preferences.core.MutablePreferences, v: SendingPrefs) {
         v.defaultSubscriptionId?.let { p[K.defaultSim] = it.value } ?: p.remove(K.defaultSim)
+        v.defaultSubscriptionLabel?.let { p[K.defaultSimLabel] = it } ?: p.remove(K.defaultSimLabel)
         p[K.undoSeconds] = v.undoSeconds
         p[K.smsCounter] = v.smsCounterEnabled
         p[K.hdDefault] = v.hdDefault.name

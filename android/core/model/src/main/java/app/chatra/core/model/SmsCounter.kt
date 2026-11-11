@@ -1,5 +1,12 @@
 package app.chatra.core.model
 
+/** Full używa kalkulatora platformy; czysty model pozostaje adapterem demo. */
+fun interface SmsTextAnalyzer {
+    fun count(text: String, subscriptionId: SubscriptionId?): SmsCounter.Count
+}
+
+val ModelSmsTextAnalyzer = SmsTextAnalyzer { text, _ -> SmsCounter.count(text) }
+
 /**
  * Licznik SMS (CH025): znaki widoczne, jednostki kodowania i części. GSM 7-bit (3GPP TS 23.038)
  * z tablicą rozszerzeń liczoną podwójnie; poza alfabetem — UCS-2 (UTF-16, emoji = 2 jednostki).
@@ -21,11 +28,13 @@ object SmsCounter {
         /** Pojemność jednej części przy obecnej liczbie części (160/153 albo 70/67). */
         val perSegment: Int,
         val visibleChars: Int,
+        val lastSegmentUnits: Int? = null,
+        val preservesText: Boolean = true,
     ) {
         /** „20/70 · 1 SMS” — jednostki w bieżącej części / pojemność · liczba części. */
         val label: String
             get() {
-                val used = if (segments <= 1) units else units - (segments - 1) * perSegment
+                val used = lastSegmentUnits ?: if (segments <= 1) units else units - (segments - 1) * perSegment
                 return "$used/$perSegment · $segments SMS"
             }
     }

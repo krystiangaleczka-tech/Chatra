@@ -45,6 +45,7 @@ interface AppContainer {
     val proOffer: app.chatra.core.model.ProOffer get() = app.chatra.core.model.ProOffer.Unavailable
     /** Transporty full są dopiero w CH026/CH032; nigdy nie zastępujemy ich atrapą. */
     val canSendMessages: Boolean get() = isDemo
+    val sendAccess: Flow<Boolean> get() = kotlinx.coroutines.flow.flowOf(canSendMessages)
     val platform: app.chatra.platform.PlatformAccess? get() = null
     /** Wejście SENDTO/RESPOND_VIA_MESSAGE, odczytane dopiero przez edytor. */
     fun externalDraft(id: String): app.chatra.core.model.ExternalCompose? = null
@@ -57,6 +58,7 @@ interface AppContainer {
 
     /** Wariant demonstracyjny: bez prawdziwej wysyłki i zakupów. */
     val isDemo: Boolean
+    val smsText: app.chatra.core.model.SmsTextAnalyzer get() = app.chatra.core.model.ModelSmsTextAnalyzer
 }
 
 /** Formularz S05 ze wzorca: treść różni się od kompozytora S03, więc plansza ma własny preset. */

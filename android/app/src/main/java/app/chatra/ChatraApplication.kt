@@ -8,6 +8,7 @@ class ChatraApplication : Application() {
     private var instance: AppContainer? = null
 
     /** Kontener powstaje przy pierwszym ekranie, bo tryb referencyjny przychodzi w intencji. */
+    @Synchronized
     fun container(referenceFrame: Boolean, roleScenario: String? = null, exactAlarms: Boolean = true): AppContainer =
         instance ?: createContainer(this, referenceFrame, roleScenario, exactAlarms).also { instance = it }
 }

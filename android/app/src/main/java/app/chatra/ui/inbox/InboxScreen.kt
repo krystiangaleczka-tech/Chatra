@@ -1,6 +1,7 @@
 package app.chatra.ui.inbox
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +20,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -86,7 +92,14 @@ fun InboxScreen(
         ) {
             item("header") { Header(onMore) }
             if (!container.isDemo) item("development") {
-                BasicText("Wersja rozwojowa: odczyt historii i wysyłanie nie są jeszcze dostępne. Nie używaj jej jako głównej aplikacji SMS.", style = chatraText(14f, 600, color = ChatraColors.ErrorText))
+                Column {
+                    BasicText("Wersja testowa: historia SMS/MMS i wysyłanie SMS. Wysyłanie oraz pobieranie nowych MMS, HD i harmonogram nie są jeszcze gotowe.", style = chatraText(14f, 600, color = ChatraColors.ErrorText))
+                    app.chatra.ui.settings.PermissionPrompt(app.chatra.platform.AccessFeature.Sms)
+                    if (state.history is app.chatra.core.model.HistoryStatus.Error) {
+                        BasicText((state.history as app.chatra.core.model.HistoryStatus.Error).message, style = ChatraType.Preview)
+                        app.chatra.ui.common.TextAction("Odśwież historię", model::refresh)
+                    }
+                }
             }
             item("search") { SearchField(onSearch) }
             item("filter") { Filter(state.filter, state.unreadConversations, model::setFilter) }
@@ -186,10 +199,13 @@ private fun EmptyLine(text: String) {
 @Composable
 private fun ConversationRow(row: ConversationSummary, onOpen: (ConversationId) -> Unit) {
     val unread = row.isUnread
+    val container = app.chatra.ui.LocalContainer.current
+    val scope = rememberCoroutineScope()
+    var menu by remember { mutableStateOf(false) }
     Row(
         Modifier.fillMaxWidth()
             .semantics(mergeDescendants = true) { role = Role.Button }
-            .pressable({ onOpen(row.id) })
+            .combinedClickable(interactionSource = null, indication = null, onClick = { onOpen(row.id) }, onLongClickLabel = "Akcje rozmowy", onLongClick = { menu = true })
             .padding(horizontal = 16.dp, vertical = 9.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -210,6 +226,16 @@ private fun ConversationRow(row: ConversationSummary, onOpen: (ConversationId) -
             Preview(row, unread)
         }
     }
+    if (menu) app.chatra.ui.common.ChoiceDialog(row.title, listOf(if (unread) "Oznacz jako przeczytane" else "Oznacz jako nieprzeczytane", if (row.pinned) "Odepnij" else "Przypnij", "Anuluj"), { option ->
+        scope.launch {
+            runCatching {
+                when (option) {
+                    0 -> if (unread) container.conversations.markRead(row.id) else container.conversations.markUnread(row.id)
+                    1 -> container.conversations.setPinned(row.id, !row.pinned)
+                }
+            }
+        }
+    }, { menu = false })
 }
 
 @Composable

@@ -13,8 +13,10 @@ data class NewMessageState(
     val mode: RecipientMode = RecipientMode.SeparateSms, val sims: List<SimCard> = emptyList(),
     val sim: SimChoice = SimChoice.NoSim, val suggestions: List<Participant> = emptyList(), val busy: Boolean = false, val error: String? = null,
     val sendingAvailable: Boolean = true,
+    val counter: SmsCounter.Count = SmsCounter.count(""),
+    val counterEnabled: Boolean = true,
 ) {
-    val canSend get() = sendingAvailable && !busy && text.isNotBlank() && recipients.isNotEmpty() && input.isBlank() && recipients.all { isOutgoingNumber(it.address.raw) } && sim is SimChoice.Ready
+    val canSend get() = sendingAvailable && !busy && text.isNotBlank() && text.length <= 16384 && counter.preservesText && recipients.isNotEmpty() && input.isBlank() && recipients.all { isOutgoingNumber(it.address.raw) } && sim is SimChoice.Ready
     val operationLabel get() = if (recipients.size > 1 && mode == RecipientMode.GroupMms) "1 grupowy MMS" else if (recipients.size == 1) "1 SMS" else "${recipients.size} osobne SMS"
 }
 
@@ -40,18 +42,29 @@ class NewMessageViewModel(private val saved: SavedStateHandle, private val c: Ap
     private val form = combine(addresses, names, input, text, mode) { a, n, i, t, m ->
         NewMessageState(a.mapIndexed { index, raw -> Participant(Address(raw), n.getOrNull(index)?.takeIf { it.isNotBlank() }) }, i, t, RecipientMode.valueOf(m))
     }
-    private val data = combine(c.sims.cards(), c.contacts.suggestions(), c.sending.value, chosen) { sims, contacts, prefs, sim ->
-        Triple(sims, contacts, chooseSim(sims, sim?.let(::SubscriptionId), null, prefs.defaultSubscriptionId))
+    private val defaultSim = combine(c.sending.value, c.sims.defaultSubscription()) { prefs, system -> prefs.defaultSubscriptionId ?: system }
+    private val data = combine(c.sims.cards(), c.contacts.suggestions(), defaultSim, chosen) { sims, contacts, default, sim ->
+        Triple(sims, contacts, chooseSim(sims, sim?.let(::SubscriptionId), null, default))
     }
-    val state = combine(form, data, busy, error) { f, d, b, e ->
-        f.copy(sims = d.first, sim = d.third, busy = b, error = e, sendingAvailable = c.canSendMessages,
+    val state = combine(form, data, busy, error, c.sendAccess) { f, d, b, e, access ->
+        f.copy(sims = d.first, sim = d.third, busy = b, error = e, sendingAvailable = access && (c.isDemo || f.mode != RecipientMode.GroupMms),
+            counterEnabled = c.sending.value.value.smsCounterEnabled,
+            counter = c.smsText.count(f.text, (d.third as? SimChoice.Ready)?.sim?.id),
             suggestions = d.second.filter { p -> f.recipients.none { it.address.normalized == p.address.normalized } && (f.input.isBlank() || searchFold(f.input) in searchFold(p.label) || f.input.filter(Char::isDigit).let { it.isNotEmpty() && it in p.address.normalized }) })
     }.stateIn(viewModelScope, SharingStarted.Eagerly, NewMessageState())
+
+    init {
+        viewModelScope.launch {
+            state.collect { s ->
+                if (chosen.value == null && (s.recipients.isNotEmpty() || s.text.isNotBlank())) (s.sim as? SimChoice.Ready)?.sim?.let { sim(it.id) }
+            }
+        }
+    }
 
     fun input(value: String) { saved["input"] = value; error.value = null }
     fun text(value: String) { saved["text"] = value; error.value = null }
     fun mode(value: RecipientMode) { saved["mode"] = value.name }
-    fun sim(value: SubscriptionId) { saved["sim"] = value.value }
+    fun sim(value: SubscriptionId) { saved["sim"] = value.value; saved["simLabel"] = state.value.sims.firstOrNull { it.id == value }?.label }
     fun remove(index: Int) {
         saved["addresses"] = ArrayList(addresses.value.filterIndexed { i, _ -> i != index })
         saved["names"] = ArrayList(names.value.filterIndexed { i, _ -> i != index })
@@ -75,7 +88,8 @@ class NewMessageViewModel(private val saved: SavedStateHandle, private val c: Ap
         if (!s.canSend || busy.value || text.value.isBlank() || addresses.value.isEmpty()) return
         busy.value = true
         viewModelScope.launch {
-            val draft = Draft(DraftId.new(), null, s.recipients.map { it.address }, s.text, s.mode, emptyList(), (s.sim as SimChoice.Ready).sim.id, c.clock.now())
+            val card = (s.sim as SimChoice.Ready).sim
+            val draft = Draft(DraftId.new(), null, s.recipients.map { it.address }, s.text, s.mode, emptyList(), card.id, c.clock.now(), subscriptionLabel = card.label)
             val plan = draft.newMessagePlan()
             var last: ConversationId? = null
             val accepted = mutableListOf<Address>()

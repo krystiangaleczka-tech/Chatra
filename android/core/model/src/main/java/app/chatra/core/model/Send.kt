@@ -98,9 +98,9 @@ data class SendPart(
 /** Zagregowany wynik części: wszystkie wysłane → SENT, wszystkie doręczone → DELIVERED. */
 fun aggregate(parts: List<SendPart>): SendState? = when {
     parts.isEmpty() -> null
+    parts.all { it.delivery == PartDelivery.Delivered } -> SendState.DELIVERED
     parts.any { it.sent == PartStatus.Failed } && parts.any { it.sent == PartStatus.Sent } -> SendState.PARTIALLY_SENT
     parts.any { it.sent == PartStatus.Failed } -> SendState.FAILED
-    parts.all { it.delivery == PartDelivery.Delivered } -> SendState.DELIVERED
     parts.all { it.sent == PartStatus.Sent } -> SendState.SENT
     else -> null
 }

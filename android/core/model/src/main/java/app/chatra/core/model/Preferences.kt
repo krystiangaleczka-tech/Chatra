@@ -31,6 +31,7 @@ data class SendingPrefs(
     val undoSeconds: Int = 3,
     val smsCounterEnabled: Boolean = true,
     val hdDefault: MediaVariant = MediaVariant.OriginalHd,
+    val defaultSubscriptionLabel: String? = null,
 ) {
     companion object { val UNDO_OPTIONS = listOf(0, 3, 5, 10) }
 }

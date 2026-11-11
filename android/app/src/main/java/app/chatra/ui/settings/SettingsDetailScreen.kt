@@ -70,9 +70,10 @@ fun SettingsDetailScreen(kind: Route.SettingsDetail.Kind, onBack: () -> Unit, on
                     BasicText("Wybór zapisany w szkicu ma pierwszeństwo. Po utracie karty poprosimy o ponowny wybór.", style = ChatraType.Preview)
                     if (sims.none { it.available }) BasicText("Brak dostępnych kart SIM.", style = ChatraType.Body)
                     else {
-                        ChoiceRow("Pytaj przy wysyłaniu", prefs.defaultSubscriptionId == null) { scope.launch { c.sending.update { it.copy(defaultSubscriptionId = null) } } }
-                        sims.filter { it.available }.forEach { card -> ChoiceRow(card.label, prefs.defaultSubscriptionId == card.id) { scope.launch { c.sending.update { it.copy(defaultSubscriptionId = card.id) } } } }
+                        ChoiceRow(if (c.isDemo) "Pytaj przy wysyłaniu" else "Użyj domyślnej karty systemu", prefs.defaultSubscriptionId == null) { scope.launch { c.sending.update { it.copy(defaultSubscriptionId = null, defaultSubscriptionLabel = null) } } }
+                        sims.filter { it.available }.forEach { card -> ChoiceRow(card.label, prefs.defaultSubscriptionId == card.id) { scope.launch { c.sending.update { it.copy(defaultSubscriptionId = card.id, defaultSubscriptionLabel = card.label) } } } }
                     }
+                    if (prefs.defaultSubscriptionId != null && sims.none { it.id == prefs.defaultSubscriptionId }) BasicText("Poprzednia karta: ${prefs.defaultSubscriptionLabel ?: prefs.defaultSubscriptionId?.value}. Wybierz dostępną kartę ponownie.", style = ChatraType.Preview)
                 }
             }
             Route.SettingsDetail.Kind.Delay -> DetailCard {
@@ -147,4 +148,11 @@ fun PermissionCard(feature: AccessFeature) {
         if (result == AccessResult.Denied) BasicText("Możesz korzystać z pozostałych funkcji i wrócić do tej zgody później.", style = ChatraType.Preview)
         if (result == AccessResult.RoleRequired) BasicText("Najpierw ustaw Chatrę jako domyślną aplikację SMS.", style = ChatraType.Preview)
     }
+}
+
+@Composable
+fun PermissionPrompt(feature: AccessFeature) {
+    val platform = LocalContainer.current.platform ?: return
+    val revision by platform.changes.collectAsStateWithLifecycle()
+    if (!remember(revision) { platform.allowed(feature) }) PermissionCard(feature)
 }

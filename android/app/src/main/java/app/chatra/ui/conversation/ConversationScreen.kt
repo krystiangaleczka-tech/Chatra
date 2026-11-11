@@ -28,6 +28,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.flow.distinctUntilChanged
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -90,18 +97,31 @@ fun ConversationScreen(
 ) {
     val state by model.state.collectAsStateWithLifecycle()
     val chrome = LocalChrome.current
-    LaunchedEffect(state.messages.size) { if (state.messages.isNotEmpty()) model.onShown() }
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    val density = LocalDensity.current.density
+    var composerHeight by remember { mutableIntStateOf(0) }
     val top = chrome.top(50.dp) + (ContentTop - 50).dp
-    val bottom = chrome.bottom(26.dp) + (ContentBottom - 26).dp
+    val bottom = maxOf(chrome.bottom(26.dp) + (ContentBottom - 26).dp, chrome.bottom(26.dp) + composerHeight.dp + 12.dp)
     ChatraScreen(
         Backgrounds.Conversation,
         floating = {
             Header(state, onBack, onDetails, Modifier.align(Alignment.TopStart).padding(top = chrome.top(50.dp), start = 12.dp, end = 12.dp))
-            Composer(state, model, onExtras, onPickSim, Modifier.align(Alignment.BottomStart).padding(start = 12.dp, end = 12.dp, bottom = chrome.bottom(26.dp)))
+            Composer(state, model, onExtras, onPickSim, Modifier.align(Alignment.BottomStart).padding(start = 12.dp, end = 12.dp, bottom = chrome.bottom(26.dp)).onSizeChanged { composerHeight = (it.height / density).toInt() })
         },
     ) {
         val list = rememberLazyListState()
         val rows = remember(state.messages) { buildRows(state.messages) }
+        LaunchedEffect(list, rows, lifecycle) {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                snapshotFlow {
+                    val layout = list.layoutInfo
+                    val viewport = layout.viewportEndOffset - layout.viewportStartOffset
+                    layout.visibleItemsInfo.filter { viewport > 0 && minOf(it.offset + it.size, layout.viewportEndOffset) - maxOf(it.offset, layout.viewportStartOffset) >= minOf(it.size, viewport / 2) }
+                        .mapNotNull { (rows.asReversed().getOrNull(it.index) as? Row.Bubble)?.message }
+                        .filter { it.direction == Direction.Incoming }.map { it.ref }.toSet()
+                }.distinctUntilChanged().collect { if (it.isNotEmpty()) model.onShown(it) }
+            }
+        }
         var anchored by remember(target) { androidx.compose.runtime.mutableStateOf(false) }
         LaunchedEffect(target, rows) {
             if (target != null && !anchored) {
@@ -118,6 +138,7 @@ fun ConversationScreen(
             contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 14.dp),
         ) {
             items(rows.asReversed(), key = { it.key }) { row -> RowContent(row, state, model) }
+            if (state.hasOlder) item("older") { app.chatra.ui.common.TextAction("Wczytaj wcześniejsze wiadomości", model::loadOlder) }
         }
     }
 }
@@ -155,6 +176,7 @@ private fun RowContent(row: Row, state: ConversationState, model: ConversationVi
         }
         is Row.Bubble -> Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             MessageBubble(row.message)
+            row.message.attachments.forEach { app.chatra.ui.common.ProviderThumbnail(it) }
             if (row.showStatus || row.message.status in setOf(DeliveryStatus.Failed, DeliveryStatus.PendingUndo)) {
                 Status(row.message, state, model)
             }
@@ -350,13 +372,21 @@ private fun subtitle(s: app.chatra.core.model.ConversationSummary): String = whe
 private fun Composer(state: ConversationState, model: ConversationViewModel, onExtras: () -> Unit, onPickSim: () -> Unit, modifier: Modifier) {
     val reference = LocalContainer.current.referenceFrame
     Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        if (!reference) {
+            state.error?.let { BasicText(it, style = chatraText(13f, color = ChatraColors.ErrorText)) }
+            if (!state.sendingAvailable && state.summary?.isGroupMms == true) BasicText("Wysyłanie grupowego MMS nie jest jeszcze dostępne.", style = chatraText(13f, color = ChatraColors.TextSecondary))
+            if (!state.counter.preservesText) BasicText("System zmieniłby treść. Sprawdź podgląd licznika.", style = chatraText(13f, color = ChatraColors.ErrorText))
+            if (state.text.length > 16384) BasicText("Wiadomość jest zbyt długa. Podziel ją przed wysłaniem.", style = chatraText(13f, color = ChatraColors.ErrorText))
+            app.chatra.ui.settings.PermissionPrompt(app.chatra.platform.AccessFeature.Sms)
+        }
         Row(Modifier.fillMaxWidth().padding(start = 52.dp, end = 4.dp), verticalAlignment = Alignment.CenterVertically) {
             SimChip(state.sim, onPickSim)
             Spacer(Modifier.weight(1f))
-            if (state.counterEnabled && state.text.isNotEmpty()) {
+            if (state.counterEnabled && state.text.isNotEmpty() && state.summary?.isGroupMms != true) {
                 // Fixture S03 zachowuje literalny, błędny licznik ze wzorca (CH006, wyjątek).
                 val label = if (reference && state.text == "Kupię kwiaty dla Ani") "21/160 · 1 SMS" else state.counter.label
-                BasicText(label, style = chatraText(12f, color = ChatraColors.TextTertiary).copy(fontFeatureSettings = "tnum"))
+                if (reference) BasicText(label, style = chatraText(12f, color = ChatraColors.TextTertiary).copy(fontFeatureSettings = "tnum"))
+                else app.chatra.ui.common.SmsCounterAction(state.text, (state.sim as? SimChoice.Ready)?.sim?.id, model::onText)
             }
         }
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.Bottom) {

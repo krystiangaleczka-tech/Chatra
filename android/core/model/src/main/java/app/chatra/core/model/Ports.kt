@@ -1,6 +1,7 @@
 package app.chatra.core.model
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -17,6 +18,22 @@ interface ConversationRepository {
     suspend fun setPinned(id: ConversationId, pinned: Boolean)
     suspend fun moveToTrash(id: ConversationId)
     suspend fun conversationFor(recipients: List<Address>): ConversationId
+    fun historyStatus(): Flow<HistoryStatus> = kotlinx.coroutines.flow.flowOf(HistoryStatus.Ready)
+    suspend fun refresh() {}
+    suspend fun loadOlder(id: ConversationId) {}
+    fun hasOlder(id: ConversationId): Flow<Boolean> = kotlinx.coroutines.flow.flowOf(false)
+    fun preferredSim(id: ConversationId): Flow<SubscriptionId?> = kotlinx.coroutines.flow.flowOf(null)
+    suspend fun preferSim(id: ConversationId, sim: SubscriptionId, label: String) {}
+    suspend fun markUnread(id: ConversationId) {}
+    suspend fun markAllRead() { inbox().first().filter { it.isUnread }.forEach { markRead(it.id) } }
+    suspend fun markShown(id: ConversationId, refs: Set<MessageRef>) { markRead(id) }
+}
+
+sealed interface HistoryStatus {
+    data object Loading : HistoryStatus
+    data object Ready : HistoryStatus
+    data object PermissionRequired : HistoryStatus
+    data class Error(val message: String) : HistoryStatus
 }
 
 interface DraftRepository {
@@ -27,6 +44,7 @@ interface DraftRepository {
 
 interface SimRepository {
     fun cards(): Flow<List<SimCard>>
+    fun defaultSubscription(): Flow<SubscriptionId?> = kotlinx.coroutines.flow.flowOf(null)
 }
 
 interface ContactsDirectory {

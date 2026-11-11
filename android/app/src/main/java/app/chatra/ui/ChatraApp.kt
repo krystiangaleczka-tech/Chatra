@@ -153,7 +153,10 @@ private fun Screen(route: Route, navigator: Navigator, listStates: MutableMap<Ta
         }
         is Route.Conversation -> {
             val model = conversationModel(c, route.id)
-            ConversationScreen(model, { navigator.back() }, { navigator.push(Route.DesignCatalog) }, { navigator.push(Route.Extras(route.id)) }, { navigator.push(Route.SettingsDetail(Route.SettingsDetail.Kind.Sims)) }, target = route.message)
+            var simPicker by remember { mutableStateOf(false) }
+            val state by model.state.collectAsStateWithLifecycle()
+            ConversationScreen(model, { navigator.back() }, { navigator.push(Route.DesignCatalog) }, { navigator.push(Route.Extras(route.id)) }, { simPicker = true }, target = route.message)
+            if (simPicker) app.chatra.ui.common.SimPicker(state.sims, (state.sim as? app.chatra.core.model.SimChoice.Ready)?.sim?.id, model::selectSim, { simPicker = false })
         }
         Route.Scheduled -> {
             val model = viewModel { ScheduledViewModel(c.schedules, c.sims, c.clock) }
@@ -181,7 +184,7 @@ private fun Screen(route: Route, navigator: Navigator, listStates: MutableMap<Ta
     }
     if (inboxMenu) ChoiceDialog("Rozmowy", listOf("Oznacz wszystkie jako przeczytane", "Ustawienia", "Pomoc", "Projekty uzupełniające"), { option ->
         when (option) {
-            0 -> scope.launch { c.conversations.inbox().first().filter { it.isUnread }.forEach { c.conversations.markRead(it.id) } }
+            0 -> scope.launch { runCatching { c.conversations.markAllRead() } }
             1 -> navigator.select(Tab.Settings)
             2 -> navigator.push(Route.Help)
             3 -> navigator.push(Route.DesignCatalog)
@@ -196,7 +199,10 @@ private fun Sheet(sheet: Route.Sheet, navigator: Navigator) {
         is Route.Extras -> {
             val model = conversationModel(c, sheet.id)
             // Zaplanuj nad Dodatkami: „Wróć” w S05 wraca do Dodatków (wzorzec), Back systemowy tak samo.
-            ExtrasSheet(model, navigator::popSheets) { navigator.push(Route.Schedule(sheet.id)) }
+            if (c.isDemo) ExtrasSheet(model, navigator::popSheets) { navigator.push(Route.Schedule(sheet.id)) }
+            else DetailPage("Dodatki", navigator::popSheets) {
+                DetailCard { BasicText("Wysyłanie MMS, Chatra HD i harmonogram nie są jeszcze dostępne w tej wersji. Tekst pozostaje w szkicu.", style = ChatraType.Body) }
+            }
         }
         is Route.Schedule -> {
             val model = conversationModel(c, sheet.id)
@@ -215,7 +221,7 @@ private fun Sheet(sheet: Route.Sheet, navigator: Navigator) {
 /** Rozmowa i jej arkusze dzielą jeden ViewModel (szkic, SIM, zdjęcia). */
 @Composable
 private fun conversationModel(c: AppContainer, id: app.chatra.core.model.ConversationId) = viewModel(key = "conv-${id.value}") {
-    ConversationViewModel(id, c.conversations, c.drafts, c.sims, c.sendQueue, c.schedules, c.sending.value, c.clock)
+    ConversationViewModel(id, c.conversations, c.drafts, c.sims, c.sendQueue, c.schedules, c.sending.value, c.clock, c.smsText, c.isDemo, c.sendAccess)
 }
 
 @Composable

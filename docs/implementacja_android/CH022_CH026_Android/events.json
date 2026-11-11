@@ -1,0 +1,107 @@
+[
+  {
+    "case": "receiver-background",
+    "result": "PASS",
+    "detail": "Po SMS z konsoli AVD wiadomość jest w Skrzynce z licznikiem 1; aplikacja była force-stop przed odbiorem"
+  },
+  {
+    "case": "visible-read",
+    "result": "PASS",
+    "detail": "Wejście do widocznego bąbelka synchronizuje odczyt i licznik"
+  },
+  {
+    "case": "transliteration-opt-in",
+    "result": "PASS",
+    "detail": ""
+  },
+  {
+    "case": "transliteration-restore",
+    "result": "PASS",
+    "detail": ""
+  },
+  {
+    "case": "native-transport-emulator-5556",
+    "result": "ISSUE_FIXED",
+    "detail": "Pierwsza próba wykryła odczyt resultCode po goAsync. Po poprawce test PendingIntent i dwie próby natywne potwierdziły poprawne wyniki."
+  },
+  {
+    "case": "native-sent-delivered-confirmed",
+    "result": "PASS",
+    "detail": "SIM 1: sent=-1, part Sent, delivery Delivered, operation DELIVERED. Emulator, nie sieć operatora."
+  },
+  {
+    "case": "native-multipart-attempt",
+    "result": "PASS",
+    "detail": "SmsManager: 163 znaki ASCII do portu emulatora 5556"
+  },
+  {
+    "case": "actual-role-loss",
+    "result": "PASS",
+    "detail": ""
+  },
+  {
+    "case": "actual-role-regain",
+    "result": "PASS",
+    "detail": ""
+  },
+  {
+    "case": "role-restored-messages",
+    "result": "PASS",
+    "detail": "Przywrócono pierwotną aplikację SMS w testowym AVD"
+  },
+  {
+    "case": "native-multipart-confirmed",
+    "result": "PASS",
+    "detail": "2 części: Sent i Delivered, resultCode=-1, operacja DELIVERED, emulator SIM 1"
+  },
+  {
+    "case": "S10-small-routing-Karty SIM",
+    "result": "PASS",
+    "detail": "320×640 dp, fontScale 1.3"
+  },
+  {
+    "case": "S10-small-routing-Opóźnienie wysłania",
+    "result": "PASS",
+    "detail": "320×640 dp, fontScale 1.3"
+  },
+  {
+    "case": "S10-small-routing-Chatra HD",
+    "result": "PASS",
+    "detail": "320×640 dp, fontScale 1.3"
+  },
+  {
+    "case": "S10-small-routing-Wygląd",
+    "result": "PASS",
+    "detail": "320×640 dp, fontScale 1.3"
+  },
+  {
+    "case": "S10-small-routing-Nieznani nadawcy",
+    "result": "PASS",
+    "detail": "320×640 dp, fontScale 1.3"
+  },
+  {
+    "case": "S10-small-routing-Zablokowani",
+    "result": "PASS",
+    "detail": "320×640 dp, fontScale 1.3"
+  },
+  {
+    "case": "S10-small-routing-Kosz",
+    "result": "PASS",
+    "detail": "320×640 dp, fontScale 1.3"
+  },
+  {
+    "case": "S10-small-routing-Prywatność",
+    "result": "PASS",
+    "detail": "320×640 dp, fontScale 1.3"
+  },
+  {
+    "case": "S10-no-price-outside-fixture",
+    "result": "PASS",
+    "detail": ""
+  },
+  {
+    "case": "S10-environment-restored",
+    "result": "PASS",
+    "detail": ""
+  }
+]

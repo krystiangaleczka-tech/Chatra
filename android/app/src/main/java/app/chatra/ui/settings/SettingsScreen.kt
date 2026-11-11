@@ -30,6 +30,7 @@ fun SettingsScreen(onAction: (SettingsEntry) -> Unit, dock: MainDock) {
     val sending by c.sending.value.collectAsStateWithLifecycle()
     val appearance by c.appearance.value.collectAsStateWithLifecycle()
     val sims by c.sims.cards().collectAsStateWithLifecycle(emptyList())
+    val systemDefault by c.sims.defaultSubscription().collectAsStateWithLifecycle(null)
     val housekeeping by c.housekeeping.collectAsStateWithLifecycle(Housekeeping(0, 0, 30))
     val scope = rememberCoroutineScope()
     val chrome = LocalChrome.current
@@ -52,7 +53,7 @@ fun SettingsScreen(onAction: (SettingsEntry) -> Unit, dock: MainDock) {
             }
             item {
                 SettingsCard(card, "Wysyłanie") {
-                    SettingsRow("Karty SIM", simSettingsSummary(sims, sending.defaultSubscriptionId), ChatraIcons.Sim, ChatraColors.Accent, first = true, onClick = { onAction(SettingsEntry.Sims) })
+                    SettingsRow("Karty SIM", simSettingsSummary(sims, sending.defaultSubscriptionId ?: systemDefault), ChatraIcons.Sim, ChatraColors.Accent, first = true, onClick = { onAction(SettingsEntry.Sims) })
                     SettingsRow("Opóźnienie wysłania", if (sending.undoSeconds == 0) "Bez okna anulowania" else "${sending.undoSeconds} s na anulowanie przed wysłaniem", ChatraIcons.Clock, Color(0xFFC2570C), onClick = { onAction(SettingsEntry.Delay) })
                     SettingsRow("Licznik części SMS", "Wersję bez polskich znaków tylko na życzenie", ChatraIcons.Lines, Color(0xFF5B6275), trailing = {
                         ChatraSwitch(sending.smsCounterEnabled, { value -> scope.launch { c.sending.update { it.copy(smsCounterEnabled = value) } } }, "Licznik części SMS")

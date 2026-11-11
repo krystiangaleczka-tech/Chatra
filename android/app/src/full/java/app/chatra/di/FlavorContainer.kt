@@ -12,13 +12,20 @@ import android.telephony.SubscriptionManager
 import androidx.core.content.ContextCompat
 import app.chatra.core.model.*
 import app.chatra.platform.*
+import app.chatra.telephony.*
+import app.chatra.core.database.ChatraDatabase
 import app.chatra.prefs.DataStorePreferences
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import java.time.Instant
 import java.time.ZoneId
 
-/** Realna rola i zgody, bez fixture. Historia/transporty dopiero w kolejnych zadaniach. */
+interface FullTelephonyContainer : AppContainer {
+    val incomingSms: IncomingSms
+    val smsQueue: PersistentSmsQueue
+}
+
+/** Systemowa historia, projekcja Room i trwała kolejka SMS; bez fixture. */
 fun createContainer(app: Application, referenceFrame: Boolean, roleScenario: String? = null, exactAlarms: Boolean = true): AppContainer {
     val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     val platform = SystemPlatform(app)
@@ -29,30 +36,6 @@ fun createContainer(app: Application, referenceFrame: Boolean, roleScenario: Str
         override fun zone(): ZoneId = ZoneId.systemDefault()
         override fun elapsedRealtimeMillis(): Long = SystemClock.elapsedRealtime()
     }
-    val conversations = object : ConversationRepository {
-        override fun inbox() = flowOf(emptyList<ConversationSummary>())
-        override fun conversation(id: ConversationId) = flowOf<ConversationSummary?>(null)
-        override fun messages(id: ConversationId) = flowOf(emptyList<Message>())
-        override suspend fun markRead(id: ConversationId) { }
-        override suspend fun setPinned(id: ConversationId, pinned: Boolean) { }
-        override suspend fun moveToTrash(id: ConversationId) { }
-        override suspend fun conversationFor(recipients: List<Address>): ConversationId = error("Historia wiadomości nie jest jeszcze dostępna.")
-    }
-    val drafts = object : DraftRepository {
-        override fun draft(conversationId: ConversationId) = flowOf<Draft?>(null)
-        override suspend fun save(draft: Draft) = error("Trwały magazyn szkiców nie jest jeszcze dostępny.")
-        override suspend fun delete(id: DraftId) { }
-    }
-    val queue = object : SendQueue {
-        override fun operations() = flowOf(emptyList<SendOperation>())
-        override suspend fun enqueue(draft: Draft, undoSeconds: Int): OperationId {
-            check(SmsAccessSnapshot(platform.isHeld(), false,
-                ContextCompat.checkSelfPermission(app, Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED).canDispatch) { "Brak roli SMS lub zgody na wysyłanie." }
-            error("Transport wiadomości nie jest jeszcze dostępny.")
-        }
-        override suspend fun cancel(id: OperationId) = false
-        override suspend fun retry(id: OperationId) = false
-    }
     val schedules = object : ScheduleRepository {
         override fun scheduled() = flowOf(emptyList<ScheduledItem>())
         override fun lastSent() = flowOf<LastScheduledSent?>(null)
@@ -60,15 +43,6 @@ fun createContainer(app: Application, referenceFrame: Boolean, roleScenario: Str
         override suspend fun sendNow(id: ScheduleId, sim: SubscriptionId?) = false
         override suspend fun reschedule(id: ScheduleId, instant: Instant, local: java.time.LocalDateTime, zone: ZoneId) = false
         override suspend fun delete(id: ScheduleId) = false
-    }
-    val sims = object : SimRepository {
-        private val cards = platform.changes.map {
-            if (!platform.allowed(AccessFeature.Sims)) emptyList() else try {
-                app.getSystemService(SubscriptionManager::class.java).activeSubscriptionInfoList.orEmpty()
-                    .map { SimCard(SubscriptionId(it.subscriptionId), it.simSlotIndex, it.displayName?.toString().orEmpty()) }
-            } catch (_: SecurityException) { emptyList() }
-        }.flowOn(Dispatchers.IO)
-        override fun cards(): Flow<List<SimCard>> = cards
     }
     val contacts = object : ContactsDirectory {
         private fun read(): List<Participant> {
@@ -89,7 +63,22 @@ fun createContainer(app: Application, referenceFrame: Boolean, roleScenario: Str
         override fun suggestions() = platform.changes.map { read() }.flowOn(Dispatchers.IO)
         override suspend fun lookup(address: Address): Participant? = withContext(Dispatchers.IO) { read().firstOrNull { it.address.normalized == address.normalized } }
     }
-    return object : AppContainer {
+    val db = ChatraDatabase.open(app)
+    val sims = SystemSim(app, platform, scope)
+    val conversations = SystemHistory(app, db, platform, contacts, scope)
+    val drafts = RoomDrafts(db)
+    val smsText = PlatformSmsText(app)
+    val queue = PersistentSmsQueue(app, db, platform, conversations, sims, smsText, drafts)
+    val incoming = IncomingSms(app, db, platform, conversations)
+    MessageNotifications(app, db, platform, scope)
+    scope.launch(Dispatchers.IO) {
+        queue.awaitReady()
+        platform.changes.collect { incoming.recover(); queue.recover(false) }
+    }
+    return object : FullTelephonyContainer {
+        override val incomingSms = incoming
+        override val smsQueue = queue
+        override val smsText = smsText
         override val conversations = conversations
         override val drafts = drafts
         override val sims = sims
@@ -113,6 +102,7 @@ fun createContainer(app: Application, referenceFrame: Boolean, roleScenario: Str
         override fun externalDraft(id: String): ExternalCompose? = platform.externalDraft(id)
         override val referenceFrame = false
         override val isDemo = false
-        override val canSendMessages = false
+        override val canSendMessages = true
+        override val sendAccess = platform.changes.map { app.smsRead(platform) && app.smsSend(platform) }
     }
 }
