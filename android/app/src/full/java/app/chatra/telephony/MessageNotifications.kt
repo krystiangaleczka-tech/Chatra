@@ -67,8 +67,11 @@ class MessageNotifications(private val context: Context, db: ChatraDatabase, pla
         val old = lastState
         lastState = if (permitted) current else null
 
-        (activeIds - unmuted.map { it.meta.id }.toSet()).forEach { manager.cancel("conversation:$it", threadNotificationId) }
-        activeIds = unmuted.map { it.meta.id }.toSet()
+        val nextIds = unmuted.map { it.meta.id }.toSet()
+        // Android zachowuje powiadomienia po zabiciu procesu: usuń też dawne tagi z poprzedniej instancji.
+        val systemIds = manager.activeNotifications.mapNotNull { it.tag?.takeIf { tag -> tag.startsWith("conversation:") }?.removePrefix("conversation:") }.toSet()
+        (activeIds + systemIds - nextIds).forEach { manager.cancel("conversation:$it", threadNotificationId) }
+        activeIds = nextIds
 
         if (visible.isEmpty()) {
             manager.cancel(1)
