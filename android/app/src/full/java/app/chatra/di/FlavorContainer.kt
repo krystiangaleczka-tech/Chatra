@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat
 import app.chatra.core.model.*
 import app.chatra.platform.*
 import app.chatra.telephony.*
+import app.chatra.local.SystemContacts
 import app.chatra.core.database.ChatraDatabase
 import app.chatra.prefs.DataStorePreferences
 import kotlinx.coroutines.*
@@ -44,25 +45,7 @@ fun createContainer(app: Application, referenceFrame: Boolean, roleScenario: Str
         override suspend fun reschedule(id: ScheduleId, instant: Instant, local: java.time.LocalDateTime, zone: ZoneId) = false
         override suspend fun delete(id: ScheduleId) = false
     }
-    val contacts = object : ContactsDirectory {
-        private fun read(): List<Participant> {
-            if (!platform.allowed(AccessFeature.Contacts)) return emptyList()
-            return try {
-                val rows = mutableListOf<Participant>()
-                app.contentResolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-                    arrayOf(ContactsContract.CommonDataKinds.Phone.NUMBER, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME), null, null,
-                    ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " COLLATE LOCALIZED ASC")?.use { cursor ->
-                    while (cursor.moveToNext() && rows.size < 100) {
-                        val address = Address(cursor.getString(0).orEmpty())
-                        if (isOutgoingNumber(address.raw)) rows += Participant(address, cursor.getString(1))
-                    }
-                }
-                rows.distinctBy { it.address.normalized }
-            } catch (_: SecurityException) { emptyList() }
-        }
-        override fun suggestions() = platform.changes.map { read() }.flowOn(Dispatchers.IO)
-        override suspend fun lookup(address: Address): Participant? = withContext(Dispatchers.IO) { read().firstOrNull { it.address.normalized == address.normalized } }
-    }
+    val contacts = SystemContacts(app, platform, scope)
     val db = ChatraDatabase.open(app)
     val sims = SystemSim(app, platform, scope)
     val conversations = SystemHistory(app, db, platform, contacts, scope)

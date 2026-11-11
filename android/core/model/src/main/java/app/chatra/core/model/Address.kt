@@ -32,4 +32,10 @@ data class Participant(val address: Address, val displayName: String? = null) {
 
 /** Ustalony zbiór uczestników identyfikuje wątek grupowy (specyfikacja 7, źródła prawdy). */
 fun participantsKey(addresses: Collection<Address>): String =
-    addresses.map { it.normalized }.filter { it.isNotEmpty() }.distinct().sorted().joinToString("|")
+    addresses.map { recipientKey(it.raw) }.filter { it.isNotEmpty() }.distinct().sorted().joinToString("|")
+
+/** Identity comparison uses PL for local nine-digit numbers; the destination is preserved. */
+fun recipientKey(value: String, region: String = "PL"): String {
+    val address = Address(value)
+    return if (address.kind == Address.Kind.Phone && region == "PL" && address.normalized.matches(Regex("[0-9]{9}"))) "+48${address.normalized}" else address.normalized
+}

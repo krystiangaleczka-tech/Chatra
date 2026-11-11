@@ -434,6 +434,24 @@ class SystemIntegrationTest {
         assertTrue(queue.operations().first().first { it.id == id }.deliveryFailed)
     }
 
+    @Test fun localAndInternationalRecipientShareOneChildAndNeverRevealOtherRecipients() = runBlocking {
+        val first=("+488"+System.nanoTime().toString().takeLast(8)).also { numbers += it; numbers += it.drop(3) }
+        val recipients=listOf(first,number(),number())
+        val calls=mutableListOf<String>()
+        val queue=queue(FakeTime()) { _,address,_,_,_ -> calls += address }
+        val id=queue.enqueue(draft("CH029 deduplikacja",first).copy(
+            recipients=(recipients+first.drop(3)).map(::Address),recipientMode=RecipientMode.SeparateSms),0)
+        queue.dispatch(id.value)
+        assertEquals(recipients.toSet(),calls.toSet())
+        assertEquals(3,calls.size)
+        val children=db.dao().recipients(id.value)
+        assertEquals(3,children.size)
+        assertEquals(3,children.map {it.conversationId}.distinct().size)
+        children.forEach { child ->
+            assertEquals(listOf(child.address),addresses(db.dao().conversation(child.conversationId)!!.participants).map {it.raw})
+        }
+    }
+
     @Test fun sentProofWinsEvenWhenTransportThrowsAfterPartialCallback() = runBlocking {
         lateinit var queue: PersistentSmsQueue
         queue = queue { _, _, _, _, _ ->

@@ -340,6 +340,8 @@ Odbiór: powrót i obrót nie gubią szkicu; skuteczny cancel nie wysyła. Weryf
 
 ### CH029 Podłączyć kontakty i wysyłkę do wielu osób
 
+**Wynik 11.11.2026:** [kontakty, deduplikacja i wielu odbiorców](CH029_Kontakty_i_wielu_odbiorcow.md). Wyodrębniony zakres CH029; dowody w raporcie.
+
 **P1 · Android domena · 2–3 osobodni · zależności CH017 CH022 CH025 CH026 CH028**
 
 Wykonanie: wyszukiwanie kontaktów, wybór kilku numerów, normalizacja, deduplikacja, sugestie i ręczny numer. Osobne SMS jako domyślny tryb, nadrzędna operacja i wyniki odbiorców. Grupowy MMS wymaga jawnego trybu. Zablokować nieprawidłowe adresy i alfanumerycznych nadawców wyjściowych.

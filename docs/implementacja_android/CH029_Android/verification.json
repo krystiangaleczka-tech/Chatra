@@ -1,0 +1,74 @@
+{
+  "task": "CH029",
+  "date_utc": "2026-11-11T10:35:31.729511+00:00",
+  "base": {
+    "branch": "android/ch027-ch028",
+    "commit": "e80600a627c95696b75847c739f383138bab8879"
+  },
+  "branch": "android/ch029",
+  "build": {
+    "demo": "passed",
+    "full": "passed",
+    "android_test_apk": "passed",
+    "log": "build-and-lint.log"
+  },
+  "jvm": {
+    "tests": 76,
+    "passed": 76,
+    "failures": 0,
+    "skipped": 0,
+    "details": "jvm-results.json"
+  },
+  "lint": {
+    "errors": 0,
+    "details": "lint-results.json",
+    "demo_warnings": 8,
+    "full_warnings": 21
+  },
+  "android": {
+    "api": 31,
+    "hardware": "ranchu, software emulation",
+    "default_sms_role": true,
+    "virtual_subscriptions": 1,
+    "unique_tests": 3,
+    "unique_passed": 3,
+    "unresolved_failures": 0,
+    "unresolved_skips": 0,
+    "coverage": [
+      "Contacts Provider changes and multiple numbers",
+      "permission-denied gate clears names",
+      "local/+48 recipient deduplication and distinct conversations",
+      "three recipients with partial success; retry only definitely failed recipient"
+    ],
+    "runs": [
+      {
+        "log": "contacts-and-startup-probe.log",
+        "passed": 1,
+        "skipped": 2,
+        "failed": 0
+      },
+      {
+        "log": "recipients-startup-probe.log",
+        "passed": 0,
+        "skipped": 2,
+        "failed": 0
+      },
+      {
+        "log": "recipients-instrumentation.log",
+        "passed": 2,
+        "skipped": 0,
+        "failed": 0
+      }
+    ],
+    "startup_note": "The first two probes skipped recipient tests before the virtual subscription became available to the app. Both tests passed in the final run. The contact test passed in the first run.",
+    "transport": "SmsTransport test double; no real recipient messages sent"
+  },
+  "artifacts": {
+    "apks": "apk-sha256.json",
+    "source": "source-fingerprint.txt"
+  },
+  "scope_limits": [
+    "MMS and attachment import belong to CH032/CH031 and remain unavailable in full flavor.",
+    "Carrier and physical dual-SIM acceptance belongs to later telephony QA."
+  ]
+}

@@ -93,6 +93,7 @@ class ScreenModelsTest {
             model.send { fail("empty draft sent") }; runCurrent()
             assertEquals(before, c.sendQueue.operations().first().size)
             model.add(Fixture.mama); model.add(Fixture.mama.copy(address = Address("+48600100200")))
+            model.add(Fixture.mama.copy(address = Address("600 100 200")))
             model.text("Treść"); runCurrent()
             assertEquals(1, model.state.value.recipients.size)
             assertTrue(model.state.value.canSend)

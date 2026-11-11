@@ -9,7 +9,7 @@ fun isOutgoingNumber(value: String): Boolean {
 /** Jedna operacja na odbiorcę osobnego SMS; świadomie wybrany MMS to jedna operacja grupowa. */
 fun Draft.newMessagePlan(): List<Draft> {
     if (!isSendable || recipients.any { !isOutgoingNumber(it.raw) }) return emptyList()
-    val unique = recipients.distinctBy { it.normalized }
+    val unique = recipients.distinctBy { recipientKey(it.raw) }
     return if (recipientMode == RecipientMode.GroupMms && unique.size > 1) {
         listOf(copy(recipients = unique))
     } else unique.map { copy(id = DraftId.new(), conversationId = null, recipients = listOf(it), recipientMode = RecipientMode.Single) }
