@@ -55,21 +55,33 @@ class DatabaseTest {
         } finally { db.close() }
     }
 
-    @Test fun migrationOneToTwoPreservesExistingConversationPreferences() = runBlocking {
+    @Test fun migrationOneToThreePreservesExistingConversationPreferences() = runBlocking {
         val name = "migration-test.db"
         context.deleteDatabase(name)
         val legacy = SQLiteDatabase.openOrCreateDatabase(context.getDatabasePath(name).apply { parentFile!!.mkdirs() }, null)
         val schema = InstrumentationRegistry.getInstrumentation().context.assets.open("migration-v1.sql").bufferedReader().use { it.readText() }
         schema.lineSequence().filterNot { it.startsWith("--") }.joinToString("\n").split(';').filter { it.isNotBlank() }.forEach { legacy.execSQL(it) }
         legacy.execSQL("INSERT INTO ConversationMeta(id,threadId,participantsKey,participants,pinned,trashed) VALUES ('thread',1,'123','[\"123\"]',1,0)")
+        legacy.execSQL("INSERT INTO OutgoingOperation(id,draftKey,conversationId,recipients,body,mode,subscriptionId,subscriptionLabel,state,version,createdAt,undoUntil,bootCount) VALUES ('old','old-draft',NULL,'[\"123\"]','legacy','Single',1,'SIM','PENDING_UNDO',0,1,2,1)")
+        legacy.execSQL("INSERT INTO SavedDraft(id,conversationId,payload) VALUES ('draft',NULL,'legacy-payload')")
+        legacy.execSQL("INSERT INTO OutgoingOperation(id,draftKey,conversationId,recipients,body,mode,subscriptionId,subscriptionLabel,state,version,createdAt,undoUntil,bootCount) VALUES ('failure','failure-draft','thread','[\"123\"]','uncertain','Single',1,'SIM','FAILED',0,1,2,1)")
+        legacy.execSQL("INSERT INTO OutgoingRecipient(operationId,address,conversationId,state,providerId) VALUES ('failure','123','thread','FAILED',42)")
+        legacy.execSQL("INSERT INTO OutgoingAttempt(id,operationId,address,subscriptionId,subscriptionLabel,startedAt,callbackToken,partCount) VALUES ('attempt','failure','123',1,'SIM',1,'token',1)")
+        legacy.execSQL("INSERT INTO OutgoingPart(attemptId,partIndex,sent,delivery,resultCode) VALUES ('attempt',0,'Failed','Unknown',1)")
         legacy.version = 1
         legacy.close()
-        val db = Room.databaseBuilder(context, ChatraDatabase::class.java, name).addMigrations(ChatraDatabase.MIGRATION_1_2).build()
+        val db = Room.databaseBuilder(context, ChatraDatabase::class.java, name).addMigrations(ChatraDatabase.MIGRATION_1_2, ChatraDatabase.MIGRATION_2_3).build()
         try {
             val row = db.dao().conversation("thread")!!
             assertTrue(row.pinned)
             assertFalse(row.muted)
             assertFalse(row.manualUnread)
+            assertEquals("legacy", db.dao().operation("old")!!.body)
+            assertNull(db.dao().operation("old")!!.undoElapsed)
+            assertEquals("legacy-payload", db.dao().savedDraft("draft")!!.payload)
+            assertEquals("DISPATCH_UNCERTAIN", db.dao().operation("failure")!!.state)
+            assertEquals("Unknown", db.dao().parts("attempt").single().sent)
+            assertEquals(42L, db.dao().attempt("attempt")!!.providerId)
         } finally { db.close(); context.deleteDatabase(name) }
     }
 }

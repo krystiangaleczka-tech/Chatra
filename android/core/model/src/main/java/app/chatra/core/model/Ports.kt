@@ -37,7 +37,11 @@ sealed interface HistoryStatus {
 }
 
 interface DraftRepository {
+    val durable: Boolean get() = false
     fun draft(conversationId: ConversationId): Flow<Draft?>
+    fun all(): Flow<List<Draft>> = kotlinx.coroutines.flow.flowOf(emptyList())
+    suspend fun find(id: DraftId): Draft? = all().first().firstOrNull { it.id == id }
+    suspend fun isClosed(id: DraftId): Boolean = false
     suspend fun save(draft: Draft)
     suspend fun delete(id: DraftId)
 }
@@ -58,6 +62,9 @@ interface SendQueue {
     suspend fun enqueue(draft: Draft, undoSeconds: Int): OperationId
     suspend fun cancel(id: OperationId): Boolean
     suspend fun retry(id: OperationId): Boolean
+    suspend fun retry(id: OperationId, sim: SubscriptionId): Boolean = retry(id)
+    suspend fun reconcile(id: OperationId) {}
+    suspend fun copyToDraft(id: OperationId): Draft? = null
 }
 
 interface ScheduleRepository {

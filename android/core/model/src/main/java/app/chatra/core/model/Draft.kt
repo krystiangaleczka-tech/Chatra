@@ -17,6 +17,9 @@ data class Draft(
     /** Łączny rozmiar załączników (opis i limit transportu). */
     val attachmentBytes: Long = 0,
     val subscriptionLabel: String? = null,
+    val revision: Long = 0,
+    val recipientNames: List<String> = emptyList(),
+    val recipientInput: String = "",
 ) {
     /** Pusty tekst bez załączników nie wysyła. */
     val isSendable: Boolean get() = (text.isNotBlank() || attachmentIds.isNotEmpty()) && recipients.isNotEmpty()

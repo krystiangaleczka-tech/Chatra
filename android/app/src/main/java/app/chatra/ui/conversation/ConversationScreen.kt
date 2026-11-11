@@ -28,6 +28,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.layout.onSizeChanged
@@ -99,13 +100,16 @@ fun ConversationScreen(
     val chrome = LocalChrome.current
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val density = LocalDensity.current.density
+    val nativeDrafts = !LocalContainer.current.isDemo
+    val savedDrafts by model.savedDrafts.collectAsStateWithLifecycle()
+    var draftPicker by remember { mutableStateOf(false) }
     var composerHeight by remember { mutableIntStateOf(0) }
     val top = chrome.top(50.dp) + (ContentTop - 50).dp
     val bottom = maxOf(chrome.bottom(26.dp) + (ContentBottom - 26).dp, chrome.bottom(26.dp) + composerHeight.dp + 12.dp)
     ChatraScreen(
         Backgrounds.Conversation,
         floating = {
-            Header(state, onBack, onDetails, Modifier.align(Alignment.TopStart).padding(top = chrome.top(50.dp), start = 12.dp, end = 12.dp))
+            Header(state, { model.leave(onBack) }, onDetails, Modifier.align(Alignment.TopStart).padding(top = chrome.top(50.dp), start = 12.dp, end = 12.dp))
             Composer(state, model, onExtras, onPickSim, Modifier.align(Alignment.BottomStart).padding(start = 12.dp, end = 12.dp, bottom = chrome.bottom(26.dp)).onSizeChanged { composerHeight = (it.height / density).toInt() })
         },
     ) {
@@ -138,8 +142,14 @@ fun ConversationScreen(
             contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 14.dp),
         ) {
             items(rows.asReversed(), key = { it.key }) { row -> RowContent(row, state, model) }
+            if (nativeDrafts) item("drafts") { app.chatra.ui.common.TextAction("Szkice", { draftPicker = true }) }
             if (state.hasOlder) item("older") { app.chatra.ui.common.TextAction("Wczytaj wcześniejsze wiadomości", model::loadOlder) }
         }
+    }
+    if (draftPicker) {
+        val choices = savedDrafts.filter { it.conversationId == state.summary?.id && (it.text.isNotEmpty() || it.attachmentIds.isNotEmpty()) }
+        app.chatra.ui.common.ChoiceDialog("Szkice rozmowy", choices.map { it.text.take(80) }.ifEmpty { listOf("Brak zapisanych szkiców") },
+            { index -> choices.getOrNull(index)?.let(model::restore) }, { draftPicker = false })
     }
 }
 
@@ -177,7 +187,7 @@ private fun RowContent(row: Row, state: ConversationState, model: ConversationVi
         is Row.Bubble -> Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             MessageBubble(row.message)
             row.message.attachments.forEach { app.chatra.ui.common.ProviderThumbnail(it) }
-            if (row.showStatus || row.message.status in setOf(DeliveryStatus.Failed, DeliveryStatus.PendingUndo)) {
+            if (row.showStatus || row.message.status in setOf(DeliveryStatus.Failed, DeliveryStatus.PendingUndo, DeliveryStatus.Uncertain, DeliveryStatus.PartiallySent)) {
                 Status(row.message, state, model)
             }
         }
@@ -282,6 +292,10 @@ private fun Modifier.drawGradient(angle: Float, a: Color, b: Color) = drawBehind
 @Composable
 private fun Status(m: Message, state: ConversationState, model: ConversationViewModel) {
     val sim = state.sims.firstOrNull { it.id == m.subscriptionId }?.shortLabel
+    val operation = m.operationId?.let { state.operations[it] }
+    var retryPicker by remember { mutableStateOf(false) }
+    var copyWarning by remember { mutableStateOf(false) }
+    val demo = LocalContainer.current.isDemo
     val clock = LocalClock.current
     val zone = clock.zone()
     val tertiary = chatraText(12f, color = ChatraColors.TextTertiary)
@@ -293,22 +307,35 @@ private fun Status(m: Message, state: ConversationState, model: ConversationView
                     Modifier.weight(1f, fill = false),
                     style = chatraText(12f, 600, 16f, color = ChatraColors.ErrorText).copy(textAlign = TextAlign.End),
                 )
-                SmallPill("Ponów", ChatraColors.ErrorText, Color.White, ChatraColors.white(0.9f)) { m.operationId?.let(model::retry) }
+                if (demo || operation?.canRetry == true) SmallPill("Ponów", ChatraColors.ErrorText, Color.White, ChatraColors.white(0.9f)) {
+                    if (demo) m.operationId?.let { model.retry(it) } else retryPicker = true
+                } else SmallPill("Sprawdź", ChatraColors.Link, ChatraColors.white(.85f), null) { m.operationId?.let(model::reconcile) }
             }
             DeliveryStatus.PendingUndo -> {
                 val op = m.operationId?.let { state.operations[it] }
                 var now by remember { mutableLongStateOf(clock.now().toEpochMilli()) }
+                var elapsed by remember { mutableLongStateOf(clock.elapsedRealtimeMillis()) }
                 LaunchedEffect(op?.undoDeadline) {
                     while (true) {
-                        now = clock.now().toEpochMilli()
+                        now = clock.now().toEpochMilli(); elapsed = clock.elapsedRealtimeMillis()
                         kotlinx.coroutines.delay(250)
                     }
                 }
-                val left = op?.undoDeadline?.let { ceil((it.toEpochMilli() - now) / 1000.0).toInt().coerceAtLeast(0) } ?: 0
+                val left = op?.undoElapsedDeadline?.let { ceil((it - elapsed) / 1000.0).toInt().coerceAtLeast(0) } ?: op?.undoDeadline?.let { ceil((it.toEpochMilli() - now) / 1000.0).toInt().coerceAtLeast(0) } ?: 0
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
                     Icon(ChatraIcons.Clock, 14.dp, ChatraColors.TextTertiary, 2.2f)
                     BasicText("Wyślę za $left s", style = tertiary)
                     SmallPill("Anuluj", ChatraColors.Link, ChatraColors.white(0.85f), null) { m.operationId?.let(model::cancel) }
+                }
+            }
+            DeliveryStatus.Uncertain, DeliveryStatus.PartiallySent -> Column(Modifier.widthIn(max = 340.dp), horizontalAlignment = Alignment.End) {
+                BasicText(if (operation?.state == app.chatra.core.model.SendState.MISSED_NEEDS_DECISION) "Wysyłka wstrzymana po restarcie. Wybierz dalsze działanie."
+                    else if (m.status == DeliveryStatus.PartiallySent) "Wysłano tylko część wiadomości. Ponowna wysyłka może ją powielić."
+                    else "Nie wiadomo, czy operator przyjął wiadomość. Ponowna wysyłka może ją powielić.", style = tertiary)
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    SmallPill("Sprawdź status", ChatraColors.Link, ChatraColors.white(.85f), null) { m.operationId?.let(model::reconcile) }
+                    if (operation?.canRetry == true) SmallPill("Ponów nieudane", ChatraColors.Link, ChatraColors.white(.85f), null) { retryPicker = true }
+                    else SmallPill("Kopia do szkicu", ChatraColors.Link, ChatraColors.white(.85f), null) { copyWarning = true }
                 }
             }
             else -> {
@@ -321,10 +348,17 @@ private fun Status(m: Message, state: ConversationState, model: ConversationView
                     m.status == DeliveryStatus.Uncertain -> "Nie wiadomo, czy operator przyjął wiadomość"
                     else -> null
                 }
-                if (text != null) BasicText(text, Modifier.padding(end = 6.dp), style = tertiary)
+                Column(horizontalAlignment = Alignment.End) {
+                    if (text != null) BasicText(text, Modifier.padding(end = 6.dp), style = tertiary)
+                    if (operation?.deliveryFailed == true) BasicText("Operator zgłosił błąd doręczenia. SMS został wysłany.", style = tertiary)
+                    if (!demo && m.status == DeliveryStatus.Sending) SmallPill("Sprawdź status", ChatraColors.Link, ChatraColors.white(.85f), null) { m.operationId?.let(model::reconcile) }
+                }
             }
         }
     }
+    if (retryPicker) app.chatra.ui.common.SimPicker(state.sims, m.subscriptionId, { selected -> m.operationId?.let { model.retry(it, selected) } }, { retryPicker = false })
+    if (copyWarning) app.chatra.ui.common.ChoiceDialog("Kopia może spowodować ponowne doręczenie tej samej wiadomości", listOf("Zapisz kopię do szkicu"),
+        { m.operationId?.let(model::copyToDraft) }, { copyWarning = false })
 }
 
 @Composable

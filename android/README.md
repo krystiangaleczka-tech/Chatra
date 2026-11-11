@@ -80,3 +80,6 @@ Pro ma własny stan braku oferty; `[CENA]` występuje tylko w ramce fixture.
 [Zakres i weryfikacja](../docs/implementacja_android/CH019_CH021_Wdrozenie_i_weryfikacja.md).
 [18 projektów i kontrakty stanów CH020](../docs/implementacja_android/CH020_Katalog_projektow_i_stanow.md)
 pozostają do akceptacji G09. Katalog dostępny z menu Skrzynki i Pomocy.
+
+CH027–CH028 rozszerzają kolejkę o bezpieczne ponawianie, rekoncyliację, trwałe szkice i atomowe anulowanie.
+[Zachowanie, testy i granice odbioru](../docs/implementacja_android/CH027_CH028_Wdrozenie_i_weryfikacja.md).

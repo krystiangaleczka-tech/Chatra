@@ -495,7 +495,9 @@
       "dependencies": [
         "CH026"
       ],
-      "description": "Wykonanie: maszyna stanów, agregacja części, callbacki poza kolejnością i deduplikacja. Retry tylko jawnie dla pewnej porażki, nigdy automatycznie po niepewnym crashu. Dodać DISPATCH_UNCERTAIN i decyzję użytkownika. Rekoncyliować z providerem, jeśli istnieją porównywalne dane, bez zgadywania sukcesu.\n\nOdbiór: DELIVERED nie cofa się do SENT, brak duplikatów przy ponownym callbacku. Weryfikacja: awaria tuż przed/po wywołaniu API, jedna część nieudana, brak raportu doręczenia i retry po zmianie SIM."
+      "description": "Wykonanie: maszyna stanów, agregacja części, callbacki poza kolejnością i deduplikacja. Retry tylko jawnie dla pewnej porażki, nigdy automatycznie po niepewnym crashu. Dodać DISPATCH_UNCERTAIN i decyzję użytkownika. Rekoncyliować z providerem, jeśli istnieją porównywalne dane, bez zgadywania sukcesu.\n\nOdbiór: DELIVERED nie cofa się do SENT, brak duplikatów przy ponownym callbacku. Weryfikacja: awaria tuż przed/po wywołaniu API, jedna część nieudana, brak raportu doręczenia i retry po zmianie SIM.",
+      "status": "implemented_emulator_verified_physical_acceptance_pending",
+      "evidence": "CH027_CH028_Wdrozenie_i_weryfikacja.md"
     },
     {
       "id": "CH028",
@@ -511,7 +513,9 @@
         "CH026",
         "CH027"
       ],
-      "description": "Wykonanie: zapis szkicu tekst/odbiorcy/pliki/SIM, trwały snapshot operacji PENDING_UNDO. Odliczanie od deadline, atomowy cancel przeciw dispatch, przywrócenie szkicu po cancel. Zdefiniować bezpieczne zachowanie po zabiciu procesu i restarcie. Nigdy nie wywoływać transportu przed końcem okna.\n\nOdbiór: powrót i obrót nie gubią szkicu; skuteczny cancel nie wysyła. Weryfikacja: 2,9 s, 3,0 s i 3,1 s, wielokrotny klik, brak aktywnego UI i wyścig cancel/send."
+      "description": "Wykonanie: zapis szkicu tekst/odbiorcy/pliki/SIM, trwały snapshot operacji PENDING_UNDO. Odliczanie od deadline, atomowy cancel przeciw dispatch, przywrócenie szkicu po cancel. Zdefiniować bezpieczne zachowanie po zabiciu procesu i restarcie. Nigdy nie wywoływać transportu przed końcem okna.\n\nOdbiór: powrót i obrót nie gubią szkicu; skuteczny cancel nie wysyła. Weryfikacja: 2,9 s, 3,0 s i 3,1 s, wielokrotny klik, brak aktywnego UI i wyścig cancel/send.",
+      "status": "implemented_emulator_verified_physical_acceptance_pending",
+      "evidence": "CH027_CH028_Wdrozenie_i_weryfikacja.md"
     },
     {
       "id": "CH029",

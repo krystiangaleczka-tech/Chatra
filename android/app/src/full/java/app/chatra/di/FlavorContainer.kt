@@ -80,6 +80,7 @@ fun createContainer(app: Application, referenceFrame: Boolean, roleScenario: Str
         override val smsQueue = queue
         override val smsText = smsText
         override val conversations = conversations
+        override val draftWriteScope = scope
         override val drafts = drafts
         override val sims = sims
         override val contacts = contacts

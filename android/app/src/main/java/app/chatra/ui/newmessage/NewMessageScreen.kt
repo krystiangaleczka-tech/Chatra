@@ -38,6 +38,8 @@ fun NewMessageScreen(model: NewMessageViewModel, onCancel: () -> Unit, onSent: (
     val state by model.state.collectAsStateWithLifecycle()
     val chrome = LocalChrome.current
     val keyboard = LocalSoftwareKeyboardController.current
+    val savedDrafts by model.drafts.collectAsStateWithLifecycle()
+    var draftPicker by remember { mutableStateOf(false) }
     var simPicker by remember { mutableStateOf(false) }
     ChatraScreen(Backgrounds.NewMessage, floating = {
         Column(Modifier.align(Alignment.BottomStart).fillMaxWidth().padding(start = 12.dp, end = 12.dp, bottom = chrome.bottom(26.dp)), verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -56,7 +58,7 @@ fun NewMessageScreen(model: NewMessageViewModel, onCancel: () -> Unit, onSent: (
             }
             GlassSurface(GlassStyles.Input.copy(from = ChatraColors.white(.88f), to = ChatraColors.white(.62f)), RoundedCornerShape(24.dp), Modifier.fillMaxWidth(), shadows = listOf(Shadows.Control)) {
                 Row(Modifier.fillMaxWidth().heightIn(min = 50.dp).padding(start = 16.dp, end = 4.dp, top = 4.dp, bottom = 4.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    BasicTextField(state.text, model::text, Modifier.weight(1f).heightIn(max = 120.dp).semantics { contentDescription = "Treść wiadomości" }, textStyle = chatraText(16f), maxLines = 5, decorationBox = { field -> Box { if (state.text.isEmpty()) BasicText("Wiadomość SMS", style = chatraText(16f, color = ChatraColors.TextSecondary)); field() } })
+                    BasicTextField(state.text, model::text, Modifier.weight(1f).heightIn(max = 120.dp).semantics { contentDescription = "Treść wiadomości" }, readOnly = state.busy, textStyle = chatraText(16f), maxLines = 5, decorationBox = { field -> Box { if (state.text.isEmpty()) BasicText("Wiadomość SMS", style = chatraText(16f, color = ChatraColors.TextSecondary)); field() } })
                     Box(Modifier.size(40.dp).clip(CircleShape).background(if (state.canSend) ChatraColors.Accent else ChatraColors.ink(.12f)).semantics { role = Role.Button; contentDescription = "Wyślij"; if (!state.canSend) disabled() }.pressable({ keyboard?.hide(); model.send(onSent) }, state.canSend), contentAlignment = Alignment.Center) { Icon(ChatraIcons.ArrowUp, 20.dp, if (state.canSend) Color.White else ChatraColors.TextSecondary, 2.4f) }
                 }
             }
@@ -65,9 +67,9 @@ fun NewMessageScreen(model: NewMessageViewModel, onCancel: () -> Unit, onSent: (
         Column(Modifier.fillMaxSize().padding(bottom = chrome.bottom(26.dp) + 120.dp).verticalScroll(rememberScrollState()).padding(start = 16.dp, end = 16.dp, top = chrome.top(20.dp)), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             SheetHandle()
             Row(Modifier.fillMaxWidth().padding(top = 16.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
-                TextAction("Anuluj", { keyboard?.hide(); onCancel() }, Modifier.width(70.dp))
+                TextAction("Anuluj", { keyboard?.hide(); model.leave(onCancel) }, Modifier.width(70.dp))
                 BasicText("Nowa wiadomość", Modifier.semantics { heading() }, style = chatraText(17f, 700))
-                Spacer(Modifier.width(70.dp))
+                if (!LocalContainer.current.isDemo) TextAction("Szkice", { draftPicker = true }, Modifier.width(70.dp), enabled = !state.busy) else Spacer(Modifier.width(70.dp))
             }
             GlassSurface(GlassStyles.Input.copy(from = ChatraColors.white(.88f), to = ChatraColors.white(.62f)), RoundedCornerShape(22.dp), Modifier.fillMaxWidth(), shadows = listOf(Shadows.Search)) {
                 FlowRow(Modifier.padding(start = 14.dp + cssBorder(), end = 10.dp + cssBorder(), top = 8.dp + cssBorder(), bottom = 8.dp + cssBorder()), horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(6.dp), itemVerticalAlignment = Alignment.CenterVertically) {
@@ -78,7 +80,7 @@ fun NewMessageScreen(model: NewMessageViewModel, onCancel: () -> Unit, onSent: (
                             Box(Modifier.size(24.dp).semantics { role = Role.Button; contentDescription = "Usuń: ${p.label}" }.pressable({ model.remove(i) }), contentAlignment = Alignment.Center) { Icon(ChatraIcons.Close, 12.dp, Color(0xFF0050C8), 2.4f) }
                         }
                     }
-                    BasicTextField(state.input, model::input, Modifier.widthIn(min = 100.dp).weight(1f).heightIn(min = 30.dp).semantics { contentDescription = "Dodaj odbiorcę" }, singleLine = true, textStyle = chatraText(16f), keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Done), keyboardActions = KeyboardActions(onDone = { model.addInput() }), decorationBox = { field -> Box(contentAlignment = Alignment.CenterStart) { if (state.input.isEmpty()) BasicText("Imię lub numer", style = chatraText(16f, color = ChatraColors.TextSecondary)); field() } })
+                    BasicTextField(state.input, model::input, Modifier.widthIn(min = 100.dp).weight(1f).heightIn(min = 30.dp).semantics { contentDescription = "Dodaj odbiorcę" }, readOnly = state.busy, singleLine = true, textStyle = chatraText(16f), keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Done), keyboardActions = KeyboardActions(onDone = { model.addInput() }), decorationBox = { field -> Box(contentAlignment = Alignment.CenterStart) { if (state.input.isEmpty()) BasicText("Imię lub numer", style = chatraText(16f, color = ChatraColors.TextSecondary)); field() } })
                 }
             }
             if (state.input.isNotBlank()) TextAction("Dodaj numer", model::addInput)
@@ -111,6 +113,11 @@ fun NewMessageScreen(model: NewMessageViewModel, onCancel: () -> Unit, onSent: (
                 }
             }
         }
+    }
+    if (draftPicker) {
+        val choices = savedDrafts.filter { it.conversationId == null && (it.text.isNotEmpty() || it.recipients.isNotEmpty() || it.recipientInput.isNotEmpty()) }
+        ChoiceDialog("Szkice", choices.map { "${it.recipients.joinToString { a -> a.raw }} · ${it.text.take(60)}" }.ifEmpty { listOf("Brak zapisanych szkiców") },
+            { index -> choices.getOrNull(index)?.let(model::restore) }, { draftPicker = false })
     }
     if (simPicker) app.chatra.ui.common.SimPicker(state.sims, (state.sim as? SimChoice.Ready)?.sim?.id, model::sim, { simPicker = false })
 }

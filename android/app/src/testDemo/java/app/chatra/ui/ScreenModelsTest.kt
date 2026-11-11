@@ -16,11 +16,11 @@ import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ScreenModelsTest {
-    private fun container(scope: CoroutineScope, queueOverride: ((InMemoryChatra) -> SendQueue)? = null): AppContainer {
+    private fun container(scope: CoroutineScope, draftsOverride: DraftRepository? = null, queueOverride: ((InMemoryChatra) -> SendQueue)? = null): AppContainer {
         val repo = InMemoryChatra(FixedClock(), scope, frozen = true)
         return object : AppContainer {
             override val conversations = repo
-            override val drafts = repo
+            override val drafts = draftsOverride ?: repo
             override val sims = repo
             override val contacts = repo
             override val sendQueue = queueOverride?.invoke(repo) ?: repo
@@ -101,6 +101,80 @@ class ScreenModelsTest {
             assertNotNull(model.state.value.error)
             model.input(""); runCurrent()
             assertTrue(model.state.value.canSend)
+        } finally { Dispatchers.resetMain() }
+    }
+
+    private class DurableDrafts : DraftRepository {
+        private val rows = MutableStateFlow<List<Draft>>(emptyList())
+        override val durable = true
+        override fun all(): Flow<List<Draft>> = rows
+        override fun draft(conversationId: ConversationId) = rows.map { list -> list.firstOrNull { it.conversationId == conversationId } }
+        override suspend fun save(draft: Draft) {
+            val old = rows.value.firstOrNull { it.id == draft.id }
+            if (old == null || old.revision < draft.revision) rows.value = listOf(draft) + rows.value.filter { it.id != draft.id }
+        }
+        override suspend fun delete(id: DraftId) { rows.value = rows.value.filter { it.id != id } }
+    }
+    @Test fun `fresh editor restores durable recipients names text unfinished input and SIM without saved state`() = runTest {
+        Dispatchers.setMain(UnconfinedTestDispatcher(testScheduler))
+        try {
+            val drafts = DurableDrafts()
+            val c = container(backgroundScope, draftsOverride = drafts)
+            val first = NewMessageViewModel(SavedStateHandle(), c, emptyList())
+            runCurrent()
+            first.add(Fixture.mama); first.text("Trwały tekst"); first.input("niedokończony numer"); first.sim(Fixture.SIM2.id)
+            runCurrent()
+            val restored = NewMessageViewModel(SavedStateHandle(), c, emptyList())
+            runCurrent()
+            assertEquals("Trwały tekst", restored.state.value.text)
+            assertEquals("niedokończony numer", restored.state.value.input)
+            assertEquals(listOf("Mama"), restored.state.value.recipients.map { it.label })
+            assertEquals(Fixture.SIM2.id, (restored.state.value.sim as SimChoice.Ready).sim.id)
+            assertFalse(restored.state.value.canSend)
+        } finally { Dispatchers.resetMain() }
+    }
+    @Test fun `accepting a durable snapshot blocks duplicate clicks and edits until enqueue completes`() = runTest {
+        Dispatchers.setMain(UnconfinedTestDispatcher(testScheduler))
+        try {
+            val drafts = DurableDrafts()
+            val release = CompletableDeferred<Unit>()
+            var calls = 0
+            val c = container(backgroundScope, queueOverride = { repo -> object : SendQueue by repo {
+                override suspend fun enqueue(draft: Draft, undoSeconds: Int): OperationId {
+                    calls++; release.await(); return repo.enqueue(draft, undoSeconds)
+                }
+            } }, draftsOverride = drafts)
+            val model = NewMessageViewModel(SavedStateHandle(), c, emptyList()); runCurrent()
+            model.add(Fixture.mama); model.text("Migawka"); runCurrent()
+            model.send {}; model.send {}; model.text("Zmiana podczas zapisu"); model.remove(0); runCurrent()
+            assertEquals(1, calls); assertEquals("Migawka", model.state.value.text)
+            release.complete(Unit); runCurrent()
+            assertEquals("", model.state.value.text)
+        } finally { Dispatchers.resetMain() }
+    }
+
+    @Test fun `cancel into an empty conversation editor remains restored after a fresh view model`() = runTest {
+        Dispatchers.setMain(UnconfinedTestDispatcher(testScheduler))
+        try {
+            val drafts = DurableDrafts()
+            val conversation = Fixture.Ids.Mama
+            val restored = Draft(DraftId.new(), conversation, listOf(Fixture.mama.address), "Przywrócone po anulowaniu", RecipientMode.Single,
+                emptyList(), Fixture.SIM1.id, FixedClock().now(), subscriptionLabel = Fixture.SIM1.label)
+            val c = container(backgroundScope, draftsOverride = drafts, queueOverride = { repo -> object : SendQueue by repo {
+                override suspend fun cancel(id: OperationId): Boolean { drafts.save(restored); return true }
+            } })
+            fun editor() = app.chatra.ui.conversation.ConversationViewModel(conversation, c.conversations, drafts, c.sims, c.sendQueue,
+                c.schedules, c.sending.value, c.clock, draftWriteScope = backgroundScope)
+            val first = editor()
+            val one = backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { first.state.collect() }
+            runCurrent(); first.cancel(OperationId("pending")); runCurrent()
+            assertEquals(restored.text, first.state.value.text)
+            assertEquals(1, drafts.all().first().size)
+            val fresh = editor()
+            val two = backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { fresh.state.collect() }
+            runCurrent(); assertEquals(restored.text, fresh.state.value.text)
+            assertEquals(Fixture.SIM1.id, (fresh.state.value.sim as SimChoice.Ready).sim.id)
+            one.cancel(); two.cancel(); advanceTimeBy(5001); runCurrent()
         } finally { Dispatchers.resetMain() }
     }
 

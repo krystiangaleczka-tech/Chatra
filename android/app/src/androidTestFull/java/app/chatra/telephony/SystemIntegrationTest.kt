@@ -67,7 +67,7 @@ class SystemIntegrationTest {
         files.forEach { it.delete() }
         db.close()
     }
-    private fun queue(transport: SmsTransport): PersistentSmsQueue {
+    private fun queue(time: SmsQueueTime? = null, transport: SmsTransport): PersistentSmsQueue {
         val role = object : SmsRoleGate {
             override fun isHeld() = held && platform.isHeld()
             override suspend fun capability() = SmsCapability.Available
@@ -75,7 +75,8 @@ class SystemIntegrationTest {
             override fun openSystemSettings() {}
         }
         val sims = object : SimRepository { override fun cards() = flowOf(listOf(sim)) }
-        return PersistentSmsQueue(context, db, role, history, sims, PlatformSmsText(context), RoomDrafts(db), transport, work)
+        return if (time == null) PersistentSmsQueue(context, db, role, history, sims, PlatformSmsText(context), RoomDrafts(db), transport, work)
+        else PersistentSmsQueue(context, db, role, history, sims, PlatformSmsText(context), RoomDrafts(db), transport, work, time)
     }
     private fun draft(body: String, address: String) = Draft(DraftId.new(), null, listOf(Address(address)), body, RecipientMode.Single, emptyList(), sim.id, Instant.now(), subscriptionLabel = sim.label)
     private fun status(attempt: OutgoingAttempt, part: Int, kind: String = "sent") = Intent("app.chatra.SMS_STATUS", Uri.parse("chatra-callback://sms/${attempt.id}/$part/$kind/${attempt.callbackToken}"))
@@ -240,6 +241,213 @@ class SystemIntegrationTest {
         context.contentResolver.update(textPart, ContentValues().apply { put(Telephony.Mms.Part.TEXT, "Zmieniona treść MMS") }, null, null)
         val updated = withTimeout(15000) { history.messages(summary.id).first { it.any { m -> m.body == "Zmieniona treść MMS" } }.single { it.ref == message.ref } }
         assertEquals(message.attachments.single().id, updated.attachments.single().id)
+    }
+
+    private class FakeTime(var tick: Long = 100000, var epoch: Long = System.currentTimeMillis(), var bootId: Int = 8) : SmsQueueTime {
+        override fun elapsed() = tick
+        override fun wall() = epoch
+        override fun boot() = bootId
+    }
+
+    @Test fun undoDeadlineIsEnforcedAtTransportAt2900Exactly3000And3100EvenAfterWallClockChange() = runBlocking {
+        val time = FakeTime()
+        val calls = mutableListOf<String>()
+        val queue = queue(time) { _, address, _, _, _ -> calls += address }
+        for (offset in listOf(2900L, 3000L, 3100L)) {
+            val address = number()
+            val start = time.tick
+            val op = queue.enqueue(draft("Granica $offset", address), 3)
+            time.tick = start + offset; time.epoch -= 86400000
+            queue.dispatch(op.value)
+            assertEquals("offset=$offset", if (offset < 3000) 0 else 1, calls.count { it == address })
+            if (offset < 3000) assertTrue(queue.cancel(op)) else assertFalse(queue.cancel(op))
+            queue.dispatch(op.value)
+            assertEquals(if (offset < 3000) 0 else 1, calls.count { it == address })
+        }
+    }
+
+    @Test fun concurrentCancelVersusDispatchHasOneWinnerAndDuplicateWorkersNeverResend() = runBlocking {
+        val time = FakeTime()
+        val calls = java.util.concurrent.ConcurrentHashMap<String, java.util.concurrent.atomic.AtomicInteger>()
+        val queue = queue(time) { _, address, _, _, _ -> calls.computeIfAbsent(address) { java.util.concurrent.atomic.AtomicInteger() }.incrementAndGet() }
+        repeat(12) {
+            val address = number()
+            val op = queue.enqueue(draft("Wyścig $it", address), 3)
+            time.tick += 3100
+            val cancelled = coroutineScope {
+                val cancel = async(Dispatchers.IO) { queue.cancel(op) }
+                val send1 = async(Dispatchers.IO) { queue.dispatch(op.value) }
+                val send2 = async(Dispatchers.IO) { queue.dispatch(op.value) }
+                send1.await(); send2.await(); cancel.await()
+            }
+            assertEquals(if (cancelled) 0 else 1, calls[address]?.get() ?: 0)
+            assertFalse(queue.cancel(op))
+        }
+    }
+
+    @Test fun restartWithinBootResumesDeadlineButDeviceRebootRequiresDecision() = runBlocking {
+        val time = FakeTime()
+        var calls = 0
+        val queue = queue(time) { _, _, _, _, _ -> calls++ }
+        val first = queue.enqueue(draft("Proces", number()), 3)
+        time.tick += 2900
+        val restarted = queue(time) { _, _, _, _, _ -> calls++ }
+        restarted.dispatch(first.value); assertEquals(0, calls)
+        time.tick += 100
+        restarted.dispatch(first.value); assertEquals(1, calls)
+        val secondDraft = draft("Restart urządzenia", number()).let { it.copy(recipients = it.recipients + Address(number()), recipientMode = RecipientMode.SeparateSms) }
+        val second = restarted.enqueue(secondDraft, 3)
+        val conversations = db.dao().recipients(second.value).map { ConversationId(it.conversationId) }
+        withTimeout(15000) { history.inbox().first { rows -> conversations.all { id -> rows.any { it.id == id } } } }
+        time.bootId++; time.tick = 50
+        val rebooted = queue(time) { _, _, _, _, _ -> calls++ }
+        rebooted.dispatch(second.value)
+        assertEquals("MISSED_NEEDS_DECISION", db.dao().operation(second.value)!!.state)
+        withTimeout(15000) { history.inbox().first { rows -> conversations.all { id -> rows.any { it.id == id } } } }
+        assertEquals(1, calls)
+        assertNotNull(rebooted.copyToDraft(second))
+    }
+
+    @Test fun draftsRoundTripAllFieldsRejectStaleWritesAndPreserveNewTextWhenUndoRestoresSnapshot() = runBlocking {
+        val drafts = RoomDrafts(db)
+        val conv = history.conversationFor(listOf(Address(number())))
+        val rich = draft("Pełny szkic", number()).copy(conversationId = conv, attachmentIds = listOf(AttachmentId("file-1"), AttachmentId("file-2")),
+            attachmentBytes = 12345, mediaVariant = MediaVariant.NoLocationCopy, revision = 5, recipientNames = listOf("Kontakt"), recipientInput = "kolejny")
+        drafts.save(rich); drafts.save(rich.copy(text = "stary zapis", revision = 4))
+        assertEquals(rich, RoomDrafts(db).find(rich.id))
+        val sendable = rich.copy(attachmentIds = emptyList(), attachmentBytes = 0, mediaVariant = null, recipientInput = "", revision = 6)
+        val queue = queue { _, _, _, _, _ -> fail("Cancelled operation sent") }
+        drafts.save(sendable.copy(text = "Nowsza wersja przed przyjęciem", revision = 7))
+        val op = queue.enqueue(sendable, 3)
+        drafts.save(sendable.copy(text = "spóźniony zapis", revision = 7))
+        assertNull(drafts.find(sendable.id))
+        val newer = sendable.copy(id = DraftId.new(), text = "Nowy tekst", revision = 1)
+        drafts.save(newer)
+        assertTrue(queue.cancel(op)); assertFalse(queue.cancel(op)); queue.dispatch(op.value)
+        val all = drafts.all().first()
+        assertTrue(all.any { it.text == "Nowsza wersja przed przyjęciem" && it.id != sendable.id })
+        assertTrue(all.any { it.id == newer.id && it.text == "Nowy tekst" })
+        val restored = all.single { it.text == sendable.text }
+        assertEquals(sendable.copy(id = restored.id, updatedAt = restored.updatedAt), restored)
+        assertEquals("CANCELLED", db.dao().operation(op.value)!!.state)
+    }
+
+    @Test fun recoveryDistinguishesPreparedFromSubmittingAndReturnedWithoutGuessingFromOutbox() = runBlocking {
+        val queue = queue { _, _, _, _, _ -> }
+        val ids = listOf("PREPARED", "SUBMITTING", "RETURNED").map { phase ->
+            val id = queue.enqueue(draft(phase, number()), 0); queue.dispatch(id.value)
+            db.dao().phase(db.dao().attempts(id.value).single().id, phase)
+            phase to id
+        }
+        val restarted = queue { _, _, _, _, _ -> fail("Recovery must never resend") }
+        restarted.awaitReady()
+        for ((phase, id) in ids) {
+            assertEquals(if (phase == "PREPARED") "FAILED" else "DISPATCH_UNCERTAIN", db.dao().operation(id.value)!!.state)
+            if (phase != "PREPARED") assertFalse(restarted.retry(id))
+        }
+    }
+
+    @Test fun explicitRetryUsesOnlyCertainFailuresAndSelectedLiveSimWithOneChild() = runBlocking {
+        val time = FakeTime()
+        var calls = 0
+        val queue = queue(time) { _, _, _, _, _ -> calls++ }
+        val id = queue.enqueue(draft("Ponów pewną porażkę", number()), 0); queue.dispatch(id.value)
+        val attempt = db.dao().attempts(id.value).single()
+        queue.callback(status(attempt, 0), android.telephony.SmsManager.RESULT_ERROR_NO_SERVICE)
+        assertEquals("FAILED", db.dao().operation(id.value)!!.state)
+        try { queue.retry(id, SubscriptionId(Int.MAX_VALUE)); fail("Missing SIM accepted") } catch (_: IllegalStateException) { }
+        assertNull(db.dao().retryChild(id.value))
+        assertTrue(queue.retry(id, sim.id)); assertFalse(queue.retry(id, sim.id))
+        val child = db.dao().retryChild(id.value)!!
+        assertEquals(sim.id.value, child.subscriptionId)
+        assertEquals("FAILED", db.dao().operation(id.value)!!.state)
+        queue.dispatch(child.id); assertEquals(1, calls)
+        time.tick += 3000
+        queue.dispatch(child.id); queue.dispatch(child.id); assertEquals(2, calls)
+    }
+
+    @Test fun multipartFailureWaitsForAllPartsAndPartialOrGenericFailureCannotRetry() = runBlocking {
+        val queue = queue { _, _, _, _, _ -> }
+        val id = queue.enqueue(draft("a".repeat(200), number()), 0); queue.dispatch(id.value)
+        val attempt = db.dao().attempts(id.value).single(); assertEquals(2, attempt.partCount)
+        queue.callback(status(attempt, 0), android.telephony.SmsManager.RESULT_ERROR_NO_SERVICE)
+        assertEquals("DISPATCHING", db.dao().operation(id.value)!!.state)
+        queue.callback(status(attempt, 1), Activity.RESULT_OK)
+        assertEquals("PARTIALLY_SENT", db.dao().operation(id.value)!!.state)
+        assertFalse(queue.retry(id)); assertNotNull(queue.copyToDraft(id))
+        val unknown = queue.enqueue(draft("Niepewny modem", number()), 0); queue.dispatch(unknown.value)
+        queue.callback(status(db.dao().attempts(unknown.value).single(), 0), android.telephony.SmsManager.RESULT_ERROR_GENERIC_FAILURE)
+        assertEquals("DISPATCH_UNCERTAIN", db.dao().operation(unknown.value)!!.state)
+        assertFalse(queue.retry(unknown))
+    }
+
+    @Test fun latePositiveCallbackCancelsPendingRetryAndDeliveredDoesNotRegress() = runBlocking {
+        val time = FakeTime()
+        var calls = 0
+        val queue = queue(time) { _, _, _, _, _ -> calls++ }
+        val id = queue.enqueue(draft("Późny callback", number()), 0); queue.dispatch(id.value)
+        val attempt = db.dao().attempts(id.value).single()
+        queue.callback(status(attempt, 0), android.telephony.SmsManager.RESULT_ERROR_NO_SERVICE)
+        assertTrue(queue.retry(id))
+        val child = db.dao().retryChild(id.value)!!
+        queue.callback(status(attempt, 0), Activity.RESULT_OK)
+        assertEquals("CANCELLED", db.dao().operation(child.id)!!.state)
+        time.tick += 3000; queue.dispatch(child.id); assertEquals(1, calls)
+        db.dao().delivered(attempt.id, 0, "Delivered")
+        queue.callback(status(attempt, 0), Activity.RESULT_OK)
+        queue.callback(status(attempt, 0), android.telephony.SmsManager.RESULT_ERROR_GENERIC_FAILURE)
+        assertEquals("DELIVERED", db.dao().operation(id.value)!!.state)
+    }
+
+    @Test fun reconcileRequiresExactOwnedProviderEvidenceAndMissingDeliveryStaysSent() = runBlocking {
+        val queue = queue { _, _, _, _, _ -> }
+        val d = draft("Porównywalny rekord", number())
+        val id = queue.enqueue(d, 0); queue.dispatch(id.value); queue.interrupted(id.value)
+        val attempt = db.dao().attempts(id.value).single()
+        val uri = ContentUris.withAppendedId(Telephony.Sms.CONTENT_URI, attempt.providerId!!)
+        context.contentResolver.update(uri, ContentValues().apply { put("type", 2); put("status", 32); put("body", "Inny rekord") }, null, null)
+        queue.reconcile(id); assertEquals("DISPATCH_UNCERTAIN", db.dao().operation(id.value)!!.state)
+        context.contentResolver.update(uri, ContentValues().apply { put("body", d.text) }, null, null)
+        queue.reconcile(id); assertEquals("SENT", db.dao().operation(id.value)!!.state)
+        assertEquals("Unknown", db.dao().parts(attempt.id).single().delivery)
+        context.contentResolver.update(uri, ContentValues().apply { put("status", 0) }, null, null)
+        queue.reconcile(id); assertEquals("DELIVERED", db.dao().operation(id.value)!!.state)
+        queue.callback(status(attempt, 0), android.telephony.SmsManager.RESULT_ERROR_NO_SERVICE)
+        assertEquals("DELIVERED", db.dao().operation(id.value)!!.state)
+    }
+
+    @Test fun mixedRecipientsRetryOnlyDefinitelyFailedAddressesAndDeliveryFailureNeverAllowsResend() = runBlocking {
+        val time = FakeTime()
+        val queue = queue(time) { _, _, _, _, _ -> }
+        val recipients = listOf(number(), number(), number())
+        val id = queue.enqueue(draft("Trzech odbiorców", recipients.first()).copy(recipients = recipients.map(::Address), recipientMode = RecipientMode.SeparateSms), 0)
+        queue.dispatch(id.value)
+        val attempts = db.dao().attempts(id.value).associateBy { it.address }
+        queue.callback(status(attempts.getValue(recipients[0]), 0), Activity.RESULT_OK)
+        queue.callback(status(attempts.getValue(recipients[1]), 0), android.telephony.SmsManager.RESULT_ERROR_NO_SERVICE)
+        queue.callback(status(attempts.getValue(recipients[2]), 0), Activity.RESULT_OK)
+        assertEquals("PARTIALLY_SENT", db.dao().operation(id.value)!!.state)
+        db.dao().delivered(attempts.getValue(recipients[0]).id, 0, "Failed")
+        queue.callback(status(attempts.getValue(recipients[0]), 0), Activity.RESULT_OK)
+        assertTrue(queue.retry(id))
+        assertEquals(listOf(recipients[1]), db.dao().recipients(db.dao().retryChild(id.value)!!.id).map { it.address })
+        assertTrue(queue.operations().first().first { it.id == id }.deliveryFailed)
+    }
+
+    @Test fun sentProofWinsEvenWhenTransportThrowsAfterPartialCallback() = runBlocking {
+        lateinit var queue: PersistentSmsQueue
+        queue = queue { _, _, _, _, _ ->
+            runBlocking {
+                val row = db.dao().operations().first().first { it.state == "DISPATCHING" }
+                val attempt = db.dao().attempts(row.id).single()
+                queue.callback(status(attempt, 0), Activity.RESULT_OK)
+            }
+            throw SecurityException("Failure after a positive callback")
+        }
+        val id = queue.enqueue(draft("a".repeat(200), number()), 0)
+        queue.dispatch(id.value)
+        assertEquals("PARTIALLY_SENT", db.dao().operation(id.value)!!.state)
+        assertFalse(queue.retry(id))
     }
 
     private fun pdu(sender: String, body: String, part: Int): ByteArray {

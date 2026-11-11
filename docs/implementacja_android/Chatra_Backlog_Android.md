@@ -326,6 +326,8 @@ Wykonanie: maszyna stanów, agregacja części, callbacki poza kolejnością i d
 
 Odbiór: DELIVERED nie cofa się do SENT, brak duplikatów przy ponownym callbacku. Weryfikacja: awaria tuż przed/po wywołaniu API, jedna część nieudana, brak raportu doręczenia i retry po zmianie SIM.
 
+**Implementacja 10.11.2026:** [zakres i weryfikacja](CH027_CH028_Wdrozenie_i_weryfikacja.md); odbiór fizyczny pozostaje otwarty.
+
 ### CH028 Utrwalić szkice i okno anulowania
 
 **P0 · Android dane i domena · 3–4 osobodni · zależności CH012 CH017 CH022 CH026 CH027**
@@ -333,6 +335,8 @@ Odbiór: DELIVERED nie cofa się do SENT, brak duplikatów przy ponownym callbac
 Wykonanie: zapis szkicu tekst/odbiorcy/pliki/SIM, trwały snapshot operacji PENDING_UNDO. Odliczanie od deadline, atomowy cancel przeciw dispatch, przywrócenie szkicu po cancel. Zdefiniować bezpieczne zachowanie po zabiciu procesu i restarcie. Nigdy nie wywoływać transportu przed końcem okna.
 
 Odbiór: powrót i obrót nie gubią szkicu; skuteczny cancel nie wysyła. Weryfikacja: 2,9 s, 3,0 s i 3,1 s, wielokrotny klik, brak aktywnego UI i wyścig cancel/send.
+
+**Implementacja 10.11.2026:** [zakres i weryfikacja](CH027_CH028_Wdrozenie_i_weryfikacja.md); odbiór fizyczny pozostaje otwarty.
 
 ### CH029 Podłączyć kontakty i wysyłkę do wielu osób
 

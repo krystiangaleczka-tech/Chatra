@@ -1,0 +1,33 @@
+{
+  "operation": {
+    "id": "25b45b08-cc17-4a2b-967a-3d0be14bce8c",
+    "state": "DELIVERED",
+    "body": "QA_CH028_CANCEL_FINAL_2026111QA_CH028_BACKGROUND_20261110",
+    "createdAt": 1794342199059,
+    "undoUntil": 1794342209059,
+    "undoElapsed": 189067
+  },
+  "attempts": [
+    {
+      "id": "02d92955-5f2f-4b8d-bcd6-6a0d3cfe6d84",
+      "operationId": "25b45b08-cc17-4a2b-967a-3d0be14bce8c",
+      "address": "5556",
+      "subscriptionId": 1,
+      "subscriptionLabel": "SIM 1 \u00b7 T-Mobile",
+      "startedAt": 1794342209146,
+      "partCount": 1,
+      "phase": "RETURNED",
+      "providerId": 5
+    }
+  ],
+  "parts": [
+    {
+      "attemptId": "02d92955-5f2f-4b8d-bcd6-6a0d3cfe6d84",
+      "partIndex": 0,
+      "sent": "Sent",
+      "delivery": "Delivered",
+      "resultCode": -1
+    }
+  ],
+  "after_deadline_ms": 87
+}

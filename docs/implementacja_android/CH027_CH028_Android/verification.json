@@ -1,0 +1,235 @@
+{
+  "date": "2026-11-10",
+  "jvm": {
+    "tests": 75,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "suites": [
+      {
+        "module": "core/model",
+        "variant": "test",
+        "suite": "app.chatra.core.model.DurableSendingPolicyTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "module": "core/model",
+        "variant": "test",
+        "suite": "app.chatra.core.model.SmsSetupTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "module": "core/model",
+        "variant": "test",
+        "suite": "app.chatra.core.model.SendStateTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "module": "core/model",
+        "variant": "test",
+        "suite": "app.chatra.core.model.ScheduleTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "module": "core/model",
+        "variant": "test",
+        "suite": "app.chatra.core.model.ScheduleFormTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "module": "core/model",
+        "variant": "test",
+        "suite": "app.chatra.core.model.SmsCounterTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "module": "core/model",
+        "variant": "test",
+        "suite": "app.chatra.core.model.SearchAndRecipientsTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "module": "core/model",
+        "variant": "test",
+        "suite": "app.chatra.core.model.SettingsAndPlatformTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "module": "core/model",
+        "variant": "test",
+        "suite": "app.chatra.core.model.AddressAndSimTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "module": "core/model",
+        "variant": "test",
+        "suite": "app.chatra.core.model.InboxTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "module": "core/testing",
+        "variant": "test",
+        "suite": "app.chatra.core.testing.ScheduledActionsTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "module": "core/testing",
+        "variant": "test",
+        "suite": "app.chatra.core.testing.SearchAndComposeTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "module": "core/testing",
+        "variant": "test",
+        "suite": "app.chatra.core.testing.FixtureTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "module": "core/designsystem",
+        "variant": "testDebugUnitTest",
+        "suite": "app.chatra.core.designsystem.glass.DownsampleTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "module": "app",
+        "variant": "testFullDebugUnitTest",
+        "suite": "app.chatra.di.OrganizationPreviewTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "module": "app",
+        "variant": "testDemoDebugUnitTest",
+        "suite": "app.chatra.ui.RoleResumeTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "module": "app",
+        "variant": "testDemoDebugUnitTest",
+        "suite": "app.chatra.ui.ScreenModelsTest",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "module": "app",
+        "variant": "testDemoDebugUnitTest",
+        "suite": "app.chatra.di.OrganizationPreviewTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    ]
+  },
+  "build": "PASS demoDebug/fullDebug + fullDebugAndroidTest + database debugAndroidTest",
+  "lint": "PASS demoDebug/fullDebug",
+  "apk_sha256": {
+    "android/app/build/outputs/apk/full/debug/app-full-debug.apk": "1ad6b65e657a7300305bbd69221a9e8349094b88d0fe4317b28adbe329522af9",
+    "android/app/build/outputs/apk/demo/debug/app-demo-debug.apk": "1105c5828d2cac75da9ac0faa6e36762340abf6ca15bedc548153542d8437917"
+  },
+  "android": {
+    "status": "PASS",
+    "app_tests": 26,
+    "database_tests": 3,
+    "failures": 0,
+    "skipped": 0,
+    "hardware": "ranchu AVD ChatraDesktop arm64, API35",
+    "transport": "controlled; real PendingIntent validates callback receiver"
+  },
+  "limitations": [
+    "Physical SIM/eSIM and carrier acceptance pending",
+    "CDMA delivery decoder pending",
+    "Attachment content/URI lifecycle is CH031; this stage persists identifiers and metadata",
+    "G03/G09 and full TalkBack acceptance pending",
+    "No automatic Android CI"
+  ],
+  "additional_check": "Full final build and lint of both variants passed with --no-daemon and Xmx1g; includes empty-draft restore regression test and recipient inbox visibility fix. Gradle stopped after build.",
+  "manual_ui": [
+    {
+      "case": "process-death-draft-restoration",
+      "result": "PASS",
+      "detail": "Fresh process restores text, recipient and SIM from Room; no saved instance state"
+    },
+    {
+      "case": "rotation-preserves-draft",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "back-and-reopen-preserves-draft",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "case": "ui-cancel-before-dispatch-final",
+      "result": "PASS",
+      "detail": "CANCELLED with zero transport attempts; full snapshot retained"
+    },
+    {
+      "case": "cancelled-draft-survives-fresh-process",
+      "result": "PASS",
+      "detail": "Restored text remains active after process restart; no empty draft shadows it"
+    },
+    {
+      "case": "native-worker-without-active-ui",
+      "result": "PASS",
+      "detail": "Emulator SmsManager to port 5556 while launcher visible: DELIVERED, one attempt, 87 ms after deadline; sent=-1"
+    }
+  ],
+  "gradle_running_after_checks": false,
+  "environment_after_qa": {
+    "undo_seconds": 3,
+    "sms_role_holder": "com.google.android.apps.messaging",
+    "emulator_stopped": true,
+    "gradle_running": false
+  }
+}
