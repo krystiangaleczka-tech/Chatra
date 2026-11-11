@@ -82,7 +82,7 @@ class PersistentSmsQueue(
         val sim = requireNotNull(draft.subscriptionId)
         requireSim(sim)
         val card = sims.cards().first().first { it.id == sim }
-        val recipients = draft.recipients.distinctBy { it.normalized }.map { it to history.conversationFor(listOf(it)) }
+        val recipients = draft.recipients.distinctBy(::outgoingRecipientKey).map { it to history.conversationFor(listOf(it)) }
         val now = time.wall()
         val row = OutgoingOperation(UUID.randomUUID().toString(), draft.id.value, draft.conversationId?.value ?: recipients.singleOrNull()?.second?.value,
             JSONArray(recipients.map { it.first.raw }).toString(), draft.text, draft.recipientMode.name, sim.value, card.label, "PENDING_UNDO", 0, now, now + undoSeconds * 1000L, time.boot(),

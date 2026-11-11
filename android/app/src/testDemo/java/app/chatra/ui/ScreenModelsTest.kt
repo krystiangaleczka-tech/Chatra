@@ -217,4 +217,17 @@ class ScreenModelsTest {
         restored.back()
         assertEquals(Route.Search("a|b\nŁÓDŹ", "parcels"), restored.top)
     }
+    @Test fun `local number already selected as plus 48 is not added twice and cap is enforced`() = runTest {
+        val c = container(backgroundScope)
+        val model = NewMessageViewModel(SavedStateHandle(), c, emptyList())
+        model.add(Fixture.mama)
+        model.add(Participant(Address("600 100 200")))
+        runCurrent()
+        assertEquals(1, model.state.value.recipients.size)
+        for (number in 1..25) model.add(Participant(Address("601" + number.toString().padStart(6, '0'))))
+        runCurrent()
+        assertEquals(20, model.state.value.recipients.size)
+        assertEquals("Możesz dodać maksymalnie 20 odbiorców.", model.state.value.error)
+    }
+
 }

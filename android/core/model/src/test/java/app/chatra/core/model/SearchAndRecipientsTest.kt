@@ -30,4 +30,14 @@ class SearchAndRecipientsTest {
         assertTrue(group.copy(text = "").newMessagePlan().isEmpty())
         assertTrue(group.copy(recipients = listOf(Address("Paczka24"))).newMessagePlan().isEmpty())
     }
+
+    @Test fun `Polish local and international forms share a recipient key`() {
+        assertEquals("+48600100200", outgoingRecipientKey(Address("600 100 200")))
+        assertEquals(outgoingRecipientKey(Address("0048 600 100 200")), outgoingRecipientKey(Address("+48 600-100-200")))
+        assertNotEquals(outgoingRecipientKey(Address("+34 600 100 200")), outgoingRecipientKey(Address("600 100 200")))
+        assertNotEquals(outgoingRecipientKey(Address("112")), outgoingRecipientKey(Address("+48 112")))
+        val plan = draft(RecipientMode.SeparateSms).copy(recipients = listOf(Address("600 100 200"), Address("+48600100200")))
+            .newMessagePlan()
+        assertEquals(1, plan.size)
+    }
 }

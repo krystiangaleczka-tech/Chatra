@@ -16,11 +16,12 @@ data class NewMessageState(
     val counter: SmsCounter.Count = SmsCounter.count(""),
     val counterEnabled: Boolean = true,
 ) {
-    val canSend get() = sendingAvailable && !busy && text.isNotBlank() && text.length <= 16384 && counter.preservesText && recipients.isNotEmpty() && input.isBlank() && recipients.all { isOutgoingNumber(it.address.raw) } && sim is SimChoice.Ready
+    val canSend get() = sendingAvailable && !busy && text.isNotBlank() && text.length <= 16384 && counter.preservesText && recipients.isNotEmpty() && recipients.size <= 20 && input.isBlank() && recipients.all { isOutgoingNumber(it.address.raw) } && sim is SimChoice.Ready
     val operationLabel get() = if (recipients.size > 1 && mode == RecipientMode.GroupMms) "1 grupowy MMS" else if (recipients.size == 1) "1 SMS" else "${recipients.size} osobne SMS"
 }
 
 /** Nowy szkic ma osobny SavedStateHandle: anulowanie arkusza zachowuje odbiorców, treść i SIM. */
+@OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
 class NewMessageViewModel(private val saved: SavedStateHandle, private val c: AppContainer, preset: List<Participant>, external: ExternalCompose? = null) : ViewModel() {
     init {
         if (!saved.contains("addresses")) {
@@ -50,14 +51,15 @@ class NewMessageViewModel(private val saved: SavedStateHandle, private val c: Ap
         NewMessageState(a.mapIndexed { index, raw -> Participant(Address(raw), n.getOrNull(index)?.takeIf { it.isNotBlank() }) }, i, t, RecipientMode.valueOf(m))
     }
     private val defaultSim = combine(c.sending.value, c.sims.defaultSubscription()) { prefs, system -> prefs.defaultSubscriptionId ?: system }
-    private val data = combine(c.sims.cards(), c.contacts.suggestions(), defaultSim, chosen) { sims, contacts, default, sim ->
+    private val matchingContacts = input.flatMapLatest { c.contacts.search(it) }
+    private val data = combine(c.sims.cards(), matchingContacts, defaultSim, chosen) { sims, contacts, default, sim ->
         Triple(sims, contacts, chooseSim(sims, sim?.let(::SubscriptionId), null, default))
     }
     val state = combine(form, data, busy, error, c.sendAccess) { f, d, b, e, access ->
         f.copy(sims = d.first, sim = d.third, busy = b, error = e, sendingAvailable = access && (c.isDemo || f.mode != RecipientMode.GroupMms),
             counterEnabled = c.sending.value.value.smsCounterEnabled,
             counter = c.smsText.count(f.text, (d.third as? SimChoice.Ready)?.sim?.id),
-            suggestions = d.second.filter { p -> f.recipients.none { it.address.normalized == p.address.normalized } && (f.input.isBlank() || searchFold(f.input) in searchFold(p.label) || f.input.filter(Char::isDigit).let { it.isNotEmpty() && it in p.address.normalized }) })
+            suggestions = d.second.filter { p -> f.recipients.none { outgoingRecipientKey(it.address) == outgoingRecipientKey(p.address) } && (f.input.isBlank() || searchFold(f.input) in searchFold(p.label) || f.input.filter(Char::isDigit).let { it.isNotEmpty() && it in p.address.normalized }) })
     }.stateIn(viewModelScope, SharingStarted.Eagerly, NewMessageState())
 
     init {
@@ -122,7 +124,8 @@ class NewMessageViewModel(private val saved: SavedStateHandle, private val c: Ap
     fun add(participant: Participant) {
         if (busy.value) return
         if (!isOutgoingNumber(participant.address.raw)) { error.value = "Podaj poprawny numer telefonu."; return }
-        if (addresses.value.none { Address(it).normalized == participant.address.normalized }) {
+        if (addresses.value.none { outgoingRecipientKey(Address(it)) == outgoingRecipientKey(participant.address) }) {
+            if (addresses.value.size >= 20) { error.value = "Możesz dodać maksymalnie 20 odbiorców."; return }
             saved["addresses"] = ArrayList(addresses.value + participant.address.raw)
             saved["names"] = ArrayList(names.value + participant.displayName.orEmpty())
         }
@@ -159,7 +162,7 @@ class NewMessageViewModel(private val saved: SavedStateHandle, private val c: Ap
                 throw cancelled
             } catch (_: Exception) {
                 // Po częściowym powodzeniu następne Wyślij obejmie tylko nieprzyjętych odbiorców.
-                val remaining = s.recipients.filter { p -> accepted.none { it.normalized == p.address.normalized } }
+                val remaining = s.recipients.filter { p -> accepted.none { outgoingRecipientKey(it) == outgoingRecipientKey(p.address) } }
                 saved["addresses"] = ArrayList(remaining.map { it.address.raw }); saved["names"] = ArrayList(remaining.map { it.displayName.orEmpty() })
                 error.value = "Nie udało się dodać wszystkich wiadomości do kolejki. Pozostali odbiorcy zostali w szkicu."
             } finally { busy.value = false; if (error.value != null) persist() }

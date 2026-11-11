@@ -351,6 +351,8 @@ Odbiór: tryb osobnych wiadomości nie ujawnia numerów pozostałych odbiorców;
 **Odbiór rozszerzony:** Nie można po cichu zadzwonić na zły numer ani pokazać działającego telefonu przy alfanumerycznym nadawcy.
 
 
+**CH029 — implementacja w przeglądzie (11.11.2026):** wyszukiwanie całej listy numerów kontaktów po nazwie/numerze z obserwacją zmian i sprawdzaniem uprawnienia, deduplikacja lokalnego polskiego numeru i `+48`/`0048`, limit 20 odbiorców, atomowa operacja wieloodbiorcza w trwałej kolejce i testy regresji. Kod w gałęzi `android/ch029-contacts-multi-recipient`; testy budowania/Androida i odbiór fizycznej SIM pozostają otwarte. Grupowy MMS nadal wymaga CH032. Zasada 9 cyfr = format PL wymaga osobnej polityki kraju przed wydaniem międzynarodowym.
+
 ### CH030 Wdrożyć powiadomienia i wejścia systemowe
 
 **P1 · Android platforma · 2–3 osobodni · zależności CH009 CH020 CH023 CH026 CH028**

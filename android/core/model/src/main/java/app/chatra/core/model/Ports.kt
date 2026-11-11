@@ -2,6 +2,7 @@ package app.chatra.core.model
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -53,6 +54,15 @@ interface SimRepository {
 
 interface ContactsDirectory {
     fun suggestions(): Flow<List<Participant>>
+    /** Zwraca dopasowane numery (nie same kontakty); jedna osoba może mieć wiele numerów. */
+    fun search(query: String): Flow<List<Participant>> = suggestions().map { people ->
+        val needle = searchFold(query.trim())
+        val digits = query.filter(Char::isDigit)
+        people.filter { p ->
+            needle.isEmpty() || needle in searchFold(p.label) ||
+                (digits.isNotEmpty() && digits in outgoingRecipientKey(p.address).filter(Char::isDigit))
+        }
+    }
     suspend fun lookup(address: Address): Participant?
 }
 
