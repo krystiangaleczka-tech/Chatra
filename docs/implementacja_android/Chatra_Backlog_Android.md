@@ -366,6 +366,8 @@ Odbiór: właściwy wątek, aktualne badge, brak tekstu na blokadzie przy ukryty
 **Odbiór rozszerzony:** Nowa wiadomość w wyciszonej rozmowie aktualizuje historię i liczniki bez niepożądanego alertu; zmiana preferencji pozostaje skuteczna po restarcie.
 
 
+**CH030 — etap implementacji (11.11.2026):** rozdzielono kanały powiadomień, dodano powiadomienia per rozmowa z bezpiecznym otwieraniem lokalnego ID, neutralny widok ekranu blokady, odrębne alertowanie nowych SMS i pominięcie wyciszonych wątków przy zachowaniu licznika. Pozostają: szybka odpowiedź przez wspólną kolejkę i wybraną SIM, kontrola czasu wyciszenia oraz odbiór lockscreen/cold start/API 31+ na urządzeniach. Prace w PR opartym na CH029. Nie zamykać zadania przed testami.
+
 ### CH031 Przygotować cykl życia załączników
 
 **P0 · Android media · 2–3 osobodni · zależności CH013 CH022 CH028**
