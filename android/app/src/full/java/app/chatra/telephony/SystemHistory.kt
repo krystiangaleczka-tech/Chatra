@@ -66,6 +66,7 @@ class SystemHistory(
             }
         }
         scope.launch(Dispatchers.IO) { for (request in requests) reconcile() }
+        scope.launch(Dispatchers.IO) { contacts.suggestions().drop(1).collect { requests.trySend(Unit) } }
     }
     override fun historyStatus(): Flow<HistoryStatus> = status
     override suspend fun refresh() { requests.send(Unit) }

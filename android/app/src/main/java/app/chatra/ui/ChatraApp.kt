@@ -139,6 +139,7 @@ private fun Screen(route: Route, navigator: Navigator, listStates: MutableMap<Ta
     val c = LocalContainer.current
     val dock = MainDock(navigator.tab, navigator::select) { navigator.push(Route.NewMessage()) }
     val scope = rememberCoroutineScope()
+    val context = androidx.compose.ui.platform.LocalContext.current
     var inboxMenu by remember { mutableStateOf(false) }
     when (route) {
         Route.Start -> {
@@ -154,9 +155,18 @@ private fun Screen(route: Route, navigator: Navigator, listStates: MutableMap<Ta
         is Route.Conversation -> {
             val model = conversationModel(c, route.id)
             var simPicker by remember { mutableStateOf(false) }
+            var details by remember { mutableStateOf(false) }
             val state by model.state.collectAsStateWithLifecycle()
-            ConversationScreen(model, { navigator.back() }, { navigator.push(Route.DesignCatalog) }, { navigator.push(Route.Extras(route.id)) }, { simPicker = true }, target = route.message)
+            ConversationScreen(model, { navigator.back() }, { if(c.isDemo) navigator.push(Route.DesignCatalog) else details=true }, { navigator.push(Route.Extras(route.id)) }, { simPicker = true }, target = route.message)
             if (simPicker) app.chatra.ui.common.SimPicker(state.sims, (state.sim as? app.chatra.core.model.SimChoice.Ready)?.sim?.id, model::selectSim, { simPicker = false })
+            if(details) {
+                val numbers=state.summary?.participants.orEmpty().filter {app.chatra.core.model.isOutgoingNumber(it.address.raw)}
+                ChoiceDialog(state.summary?.title ?: "Rozmowa",numbers.map {"Zadzwoń: ${it.label} · ${it.address.raw}"},{option->
+                    numbers.getOrNull(option)?.let {participant->
+                        runCatching {context.startActivity(android.content.Intent(android.content.Intent.ACTION_DIAL,android.net.Uri.fromParts("tel",participant.address.raw,null)))}
+                    }
+                },{details=false})
+            }
         }
         Route.Scheduled -> {
             val model = viewModel { ScheduledViewModel(c.schedules, c.sims, c.clock) }

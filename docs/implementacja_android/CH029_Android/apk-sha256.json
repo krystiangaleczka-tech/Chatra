@@ -1,0 +1,5 @@
+{
+  "android/app/build/outputs/apk/full/debug/app-full-debug.apk": "07c67b4f8b15600c2e6deebad411a151232b09bd9962c38f4bb5d31bced87d80",
+  "android/app/build/outputs/apk/demo/debug/app-demo-debug.apk": "ed5a98cfd41b6be63f5bff701d329916439617aa5b9b9309e7e7a88229d7f404",
+  "android/app/build/outputs/apk/androidTest/full/debug/app-full-debug-androidTest.apk": "df8234af95a8e5a672b416c2a73ed082e860970154d6f261807d7c0ecbcecc07"
+}

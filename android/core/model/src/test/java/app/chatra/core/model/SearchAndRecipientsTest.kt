@@ -17,7 +17,7 @@ class SearchAndRecipientsTest {
         listOf("+48 600 100 200", "0048 600-100-200", "112", "(600) 100 200").forEach { assertTrue(it, isOutgoingNumber(it)) }
     }
 
-    private fun draft(mode: RecipientMode) = Draft(DraftId.new(), null, listOf(Address("+48 600 100 200"), Address("+48600100200"), Address("+48 605 300 400")), "Cześć", mode, emptyList(), SubscriptionId(1), Instant.EPOCH)
+    private fun draft(mode: RecipientMode) = Draft(DraftId.new(), null, listOf(Address("+48 600 100 200"), Address("600100200"), Address("+48 605 300 400")), "Cześć", mode, emptyList(), SubscriptionId(1), Instant.EPOCH)
 
     @Test fun `separate SMS has unique recipients in separate operations and group MMS stays one`() {
         val separate = draft(RecipientMode.SeparateSms).newMessagePlan()
