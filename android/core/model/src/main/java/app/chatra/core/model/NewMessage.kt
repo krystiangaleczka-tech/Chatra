@@ -13,7 +13,7 @@ fun isOutgoingNumber(value: String): Boolean {
  */
 fun outgoingRecipientKey(address: Address): String {
     val normalized = address.normalized
-    return if (normalized.length == 9 && normalized.all(Char::isDigit)) "+48$"+"normalized" else normalized
+    return if (normalized.length == 9 && normalized.all(Char::isDigit)) "+48$normalized" else normalized
 }
 
 /** Jedna operacja na odbiorcę osobnego SMS; świadomie wybrany MMS to jedna operacja grupowa. */

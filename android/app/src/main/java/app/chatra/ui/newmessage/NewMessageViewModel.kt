@@ -21,7 +21,7 @@ data class NewMessageState(
 }
 
 /** Nowy szkic ma osobny SavedStateHandle: anulowanie arkusza zachowuje odbiorców, treść i SIM. */
-@OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+@OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class, kotlinx.coroutines.FlowPreview::class)
 class NewMessageViewModel(private val saved: SavedStateHandle, private val c: AppContainer, preset: List<Participant>, external: ExternalCompose? = null) : ViewModel() {
     init {
         if (!saved.contains("addresses")) {
@@ -51,7 +51,8 @@ class NewMessageViewModel(private val saved: SavedStateHandle, private val c: Ap
         NewMessageState(a.mapIndexed { index, raw -> Participant(Address(raw), n.getOrNull(index)?.takeIf { it.isNotBlank() }) }, i, t, RecipientMode.valueOf(m))
     }
     private val defaultSim = combine(c.sending.value, c.sims.defaultSubscription()) { prefs, system -> prefs.defaultSubscriptionId ?: system }
-    private val matchingContacts = input.flatMapLatest { c.contacts.search(it) }
+    private val matchingContacts = input.debounce { if (c.isDemo) 0L else 180L }
+        .flatMapLatest { c.contacts.search(it) }
     private val data = combine(c.sims.cards(), matchingContacts, defaultSim, chosen) { sims, contacts, default, sim ->
         Triple(sims, contacts, chooseSim(sims, sim?.let(::SubscriptionId), null, default))
     }
@@ -59,7 +60,7 @@ class NewMessageViewModel(private val saved: SavedStateHandle, private val c: Ap
         f.copy(sims = d.first, sim = d.third, busy = b, error = e, sendingAvailable = access && (c.isDemo || f.mode != RecipientMode.GroupMms),
             counterEnabled = c.sending.value.value.smsCounterEnabled,
             counter = c.smsText.count(f.text, (d.third as? SimChoice.Ready)?.sim?.id),
-            suggestions = d.second.filter { p -> f.recipients.none { outgoingRecipientKey(it.address) == outgoingRecipientKey(p.address) } && (f.input.isBlank() || searchFold(f.input) in searchFold(p.label) || f.input.filter(Char::isDigit).let { it.isNotEmpty() && it in p.address.normalized }) })
+            suggestions = d.second.filter { p -> f.recipients.none { outgoingRecipientKey(it.address) == outgoingRecipientKey(p.address) } })
     }.stateIn(viewModelScope, SharingStarted.Eagerly, NewMessageState())
 
     init {
