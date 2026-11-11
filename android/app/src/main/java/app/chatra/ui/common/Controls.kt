@@ -18,9 +18,9 @@ import app.chatra.core.designsystem.theme.ChatraColors
 import app.chatra.core.designsystem.theme.chatraText
 
 @Composable
-fun TextAction(text: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
-    Box(modifier.heightIn(min = 44.dp).semantics { role = Role.Button }.pressable(onClick).padding(horizontal = 4.dp), contentAlignment = androidx.compose.ui.Alignment.Center) {
-        BasicText(text, style = chatraText(17f, color = ChatraColors.Link))
+fun TextAction(text: String, onClick: () -> Unit, modifier: Modifier = Modifier, enabled: Boolean = true) {
+    Box(modifier.heightIn(min = 44.dp).semantics { role = Role.Button; if (!enabled) disabled() }.pressable(onClick, enabled).padding(horizontal = 4.dp), contentAlignment = androidx.compose.ui.Alignment.Center) {
+        BasicText(text, style = chatraText(17f, color = if (enabled) ChatraColors.Link else ChatraColors.TextSecondary.copy(alpha = .5f)))
     }
 }
 

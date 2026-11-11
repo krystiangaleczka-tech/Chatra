@@ -5,6 +5,7 @@ import app.chatra.core.model.AppearancePrefs
 import app.chatra.core.model.Clock
 import app.chatra.core.model.ConversationId
 import app.chatra.core.model.SendingPrefs
+import app.chatra.core.model.ProOffer
 import app.chatra.core.testing.FakeExactAlarmGate
 import app.chatra.core.testing.FakeSmsRoleGate
 import app.chatra.core.testing.FixedClock
@@ -15,6 +16,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 import android.os.SystemClock
 import java.time.Instant
 import java.time.ZoneId
@@ -26,6 +28,9 @@ fun createContainer(app: Application, referenceFrame: Boolean, roleScenario: Str
     val clock: Clock = if (referenceFrame) FixedClock() else DemoClock()
     val repo = InMemoryChatra(clock, scope, frozen = referenceFrame)
     val prefs = DataStorePreferences(app, scope, if (referenceFrame) "demo-reference" else "demo")
+    val organization = MemoryOrganizationPreview(true,
+        (1..Fixture.BlockedCount).map { BlockedPreview("blocked-$it", "+48 500 000 00$it") },
+        (1..Fixture.TrashCount).map { TrashPreview(ConversationId("demo-trash-$it"), "Rozmowa demonstracyjna $it") })
     return object : AppContainer {
         override val conversations = repo
         override val drafts = repo
@@ -41,8 +46,10 @@ fun createContainer(app: Application, referenceFrame: Boolean, roleScenario: Str
         override val smsRole = FakeSmsRoleGate.scenario(roleScenario, delayMillis = if (referenceFrame) 0 else 600)
         // Tryb referencyjny zawsze startuje z ustawień domyślnych wzorca.
         override val appearance = if (referenceFrame) InMemoryStore(AppearancePrefs.Default) else prefs.appearance
-        override val sending = if (referenceFrame) InMemoryStore(SendingPrefs()) else prefs.sending
-        override val housekeeping = MutableStateFlow(Housekeeping(Fixture.BlockedCount, Fixture.TrashCount, Fixture.TrashDays))
+        override val sending = if (referenceFrame) InMemoryStore(SendingPrefs(defaultSubscriptionId = Fixture.SIM1.id)) else prefs.sending
+        override val organization = organization
+        override val proOffer = if (referenceFrame) ProOffer.DemoPlaceholder else ProOffer.Unavailable
+        override val housekeeping = combine(organization.blocked, organization.trash) { blocked, trash -> Housekeeping(blocked.size, trash.size, Fixture.TrashDays) }
         override fun avatarTone(id: ConversationId) = Fixture.avatarTones[id]
         override val referenceFrame = referenceFrame
         override val isDemo = true

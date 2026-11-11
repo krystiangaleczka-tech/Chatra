@@ -8,7 +8,7 @@ import app.chatra.core.model.SmsSetup
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class StartViewModel(gate: SmsRoleGate) : ViewModel() {
+class StartViewModel(private val gate: SmsRoleGate) : ViewModel() {
     private val setup = SmsSetup(gate)
     val state: StateFlow<SetupState> = setup.state
 
@@ -20,5 +20,6 @@ class StartViewModel(gate: SmsRoleGate) : ViewModel() {
         viewModelScope.launch { setup.primary() }
     }
 
-    fun onResume() = setup.recheck()
+    fun onResume() { viewModelScope.launch { if (state.value != SetupState.Requesting) setup.check() } }
+    fun isRoleHeld() = gate.isHeld()
 }

@@ -12,6 +12,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.lifecycle.createSavedStateHandle
@@ -56,6 +59,14 @@ import app.chatra.ui.inbox.InboxScreen
 import app.chatra.ui.inbox.InboxViewModel
 import app.chatra.ui.start.StartScreen
 import app.chatra.ui.start.StartViewModel
+import app.chatra.ui.settings.*
+import app.chatra.core.model.SettingsEntry
+import app.chatra.core.model.ObservableSmsRoleGate
+import app.chatra.platform.ActivityPlatform
+import app.chatra.ui.common.ChoiceDialog
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import androidx.compose.runtime.rememberCoroutineScope
 
 val LocalContainer = androidx.compose.runtime.staticCompositionLocalOf<AppContainer> { error("container") }
 
@@ -67,6 +78,21 @@ fun ChatraApp(container: AppContainer, initial: Navigator?, onExit: () -> Unit, 
     val keyboard = LocalSoftwareKeyboardController.current
     val focus = LocalFocusManager.current
     val imeVisible = LocalChrome.current.ime > 0.dp
+    val observableRole = container.smsRole as? ObservableSmsRoleGate
+    val roleState = remember(container) { observableRole?.held ?: kotlinx.coroutines.flow.MutableStateFlow(true) }
+    val held by roleState.collectAsStateWithLifecycle()
+    val platform = container.platform as? ActivityPlatform
+    val incomingState = remember(container) { platform?.incomingDraftId ?: kotlinx.coroutines.flow.MutableStateFlow<String?>(null) }
+    val incoming by incomingState.collectAsStateWithLifecycle()
+    LaunchedEffect(held, incoming, navigator.screen) {
+        if (!container.isDemo && !held && navigator.screen !in listOf(Route.Start, Route.Help, Route.Privacy, Route.DesignCatalog)) {
+            navigator.select(Tab.Conversations)
+            navigator.resetTo(Route.Start)
+        } else if (held && incoming != null && platform != null && navigator.screen != Route.Start) {
+            navigator.push(Route.NewMessage(externalId = incoming))
+            platform.acknowledgeCompose(incoming!!)
+        }
+    }
     // Back: najpierw IME, potem arkusz, potem ekran (specyfikacja 5).
     BackHandler {
         focus.clearFocus()
@@ -112,6 +138,8 @@ private fun startStack(container: AppContainer): List<Route> =
 private fun Screen(route: Route, navigator: Navigator, listStates: MutableMap<Tab, LazyListState>) {
     val c = LocalContainer.current
     val dock = MainDock(navigator.tab, navigator::select) { navigator.push(Route.NewMessage()) }
+    val scope = rememberCoroutineScope()
+    var inboxMenu by remember { mutableStateOf(false) }
     when (route) {
         Route.Start -> {
             val model = viewModel { StartViewModel(c.smsRole) }
@@ -121,11 +149,11 @@ private fun Screen(route: Route, navigator: Navigator, listStates: MutableMap<Ta
         Route.Inbox -> {
             val model = viewModel { InboxViewModel(c.conversations) }
             val list = listStates.getOrPut(Tab.Conversations) { rememberLazyListState() }
-            InboxScreen(model, list, { navigator.push(Route.Conversation(it)) }, { navigator.push(Route.Search()) }, {}, dock)
+            InboxScreen(model, list, { navigator.push(Route.Conversation(it)) }, { navigator.push(Route.Search()) }, { inboxMenu = true }, dock)
         }
         is Route.Conversation -> {
             val model = conversationModel(c, route.id)
-            ConversationScreen(model, { navigator.back() }, {}, { navigator.push(Route.Extras(route.id)) }, {}, target = route.message)
+            ConversationScreen(model, { navigator.back() }, { navigator.push(Route.DesignCatalog) }, { navigator.push(Route.Extras(route.id)) }, { navigator.push(Route.SettingsDetail(Route.SettingsDetail.Kind.Sims)) }, target = route.message)
         }
         Route.Scheduled -> {
             val model = viewModel { ScheduledViewModel(c.schedules, c.sims, c.clock) }
@@ -137,15 +165,28 @@ private fun Screen(route: Route, navigator: Navigator, listStates: MutableMap<Ta
             SearchScreen(model, { navigator.back() }) { navigator.push(Route.Conversation(it.conversationId, it.ref)) }
         }
         Route.Appearance -> AppearanceScreen(c.appearance) { navigator.back() }
-        // Pełna plansza S10 w CH019; na razie dostęp do S09 z korzenia Ustawień.
-        Route.Settings -> ChatraScreen(Backgrounds.Settings, floating = { dock.Render(Modifier.align(Alignment.BottomStart)) }) {
-            Column(Modifier.padding(start = 16.dp, end = 16.dp, top = LocalChrome.current.top(54.dp))) {
-                BasicText("Ustawienia", style = ChatraType.ListTitle)
-                TextAction("Wygląd", { navigator.push(Route.Appearance) })
+        Route.Settings -> SettingsScreen({ action ->
+            when (action) {
+                SettingsEntry.Appearance -> navigator.push(Route.Appearance)
+                SettingsEntry.Privacy -> navigator.push(Route.Privacy)
+                SettingsEntry.Counter -> Unit
+                else -> navigator.push(Route.SettingsDetail(Route.SettingsDetail.Kind.valueOf(action.name)))
             }
-        }
+        }, dock)
+        is Route.SettingsDetail -> SettingsDetailScreen(route.kind, { navigator.back() }, { navigator.select(Tab.Conversations) })
+        Route.Privacy -> PrivacyScreen { navigator.back() }
+        Route.Help -> HelpScreen({ navigator.back() }, { navigator.push(Route.Privacy) }, { navigator.push(Route.DesignCatalog) })
+        Route.DesignCatalog -> DesignCatalogScreen { navigator.back() }
         else -> Placeholder(route.toString())
     }
+    if (inboxMenu) ChoiceDialog("Rozmowy", listOf("Oznacz wszystkie jako przeczytane", "Ustawienia", "Pomoc", "Projekty uzupełniające"), { option ->
+        when (option) {
+            0 -> scope.launch { c.conversations.inbox().first().filter { it.isUnread }.forEach { c.conversations.markRead(it.id) } }
+            1 -> navigator.select(Tab.Settings)
+            2 -> navigator.push(Route.Help)
+            3 -> navigator.push(Route.DesignCatalog)
+        }
+    }, { inboxMenu = false })
 }
 
 @Composable
@@ -165,7 +206,7 @@ private fun Sheet(sheet: Route.Sheet, navigator: Navigator) {
             }
         }
         is Route.NewMessage -> {
-            val model = viewModel(key = "new-message") { NewMessageViewModel(createSavedStateHandle(), c, if (sheet.preset) c.newMessagePreset else emptyList()) }
+            val model = viewModel(key = "new-message${sheet.externalId?.let { "-$it" }.orEmpty()}") { NewMessageViewModel(createSavedStateHandle(), c, if (sheet.preset) c.newMessagePreset else emptyList(), sheet.externalId?.let(c::externalDraft)) }
             NewMessageScreen(model, navigator::popSheets) { id -> navigator.popSheets(); navigator.push(Route.Conversation(id)) }
         }
     }

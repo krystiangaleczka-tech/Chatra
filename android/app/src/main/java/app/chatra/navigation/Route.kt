@@ -13,6 +13,7 @@ sealed interface Route {
     data object Appearance : Route
     data object Privacy : Route
     data object Help : Route
+    data object DesignCatalog : Route
     data class SettingsDetail(val kind: Kind) : Route {
         enum class Kind { Sims, Delay, Hd, Unknown, Blocked, Trash, Pro }
     }
@@ -22,7 +23,7 @@ sealed interface Route {
     data class Extras(val id: ConversationId) : Sheet
     /** [preset]: plansza S05 z treścią i terminem fixture (tryb referencyjny). */
     data class Schedule(val id: ConversationId, val preset: Boolean = false) : Sheet
-    data class NewMessage(val preset: Boolean = false) : Sheet
+    data class NewMessage(val preset: Boolean = false, val externalId: String? = null) : Sheet
 }
 
 enum class Tab { Conversations, Scheduled, Settings }

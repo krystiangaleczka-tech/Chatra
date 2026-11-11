@@ -12,17 +12,20 @@ data class NewMessageState(
     val recipients: List<Participant> = emptyList(), val input: String = "", val text: String = "",
     val mode: RecipientMode = RecipientMode.SeparateSms, val sims: List<SimCard> = emptyList(),
     val sim: SimChoice = SimChoice.NoSim, val suggestions: List<Participant> = emptyList(), val busy: Boolean = false, val error: String? = null,
+    val sendingAvailable: Boolean = true,
 ) {
-    val canSend get() = !busy && text.isNotBlank() && recipients.isNotEmpty() && input.isBlank() && recipients.all { isOutgoingNumber(it.address.raw) } && sim is SimChoice.Ready
+    val canSend get() = sendingAvailable && !busy && text.isNotBlank() && recipients.isNotEmpty() && input.isBlank() && recipients.all { isOutgoingNumber(it.address.raw) } && sim is SimChoice.Ready
     val operationLabel get() = if (recipients.size > 1 && mode == RecipientMode.GroupMms) "1 grupowy MMS" else if (recipients.size == 1) "1 SMS" else "${recipients.size} osobne SMS"
 }
 
 /** Nowy szkic ma osobny SavedStateHandle: anulowanie arkusza zachowuje odbiorców, treść i SIM. */
-class NewMessageViewModel(private val saved: SavedStateHandle, private val c: AppContainer, preset: List<Participant>) : ViewModel() {
+class NewMessageViewModel(private val saved: SavedStateHandle, private val c: AppContainer, preset: List<Participant>, external: ExternalCompose? = null) : ViewModel() {
     init {
         if (!saved.contains("addresses")) {
-            saved["addresses"] = ArrayList(preset.map { it.address.raw })
-            saved["names"] = ArrayList(preset.map { it.displayName.orEmpty() })
+            val recipients = external?.recipients?.map { Participant(it) } ?: preset
+            saved["addresses"] = ArrayList(recipients.map { it.address.raw })
+            saved["names"] = ArrayList(recipients.map { it.displayName.orEmpty() })
+            if (external != null) saved["text"] = external.text
             if (preset.isNotEmpty()) saved["sim"] = 1
         }
     }
@@ -41,7 +44,7 @@ class NewMessageViewModel(private val saved: SavedStateHandle, private val c: Ap
         Triple(sims, contacts, chooseSim(sims, sim?.let(::SubscriptionId), null, prefs.defaultSubscriptionId))
     }
     val state = combine(form, data, busy, error) { f, d, b, e ->
-        f.copy(sims = d.first, sim = d.third, busy = b, error = e,
+        f.copy(sims = d.first, sim = d.third, busy = b, error = e, sendingAvailable = c.canSendMessages,
             suggestions = d.second.filter { p -> f.recipients.none { it.address.normalized == p.address.normalized } && (f.input.isBlank() || searchFold(f.input) in searchFold(p.label) || f.input.filter(Char::isDigit).let { it.isNotEmpty() && it in p.address.normalized }) })
     }.stateIn(viewModelScope, SharingStarted.Eagerly, NewMessageState())
 
