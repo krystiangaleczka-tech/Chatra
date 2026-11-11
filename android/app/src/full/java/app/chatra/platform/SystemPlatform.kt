@@ -41,7 +41,7 @@ class SystemPlatform(private val context: Context) : ActivityPlatform, Observabl
     override fun acceptIntent(intent: Intent): String? {
         if (intent.action == ACTION_OPEN_CONVERSATION) {
             val id = intent.getStringExtra(EXTRA_CONVERSATION_ID)
-                ?.takeIf { it.matches(Regex("[a-zA-Z0-9_-]{1,80}")) }
+                ?.takeIf { raw -> runCatching { java.util.UUID.fromString(raw).toString().equals(raw, ignoreCase = true) }.getOrDefault(false) }
                 ?.let(::ConversationId)
             if (id != null) incomingConversationId.value = id
             return null
