@@ -1,6 +1,8 @@
 package app.chatra.di
 
 import android.Manifest
+import app.chatra.local.*
+import app.chatra.mms.MmsEngine
 import android.app.Application
 import android.app.AlarmManager
 import android.content.Intent
@@ -23,6 +25,7 @@ import java.time.ZoneId
 
 interface FullTelephonyContainer : AppContainer {
     val incomingSms: IncomingSms
+    val mms: MmsEngine
     val smsQueue: PersistentSmsQueue
 }
 
@@ -30,6 +33,7 @@ interface FullTelephonyContainer : AppContainer {
 fun createContainer(app: Application, referenceFrame: Boolean, roleScenario: String? = null, exactAlarms: Boolean = true): AppContainer {
     val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     val platform = SystemPlatform(app)
+    val notificationPrefs = LocalNotificationPrefs(app)
     val prefs = DataStorePreferences(app, scope, "full")
     val organization = MemoryOrganizationPreview()
     val clock = object : Clock {
@@ -51,17 +55,30 @@ fun createContainer(app: Application, referenceFrame: Boolean, roleScenario: Str
     val conversations = SystemHistory(app, db, platform, contacts, scope)
     val drafts = RoomDrafts(db)
     val smsText = PlatformSmsText(app)
+    val mediaStore = PrivateMediaStore(app)
     val queue = PersistentSmsQueue(app, db, platform, conversations, sims, smsText, drafts)
+    val mmsEngine = MmsEngine(app, db, mediaStore, conversations, platform)
+    queue.mms = mmsEngine
     val incoming = IncomingSms(app, db, platform, conversations)
-    MessageNotifications(app, db, platform, scope)
+    MessageNotifications(app, db, platform, scope, notificationPrefs, sims)
     scope.launch(Dispatchers.IO) {
+        mmsEngine.recoverDownloads()
         queue.awaitReady()
+        val protected = db.dao().drafts().first().flatMap { DraftCodec.decode(it).attachmentIds } + db.dao().operations().first().flatMap { row -> row.snapshot?.let { DraftCodec.decode(it).attachmentIds }.orEmpty() }
+        mediaStore.collectUnused(protected.toSet(), System.currentTimeMillis() - 86_400_000)
         platform.changes.collect { incoming.recover(); queue.recover(false) }
     }
     return object : FullTelephonyContainer {
+        override val gallery = ProviderMediaGallery(app, db, platform)
+        override val mmsDownloads = mmsEngine
+        override val mms = mmsEngine
+        override val mmsAvailable = true
         override val incomingSms = incoming
         override val smsQueue = queue
         override val smsText = smsText
+        override val templates = LocalTemplates(app)
+        override val media = mediaStore
+        override val notifications = notificationPrefs
         override val conversations = conversations
         override val draftWriteScope = scope
         override val drafts = drafts

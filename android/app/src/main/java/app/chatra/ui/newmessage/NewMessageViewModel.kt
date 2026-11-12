@@ -15,9 +15,10 @@ data class NewMessageState(
     val sendingAvailable: Boolean = true,
     val counter: SmsCounter.Count = SmsCounter.count(""),
     val counterEnabled: Boolean = true,
+    val attachmentCount: Int = 0,
 ) {
-    val canSend get() = sendingAvailable && !busy && text.isNotBlank() && text.length <= 16384 && counter.preservesText && recipients.isNotEmpty() && input.isBlank() && recipients.all { isOutgoingNumber(it.address.raw) } && sim is SimChoice.Ready
-    val operationLabel get() = if (recipients.size > 1 && mode == RecipientMode.GroupMms) "1 grupowy MMS" else if (recipients.size == 1) "1 SMS" else "${recipients.size} osobne SMS"
+    val canSend get() = sendingAvailable && !busy && (text.isNotBlank() || attachmentCount > 0) && text.length <= 16384 && counter.preservesText && recipients.isNotEmpty() && input.isBlank() && recipients.all { isOutgoingNumber(it.address.raw) } && sim is SimChoice.Ready
+    val operationLabel get() = if (attachmentCount > 0 && mode != RecipientMode.GroupMms) "${recipients.size} osobne MMS" else if (recipients.size > 1 && mode == RecipientMode.GroupMms) "1 grupowy MMS" else if (recipients.size == 1) "1 SMS" else "${recipients.size} osobne SMS"
 }
 
 /** Nowy szkic ma osobny SavedStateHandle: anulowanie arkusza zachowuje odbiorców, treść i SIM. */
@@ -42,19 +43,20 @@ class NewMessageViewModel(private val saved: SavedStateHandle, private val c: Ap
     private var draftId = DraftId(saved.get<String>("draftId") ?: external?.let { "external:${it.id}" } ?: DraftId.new().value)
     private var revision = saved.get<Long>("revision") ?: 0L
     private var loaded = !c.drafts.durable
-    private var draftBase: Draft? = null
+    private var draftBase: Draft? = external?.takeIf { it.attachmentIds.isNotEmpty() }?.let { Draft(draftId, null, it.recipients, it.text, RecipientMode.SeparateSms, it.attachmentIds, null, c.clock.now(), mediaVariant = MediaVariant.Mms) }
     private var saveJob: kotlinx.coroutines.Job? = null
     val drafts = c.drafts.all().stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
-    private val error = MutableStateFlow<String?>(null)
+    private val error = MutableStateFlow<String?>(external?.error)
+    private val attachments = MutableStateFlow(external?.attachmentIds.orEmpty())
     private val form = combine(addresses, names, input, text, mode) { a, n, i, t, m ->
         NewMessageState(a.mapIndexed { index, raw -> Participant(Address(raw), n.getOrNull(index)?.takeIf { it.isNotBlank() }) }, i, t, RecipientMode.valueOf(m))
-    }
+    }.combine(attachments) { f, ids -> f.copy(attachmentCount = ids.size) }
     private val defaultSim = combine(c.sending.value, c.sims.defaultSubscription()) { prefs, system -> prefs.defaultSubscriptionId ?: system }
     private val data = combine(c.sims.cards(), c.contacts.suggestions(), defaultSim, chosen) { sims, contacts, default, sim ->
         Triple(sims, contacts, chooseSim(sims, sim?.let(::SubscriptionId), null, default))
     }
     val state = combine(form, data, busy, error, c.sendAccess) { f, d, b, e, access ->
-        f.copy(sims = d.first, sim = d.third, busy = b, error = e, sendingAvailable = access && (c.isDemo || f.mode != RecipientMode.GroupMms),
+        f.copy(sims = d.first, sim = d.third, busy = b, error = e, sendingAvailable = access && (c.mmsAvailable || f.mode != RecipientMode.GroupMms),
             counterEnabled = c.sending.value.value.smsCounterEnabled,
             counter = c.smsText.count(f.text, (d.third as? SimChoice.Ready)?.sim?.id),
             suggestions = d.second.filter { p -> f.recipients.none { recipientKey(it.address.raw) == recipientKey(p.address.raw) } && (f.input.isBlank() || searchFold(f.input) in searchFold(p.label) || f.input.filter(Char::isDigit).let { it.isNotEmpty() && it in p.address.normalized }) }.take(50))
@@ -68,7 +70,7 @@ class NewMessageViewModel(private val saved: SavedStateHandle, private val c: Ap
                 if (d != null) applyDraft(d)
                 else if (c.drafts.isClosed(draftId)) {
                     saved["text"] = ""; saved["addresses"] = arrayListOf<String>(); saved["names"] = arrayListOf<String>()
-                    draftId = DraftId.new(); draftBase = null; revision = 0; saved["draftId"] = draftId.value
+                    draftId = DraftId.new(); draftBase = null; attachments.value = emptyList(); revision = 0; saved["draftId"] = draftId.value
                 }
                 loaded = true
             } catch (_: Exception) { error.value = "Nie udało się wczytać szkicu. Otwórz edytor ponownie." }
@@ -77,18 +79,20 @@ class NewMessageViewModel(private val saved: SavedStateHandle, private val c: Ap
     }
     private fun applyDraft(d: Draft) {
         draftBase = d
+        attachments.value = d.attachmentIds
         draftId = d.id; revision = d.revision; saved["draftId"] = d.id.value; saved["revision"] = revision
         saved["addresses"] = ArrayList(d.recipients.map { it.raw }); saved["names"] = ArrayList(d.recipientNames)
         saved["text"] = d.text; saved["input"] = d.recipientInput; saved["mode"] = d.recipientMode.name
         saved["sim"] = d.subscriptionId?.value; saved["simLabel"] = d.subscriptionLabel
     }
+    fun clearAttachments() { if (!busy.value) { attachments.value = emptyList(); draftBase = draftBase?.copy(attachmentIds = emptyList(), attachmentBytes = 0, mediaVariant = null); persist() } }
     fun restore(d: Draft) {
         if (busy.value || d.id == draftId) return
         if (text.value.isNotEmpty() || addresses.value.isNotEmpty() || input.value.isNotEmpty() || !draftBase?.attachmentIds.isNullOrEmpty()) persist()
         applyDraft(d)
         persist()
     }
-    private fun snapshot(): Draft = Draft(draftId, null, addresses.value.map(::Address), text.value, RecipientMode.valueOf(mode.value), draftBase?.attachmentIds.orEmpty(),
+    private fun snapshot(): Draft = Draft(draftId, null, addresses.value.map(::Address), text.value, RecipientMode.valueOf(mode.value), attachments.value,
         chosen.value?.let(::SubscriptionId), c.clock.now(), subscriptionLabel = saved["simLabel"], revision = revision,
         recipientNames = names.value, recipientInput = input.value, mediaVariant = draftBase?.mediaVariant, attachmentBytes = draftBase?.attachmentBytes ?: 0)
     private fun persist() {
@@ -137,22 +141,22 @@ class NewMessageViewModel(private val saved: SavedStateHandle, private val c: Ap
     }
     fun send(onDone: (ConversationId) -> Unit) {
         val s = state.value
-        if (!s.canSend || busy.value || s.text != text.value || text.value.isBlank() || addresses.value.isEmpty()) return
+        if (!s.canSend || busy.value || s.text != text.value || (text.value.isBlank() && draftBase?.attachmentIds.isNullOrEmpty()) || addresses.value.isEmpty()) return
         busy.value = true
         viewModelScope.launch {
             val card = (s.sim as SimChoice.Ready).sim
-            val draft = Draft(if (c.drafts.durable) draftId else DraftId.new(), null, s.recipients.map { it.address }, s.text, s.mode, draftBase?.attachmentIds.orEmpty(), card.id, c.clock.now(), subscriptionLabel = card.label, revision = revision, recipientNames = names.value, recipientInput = input.value, mediaVariant = draftBase?.mediaVariant, attachmentBytes = draftBase?.attachmentBytes ?: 0)
+            val draft = Draft(if (c.drafts.durable) draftId else DraftId.new(), null, s.recipients.map { it.address }, s.text, s.mode, attachments.value, card.id, c.clock.now(), subscriptionLabel = card.label, revision = revision, recipientNames = names.value, recipientInput = input.value, mediaVariant = draftBase?.mediaVariant, attachmentBytes = draftBase?.attachmentBytes ?: 0)
             val plan = if (c.drafts.durable) listOf(draft) else draft.newMessagePlan()
             var last: ConversationId? = null
             val accepted = mutableListOf<Address>()
             try {
                 for (part in plan) {
-                    val id = c.conversations.conversationFor(if (c.drafts.durable) part.recipients.take(1) else part.recipients)
+                    val id = c.conversations.conversationFor(if (c.drafts.durable && part.recipientMode != RecipientMode.GroupMms) part.recipients.take(1) else part.recipients)
                     c.sendQueue.enqueue(if (c.drafts.durable) part else part.copy(conversationId = id), c.sending.value.value.undoSeconds)
                     accepted += part.recipients
                     last = id
                 }
-                draftId = DraftId.new(); draftBase = null; revision = 0; saved["draftId"] = draftId.value; saved["revision"] = 0L
+                draftId = DraftId.new(); draftBase = null; attachments.value = emptyList(); revision = 0; saved["draftId"] = draftId.value; saved["revision"] = 0L
                 saved["addresses"] = arrayListOf<String>(); saved["names"] = arrayListOf<String>(); saved["text"] = ""
                 last?.let(onDone)
             } catch (cancelled: kotlinx.coroutines.CancellationException) {

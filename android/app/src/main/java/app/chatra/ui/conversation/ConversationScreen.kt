@@ -303,7 +303,7 @@ private fun Status(m: Message, state: ConversationState, model: ConversationView
         when (m.status) {
             DeliveryStatus.Failed -> Row(Modifier.widthIn(max = 330.dp), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
                 BasicText(
-                    "Nie udało się wysłać. Wybierz kartę SIM i spróbuj ponownie.",
+                    operation?.failureDescription ?: "Nie udało się wysłać. Wybierz kartę SIM i spróbuj ponownie.",
                     Modifier.weight(1f, fill = false),
                     style = chatraText(12f, 600, 16f, color = ChatraColors.ErrorText).copy(textAlign = TextAlign.End),
                 )
@@ -332,6 +332,7 @@ private fun Status(m: Message, state: ConversationState, model: ConversationView
                 BasicText(if (operation?.state == app.chatra.core.model.SendState.MISSED_NEEDS_DECISION) "Wysyłka wstrzymana po restarcie. Wybierz dalsze działanie."
                     else if (m.status == DeliveryStatus.PartiallySent) "Wysłano tylko część wiadomości. Ponowna wysyłka może ją powielić."
                     else "Nie wiadomo, czy operator przyjął wiadomość. Ponowna wysyłka może ją powielić.", style = tertiary)
+                operation?.failureDescription?.let { BasicText(it, style = tertiary) }
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     SmallPill("Sprawdź status", ChatraColors.Link, ChatraColors.white(.85f), null) { m.operationId?.let(model::reconcile) }
                     if (operation?.canRetry == true) SmallPill("Ponów nieudane", ChatraColors.Link, ChatraColors.white(.85f), null) { retryPicker = true }

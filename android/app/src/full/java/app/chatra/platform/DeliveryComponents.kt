@@ -45,6 +45,7 @@ private object DeliverySpool {
             try { stream.write(json.put("receivedAt", System.currentTimeMillis()).toString().toByteArray()); file.finishWrite(stream) } catch (error: Exception) { file.failWrite(stream); throw error }
         }
         if (!mms) IncomingSms.schedule(context, key)
+        else app.chatra.mms.MmsDownloadWorker.schedule(context, key)
     }
 }
 

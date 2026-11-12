@@ -17,10 +17,14 @@ import app.chatra.ui.LocalContainer
 import app.chatra.ui.common.TextAction
 import app.chatra.ui.common.ChoiceDialog
 import org.json.JSONObject
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.launch
 
 @Composable
 fun PrivacyScreen(onBack: () -> Unit) {
     val c = LocalContainer.current
+    val notices by c.notifications.value.collectAsStateWithLifecycle()
+    val notificationScope = rememberCoroutineScope()
     var files by rememberSaveable { mutableIntStateOf(0) }
     val picker = rememberLauncherForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(20)) { files = it.size }
     DetailPage("Prywatność", onBack) {
@@ -28,6 +32,23 @@ fun PrivacyScreen(onBack: () -> Unit) {
             BasicText("Historia i wyszukiwanie pozostają na telefonie. Dane nie trafiają do chmury przez samo nadanie roli SMS.", style = ChatraType.Body)
             BasicText("Chatra HD jest osobnym, dobrowolnym transferem. W tej wersji nie jest aktywny. Nie obiecujemy RCS, iMessage ani połączeń.", style = ChatraType.Preview)
             if (c.isDemo) BasicText("Demo używa przykładowych rozmów i kart. Nie odczytuje SMS ani kontaktów urządzenia i nie wykonuje zakupów.", style = ChatraType.Preview)
+        }
+        c.mmsDownloads?.let { downloads ->
+            val pending by downloads.pending.collectAsStateWithLifecycle()
+            var downloadError by remember { mutableStateOf<String?>(null) }
+            if (pending.isNotEmpty()) DetailCard {
+                BasicText("MMS do pobrania: ${pending.size}", style = chatraText(17f, 600))
+                pending.forEach { item ->
+                    BasicText(item.description, style = ChatraType.Preview)
+                    TextAction("Ponów pobieranie", { notificationScope.launch { try { downloads.retryDownload(item.id); downloadError = null } catch (e: Exception) { downloadError = e.message ?: "Nie udało się ponowić pobierania." } } })
+                }
+                downloadError?.let { BasicText(it, style = ChatraType.Preview) }
+            }
+        }
+        DetailCard {
+            BasicText("Podgląd powiadomień", style = chatraText(17f, 600))
+            BasicText(if (notices.previews) "Podgląd tekstu po odblokowaniu. Ekran blokady pokazuje neutralną treść." else "Treść wiadomości jest ukryta w powiadomieniach.", style = ChatraType.Preview)
+            TextAction(if (notices.previews) "Ukryj podglądy" else "Pokaż podglądy po odblokowaniu", { notificationScope.launch { c.notifications.update { it.copy(previews = !it.previews) } } })
         }
         if (c.platform != null) {
             PermissionCard(AccessFeature.Sms)

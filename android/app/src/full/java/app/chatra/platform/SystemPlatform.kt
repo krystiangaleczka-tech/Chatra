@@ -18,6 +18,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.lang.ref.WeakReference
 import kotlin.coroutines.resume
+import kotlinx.coroutines.*
+import app.chatra.local.PrivateMediaStore
 
 /** Launchery rejestrowane przed STARTED; wynik zawsze sprawdza faktyczny stan systemu. */
 class SystemPlatform(private val context: Context) : ActivityPlatform, ObservableSmsRoleGate {
@@ -44,6 +46,31 @@ class SystemPlatform(private val context: Context) : ActivityPlatform, Observabl
                 ?.takeIf { raw -> runCatching { java.util.UUID.fromString(raw).toString().equals(raw, ignoreCase = true) }.getOrDefault(false) }
                 ?.let(::ConversationId)
             if (id != null) incomingConversationId.value = id
+            return null
+        }
+        if (intent.action in listOf(Intent.ACTION_SEND, Intent.ACTION_SEND_MULTIPLE)) {
+            // URI grants are consumed into owned bytes while the receiving activity is alive.
+            val body = intent.getCharSequenceExtra(Intent.EXTRA_TEXT)?.toString().orEmpty()
+            if (body.length > 16384 || '\u0000' in body) return null
+            val uris = buildList<Uri> {
+                if (intent.action == Intent.ACTION_SEND) androidx.core.content.IntentCompat.getParcelableExtra(intent, Intent.EXTRA_STREAM, Uri::class.java)?.let { add(it) }
+                else addAll(androidx.core.content.IntentCompat.getParcelableArrayListExtra(intent, Intent.EXTRA_STREAM, Uri::class.java).orEmpty())
+                if (isEmpty()) intent.clipData?.let { clip -> for (i in 0 until clip.itemCount) clip.getItemAt(i).uri?.let { add(it) } }
+            }.distinct()
+            if (uris.size > 20 || uris.any { it.scheme != "content" }) return null
+            val id = java.util.UUID.randomUUID().toString()
+            CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
+                val owned = mutableListOf<AttachmentId>()
+                try {
+                    val media = PrivateMediaStore(context)
+                    for (uri in uris) owned += media.importUri(uri.toString()).id
+                    val draft = externalCompose(emptyList(), body, id, owned, allowEmptyRecipients = true) ?: return@launch
+                    external.save(draft); incomingDraftId.value = draft.id
+                } catch (_: Exception) {
+                    // Preserve valid shared text even if a URI was revoked; no automatic send.
+                    externalCompose(emptyList(), body, id, owned, allowEmptyRecipients = true)?.copy(error = "Nie udało się skopiować wszystkich udostępnionych plików. Wybierz brakujące ponownie.")?.let { external.save(it); incomingDraftId.value = it.id }
+                }
+            }
             return null
         }
         return parseComposeIntent(intent)?.let { external.save(it); incomingDraftId.value = it.id; it.id }

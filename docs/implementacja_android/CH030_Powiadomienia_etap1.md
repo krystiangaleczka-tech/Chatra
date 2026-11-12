@@ -1,6 +1,8 @@
 # CH030 — powiadomienia i wejścia systemowe, etap 1 (11.11.2026)
 
-Stan: **PR roboczy, częściowa implementacja, bez odbioru urządzenia**. Baza: CH029 / PR #14.
+**Opis historyczny etapu 1. Aktualna implementacja i testy: [CH030–CH034](CH030_CH034_Wdrozenie_i_weryfikacja.md).**
+
+Stan etapu 1: **PR roboczy, częściowa implementacja, bez odbioru urządzenia**. Baza: CH029 / PR #14.
 
 - Kanały: SMS, błędy wysyłania, harmonogram i HD. Samo istnienie kanałów nie oznacza wdrożenia alertów błędów, alarmów lub HD.
 - Niewyciszona rozmowa ma własne powiadomienie z niezmiennym identyfikatorem rozmowy i odrębnym PendingIntent. ID nie pochodzi z numeru telefonu ani treści SMS. Wariant publiczny na ekranie blokady ma neutralną treść; nie wyświetla nazwy kontaktu, nadawcy ani wiadomości.

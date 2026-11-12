@@ -20,6 +20,12 @@ import kotlinx.coroutines.flow.StateFlow
  * Telephony. Ekrany znają wyłącznie ten kontrakt.
  */
 interface AppContainer {
+    val templates: app.chatra.core.model.TemplateRepository
+    val media: app.chatra.core.model.AttachmentStore
+    val notifications: PreferenceStore<app.chatra.core.model.NotificationPrefs>
+    val mmsDownloads: app.chatra.core.model.MmsDownloads? get() = null
+    val gallery: app.chatra.core.model.MediaGallery? get() = null
+    val mmsAvailable: Boolean get() = isDemo
     val conversations: ConversationRepository
     val draftWriteScope: kotlinx.coroutines.CoroutineScope? get() = null
     val drafts: DraftRepository

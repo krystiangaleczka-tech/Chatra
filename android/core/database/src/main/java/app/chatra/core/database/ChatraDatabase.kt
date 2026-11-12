@@ -50,7 +50,7 @@ data class OutgoingOperation(
 @Entity(primaryKeys = ["operationId", "address"], indices = [Index("operationId")], foreignKeys = [
     ForeignKey(entity = OutgoingOperation::class, parentColumns = ["id"], childColumns = ["operationId"], onDelete = ForeignKey.CASCADE),
 ])
-data class OutgoingRecipient(val operationId: String, val address: String, val conversationId: String, val state: String, val providerId: Long? = null)
+data class OutgoingRecipient(val operationId: String, val address: String, val conversationId: String, val state: String, val providerId: Long? = null, @ColumnInfo(defaultValue = "'SMS'") val providerKind: String = "SMS")
 
 @Entity(indices = [Index("operationId")], foreignKeys = [
     ForeignKey(entity = OutgoingOperation::class, parentColumns = ["id"], childColumns = ["operationId"], onDelete = ForeignKey.CASCADE),
@@ -101,6 +101,10 @@ interface ChatraDao {
     @Query("DELETE FROM MediaRef WHERE messageId=:id AND partId NOT IN (:parts)") suspend fun sweepParts(id: Long, parts: List<Long>)
     @Query("SELECT * FROM MediaRef WHERE conversationId=:id AND messageId=:message") suspend fun media(id: String, message: Long): List<MediaRef>
     @Query("SELECT * FROM MediaRef WHERE conversationId=:id") fun conversationMedia(id: String): Flow<List<MediaRef>>
+    @Query("SELECT * FROM MediaRef WHERE conversationId=:id AND (:kind='' OR mimeType LIKE :kind) AND (:before IS NULL OR partId<:before) ORDER BY partId DESC LIMIT :limit") suspend fun galleryPage(id: String, kind: String, before: Long?, limit: Int): List<MediaRef>
+    @Query("SELECT COUNT(*) FROM MediaRef WHERE conversationId=:id AND (:kind='' OR mimeType LIKE :kind)") suspend fun galleryCount(id: String, kind: String): Int
+    @Query("SELECT * FROM MediaRef WHERE partId=:id") suspend fun mediaPart(id: Long): MediaRef?
+
 
     @Query("SELECT * FROM InboundReceipt WHERE fingerprint=:key") suspend fun receipt(key: String): InboundReceipt?
     @Upsert suspend fun receipt(row: InboundReceipt)
@@ -135,7 +139,7 @@ interface ChatraDao {
 }
 
 @Database(entities = [ConversationMeta::class, ProviderMessageRef::class, MediaRef::class, InboundReceipt::class,
-    OutgoingOperation::class, OutgoingRecipient::class, OutgoingAttempt::class, OutgoingPart::class, SavedDraft::class, ClosedDraft::class], version = 3, exportSchema = true)
+    OutgoingOperation::class, OutgoingRecipient::class, OutgoingAttempt::class, OutgoingPart::class, SavedDraft::class, ClosedDraft::class], version = 4, exportSchema = true)
 abstract class ChatraDatabase : RoomDatabase() {
     abstract fun dao(): ChatraDao
     companion object {
@@ -163,7 +167,12 @@ abstract class ChatraDatabase : RoomDatabase() {
                 db.execSQL("CREATE TABLE IF NOT EXISTS ClosedDraft (id TEXT NOT NULL PRIMARY KEY)")
             }
         }
+        val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE OutgoingRecipient ADD COLUMN providerKind TEXT NOT NULL DEFAULT 'SMS'")
+            }
+        }
         fun open(context: Context): ChatraDatabase = Room.databaseBuilder(context.applicationContext, ChatraDatabase::class.java, "chatra.db")
-            .addMigrations(MIGRATION_1_2, MIGRATION_2_3).build()
+            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4).build()
     }
 }

@@ -366,7 +366,7 @@ Odbiór: właściwy wątek, aktualne badge, brak tekstu na blokadzie przy ukryty
 **Odbiór rozszerzony:** Nowa wiadomość w wyciszonej rozmowie aktualizuje historię i liczniki bez niepożądanego alertu; zmiana preferencji pozostaje skuteczna po restarcie.
 
 
-**CH030 — etap implementacji (11.11.2026):** rozdzielono kanały powiadomień, dodano powiadomienia per rozmowa z bezpiecznym otwieraniem lokalnego ID, neutralny widok ekranu blokady, odrębne alertowanie nowych SMS i pominięcie wyciszonych wątków przy zachowaniu licznika. Pozostają: szybka odpowiedź przez wspólną kolejkę i wybraną SIM, kontrola czasu wyciszenia oraz odbiór lockscreen/cold start/API 31+ na urządzeniach. Prace w PR opartym na CH029. Nie zamykać zadania przed testami.
+**Implementacja 12.11.2026:** [CH030–CH034: zakres, testy i granice odbioru](CH030_CH034_Wdrozenie_i_weryfikacja.md). Szybka odpowiedź, wyciszenia i wejścia systemowe mają testy AVD; pełny odbiór urządzeń pozostaje otwarty.
 
 ### CH031 Przygotować cykl życia załączników
 
@@ -380,6 +380,7 @@ Odbiór: wybrane pliki nadal dostępne po restarcie; brak szerokiej zgody na gal
 
 **Odbiór rozszerzony:** Galeria nie zawyża liczby załączników, nie ładuje jednocześnie wszystkich pełnych plików, nie ujawnia danych wrażliwych przez przypadkowy URI.
 
+**Implementacja 12.11.2026:** [zakres i weryfikacja](CH030_CH034_Wdrozenie_i_weryfikacja.md). Trwałe pliki i port galerii są wdrożone; odbiór zasobów i docelowego urządzenia pozostaje otwarty.
 
 ### CH032 Zbudować transport MMS i grupy
 
@@ -389,6 +390,8 @@ Wykonanie: ocenić utrzymywany i zgodny licencyjnie adapter PDU, obsłużyć kon
 
 Odbiór: rzeczywisty MMS w obu kierunkach oraz grupa u uzgodnionych operatorów. Weryfikacja: fizyczne urządzenia z dwiema kartami SIM, roaming, brak danych i restart. Dokumentowany brak wsparcia nie może wyglądać jak sukces.
 
+**Implementacja 12.11.2026:** [zakres i weryfikacja](CH030_CH034_Wdrozenie_i_weryfikacja.md). Transport, PDU i zapis historii sprawdzono kontrolowanymi testami; rzeczywiste MMS u operatorów i dual SIM/eSIM pozostają do odbioru. Nie oznaczać zadania jako w pełni odebrane.
+
 ### CH033 Zbudować oryginał i kopię bez lokalizacji
 
 **P0 · Android media · 3–5 osobodni · zależności CH031**
@@ -397,6 +400,8 @@ Wykonanie: oryginał jako niezmienne bajty; osobne pochodne dla MMS i usunięcia
 
 Odbiór: oryginał ma identyczny hash; kopia nie zawiera lokalizacji w obsługiwanych polach i nie jest opisana jako oryginał. Weryfikacja: niezależny odczyt metadanych, orientacja i jakość po konwersji, nieobsługiwany format.
 
+**Implementacja 12.11.2026:** [zakres i weryfikacja](CH030_CH034_Wdrozenie_i_weryfikacja.md). Oryginały oraz kopie JPEG bez metadanych są wdrożone dla JPEG/PNG/WebP; sanitacja filmów/GIF/HEIC jest jawnie nieobsługiwana.
+
 ### CH034 Wdrożyć szablony wiadomości
 
 **P1 · Android · 1–2 osobodni · zależności CH020 CH028**
@@ -404,6 +409,8 @@ Odbiór: oryginał ma identyczny hash; kopia nie zawiera lokalizacji w obsługiw
 Wykonanie: lokalny katalog szablonów, dodanie/edycja/usunięcie, wybór w dodatkach. Wstawienie w kursor lub jasna reguła dopisania; zastąpienie niepustej treści wyłącznie po świadomej akcji. Zachować odbiorców, SIM i pliki. Brak synchronizacji z chmurą w tym zakresie.
 
 Odbiór: akcja Szablony jest kompletna, stan pusty prowadzi do utworzenia. Weryfikacja: polskie znaki, długa treść, reset procesu i brak podwojenia po dwukrotnym kliknięciu.
+
+**Implementacja 12.11.2026:** [zakres i weryfikacja](CH030_CH034_Wdrozenie_i_weryfikacja.md). Lokalne szablony, CRUD, zapis i dopisywanie treści są wdrożone.
 
 ## 5 Harmonogram wyszukiwanie i ustawienia
 

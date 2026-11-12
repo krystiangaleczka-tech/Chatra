@@ -1,5 +1,6 @@
 package app.chatra.di
 
+import app.chatra.local.*
 import android.app.Application
 import app.chatra.core.model.AppearancePrefs
 import app.chatra.core.model.Clock
@@ -27,11 +28,15 @@ fun createContainer(app: Application, referenceFrame: Boolean, roleScenario: Str
     val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     val clock: Clock = if (referenceFrame) FixedClock() else DemoClock()
     val repo = InMemoryChatra(clock, scope, frozen = referenceFrame)
+    val notificationPrefs = LocalNotificationPrefs(app)
     val prefs = DataStorePreferences(app, scope, if (referenceFrame) "demo-reference" else "demo")
     val organization = MemoryOrganizationPreview(true,
         (1..Fixture.BlockedCount).map { BlockedPreview("blocked-$it", "+48 500 000 00$it") },
         (1..Fixture.TrashCount).map { TrashPreview(ConversationId("demo-trash-$it"), "Rozmowa demonstracyjna $it") })
     return object : AppContainer {
+        override val templates = LocalTemplates(app)
+        override val media = PrivateMediaStore(app)
+        override val notifications = notificationPrefs
         override val conversations = repo
         override val drafts = repo
         override val sims = repo

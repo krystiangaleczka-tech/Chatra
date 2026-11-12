@@ -50,8 +50,11 @@ data class ConversationState(
     val error: String? = null,
     val sendingAvailable: Boolean = true,
     val hasOlder: Boolean = false,
+    val attachmentIds: List<AttachmentId> = emptyList(),
+    val attachmentBytes: Long = 0,
+    val mediaVariant: MediaVariant? = null,
 ) {
-    val canSend: Boolean get() = sendingAvailable && !busy && text.isNotBlank() && text.length <= 16384 && counter.preservesText && sim is SimChoice.Ready && summary?.participants?.any { it.address.canReply } == true
+    val canSend: Boolean get() = sendingAvailable && !busy && (text.isNotBlank() || attachmentIds.isNotEmpty()) && text.length <= 16384 && counter.preservesText && sim is SimChoice.Ready && summary?.participants?.any { it.address.canReply } == true
 }
 
 class ConversationViewModel(
@@ -69,6 +72,7 @@ class ConversationViewModel(
     private val draftWriteScope: kotlinx.coroutines.CoroutineScope? = null,
 ) : ViewModel() {
     private val text = MutableStateFlow<String?>(null)
+    private val selectedAttachments = MutableStateFlow<List<AttachmentId>>(emptyList())
     private val chosenSim = MutableStateFlow<SubscriptionId?>(null)
     private var draftId: DraftId? = null
     private var saveJob: Job? = null
@@ -86,6 +90,7 @@ class ConversationViewModel(
             draftId = d?.id
             revision = d?.revision ?: 0
             draftBase = d
+            selectedAttachments.value = d?.attachmentIds.orEmpty()
             if (text.value == null) text.value = d?.text.orEmpty()
             chosenSim.value = chosenSim.value ?: d?.subscriptionId
             selectedLabel = d?.subscriptionLabel
@@ -110,7 +115,7 @@ class ConversationViewModel(
             sendingAvailable = mmsAvailable || b.summary?.isGroupMms != true,
         )
     }
-    val state: StateFlow<ConversationState> = combine(form, busy, error, sendAccess) { form, b, e, allowed -> form.copy(busy = b, error = e, sendingAvailable = form.sendingAvailable && allowed) }
+    val state: StateFlow<ConversationState> = combine(form, busy, error, sendAccess, selectedAttachments) { form, b, e, allowed, ids -> form.copy(busy = b, error = e, sendingAvailable = form.sendingAvailable && allowed, attachmentIds = ids, attachmentBytes = draftBase?.attachmentBytes ?: 0, mediaVariant = draftBase?.mediaVariant) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ConversationState())
 
     /** Otwarty wątek oznaczamy po rzeczywistym pokazaniu treści (S02). */
@@ -142,9 +147,10 @@ class ConversationViewModel(
         val did = draftId ?: DraftId.new().also { draftId = it }
         if (chosenSim.value == null) (s.sim as? SimChoice.Ready)?.sim?.let { chosenSim.value = it.id; selectedLabel = it.label }
         revision++
-        val draft = Draft(did, id, recipients, text.value.orEmpty(), mode(s), draftBase?.attachmentIds.orEmpty(), chosenSim.value, clock.now(),
+        val draft = Draft(did, id, recipients, text.value.orEmpty(), mode(s), selectedAttachments.value, chosenSim.value, clock.now(),
             mediaVariant = draftBase?.mediaVariant, attachmentBytes = draftBase?.attachmentBytes ?: 0,
             subscriptionLabel = selectedLabel, revision = revision, recipientNames = draftBase?.recipientNames.orEmpty(), recipientInput = draftBase?.recipientInput.orEmpty())
+        draftBase = draft
         saveJob = (draftWriteScope ?: viewModelScope).launch {
             try { drafts.save(draft) }
             catch (_: Exception) { error.value = "Nie udało się zapisać szkicu. Spróbuj ponownie przed zamknięciem aplikacji." }
@@ -155,6 +161,7 @@ class ConversationViewModel(
         if (busy.value || d.id == draftId) return
         if (!text.value.isNullOrEmpty() || !draftBase?.attachmentIds.isNullOrEmpty()) persistDraft()
         draftId = d.id; draftBase = d; revision = d.revision
+        selectedAttachments.value = d.attachmentIds
         text.value = d.text; chosenSim.value = d.subscriptionId; selectedLabel = d.subscriptionLabel
         persistDraft()
     }
@@ -175,9 +182,9 @@ class ConversationViewModel(
         val did = draftId ?: DraftId.new().also { draftId = it }
         viewModelScope.launch {
             try {
-                val draft = Draft(did, id, recipients, s.text, mode(s), draftBase?.attachmentIds.orEmpty(), sim.id, clock.now(), subscriptionLabel = sim.label, revision = revision)
+                val draft = Draft(did, id, recipients, s.text, mode(s), selectedAttachments.value, sim.id, clock.now(), subscriptionLabel = sim.label, revision = revision, mediaVariant = draftBase?.mediaVariant, attachmentBytes = draftBase?.attachmentBytes ?: 0)
                 queue.enqueue(draft, sending.value.undoSeconds)
-                draftId = null; draftBase = null; revision = 0
+                draftId = null; draftBase = null; revision = 0; selectedAttachments.value = emptyList()
                 if (text.value == s.text) text.value = ""
             } catch (cancelled: kotlinx.coroutines.CancellationException) { throw cancelled }
             catch (_: Exception) { error.value = "Nie udało się dodać SMS do kolejki. Treść pozostała w szkicu; sprawdź rolę, zgody i SIM." }
@@ -185,18 +192,31 @@ class ConversationViewModel(
         }
     }
 
-    /** Zdjęcia z S04: osobna operacja z wariantem; tekst z pola zostaje w szkicu. */
+    fun mediaError(message: String) { error.value = message }
+
+    suspend fun attachMedia(items: List<app.chatra.core.model.StoredMedia>, variant: MediaVariant) {
+        if (busy.value) return
+        require(items.size <= 20)
+        draftBase = (draftBase ?: Draft(draftId ?: DraftId.new(), id, emptyList(), text.value.orEmpty(), RecipientMode.Single, emptyList(), chosenSim.value, clock.now())).copy(
+            attachmentIds = items.map { it.id }, attachmentBytes = items.sumOf { it.bytes }, mediaVariant = variant)
+        selectedAttachments.value = items.map { it.id }
+        persistDraft()
+        saveJob?.join()
+    }
+
+    /** Demo preview; full imports owned files before reaching this boundary. */
     fun sendMedia(attachments: List<AttachmentId>, bytes: Long, variant: MediaVariant) {
-        if (!mmsAvailable) { error.value = "Wysyłanie MMS i HD nie jest jeszcze dostępne."; return }
+        if (!mmsAvailable || variant != MediaVariant.Mms) { error.value = "Transfer HD wymaga uruchomienia usługi Chatra HD."; return }
         val s = state.value
         val sim = (s.sim as? SimChoice.Ready)?.sim ?: return
         val recipients = s.summary?.participants?.map { it.address } ?: return
-        if (attachments.isEmpty()) return
+        if (attachments.isEmpty() || busy.value) return
+        busy.value = true
         viewModelScope.launch {
-            queue.enqueue(
-                Draft(DraftId.new(), id, recipients, "", mode(s), attachments, sim.id, clock.now(), mediaVariant = variant, attachmentBytes = bytes),
-                sending.value.undoSeconds,
-            )
+            try {
+                queue.enqueue(Draft(DraftId.new(), id, recipients, "", mode(s), attachments, sim.id, clock.now(), mediaVariant = variant, attachmentBytes = bytes), sending.value.undoSeconds)
+            } catch (_: Exception) { error.value = "Nie udało się przyjąć plików. Pozostały w szkicu." }
+            finally { busy.value = false }
         }
     }
 
@@ -227,7 +247,7 @@ class ConversationViewModel(
         }
     }
 
-    fun insertText(value: String) = onText(if (text.value.isNullOrBlank()) value else "${text.value} $value")
+    fun insertText(value: String) = onText(app.chatra.core.model.appendTemplate(text.value.orEmpty(), value))
 
     fun cancel(op: OperationId) {
         viewModelScope.launch {

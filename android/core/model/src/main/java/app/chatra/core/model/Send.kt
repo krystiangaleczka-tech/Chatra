@@ -58,6 +58,7 @@ data class SendOperation(
     val deliveryFailed: Boolean = false,
     val undoElapsedDeadline: Long? = null,
     val retryOf: OperationId? = null,
+    val failureDescription: String? = null,
 )
 
 /** Wynik przejścia stanu: odrzucony, gdy stan lub wersja nie zgadzają się z oczekiwanymi. */
