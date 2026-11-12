@@ -1,0 +1,71 @@
+Starting: Intent { cmp=app.chatra.demo/app.chatra.MainActivity (has extras) }
+Status: ok
+LaunchState: COLD
+Activity: app.chatra.demo/app.chatra.MainActivity
+TotalTime: 4051
+WaitTime: 4053
+Complete
+Screenshot docs/implementacja_android/CH040_CH044_Android/s09-reset.png
+Starting: Intent { cmp=app.chatra.demo/app.chatra.MainActivity (has extras) }
+Status: ok
+LaunchState: COLD
+Activity: app.chatra.demo/app.chatra.MainActivity
+TotalTime: 4881
+WaitTime: 5323
+Complete
+Tapped Ciemny
+Tapped Grafit
+Screenshot docs/implementacja_android/CH040_CH044_Android/s09-dark-graphite.png
+Starting: Intent { cmp=app.chatra.demo/app.chatra.MainActivity (has extras) }
+Status: ok
+LaunchState: COLD
+Activity: app.chatra.demo/app.chatra.MainActivity
+TotalTime: 5068
+WaitTime: 5204
+Complete
+Screenshot docs/implementacja_android/CH040_CH044_Android/s09-dark-after-restart.png
+Tapped Auto
+Night mode: yes
+Screenshot docs/implementacja_android/CH040_CH044_Android/s09-auto-dark.png
+Night mode: no
+Screenshot docs/implementacja_android/CH040_CH044_Android/s09-auto-light.png
+Tapped Przywróć ustawienia domyślne
+Tapped Mgła
+Screenshot docs/implementacja_android/CH040_CH044_Android/s09-mist.png
+Tapped Kontrast
+Screenshot docs/implementacja_android/CH040_CH044_Android/s09-contrast.png
+Tapped Przywróć ustawienia domyślne
+Screenshot docs/implementacja_android/CH040_CH044_Android/s09-font2-top.png
+Screenshot docs/implementacja_android/CH040_CH044_Android/s09-font2-controls.png
+Podgląd rozmowy w wybranym wyglądzie [56,0][1309,709] selected=false
+Wiadomość SMS [150,541][854,647] selected=false
+Szkło [250,924][474,1026] selected=false
+Mgła [904,924][1102,1026] selected=false
+Grafit [250,1246][475,1348] selected=false
+Kontrast [834,1246][1172,1348] selected=false
+Tryb [115,1440][327,1559] selected=false
+Tryb kolorów [126,1591][1260,1941] selected=false
+Jasny [562,1592][825,1682] selected=false
+Ciemny [531,1711][856,1801] selected=false
+Auto [593,1830][794,1941] selected=false
+Gęstość [115,2008][495,2127] selected=false
+Gęstość listy [126,2159][1260,2390] selected=false
+Standardowa [402,2160][985,2250] selected=false
+Kompaktowa [415,2279][972,2390] selected=false
+Rozmiar tekstu [115,2464][801,2583] selected=false
+A [115,2618][179,2724] selected=false
+Rozmiar tekstu [214,2618][1127,2723] selected=false
+A [1162,2597][1250,2744] selected=false
+Ogranicz przezroczystość [115,2814][1026,2954] selected=false
+Starting: Intent { cmp=app.chatra.demo/app.chatra.MainActivity (has extras) }
+Status: ok
+LaunchState: COLD
+Activity: app.chatra.demo/app.chatra.MainActivity
+TotalTime: 2737
+WaitTime: 2742
+Complete
+Tapped Prywatność
+Screenshot docs/implementacja_android/CH040_CH044_Android/privacy-offline-font2.png
+Tapped Pomoc i kontakt
+Screenshot docs/implementacja_android/CH040_CH044_Android/help-offline-font2.png
+Final appearance / privacy / help UI flow finished

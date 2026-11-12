@@ -67,6 +67,7 @@ import app.chatra.core.designsystem.component.topHighlight
 import app.chatra.core.designsystem.glass.cssLinearGradient
 import app.chatra.core.designsystem.icon.ChatraIcons
 import app.chatra.core.designsystem.icon.Icon
+import app.chatra.core.designsystem.theme.ChatraType
 import app.chatra.core.designsystem.theme.ChatraColors
 import app.chatra.core.designsystem.theme.chatraText
 import app.chatra.core.model.DeliveryStatus
@@ -139,10 +140,11 @@ fun ConversationScreen(
             Modifier.fillMaxSize().padding(top = top, bottom = bottom).clipToBounds(),
             state = list,
             reverseLayout = true,
-            verticalArrangement = Arrangement.spacedBy(6.dp, Alignment.Bottom),
+            verticalArrangement = Arrangement.spacedBy(if (app.chatra.core.designsystem.theme.LocalAppearanceTokens.current.compact) 3.dp else 6.dp, Alignment.Bottom),
             contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 14.dp),
         ) {
             items(rows.asReversed(), key = { it.key }) { row -> RowContent(row, state, model) }
+            if (state.summary?.blocked == true) item("blocked") { BasicText("Nadawca zablokowany lokalnie. Historia zachowana, powiadomienia wyłączone. Odblokuj w szczegółach rozmowy lub ustawieniach.", style = ChatraType.Preview) }
             if (nativeDrafts) item("drafts") { app.chatra.ui.common.TextAction("Szkice", { draftPicker = true }) }
             if (state.hasOlder) item("older") { app.chatra.ui.common.TextAction("Wczytaj wcześniejsze wiadomości", model::loadOlder) }
         }
@@ -308,7 +310,7 @@ private fun Status(m: Message, state: ConversationState, model: ConversationView
                     Modifier.weight(1f, fill = false),
                     style = chatraText(12f, 600, 16f, color = ChatraColors.ErrorText).copy(textAlign = TextAlign.End),
                 )
-                if (demo || operation?.canRetry == true) SmallPill("Ponów", ChatraColors.ErrorText, Color.White, ChatraColors.white(0.9f)) {
+                if (demo || operation?.canRetry == true) SmallPill("Ponów", ChatraColors.ErrorText, app.chatra.core.designsystem.theme.LocalAppearanceTokens.current.surface, ChatraColors.white(0.9f)) {
                     if (demo) m.operationId?.let { model.retry(it) } else retryPicker = true
                 } else SmallPill("Sprawdź", ChatraColors.Link, ChatraColors.white(.85f), null) { m.operationId?.let(model::reconcile) }
             }

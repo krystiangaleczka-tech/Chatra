@@ -31,7 +31,7 @@ fun MediaExtrasSheet(model: ConversationViewModel, onClose: () -> Unit, onSchedu
     var error by remember { mutableStateOf<String?>(null) }
     var templates by rememberSaveable { mutableStateOf(false) }
     var cameraUri by rememberSaveable { mutableStateOf<String?>(null) }
-    var variant by rememberSaveable { mutableStateOf(state.mediaVariant ?: MediaVariant.Mms) }
+    var variant by rememberSaveable { mutableStateOf(state.mediaVariant ?: c.sending.value.value.hdDefault) }
     fun import(uris: List<Uri>) {
         busy = true
         scope.launch {
@@ -39,7 +39,7 @@ fun MediaExtrasSheet(model: ConversationViewModel, onClose: () -> Unit, onSchedu
                 val next = items.toMutableList()
                 for (uri in uris) {
                     require(next.size < 20) { "Możesz wybrać do 20 plików." }
-                    next += c.media.importUri(uri.toString())
+                    next += c.media.importUri(uri.toString(), variant)
                     // Persist every successful import, including when a later URI fails.
                     items = next.toList(); model.attachMedia(items, variant)
                 }

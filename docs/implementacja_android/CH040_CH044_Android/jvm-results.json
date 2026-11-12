@@ -1,0 +1,674 @@
+{
+  "app-demo": {
+    "total": 16,
+    "failures": 0,
+    "skipped": 0,
+    "cases": [
+      {
+        "class": "app.chatra.ui.SearchPagingTest",
+        "name": "typingDebouncesTwoHundredMillisecondsAndCancelsOldQuery",
+        "seconds": "0.022",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.ui.SearchPagingTest",
+        "name": "pagingSurvivesReturningFromConversationAndEveryFilterRestores",
+        "seconds": "0.034",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.ui.RoleResumeTest",
+        "name": "return after role loss does not reuse completed onboarding",
+        "seconds": "0.073",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.ui.ScreenModelsTest",
+        "name": "compose keeps draft removes one chip and double tap enqueues each recipient once",
+        "seconds": "0.098",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.ui.ScreenModelsTest",
+        "name": "empty compose is disabled invalid typed address blocks send and duplicate contacts do not add chips",
+        "seconds": "0.021",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.ui.ScreenModelsTest",
+        "name": "search state is restored and failures offer retry",
+        "seconds": "0.049",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.ui.ScreenModelsTest",
+        "name": "accepting a durable snapshot blocks duplicate clicks and edits until enqueue completes",
+        "seconds": "0.02",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.ui.ScreenModelsTest",
+        "name": "failed second enqueue retries only recipients not already accepted",
+        "seconds": "0.021",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.ui.ScreenModelsTest",
+        "name": "fresh editor restores durable recipients names text unfinished input and SIM without saved state",
+        "seconds": "0.018",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.ui.ScreenModelsTest",
+        "name": "counter reacts with unchanged SIM and preferences do not rewrite accepted countdown",
+        "seconds": "0.012",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.ui.ScreenModelsTest",
+        "name": "navigation restores all tabs with query reserved characters and message anchor",
+        "seconds": "0.046",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.ui.ScreenModelsTest",
+        "name": "durable group MMS opens the whole group conversation after acceptance",
+        "seconds": "0.011",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.ui.ScreenModelsTest",
+        "name": "attachment only shared draft clears attachments after acceptance and keeps the sent snapshot",
+        "seconds": "0.008",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.ui.ScreenModelsTest",
+        "name": "cancel into an empty conversation editor remains restored after a fresh view model",
+        "seconds": "0.037",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.di.OrganizationPreviewTest",
+        "name": "demo restore and unblock change counts idempotently",
+        "seconds": "0.047",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.di.OrganizationPreviewTest",
+        "name": "read-only production preview cannot pretend to alter history",
+        "seconds": "0.001",
+        "passed": true,
+        "skipped": false
+      }
+    ]
+  },
+  "app-full": {
+    "total": 2,
+    "failures": 0,
+    "skipped": 0,
+    "cases": [
+      {
+        "class": "app.chatra.di.OrganizationPreviewTest",
+        "name": "demo restore and unblock change counts idempotently",
+        "seconds": "0.062",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.di.OrganizationPreviewTest",
+        "name": "read-only production preview cannot pretend to alter history",
+        "seconds": "0.002",
+        "passed": true,
+        "skipped": false
+      }
+    ]
+  },
+  "model": {
+    "total": 56,
+    "failures": 0,
+    "skipped": 0,
+    "cases": [
+      {
+        "class": "app.chatra.core.model.DurableSendingPolicyTest",
+        "name": "exactUndoBoundaryAndRebootAreConservative",
+        "seconds": "0.001",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.DurableSendingPolicyTest",
+        "name": "uncertainSubmissionIsNeverAnOrdinaryFailure",
+        "seconds": "0.005",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.DurableSendingPolicyTest",
+        "name": "deliveryProofAlsoSettlesMissingSentCallbacks",
+        "seconds": "0.0",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.DurableSendingPolicyTest",
+        "name": "sentAndDeliveredNeverRegressAfterLateErrors",
+        "seconds": "0.0",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.DurableSendingPolicyTest",
+        "name": "pendingPartDoesNotTurnAnEarlyFailureIntoAWholeMessageFailure",
+        "seconds": "0.0",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.RecipientIdentityTest",
+        "name": "polishLocalAndInternationalFormsShareIdentityWithoutRewritingForeignNumbers",
+        "seconds": "0.001",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.SmsSetupTest",
+        "name": "alreadyHeldSkipsStart",
+        "seconds": "0.09",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.SmsSetupTest",
+        "name": "noTelephonyAndMissingRoleBlock",
+        "seconds": "0.002",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.SmsSetupTest",
+        "name": "grantedFinishes",
+        "seconds": "0.003",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.SmsSetupTest",
+        "name": "unavailableDuringRequestBlocks",
+        "seconds": "0.002",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.SmsSetupTest",
+        "name": "cancelledAllowsRetry",
+        "seconds": "0.002",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.SmsSetupTest",
+        "name": "repeatedTapDuringRequestIsIgnored",
+        "seconds": "0.003",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.SmsSetupTest",
+        "name": "deniedSendsToSettingsAndRecheckFinishes",
+        "seconds": "0.002",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.SendStateTest",
+        "name": "cancelOnlyBeforeDispatch",
+        "seconds": "0.0",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.SendStateTest",
+        "name": "deliveredIsNeverDowngraded",
+        "seconds": "0.0",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.SendStateTest",
+        "name": "deliveryProofWinsOverConflictingSentFailure",
+        "seconds": "0.0",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.SendStateTest",
+        "name": "transitionChecksStateAndVersion",
+        "seconds": "0.005",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.SendStateTest",
+        "name": "partsAggregate",
+        "seconds": "0.001",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.SendStateTest",
+        "name": "uncertainNeverRetriesAutomaticallyButAllowsDecision",
+        "seconds": "0.0",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.ScheduleTest",
+        "name": "withinHourWindow",
+        "seconds": "0.007",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.ScheduleTest",
+        "name": "askNeverSendsLate",
+        "seconds": "0.002",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.ScheduleTest",
+        "name": "dstGapAndOverlap",
+        "seconds": "0.0",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.ScheduleFormTest",
+        "name": "shortcutsAfterMidnightUseNewDay",
+        "seconds": "0.009",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.ScheduleFormTest",
+        "name": "fallBackOverlapPicksFirstOccurrence",
+        "seconds": "0.005",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.ScheduleFormTest",
+        "name": "saturdayShortcutOnSaturdayIsNextWeek",
+        "seconds": "0.0",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.ScheduleFormTest",
+        "name": "shortcutsFromFixtureThursday",
+        "seconds": "0.0",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.ScheduleFormTest",
+        "name": "springForwardGapMovesToExistingHour",
+        "seconds": "0.001",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.ScheduleFormTest",
+        "name": "pastAndTooCloseAreRejected",
+        "seconds": "0.001",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.SmsCounterTest",
+        "name": "ucs2Multipart",
+        "seconds": "0.003",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.SmsCounterTest",
+        "name": "extendedCharactersCountDouble",
+        "seconds": "0.001",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.SmsCounterTest",
+        "name": "gsmBoundaries",
+        "seconds": "0.005",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.SmsCounterTest",
+        "name": "empty",
+        "seconds": "0.0",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.SmsCounterTest",
+        "name": "emojiUsesTwoUtf16Units",
+        "seconds": "0.0",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.SmsCounterTest",
+        "name": "transliterationKeepsOriginalSeparate",
+        "seconds": "0.0",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.SmsCounterTest",
+        "name": "polishCharacterSwitchesToUcs2",
+        "seconds": "0.0",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.SearchAndRecipientsTest",
+        "name": "separate SMS has unique recipients in separate operations and group MMS stays one",
+        "seconds": "0.003",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.SearchAndRecipientsTest",
+        "name": "Polish case and diacritics fold while ranges point to original text",
+        "seconds": "0.008",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.SearchAndRecipientsTest",
+        "name": "outgoing number rejects alphabetic malformed and empty recipients",
+        "seconds": "0.0",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.SearchEngineTest",
+        "name": "contextualCodeNeverTreatsAWholePhoneNumberAsAnOtpOrAuthenticatesSender",
+        "seconds": "0.042",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.SearchEngineTest",
+        "name": "localDateRangeHonorsBothDstTransitions",
+        "seconds": "0.0",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.SearchEngineTest",
+        "name": "everyFilterIsAndWithExclusiveEndAndSourceConversation",
+        "seconds": "0.006",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.SearchEngineTest",
+        "name": "foldingAndSourceOffsetsPreservePolishCombiningMarksCasefoldAndEmoji",
+        "seconds": "0.005",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.SettingsAndPlatformTest",
+        "name": "external compose validates untrusted data without sending",
+        "seconds": "0.001",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.SettingsAndPlatformTest",
+        "name": "price placeholder cannot appear in production or absent offers",
+        "seconds": "0.004",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.SettingsAndPlatformTest",
+        "name": "role and permissions are independent and revoke access immediately",
+        "seconds": "0.001",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.SettingsAndPlatformTest",
+        "name": "SIM and organization summaries are derived from current data",
+        "seconds": "0.004",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.AddressAndSimTest",
+        "name": "normalizesPhones",
+        "seconds": "0.029",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.AddressAndSimTest",
+        "name": "missingSimNeedsConfirmation",
+        "seconds": "0.008",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.AddressAndSimTest",
+        "name": "simChoicePrefersDraftThenConversation",
+        "seconds": "0.001",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.LocalMediaTest",
+        "name": "template appends without replacing composer text",
+        "seconds": "0.009",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.LocalMediaTest",
+        "name": "timed mute expires exactly at deadline and does not mute another conversation",
+        "seconds": "0.0",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.LocalMediaTest",
+        "name": "shared media can open an empty recipient editor but cannot bypass recipient validation",
+        "seconds": "0.003",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.InboxTest",
+        "name": "unreadCountsConversationsNotMessages",
+        "seconds": "0.001",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.InboxTest",
+        "name": "trashedHidden",
+        "seconds": "0.001",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.InboxTest",
+        "name": "pinnedFirstThenRecent",
+        "seconds": "0.002",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.model.AppearanceInheritanceTest",
+        "name": "globalChangesPreserveExplicitCompositionWhileAccessibilityAlwaysWins",
+        "seconds": "0.002",
+        "passed": true,
+        "skipped": false
+      }
+    ]
+  },
+  "testing": {
+    "total": 13,
+    "failures": 0,
+    "skipped": 0,
+    "cases": [
+      {
+        "class": "app.chatra.core.testing.ScheduledActionsTest",
+        "name": "rescheduleBumpsVersionAndClearsAlarm",
+        "seconds": "0.008",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.testing.ScheduledActionsTest",
+        "name": "sendNowStartsExactlyOnce",
+        "seconds": "0.008",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.testing.ScheduledActionsTest",
+        "name": "fixtureOverviewMatchesS06",
+        "seconds": "0.003",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.testing.ScheduledActionsTest",
+        "name": "sendNowCompletesAndUpdatesFooter",
+        "seconds": "0.004",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.testing.ScheduledActionsTest",
+        "name": "deleteKeepsConversationAndHistory",
+        "seconds": "0.006",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.testing.SearchAndComposeTest",
+        "name": "S07 finds four messages and two independent clipboard values",
+        "seconds": "0.047",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.testing.SearchAndComposeTest",
+        "name": "three separate sends create single recipient SMS and group text is MMS",
+        "seconds": "0.005",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.testing.FixtureTest",
+        "name": "scheduledHasOneDecisionAndFourWaiting",
+        "seconds": "0.048",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.testing.FixtureTest",
+        "name": "demoRunsAreDeterministic",
+        "seconds": "0.076",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.testing.FixtureTest",
+        "name": "sendGoesThroughUndoWindowWithoutTelephony",
+        "seconds": "0.013",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.testing.FixtureTest",
+        "name": "inboxMatchesS02OrderAndCounter",
+        "seconds": "0.001",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.testing.FixtureTest",
+        "name": "cancelRestoresEditableDraft",
+        "seconds": "0.006",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.testing.FixtureTest",
+        "name": "scheduleFromS05AddsScheduledItemAndConsumesDraft",
+        "seconds": "0.008",
+        "passed": true,
+        "skipped": false
+      }
+    ]
+  },
+  "designsystem": {
+    "total": 4,
+    "failures": 0,
+    "skipped": 0,
+    "cases": [
+      {
+        "class": "app.chatra.core.designsystem.theme.AppearanceTokensTest",
+        "name": "allCompositionsKeepBodySecondaryAndLinksReadableInBothModes",
+        "seconds": "0.121",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.designsystem.theme.AppearanceTokensTest",
+        "name": "defaultPalettePreservesReferenceInkAndResetBackground",
+        "seconds": "0.001",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.designsystem.glass.DownsampleTest",
+        "name": "largeBlurKeepsSixteenPixelSigmaUpToQuarter",
+        "seconds": "0.011",
+        "passed": true,
+        "skipped": false
+      },
+      {
+        "class": "app.chatra.core.designsystem.glass.DownsampleTest",
+        "name": "smallBlurStaysFullResolution",
+        "seconds": "0.001",
+        "passed": true,
+        "skipped": false
+      }
+    ]
+  }
+}

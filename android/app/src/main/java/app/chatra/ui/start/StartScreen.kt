@@ -81,7 +81,7 @@ fun StartScreen(model: StartViewModel, onDone: () -> Unit, onPrivacy: () -> Unit
 }
 
 private val Polish = Locale.forLanguageTag("pl-PL")
-private val Secondary = ChatraColors.TextSecondary
+private val Secondary @Composable get() = ChatraColors.TextSecondary
 
 private val LogoGlass = GlassStyle(28.dp, 1.7f, 160f, Color.White.copy(0.8f), Color.White.copy(0.5f), Color.White.copy(0.9f), topHighlight = Color.White.copy(0.95f))
 private val LogoShadow = CssShadow(10.dp, 30.dp, Color(27, 35, 74).copy(alpha = 0.14f))

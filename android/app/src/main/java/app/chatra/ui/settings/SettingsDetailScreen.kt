@@ -53,6 +53,11 @@ fun SettingsDetailScreen(kind: Route.SettingsDetail.Kind, onBack: () -> Unit, on
     val blocked by c.organization.blocked.collectAsStateWithLifecycle()
     val trash by c.organization.trash.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
+    var error by remember { mutableStateOf<String?>(null) }
+    var confirmation by remember { mutableStateOf<app.chatra.di.TrashPreview?>(null) }
+    var address by remember { mutableStateOf("") }
+    fun action(block: suspend () -> Unit) { scope.launch { try { block(); error = null } catch (e: Exception) { error = e.message ?: "Operacja nie powiodła się. Spróbuj ponownie." } } }
+    confirmation?.let { row -> ChoiceDialog("Trwale usunąć wiadomości z kosza? Tej operacji nie można cofnąć.", listOf("Usuń trwale"), { action { c.organization.purge(row.entryId) } }, { confirmation = null }) }
     val title = when (kind) {
         Route.SettingsDetail.Kind.Sims -> "Karty SIM"
         Route.SettingsDetail.Kind.Delay -> "Opóźnienie wysłania"
@@ -63,6 +68,7 @@ fun SettingsDetailScreen(kind: Route.SettingsDetail.Kind, onBack: () -> Unit, on
         Route.SettingsDetail.Kind.Pro -> "Chatra Pro"
     }
     DetailPage(title, onBack) {
+        error?.let { BasicText(it, style = chatraText(14f, color = ChatraColors.ErrorText)) }
         when (kind) {
             Route.SettingsDetail.Kind.Sims -> {
                 PermissionCard(AccessFeature.Sims)
@@ -86,32 +92,38 @@ fun SettingsDetailScreen(kind: Route.SettingsDetail.Kind, onBack: () -> Unit, on
                     val variant = listOf(MediaVariant.OriginalHd, MediaVariant.NoLocationCopy, MediaVariant.Mms)[i]
                     ChoiceRow(label, prefs.hdDefault == variant) { scope.launch { c.sending.update { it.copy(hdDefault = variant) } } }
                 }
-                BasicText("Przy odbiorcy bez Chatry zapytamy o link; bez Twojej zgody nie zmienimy transportu.", style = ChatraType.Preview)
+                BasicText("HD i wysyłka linku są obecnie niedostępne. Ta preferencja nie jest zgodą na przesłanie pliku ani wysłanie linku.", style = ChatraType.Preview)
+                ChoiceRow("Proponuj pytanie o link", prefs.askBeforeLink) { scope.launch { c.sending.update { it.copy(askBeforeLink = true) } } }
+                ChoiceRow("Nie proponuj linku", !prefs.askBeforeLink) { scope.launch { c.sending.update { it.copy(askBeforeLink = false) } } }
             }
             Route.SettingsDetail.Kind.Unknown -> DetailCard {
                 BasicText("Nieznany numer pozostaje w Skrzynce z oznaczeniem. Brak kontaktu nie oznacza spamu. Nie blokujemy ani nie usuwamy takich wiadomości automatycznie.", style = ChatraType.Body)
                 TextAction("Przejdź do Skrzynki", onInbox)
             }
             Route.SettingsDetail.Kind.Blocked -> DetailCard {
-                BasicText(if (c.isDemo) "Przykładowa lista demo. Przywracanie zmienia tylko dane demonstracyjne." else "Lokalne blokady będą dostępne w kolejnej wersji. Nie blokujemy połączeń telefonicznych.", style = ChatraType.Preview)
+                BasicText("Blokada działa tylko w Chatrze: ukrywa rozmowy ze Skrzynki i wyłącza ich powiadomienia. Historia pozostaje na telefonie. Nie blokuje połączeń ani odbioru SMS u operatora.", style = ChatraType.Preview)
+                if (c.organization.editable && !c.isDemo) {
+                    androidx.compose.foundation.text.BasicTextField(address, { address = it }, Modifier.fillMaxWidth().heightIn(min = 48.dp).semantics { contentDescription = "Numer lub nazwa nadawcy do zablokowania" }, textStyle = ChatraType.Body,
+                        decorationBox = { inner -> Column { if (address.isEmpty()) BasicText("Numer lub nazwa nadawcy", style = ChatraType.Preview); inner() } })
+                    TextAction("Zablokuj lokalnie", { action { c.organization.block(Address(address.trim())); address = "" } }, enabled = address.isNotBlank())
+                }
                 if (blocked.isEmpty()) BasicText("Brak zablokowanych numerów.", style = ChatraType.Body)
                 blocked.forEach { row ->
-                    Row(Modifier.fillMaxWidth(), verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
-                        BasicText(row.label, Modifier.weight(1f), style = ChatraType.Body)
-                        if (c.organization.editable) TextAction("Odblokuj", { c.organization.unblock(row.id) })
-                    }
+                    BasicText(row.label, style = ChatraType.Body)
+                    if (c.organization.editable) TextAction("Odblokuj ${row.label}", { action { c.organization.unblock(row.id) } })
                 }
             }
             Route.SettingsDetail.Kind.Trash -> DetailCard {
-                BasicText(if (c.isDemo) "Przykładowe rozmowy w koszu demo. Odzyskanie zmienia licznik. Nie usuwamy danych z telefonu." else "Odzyskiwanie i retencja kosza nie są jeszcze dostępne w tej wersji.", style = ChatraType.Preview)
+                BasicText(if (c.isDemo) "Kosz demonstracyjny." else "Kosz ukrywa wybrane wiadomości tylko w Chatrze. Inne aplikacje SMS mogą je nadal pokazywać. Odzyskasz je przez 30 dni. Potem usuniemy ten zakres z historii systemowej przy odzyskaniu dostępu. Nowe wiadomości pozostają w Skrzynce.", style = ChatraType.Preview)
                 if (trash.isEmpty()) BasicText("Kosz jest pusty.", style = ChatraType.Body)
                 trash.forEach { row ->
-                    Row(Modifier.fillMaxWidth(), verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
-                        BasicText(row.title, Modifier.weight(1f), style = ChatraType.Body)
-                        if (c.organization.editable) TextAction("Odzyskaj", { c.organization.restore(row.id) })
+                    BasicText(row.title, style = ChatraType.Body)
+                    row.expiresAt?.let { at -> BasicText(if (row.purging) "Usuwanie rozpoczęte — ponów po błędzie lub utracie dostępu." else "Odzyskiwanie do: ${java.time.Instant.ofEpochMilli(at).atZone(java.time.ZoneId.systemDefault()).toLocalDate()}", style = ChatraType.Preview) }
+                    if (c.organization.editable) {
+                        TextAction("Odzyskaj", { action { c.organization.restoreEntry(row.entryId) } }, enabled = !row.purging)
+                        if (!c.isDemo) TextAction("Usuń trwale…", { confirmation = row })
                     }
                 }
-                BasicText("Docelowa retencja: 30 dni. Nowa wiadomość od ukrytego nadawcy nie będzie usuwana.", style = ChatraType.Preview)
             }
             Route.SettingsDetail.Kind.Pro -> DetailCard {
                 BasicText(proSummary(c.proOffer, c.isDemo), style = ChatraType.Body)

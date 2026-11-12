@@ -45,6 +45,7 @@ interface AppContainer {
     /** Treść i termin planszy S05 w trybie referencyjnym (wyjątek fixture); null poza demo. */
     val schedulePreset: SchedulePreset?
     val newMessagePreset: List<app.chatra.core.model.Participant> get() = emptyList()
+    val conversationAppearance: PreferenceStore<Map<String, app.chatra.core.model.AppearanceOverride>>? get() = null
     val appearance: PreferenceStore<AppearancePrefs>
     val sending: PreferenceStore<SendingPrefs>
     val housekeeping: Flow<Housekeeping>

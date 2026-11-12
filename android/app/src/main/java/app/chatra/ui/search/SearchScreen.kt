@@ -62,7 +62,7 @@ fun SearchScreen(model: SearchViewModel, onCancel: () -> Unit, onResult: (Messag
         LazyColumn(Modifier.fillMaxSize(), state = rememberLazyListState(), contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = chrome.top(54.dp), bottom = chrome.bottom(26.dp)), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             item {
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    GlassSurface(GlassStyles.Input.copy(from = Color.White.copy(alpha = .9f), to = Color.White.copy(alpha = .66f)), RoundedCornerShape(22.dp), Modifier.weight(1f).height(46.dp), shadows = listOf(Shadows.Control)) {
+                    GlassSurface(GlassStyles.Input.copy(from = Color.White.copy(alpha = .9f), to = Color.White.copy(alpha = .66f)), RoundedCornerShape(22.dp), Modifier.weight(1f).heightIn(min = 46.dp), shadows = listOf(Shadows.Control)) {
                         Row(Modifier.fillMaxSize().padding(start = 14.dp + cssBorder(), end = 6.dp + cssBorder()), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
                             Icon(ChatraIcons.Search, 20.dp, ChatraColors.TextSecondary)
                             BasicTextField(query, model::text, Modifier.weight(1f).semantics { contentDescription = "Szukaj w rozmowach" }, singleLine = true, textStyle = chatraText(17f), keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search), keyboardActions = KeyboardActions(onSearch = { keyboard?.hide() }), decorationBox = { field ->
@@ -104,7 +104,7 @@ fun SearchScreen(model: SearchViewModel, onCancel: () -> Unit, onResult: (Messag
                 GlassSurface(GlassStyles.Card, RoundedCornerShape(24.dp), Modifier.fillMaxWidth(), shadows = listOf(Shadows.Card)) {
                     Column(Modifier.padding(6.dp + cssBorder()), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         state.results.quick.forEachIndexed { i, hit ->
-                            Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(18.dp)).then(if (i == 0) Modifier.background(Color.White) else Modifier).padding(start = 12.dp, end = 8.dp, top = 8.dp, bottom = 8.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                            Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(18.dp)).then(if (i == 0) Modifier.background(app.chatra.core.designsystem.theme.LocalAppearanceTokens.current.surface) else Modifier).padding(start = 12.dp, end = 8.dp, top = 8.dp, bottom = 8.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                                 Column(Modifier.weight(1f)) {
                                     BasicText(hit.label.uppercase(), style = chatraText(12f, 600, letterSpacingEm = .04f, color = ChatraColors.TextSecondary))
                                     if (!container.isDemo) BasicText("Wzorzec w wiadomości · nadawca niezweryfikowany", style = chatraText(12f, color = ChatraColors.TextSecondary))
@@ -127,7 +127,7 @@ fun SearchScreen(model: SearchViewModel, onCancel: () -> Unit, onResult: (Messag
                     Column(Modifier.padding(cssBorder())) {
                         SectionLabel("Wiadomości · ${state.results.hits.size}", Modifier.padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 2.dp))
                         state.results.hits.forEachIndexed { i, hit ->
-                            Column(Modifier.fillMaxWidth().then(if (i > 0) Modifier.drawTopLine(ChatraColors.Ink06) else Modifier).semantics(mergeDescendants = true) { role = Role.Button }.pressable({ keyboard?.hide(); onResult(hit.message) }).padding(start = 16.dp, end = 16.dp, top = 9.dp, bottom = if (i == state.results.hits.lastIndex) 13.dp else 9.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                            Column(Modifier.fillMaxWidth().then(if (i > 0) Modifier.drawTopLine(ChatraColors.Ink06) else Modifier).semantics(mergeDescendants = true) { role = Role.Button }.pressable({ keyboard?.hide(); onResult(hit.message) }).padding(start = 16.dp, end = 16.dp, top = if (app.chatra.core.designsystem.theme.LocalAppearanceTokens.current.compact) 4.dp else 9.dp, bottom = if (app.chatra.core.designsystem.theme.LocalAppearanceTokens.current.compact) 4.dp else if (i == state.results.hits.lastIndex) 13.dp else 9.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                     BasicText(hit.title, Modifier.weight(1f), style = chatraText(15f, 600))
                                     BasicText(formatRelativeDay(hit.message.timestamp, container.clock), style = chatraText(13f, color = ChatraColors.TextSecondary))
@@ -182,8 +182,8 @@ fun SearchScreen(model: SearchViewModel, onCancel: () -> Unit, onResult: (Messag
 
 @Composable
 private fun FilterChip(label: String, selected: Boolean, dropdown: Boolean = false, onClick: () -> Unit) {
-    Row(Modifier.height(34.dp).clip(RoundedCornerShape(17.dp)).background(if (selected) ChatraColors.TextPrimary else ChatraColors.white(.6f)).then(if (!selected) Modifier.border(cssBorder(), ChatraColors.white(.95f), RoundedCornerShape(17.dp)) else Modifier).semantics { role = Role.Checkbox; this.selected = selected }.pressable(onClick).padding(start = if (selected) 8.dp else 12.dp, end = if (dropdown) 10.dp else 12.dp), horizontalArrangement = Arrangement.spacedBy(if (dropdown) 4.dp else 5.dp), verticalAlignment = Alignment.CenterVertically) {
-        val color = if (selected) Color.White else ChatraColors.TextPrimary
+    Row(Modifier.heightIn(min = 34.dp).clip(RoundedCornerShape(17.dp)).background(if (selected) ChatraColors.TextPrimary else ChatraColors.white(.6f)).then(if (!selected) Modifier.border(cssBorder(), ChatraColors.white(.95f), RoundedCornerShape(17.dp)) else Modifier).semantics { role = Role.Checkbox; this.selected = selected }.pressable(onClick).padding(start = if (selected) 8.dp else 12.dp, end = if (dropdown) 10.dp else 12.dp), horizontalArrangement = Arrangement.spacedBy(if (dropdown) 4.dp else 5.dp), verticalAlignment = Alignment.CenterVertically) {
+        val color = if (selected) (if (app.chatra.core.designsystem.theme.LocalAppearanceTokens.current.dark) Color(0xFF0B0D14) else Color.White) else ChatraColors.TextPrimary
         if (selected) Icon(ChatraIcons.Check, 16.dp, color)
         BasicText(label, style = chatraText(14f, if (selected) 600 else 400, color = color))
         if (dropdown) Icon(ChatraIcons.ChevronDown, 14.dp, color)

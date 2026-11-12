@@ -25,7 +25,7 @@ import app.chatra.ui.common.*
 import kotlinx.coroutines.launch
 
 @Composable
-fun SettingsScreen(onAction: (SettingsEntry) -> Unit, dock: MainDock) {
+fun SettingsScreen(onAction: (SettingsEntry) -> Unit, dock: MainDock, onHelp: () -> Unit = {}) {
     val c = LocalContainer.current
     val sending by c.sending.value.collectAsStateWithLifecycle()
     val appearance by c.appearance.value.collectAsStateWithLifecycle()
@@ -59,10 +59,10 @@ fun SettingsScreen(onAction: (SettingsEntry) -> Unit, dock: MainDock) {
                         ChatraSwitch(sending.smsCounterEnabled, { value -> scope.launch { c.sending.update { it.copy(smsCounterEnabled = value) } } }, "Licznik części SMS")
                     })
                     SettingsRow("Chatra HD", when (sending.hdDefault) {
-                        MediaVariant.OriginalHd -> "Domyślnie oryginał · bez Chatra: pytaj o link"
+                        MediaVariant.OriginalHd -> if (sending.askBeforeLink) "Domyślnie oryginał · pytanie o link (HD niedostępne)" else "Domyślnie oryginał · bez propozycji linku"
                         MediaVariant.NoLocationCopy -> "Domyślnie kopia bez lokalizacji"
                         MediaVariant.Mms -> "Domyślnie MMS · w limicie operatora"
-                    }, null, ChatraColors.TextPrimary, last = true, onClick = { onAction(SettingsEntry.Hd) })
+                    }, null, Color(0xFF0B0D14), last = true, onClick = { onAction(SettingsEntry.Hd) })
                 }
             }
             item {
@@ -72,6 +72,9 @@ fun SettingsScreen(onAction: (SettingsEntry) -> Unit, dock: MainDock) {
                     SettingsRow("Zablokowani", polishCount(housekeeping.blockedCount, "numer", "numery", "numerów") + " · możesz przywrócić", ChatraIcons.Blocked, ChatraColors.Error, onClick = { onAction(SettingsEntry.Blocked) })
                     SettingsRow("Kosz", polishCount(housekeeping.trashCount, "rozmowa", "rozmowy", "rozmów") + " · odzyskasz przez ${housekeeping.trashDays} dni", ChatraIcons.Trash, Color(0xFF5B6275), last = true, onClick = { onAction(SettingsEntry.Trash) })
                 }
+            }
+            item {
+                TextAction("Pomoc", onHelp)
             }
             item {
                 SettingsCard(card, null, shadow = false) {

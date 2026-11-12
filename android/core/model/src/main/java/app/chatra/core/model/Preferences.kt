@@ -32,6 +32,7 @@ data class SendingPrefs(
     val smsCounterEnabled: Boolean = true,
     val hdDefault: MediaVariant = MediaVariant.OriginalHd,
     val defaultSubscriptionLabel: String? = null,
+    val askBeforeLink: Boolean = true,
 ) {
     companion object { val UNDO_OPTIONS = listOf(0, 3, 5, 10) }
 }
@@ -39,3 +40,21 @@ data class SendingPrefs(
 data class Template(val id: TemplateId, val title: String, val body: String, val sortOrder: Int)
 
 data class BlockRule(val address: Address, val systemWide: Boolean, val createdAtMillis: Long)
+
+/** Null fields inherit global values. Global accessibility cannot be weakened by a thread. */
+data class AppearanceOverride(
+    val composition: Composition? = null,
+    val mode: ThemeMode? = null,
+    val density: Density? = null,
+    val textStep: Int? = null,
+    val reduceTransparency: Boolean = false,
+    val increaseContrast: Boolean = false,
+)
+fun resolveAppearance(global: AppearancePrefs, thread: AppearanceOverride?): AppearancePrefs = if (thread == null) global else global.copy(
+    composition = thread.composition ?: global.composition,
+    mode = thread.mode ?: global.mode,
+    density = thread.density ?: global.density,
+    textStep = maxOf(thread.textStep?.coerceIn(1, 7) ?: global.textStep, if (global.textStep > 4) global.textStep else 1),
+    reduceTransparency = global.reduceTransparency || thread.reduceTransparency,
+    increaseContrast = global.increaseContrast || thread.increaseContrast,
+)

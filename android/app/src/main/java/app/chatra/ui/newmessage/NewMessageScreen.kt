@@ -76,8 +76,8 @@ fun NewMessageScreen(model: NewMessageViewModel, onCancel: () -> Unit, onSent: (
                     BasicText("Do:", Modifier.padding(end = 2.dp), style = chatraText(16f, color = ChatraColors.TextSecondary))
                     state.recipients.forEachIndexed { i, p ->
                         Row(Modifier.widthIn(max = 300.dp).height(30.dp).clip(RoundedCornerShape(15.dp)).background(ChatraColors.Accent.copy(alpha = .12f)).padding(start = 12.dp, end = 6.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-                            BasicText(p.label, Modifier.weight(1f, fill = false), maxLines = 1, overflow = TextOverflow.Ellipsis, style = chatraText(15f, 600, color = Color(0xFF0050C8)))
-                            Box(Modifier.size(24.dp).semantics { role = Role.Button; contentDescription = "Usuń: ${p.label}" }.pressable({ model.remove(i) }), contentAlignment = Alignment.Center) { Icon(ChatraIcons.Close, 12.dp, Color(0xFF0050C8), 2.4f) }
+                            BasicText(p.label, Modifier.weight(1f, fill = false), maxLines = 1, overflow = TextOverflow.Ellipsis, style = chatraText(15f, 600, color = ChatraColors.Link))
+                            Box(Modifier.size(24.dp).semantics { role = Role.Button; contentDescription = "Usuń: ${p.label}" }.pressable({ model.remove(i) }), contentAlignment = Alignment.Center) { Icon(ChatraIcons.Close, 12.dp, ChatraColors.Link, 2.4f) }
                         }
                     }
                     BasicTextField(state.input, model::input, Modifier.widthIn(min = 100.dp).weight(1f).heightIn(min = 30.dp).semantics { contentDescription = "Dodaj odbiorcę" }, readOnly = state.busy, singleLine = true, textStyle = chatraText(16f), keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Done), keyboardActions = KeyboardActions(onDone = { model.addInput() }), decorationBox = { field -> Box(contentAlignment = Alignment.CenterStart) { if (state.input.isEmpty()) BasicText("Imię lub numer", style = chatraText(16f, color = ChatraColors.TextSecondary)); field() } })

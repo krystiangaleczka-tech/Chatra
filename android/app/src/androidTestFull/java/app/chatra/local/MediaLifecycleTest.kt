@@ -41,9 +41,12 @@ class MediaLifecycleTest {
         assertNull(PrivateMediaStore(context).get(item.id))
     }
     @Test fun sanitizedCopyDropsAllSourceMetadataKeepsOrientationAndNeverChangesOriginal() = runBlocking {
-        val store = PrivateMediaStore(context); val original = store.importUri(photo(store, true).toString())
-        val before = context.contentResolver.openInputStream(Uri.parse(original.uri))!!.use { it.readBytes() }
-        val copy = store.derive(original.id, MediaVariant.NoLocationCopy)
+        val store = PrivateMediaStore(context); val source = photo(store, true)
+        val before = context.contentResolver.openInputStream(source)!!.use { it.readBytes() }
+        // The same import path as a new draft with the NoLocationCopy sending preference.
+        val copy = store.importUri(source.toString(), MediaVariant.NoLocationCopy)
+        assertTrue(copy.sanitized)
+        val original = store.get(copy.originalId!!)!!
         assertNotEquals(original.id, copy.id); assertNotEquals(original.sha256, copy.sha256)
         val bytes = context.contentResolver.openInputStream(Uri.parse(copy.uri))!!.use { it.readBytes() }
         val exif = ExifInterface(bytes.inputStream())

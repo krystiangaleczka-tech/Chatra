@@ -87,7 +87,9 @@ class ScheduleRecoveryWorker(context: Context, parameters: WorkerParameters) : C
     override suspend fun doWork(): Result {
         if (!applicationContext.getSystemService(UserManager::class.java).isUserUnlocked) return Result.retry()
         return try {
-            ((applicationContext as ChatraApplication).container(false) as FullTelephonyContainer).persistentSchedules.reconcile(inputData.getString("reason") ?: "recovery")
+            val container = (applicationContext as ChatraApplication).container(false) as FullTelephonyContainer
+            container.persistentSchedules.reconcile(inputData.getString("reason") ?: "recovery")
+            container.localOrganization.expire()
             Result.success()
         } catch (_: Exception) { Result.retry() }
     }

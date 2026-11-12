@@ -73,8 +73,8 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.temporal.ChronoUnit
 
-private val Secondary = ChatraColors.TextSecondary
-private val ValueColor = Color(0xFF0050C8)
+private val Secondary @Composable get() = ChatraColors.TextSecondary
+private val ValueColor @Composable get() = if (app.chatra.core.designsystem.theme.LocalAppearanceTokens.current.dark) ChatraColors.Link else Color(0xFF0050C8)
 private val ValueBackground = Color(10, 108, 255).copy(alpha = 0.1f)
 private val SegmentShadow = CssShadow(1.dp, 4.dp, Color(27, 35, 74).copy(alpha = 0.15f))
 
@@ -261,7 +261,7 @@ private fun Fields(
     onTime: () -> Unit,
     onSim: (SubscriptionId) -> Unit,
 ) {
-    Column(Modifier.fillMaxWidth().clip(RoundedCornerShape(18.dp)).background(Color.White)) {
+    Column(Modifier.fillMaxWidth().clip(RoundedCornerShape(18.dp)).background(app.chatra.core.designsystem.theme.LocalAppearanceTokens.current.surface)) {
         FieldRow("Data", divider = true) { ValueButton(date, "Data: $date, zmień", onDate) }
         FieldRow("Godzina", divider = true) { ValueButton(time, "Godzina: $time, zmień", onTime, tabular = true) }
         FieldRow("Wyślij z", divider = false) {
@@ -307,7 +307,7 @@ private fun SimSegment(sims: List<Pair<SubscriptionId, String>>, selected: Subsc
             val shape = RoundedCornerShape(9.dp)
             Box(
                 Modifier.height(30.dp)
-                    .then(if (on) Modifier.cssShadow(shape, SegmentShadow).clip(shape).background(Color.White) else Modifier.clip(shape))
+                    .then(if (on) Modifier.cssShadow(shape, SegmentShadow).clip(shape).background(app.chatra.core.designsystem.theme.LocalAppearanceTokens.current.surface) else Modifier.clip(shape))
                     .semantics { role = Role.Button; this.selected = on }.pressable({ onSim(id) })
                     .padding(horizontal = 10.dp),
                 contentAlignment = Alignment.Center,

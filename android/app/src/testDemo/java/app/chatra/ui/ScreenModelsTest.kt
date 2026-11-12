@@ -16,6 +16,28 @@ import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ScreenModelsTest {
+    @Test fun `counter reacts with unchanged SIM and preferences do not rewrite accepted countdown`() = runTest {
+        Dispatchers.setMain(UnconfinedTestDispatcher(testScheduler))
+        try {
+            val c = container(backgroundScope)
+            val model = NewMessageViewModel(SavedStateHandle(), c, listOf(Fixture.mama))
+            model.text("CH041 queue snapshot")
+            runCurrent()
+            val sim = model.state.value.sim
+            c.sending.update { it.copy(smsCounterEnabled = false, undoSeconds = 10) }
+            runCurrent()
+            assertEquals(sim, model.state.value.sim)
+            assertFalse(model.state.value.counterEnabled)
+            model.send {}; runCurrent()
+            val before = c.sendQueue.operations().first().single { it.body == "CH041 queue snapshot" }
+            assertEquals(c.clock.now().plusSeconds(10), before.undoDeadline)
+            c.sending.update { it.copy(smsCounterEnabled = true, undoSeconds = 0) }
+            runCurrent()
+            assertTrue(model.state.value.counterEnabled)
+            assertEquals(before, c.sendQueue.operations().first().single { it.id == before.id })
+        } finally { Dispatchers.resetMain() }
+    }
+
     private fun container(scope: CoroutineScope, draftsOverride: DraftRepository? = null, queueOverride: ((InMemoryChatra) -> SendQueue)? = null): AppContainer {
         val repo = InMemoryChatra(FixedClock(), scope, frozen = true)
         return object : AppContainer {

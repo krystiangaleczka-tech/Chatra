@@ -1,0 +1,56 @@
+
+app.chatra.organization.LocalOrganizationTest:......
+app.chatra.organization.PreferencesPersistenceTest:
+Error in everyAppearanceAndSendingOptionSurvivesStoreRecreationAndReset(app.chatra.organization.PreferencesPersistenceTest):
+java.lang.AssertionError: expected:<{thread-b=AppearanceOverride(composition=null, mode=Dark, density=null, textStep=null, reduceTransparency=false, increaseContrast=false)}> but was:<{thread-a=AppearanceOverride(composition=Mist, mode=null, density=null, textStep=null, reduceTransparency=false, increaseContrast=false), thread-b=AppearanceOverride(composition=null, mode=Dark, density=null, textStep=null, reduceTransparency=false, increaseContrast=false)}>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:120)
+	at org.junit.Assert.assertEquals(Assert.java:146)
+	at app.chatra.organization.PreferencesPersistenceTest$everyAppearanceAndSendingOptionSurvivesStoreRecreationAndReset$1.invokeSuspend(PreferencesPersistenceTest.kt:34)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
+	at kotlinx.coroutines.UndispatchedCoroutine.afterResume(CoroutineContext.kt:278)
+	at kotlinx.coroutines.AbstractCoroutine.resumeWith(AbstractCoroutine.kt:101)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:47)
+	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:100)
+	at kotlinx.coroutines.EventLoopImplBase.processNextEvent(EventLoop.common.kt:256)
+	at kotlinx.coroutines.BlockingCoroutine.joinBlocking(Builders.kt:54)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlockingImpl(Builders.kt:30)
+	at kotlinx.coroutines.BuildersKt.runBlockingImpl(Unknown Source:1)
+	at kotlinx.coroutines.BuildersKt__Builders_concurrentKt.runBlockingK(Builders.concurrent.kt:172)
+	at kotlinx.coroutines.BuildersKt.runBlockingK(Unknown Source:1)
+	at kotlinx.coroutines.BuildersKt__Builders_concurrentKt.runBlockingK$default(Builders.concurrent.kt:157)
+	at kotlinx.coroutines.BuildersKt.runBlockingK$default(Unknown Source:1)
+	at app.chatra.organization.PreferencesPersistenceTest.everyAppearanceAndSendingOptionSurvivesStoreRecreationAndReset(PreferencesPersistenceTest.kt:13)
+
+app.chatra.platform.NotificationLifecycleTest:...
+app.chatra.telephony.SystemIntegrationTest:.....................
+app.chatra.search.ProviderSearchTest:.
+app.chatra.search.SystemSearchTest:...
+
+Time: 23.564
+There was 1 failure:
+1) everyAppearanceAndSendingOptionSurvivesStoreRecreationAndReset(app.chatra.organization.PreferencesPersistenceTest)
+java.lang.AssertionError: expected:<{thread-b=AppearanceOverride(composition=null, mode=Dark, density=null, textStep=null, reduceTransparency=false, increaseContrast=false)}> but was:<{thread-a=AppearanceOverride(composition=Mist, mode=null, density=null, textStep=null, reduceTransparency=false, increaseContrast=false), thread-b=AppearanceOverride(composition=null, mode=Dark, density=null, textStep=null, reduceTransparency=false, increaseContrast=false)}>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:120)
+	at org.junit.Assert.assertEquals(Assert.java:146)
+	at app.chatra.organization.PreferencesPersistenceTest$everyAppearanceAndSendingOptionSurvivesStoreRecreationAndReset$1.invokeSuspend(PreferencesPersistenceTest.kt:34)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
+	at kotlinx.coroutines.UndispatchedCoroutine.afterResume(CoroutineContext.kt:278)
+	at kotlinx.coroutines.AbstractCoroutine.resumeWith(AbstractCoroutine.kt:101)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:47)
+	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:100)
+	at kotlinx.coroutines.EventLoopImplBase.processNextEvent(EventLoop.common.kt:256)
+	at kotlinx.coroutines.BlockingCoroutine.joinBlocking(Builders.kt:54)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlockingImpl(Builders.kt:30)
+	at kotlinx.coroutines.BuildersKt.runBlockingImpl(Unknown Source:1)
+	at kotlinx.coroutines.BuildersKt__Builders_concurrentKt.runBlockingK(Builders.concurrent.kt:172)
+	at kotlinx.coroutines.BuildersKt.runBlockingK(Unknown Source:1)
+	at kotlinx.coroutines.BuildersKt__Builders_concurrentKt.runBlockingK$default(Builders.concurrent.kt:157)
+	at kotlinx.coroutines.BuildersKt.runBlockingK$default(Unknown Source:1)
+	at app.chatra.organization.PreferencesPersistenceTest.everyAppearanceAndSendingOptionSurvivesStoreRecreationAndReset(PreferencesPersistenceTest.kt:13)
+
+FAILURES!!!
+Tests run: 35,  Failures: 1

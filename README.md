@@ -32,6 +32,8 @@ W PDF uzupełnienie zaczyna się na stronie 24.
 
 ## Dokumentacja implementacji Android
 
+- [CH040–CH044: trwały wygląd i nadpisania rozmów, ustawienia wysyłania, lokalne blokady, kosz i pomoc](docs/implementacja_android/CH040_CH044_Wdrozenie_i_weryfikacja.md)
+
 - [CH035–CH039: trwały harmonogram, odzyskiwanie, edycja, indeks i filtry](docs/implementacja_android/CH035_CH039_Wdrozenie_i_weryfikacja.md)
 - [CH030–CH034: powiadomienia, trwałe pliki, MMS, kopie bez lokalizacji i szablony](docs/implementacja_android/CH030_CH034_Wdrozenie_i_weryfikacja.md)
 

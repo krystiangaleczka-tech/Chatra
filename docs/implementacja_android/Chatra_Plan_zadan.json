@@ -711,7 +711,10 @@
         "CH007",
         "CH008"
       ],
-      "description": "Wykonanie: DataStore dla wszystkich opcji, tokeny czterech kompozycji i dark/auto, compact i skali 1–7. Zastosować zmiany globalnie i w podglądzie; reset do źródłowego stanu. Ograniczenie przezroczystości i kontrast mają osobne tokeny. Nie blokować opcji dostępności płatnością.\n\nOdbiór: wybory zachowane po restarcie, Auto reaguje na system, brak nieczytelnego tekstu. Weryfikacja: kombinacje trybów, fontScale 2.0 i porównanie domyślnego Szkła do wzorca po resecie.\n\nUzupełnienie UX 29.10.2026: Przewidzieć dziedziczenie globalnych tokenów przez motywy per rozmowa (CH068), oddzielny reset pojedynczego wątku, lokalne tło/kolor/dymki i kontrolę kontrastu. Opcje dostępności mają pierwszeństwo; nie udawać wspólnego tła po stronie odbiorcy SMS.\n\nOdbiór rozszerzony: Zmiana motywu globalnego nie niszczy świadomych wyjątków; powrót do globalnego usuwa tylko nadpisania konkretnej rozmowy."
+      "description": "Wykonanie: DataStore dla wszystkich opcji, tokeny czterech kompozycji i dark/auto, compact i skali 1–7. Zastosować zmiany globalnie i w podglądzie; reset do źródłowego stanu. Ograniczenie przezroczystości i kontrast mają osobne tokeny. Nie blokować opcji dostępności płatnością.\n\nOdbiór: wybory zachowane po restarcie, Auto reaguje na system, brak nieczytelnego tekstu. Weryfikacja: kombinacje trybów, fontScale 2.0 i porównanie domyślnego Szkła do wzorca po resecie.\n\nUzupełnienie UX 29.10.2026: Przewidzieć dziedziczenie globalnych tokenów przez motywy per rozmowa (CH068), oddzielny reset pojedynczego wątku, lokalne tło/kolor/dymki i kontrolę kontrastu. Opcje dostępności mają pierwszeństwo; nie udawać wspólnego tła po stronie odbiorcy SMS.\n\nOdbiór rozszerzony: Zmiana motywu globalnego nie niszczy świadomych wyjątków; powrót do globalnego usuwa tylko nadpisania konkretnej rozmowy.",
+      "status": "implemented_emulator_verified_device_acceptance_pending",
+      "evidence": "CH040_CH044_Wdrozenie_i_weryfikacja.md",
+      "review_note": "DataStore wszystkich opcji i nadpisań rozmów, palety 4 kompozycji light/dark/auto, skala i compact globalnie, reset per wątek oraz pierwszeństwo dostępności. Pomiar obrazu i font 2.0 w raporcie; G03/G09 i odbiór fizyczny pozostają otwarte."
     },
     {
       "id": "CH041",
@@ -727,7 +730,10 @@
         "CH025",
         "CH028"
       ],
-      "description": "Wykonanie: ekran SIM i preferencje, opóźnienie 0/3/5/10 s według zatwierdzenia, licznik oraz domyślne warianty HD i pytanie o link. Podsumowania ustawień wynikają z DataStore. Zmiana ustawienia nie modyfikuje zlecenia już przekazanego ani istniejącego harmonogramu bez akcji użytkownika.\n\nOdbiór: ustawienia działają w nowych szkicach, nie zmieniają treści samoczynnie. Weryfikacja: restart, brak SIM, wyłączenie licznika i zmiana delay podczas aktywnego odliczania."
+      "description": "Wykonanie: ekran SIM i preferencje, opóźnienie 0/3/5/10 s według zatwierdzenia, licznik oraz domyślne warianty HD i pytanie o link. Podsumowania ustawień wynikają z DataStore. Zmiana ustawienia nie modyfikuje zlecenia już przekazanego ani istniejącego harmonogramu bez akcji użytkownika.\n\nOdbiór: ustawienia działają w nowych szkicach, nie zmieniają treści samoczynnie. Weryfikacja: restart, brak SIM, wyłączenie licznika i zmiana delay podczas aktywnego odliczania.",
+      "status": "implemented_emulator_verified_device_acceptance_pending",
+      "evidence": "CH040_CH044_Wdrozenie_i_weryfikacja.md",
+      "review_note": "Preferencje SIM, delay, licznik, wariant plików i pytanie o link podłączone do nowych szkiców. Zmiana preferencji nie przepisuje przyjętej kolejki. HD/linki pozostają niedostępne do etapu serwera."
     },
     {
       "id": "CH042",
@@ -742,7 +748,10 @@
         "CH023",
         "CH030"
       ],
-      "description": "Wykonanie: oznaczać nieznanych nadawców bez klasyfikowania ich jako spam; lokalne reguły blokowania, lista i przywracanie. Zatrzymać powiadomienia zgodnie z regułą, zachować historię. Jeżeli G05 wybiera blokadę systemową, dodać osobny komunikat o skutkach dla połączeń i zweryfikować API.\n\nOdbiór: reguła działa dla znormalizowanego numeru, cofnięcie blokady przywraca widoczność; brak cichego kasowania SMS. Weryfikacja: nowy SMS od zablokowanego, odmienne formaty numeru, kontakt dodany później i brak roli.\n\nUzupełnienie UX 29.10.2026: Akcje wycisz, blokuj, usuń i oznacz nieprzeczytane muszą mieć odrębne, prawdziwe znaczenie w CH065 i CH069. Po zablokowaniu kontaktu UI jednoznacznie pokazuje stan; dostarczone SMS nie znikają po cichu.\n\nOdbiór rozszerzony: Blokada z karty kontaktu i ekranu ustawień prowadzi do tych samych danych, a cofnięcie działa bez utraty historii."
+      "description": "Wykonanie: oznaczać nieznanych nadawców bez klasyfikowania ich jako spam; lokalne reguły blokowania, lista i przywracanie. Zatrzymać powiadomienia zgodnie z regułą, zachować historię. Jeżeli G05 wybiera blokadę systemową, dodać osobny komunikat o skutkach dla połączeń i zweryfikować API.\n\nOdbiór: reguła działa dla znormalizowanego numeru, cofnięcie blokady przywraca widoczność; brak cichego kasowania SMS. Weryfikacja: nowy SMS od zablokowanego, odmienne formaty numeru, kontakt dodany później i brak roli.\n\nUzupełnienie UX 29.10.2026: Akcje wycisz, blokuj, usuń i oznacz nieprzeczytane muszą mieć odrębne, prawdziwe znaczenie w CH065 i CH069. Po zablokowaniu kontaktu UI jednoznacznie pokazuje stan; dostarczone SMS nie znikają po cichu.\n\nOdbiór rozszerzony: Blokada z karty kontaktu i ekranu ustawień prowadzi do tych samych danych, a cofnięcie działa bez utraty historii.",
+      "status": "implemented_emulator_verified_device_acceptance_pending",
+      "evidence": "CH040_CH044_Wdrozenie_i_weryfikacja.md",
+      "review_note": "Trwałe lokalne blokady z normalizacją numeru, wspólne dane szczegółów i ustawień, brak powiadomień i przywracanie historii. Nieznany nadawca nie jest spamem; kontakt aktualizuje oznaczenie."
     },
     {
       "id": "CH043",
@@ -757,7 +766,10 @@
         "CH023",
         "CH038"
       ],
-      "description": "Wykonanie: TrashEntry ze zbiorem provider refs/HD refs, local tombstone, TTL wynoszący 30 dni, restore i potwierdzony purge. Nowa wiadomość w widocznym wątku nie należy do starego zakresu kosza. Sprzątanie tylko po upływie TTL i przy dostępie. W UI wyjaśnić lokalne ukrycie względem innych klientów.\n\nOdbiór: restore bez duplikacji; purge nie usuwa nowych SMS z tego samego wątku. Weryfikacja: upływ 29, 30 i 31 dni, utrata roli, awaria w połowie usuwania, MMS parts i odbudowa indeksu."
+      "description": "Wykonanie: TrashEntry ze zbiorem provider refs/HD refs, local tombstone, TTL wynoszący 30 dni, restore i potwierdzony purge. Nowa wiadomość w widocznym wątku nie należy do starego zakresu kosza. Sprzątanie tylko po upływie TTL i przy dostępie. W UI wyjaśnić lokalne ukrycie względem innych klientów.\n\nOdbiór: restore bez duplikacji; purge nie usuwa nowych SMS z tego samego wątku. Weryfikacja: upływ 29, 30 i 31 dni, utrata roli, awaria w połowie usuwania, MMS parts i odbudowa indeksu.",
+      "status": "implemented_emulator_verified_device_acceptance_pending",
+      "evidence": "CH040_CH044_Wdrozenie_i_weryfikacja.md",
+      "review_note": "Room v6, zakresy TrashEntry/TrashRef, 30 dni, przywracanie, potwierdzony purge i wznowienie po awarii. Nowy SMS i części MMS objęte próbami providera. WorkManager sprząta dopiero po TTL i z dostępem."
     },
     {
       "id": "CH044",
@@ -771,7 +783,10 @@
         "CH021",
         "CH046"
       ],
-      "description": "Wykonanie: lokalna strona prywatności opisująca provider/indeks/HD/logi/backup i usuwanie danych. Pomoc z informacją o SMS/MMS/RCS, SIM i harmonogramie; docelowy kontakt dostarcza właściciel. Z obu miejsc dojście z S01/S10. Link zewnętrzny bez automatycznego udostępniania danych.\n\nOdbiór: treść zgodna z faktyczną implementacją, brak wymyślonego adresu i nieprawdziwego E2EE. Weryfikacja: offline, duży font, działające linki i porównanie z zachowaniem HD oraz kosza."
+      "description": "Wykonanie: lokalna strona prywatności opisująca provider/indeks/HD/logi/backup i usuwanie danych. Pomoc z informacją o SMS/MMS/RCS, SIM i harmonogramie; docelowy kontakt dostarcza właściciel. Z obu miejsc dojście z S01/S10. Link zewnętrzny bez automatycznego udostępniania danych.\n\nOdbiór: treść zgodna z faktyczną implementacją, brak wymyślonego adresu i nieprawdziwego E2EE. Weryfikacja: offline, duży font, działające linki i porównanie z zachowaniem HD oraz kosza.",
+      "status": "implemented_emulator_verified_device_acceptance_pending",
+      "evidence": "CH040_CH044_Wdrozenie_i_weryfikacja.md",
+      "review_note": "Prywatność i pomoc offline z S01/S10, faktyczny opis providera, indeksu, plików, backupu, usuwania i nieaktywnego HD. Jawny link Google bez załączania danych; kontakt właściciela pozostaje do dostarczenia."
     },
     {
       "id": "CH045",

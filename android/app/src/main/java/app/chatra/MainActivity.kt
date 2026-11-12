@@ -7,18 +7,12 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.requiredSize
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.chatra.navigation.ReferenceScreens
 import app.chatra.ui.ChatraApp
 import app.chatra.ui.ProvideChrome
@@ -42,17 +36,14 @@ class MainActivity : ComponentActivity() {
         }
         WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars = true
         setContent {
-            val appearance by container.appearance.value.collectAsStateWithLifecycle()
             ProvideChrome(reference) {
-                TextScale(if (reference) null else appearance.textScale) {
-                    if (reference) {
-                        // Obszar projektu 390 × 844 dp w lewym górnym rogu (porównanie z goldenem CH002).
-                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopStart) {
-                            Box(Modifier.requiredSize(390.dp, 844.dp)) { ChatraApp(container, initial, onExit = ::finish, forceMatte = matte) }
-                        }
-                    } else {
-                        ChatraApp(container, initial, onExit = ::finish, forceMatte = matte)
+                if (reference) {
+                    // Obszar projektu 390 × 844 dp w lewym górnym rogu (porównanie z goldenem CH002).
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopStart) {
+                        Box(Modifier.requiredSize(390.dp, 844.dp)) { ChatraApp(container, initial, onExit = ::finish, forceMatte = matte) }
                     }
+                } else {
+                    ChatraApp(container, initial, onExit = ::finish, forceMatte = matte)
                 }
             }
         }
@@ -83,12 +74,4 @@ class MainActivity : ComponentActivity() {
         /** Demo: brak zgody na dokładne alarmy w S05 (`--ez exactAlarms false`). */
         const val EXTRA_EXACT_ALARMS = "exactAlarms"
     }
-}
-
-/** Mnożnik tekstu z S09 współdziała ze skalą systemową; w trybie referencyjnym fontScale = 1.0. */
-@Composable
-private fun TextScale(multiplier: Float?, content: @Composable () -> Unit) {
-    val d = LocalDensity.current
-    val scale = if (multiplier == null) 1f else d.fontScale * multiplier
-    CompositionLocalProvider(LocalDensity provides Density(d.density, scale), content = content)
 }

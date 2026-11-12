@@ -118,7 +118,7 @@ fun RadioOption(
     val border = if (selected) 1.5.dp else 1.dp
     Row(
         modifier.fillMaxWidth().clip(shape)
-            .background(if (selected) Color.White else ChatraColors.white(0.55f))
+            .background(if (selected) app.chatra.core.designsystem.theme.LocalAppearanceTokens.current.surface else ChatraColors.white(0.55f))
             .border(border, if (selected) ChatraColors.Accent else ChatraColors.white(0.95f), shape)
             .semantics(mergeDescendants = true) { role = Role.RadioButton; this.selected = selected }
             .pressable(onSelect)

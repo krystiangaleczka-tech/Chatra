@@ -60,7 +60,7 @@ class NewMessageViewModel(private val saved: SavedStateHandle, private val c: Ap
             counterEnabled = c.sending.value.value.smsCounterEnabled,
             counter = c.smsText.count(f.text, (d.third as? SimChoice.Ready)?.sim?.id),
             suggestions = d.second.filter { p -> f.recipients.none { recipientKey(it.address.raw) == recipientKey(p.address.raw) } && (f.input.isBlank() || searchFold(f.input) in searchFold(p.label) || f.input.filter(Char::isDigit).let { it.isNotEmpty() && it in p.address.normalized }) }.take(50))
-    }.stateIn(viewModelScope, SharingStarted.Eagerly, NewMessageState())
+    }.combine(c.sending.value) { state, prefs -> state.copy(counterEnabled = prefs.smsCounterEnabled) }.stateIn(viewModelScope, SharingStarted.Eagerly, NewMessageState())
 
     init {
         saved["draftId"] = draftId.value

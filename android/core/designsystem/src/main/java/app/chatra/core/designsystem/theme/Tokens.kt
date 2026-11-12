@@ -1,5 +1,6 @@
 package app.chatra.core.designsystem.theme
 
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -15,23 +16,23 @@ import app.chatra.core.designsystem.R
 
 /** Kolory odczytane z HTML (specyfikacja 4). Wartość CSS → stała, bez mapowania na Material. */
 object ChatraColors {
-    val Accent = Color(0xFF0A6CFF)
-    val Link = Color(0xFF0058D6)
-    val TextPrimary = Color(0xFF0B0D14)
-    val TextSecondary = Color(0xFF3A4054)
-    val TextTertiary = Color(0xFF2A3042)
+    val Accent @Composable get() = LocalAppearanceTokens.current.accent
+    val Link @Composable get() = LocalAppearanceTokens.current.link
+    val TextPrimary @Composable get() = LocalAppearanceTokens.current.primary
+    val TextSecondary @Composable get() = LocalAppearanceTokens.current.secondary
+    val TextTertiary @Composable get() = LocalAppearanceTokens.current.secondary
     val Error = Color(0xFFC0262D)
-    val ErrorText = Color(0xFFA3141B)
-    val Draft = Color(0xFFB4410F)
-    val Decision = Color(0xFF9A3A0B)
+    val ErrorText @Composable get() = if (LocalAppearanceTokens.current.dark) Color(0xFFFFB4B4) else Color(0xFFA3141B)
+    val Draft @Composable get() = if (LocalAppearanceTokens.current.dark) Color(0xFFFFC195) else Color(0xFFB4410F)
+    val Decision @Composable get() = if (LocalAppearanceTokens.current.dark) Color(0xFFFFC195) else Color(0xFF9A3A0B)
     val BackgroundMain = Color(0xFFEDF0F7)
     val BackgroundConversation = Color(0xFFEEF1F8)
     val Success = Color(0xFF0B7A52)
-    val Ink07 = Color(0x120B0D14) // rgba(11,13,20,0.07): separatory i plakietki
-    val Ink06 = Color(0x0F0B0D14)
+    val Ink07 @Composable get() = TextPrimary.copy(alpha = .07f)
+    val Ink06 @Composable get() = TextPrimary.copy(alpha = .06f)
 
-    fun white(alpha: Float) = Color.White.copy(alpha = alpha)
-    fun ink(alpha: Float) = TextPrimary.copy(alpha = alpha)
+    @Composable fun white(alpha: Float) = LocalAppearanceTokens.current.surface.copy(alpha = alpha)
+    @Composable fun ink(alpha: Float) = TextPrimary.copy(alpha = alpha)
 }
 
 /**
@@ -51,6 +52,7 @@ const val InterNormalLineHeight = 1.2099609f
 /** Bez dodatkowego paddingu fontu; wysokość linii rozkładana równo jak w CSS (half-leading). */
 private val CssLineHeight = LineHeightStyle(LineHeightStyle.Alignment.Center, LineHeightStyle.Trim.None)
 
+@Composable
 fun chatraText(
     size: Float,
     weight: Int = 400,
@@ -73,17 +75,17 @@ fun chatraText(
 
 /** Role tekstu ze specyfikacji 4; wartości pochodzą ze stylów inline plansz. */
 object ChatraType {
-    val ListTitle = chatraText(34f, 700, 41f, -0.02f)
-    val AppearanceTitle = chatraText(28f, 700, letterSpacingEm = -0.02f)
-    val SheetTitle = chatraText(17f, 700)
-    val ContactName = chatraText(16f, 600)
-    val ContactNameUnread = chatraText(16f, 700)
-    val Preview = chatraText(14f, 400, 19f, color = ChatraColors.TextSecondary)
-    val PreviewUnread = chatraText(14f, 500, 19f)
-    val Bubble = chatraText(16f, 400, 21f)
-    val Body = chatraText(16f, 400)
-    val SectionLabel = chatraText(13f, 600, letterSpacingEm = 0.04f, color = ChatraColors.TextSecondary)
-    val Meta = chatraText(13f, 400, color = ChatraColors.TextSecondary)
-    val DockActive = chatraText(11f, 600)
-    val Dock = chatraText(11f, 500)
+    val ListTitle @Composable get() = chatraText(34f, 700, 41f, -0.02f)
+    val AppearanceTitle @Composable get() = chatraText(28f, 700, letterSpacingEm = -0.02f)
+    val SheetTitle @Composable get() = chatraText(17f, 700)
+    val ContactName @Composable get() = chatraText(16f, 600)
+    val ContactNameUnread @Composable get() = chatraText(16f, 700)
+    val Preview @Composable get() = chatraText(14f, 400, 19f, color = ChatraColors.TextSecondary)
+    val PreviewUnread @Composable get() = chatraText(14f, 500, 19f)
+    val Bubble @Composable get() = chatraText(16f, 400, 21f)
+    val Body @Composable get() = chatraText(16f, 400)
+    val SectionLabel @Composable get() = chatraText(13f, 600, letterSpacingEm = 0.04f, color = ChatraColors.TextSecondary)
+    val Meta @Composable get() = chatraText(13f, 400, color = ChatraColors.TextSecondary)
+    val DockActive @Composable get() = chatraText(11f, 600)
+    val Dock @Composable get() = chatraText(11f, 500)
 }
