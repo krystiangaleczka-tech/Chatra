@@ -1,25 +1,353 @@
 {
   "date": "2026-11-12",
+  "status": "implemented_emulator_verified_device_acceptance_pending",
   "branch": "android/ch035-ch039",
-  "status": "final_verification_in_progress",
+  "base": "0a1b51907cb97802944b0d8e2772f467962cf0d3",
+  "production_code_commit": "3fd0500321b5741385147a5a6f8f56f07576ad03",
+  "source_sha256": "c6e6307064cb3201cbd27c3e7c731552f785e7af4dfb8fb039036e998b5a64c0",
+  "source_hash_method": "Sorted git ls-files android; UTF-8 path + NUL + bytes + NUL. Build outputs excluded.",
   "jvm": {
     "tests": 87,
     "failures": 0,
-    "skipped": 0
+    "skipped": 0,
+    "suites": [
+      {
+        "module": "core/model",
+        "task": "test",
+        "tests": 55,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "module": "core/testing",
+        "task": "test",
+        "tests": 13,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "module": "core/designsystem",
+        "task": "testDebugUnitTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "module": "app",
+        "task": "testDemoDebugUnitTest",
+        "tests": 15,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "module": "app",
+        "task": "testFullDebugUnitTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    ]
   },
-  "earlier_complete_android_suite": {
-    "tests": 58,
-    "failures": 0,
-    "note": "Before final stale-worker/boot guards and FTS rebuild optimization; changed modules are being rerun."
+  "android": {
+    "app-regressions.log": {
+      "passed": 13,
+      "failures": 1,
+      "skipped": 0,
+      "cases": [
+        {
+          "class": "app.chatra.scheduling.PersistentSchedulesTest",
+          "test": "recoveryDistinguishesAskFromHourWindowAt59_60_61Minutes",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.scheduling.PersistentSchedulesTest",
+          "test": "editInvalidatesOldAlarmAndStaleScreenCannotDeleteOrSendNewVersion",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.scheduling.PersistentSchedulesTest",
+          "test": "unavailableSimRevokedAlarmAndDelayedSendNowRequireDecision",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.scheduling.PersistentSchedulesTest",
+          "test": "editAndDispatchRaceNeverChangesSubmittedSnapshotOrSendsTwice",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.scheduling.PersistentSchedulesTest",
+          "test": "deletingUncertainScheduleRetainsEvidenceAndAcceptsLateSuccess",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.scheduling.PersistentSchedulesTest",
+          "test": "savedSnapshotSurvivesAlarmFailureRestartAndPermissionRecovery",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.scheduling.PersistentSchedulesTest",
+          "test": "deviceRebootDoesNotAutoSendAskEvenInsideNormalAlarmTolerance",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.scheduling.PersistentSchedulesTest",
+          "test": "dstGapIsRejectedAndStoredInstantDoesNotMoveWithDeviceZone",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.scheduling.PersistentSchedulesTest",
+          "test": "sameDeadlineAndDuplicateAlarmHaveAtMostOneTransportPerOperation",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.search.SystemSearchTest",
+          "test": "queryOperatorsAreBoundAndAllFiltersNarrowTheSameSourceMessage",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.search.SystemSearchTest",
+          "test": "fiftyThousandDocumentsPrefixPaginationAndRebuildStayLocal",
+          "code": -2
+        },
+        {
+          "class": "app.chatra.search.SystemSearchTest",
+          "test": "changedAndDeletedProviderMessagesAreNeverReturnedFromStaleCache",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.search.SystemSearchTest",
+          "test": "incrementalUpdatesAndDeletedRowsReconcileThroughSourceEvents",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.search.ProviderSearchTest",
+          "test": "originalSourceIsRecheckedAfterEditAndDelete",
+          "code": 0
+        }
+      ],
+      "resolved_by": "benchmark-isolated.log"
+    },
+    "benchmark-isolated.log": {
+      "passed": 1,
+      "failures": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "class": "app.chatra.search.SystemSearchTest",
+          "test": "fiftyThousandDocumentsPrefixPaginationAndRebuildStayLocal",
+          "code": 0
+        }
+      ]
+    },
+    "database-instrumentation.log": {
+      "passed": 3,
+      "failures": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "class": "app.chatra.core.database.DatabaseTest",
+          "test": "typedReferencesReconcileWithoutLosingMetadataOrMediaRelations",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.core.database.DatabaseTest",
+          "test": "migrationOneToThreePreservesExistingConversationPreferences",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.core.database.DatabaseTest",
+          "test": "operationIdentityClaimAndCallbacksAreIdempotent",
+          "code": 0
+        }
+      ]
+    },
+    "native-doze.log": {
+      "passed": 1,
+      "failures": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "class": "app.chatra.scheduling.NativeScheduleAlarmTest",
+          "test": "exactWakeUsesSharedQueueOnceWithNoVisibleActivity",
+          "code": 0
+        }
+      ]
+    },
+    "reboot-prepare.log": {
+      "passed": 1,
+      "failures": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "class": "app.chatra.scheduling.NativeScheduleAlarmTest",
+          "test": "prepareFutureScheduleForReboot",
+          "code": 0
+        }
+      ]
+    },
+    "reboot-inspect.log": {
+      "passed": 1,
+      "failures": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "class": "app.chatra.scheduling.NativeScheduleAlarmTest",
+          "test": "inspectBootReceiverBeforeOpeningContainerAndCancel",
+          "code": 0
+        }
+      ]
+    }
   },
-  "database_tests": {
-    "tests": 3,
-    "failures": 0
+  "final_unique_android_cases": 20,
+  "unresolved_android_failures": 0,
+  "latest_regression_cases": [
+    {
+      "class": "app.chatra.scheduling.PersistentSchedulesTest",
+      "test": "recoveryDistinguishesAskFromHourWindowAt59_60_61Minutes",
+      "code": 0
+    },
+    {
+      "class": "app.chatra.scheduling.PersistentSchedulesTest",
+      "test": "editInvalidatesOldAlarmAndStaleScreenCannotDeleteOrSendNewVersion",
+      "code": 0
+    },
+    {
+      "class": "app.chatra.scheduling.PersistentSchedulesTest",
+      "test": "unavailableSimRevokedAlarmAndDelayedSendNowRequireDecision",
+      "code": 0
+    },
+    {
+      "class": "app.chatra.scheduling.PersistentSchedulesTest",
+      "test": "editAndDispatchRaceNeverChangesSubmittedSnapshotOrSendsTwice",
+      "code": 0
+    },
+    {
+      "class": "app.chatra.scheduling.PersistentSchedulesTest",
+      "test": "deletingUncertainScheduleRetainsEvidenceAndAcceptsLateSuccess",
+      "code": 0
+    },
+    {
+      "class": "app.chatra.scheduling.PersistentSchedulesTest",
+      "test": "savedSnapshotSurvivesAlarmFailureRestartAndPermissionRecovery",
+      "code": 0
+    },
+    {
+      "class": "app.chatra.scheduling.PersistentSchedulesTest",
+      "test": "deviceRebootDoesNotAutoSendAskEvenInsideNormalAlarmTolerance",
+      "code": 0
+    },
+    {
+      "class": "app.chatra.scheduling.PersistentSchedulesTest",
+      "test": "dstGapIsRejectedAndStoredInstantDoesNotMoveWithDeviceZone",
+      "code": 0
+    },
+    {
+      "class": "app.chatra.scheduling.PersistentSchedulesTest",
+      "test": "sameDeadlineAndDuplicateAlarmHaveAtMostOneTransportPerOperation",
+      "code": 0
+    },
+    {
+      "class": "app.chatra.search.SystemSearchTest",
+      "test": "queryOperatorsAreBoundAndAllFiltersNarrowTheSameSourceMessage",
+      "code": 0
+    },
+    {
+      "class": "app.chatra.search.SystemSearchTest",
+      "test": "fiftyThousandDocumentsPrefixPaginationAndRebuildStayLocal",
+      "code": 0
+    },
+    {
+      "class": "app.chatra.search.SystemSearchTest",
+      "test": "changedAndDeletedProviderMessagesAreNeverReturnedFromStaleCache",
+      "code": 0
+    },
+    {
+      "class": "app.chatra.search.SystemSearchTest",
+      "test": "incrementalUpdatesAndDeletedRowsReconcileThroughSourceEvents",
+      "code": 0
+    },
+    {
+      "class": "app.chatra.search.ProviderSearchTest",
+      "test": "originalSourceIsRecheckedAfterEditAndDelete",
+      "code": 0
+    }
+  ],
+  "baseline_android": {
+    "passed": 58,
+    "note": "Earlier complete suite before final stale-worker/boot guards and unchanged-document rebuild optimization. Final affected cases are covered by app-regressions.log plus isolated benchmark rerun."
   },
-  "native_alarm_verified": false,
+  "lint": {
+    "demo": {
+      "errors": 0,
+      "warnings": 17
+    },
+    "full": {
+      "errors": 0,
+      "warnings": 47
+    }
+  },
+  "artifacts": {
+    "app/build/outputs/apk/full/debug/app-full-debug.apk": {
+      "bytes": 47444152,
+      "sha256": "c124e1f53ed9de31cc714a29d20b8a7999496931953440057576523b8713eb6b"
+    },
+    "app/build/outputs/apk/demo/debug/app-demo-debug.apk": {
+      "bytes": 47343368,
+      "sha256": "9a9879669b9c84a709d551a3171e436101285339b412fbc8c5b47fe3a35d7654"
+    },
+    "app/build/outputs/apk/androidTest/full/debug/app-full-debug-androidTest.apk": {
+      "bytes": 1422892,
+      "sha256": "0c9e1f30cdc08b9d7eec4e9409357184c12e45411b2ab03d4bef1fd2fd2e2734"
+    }
+  },
+  "benchmark": {
+    "documents": 50000,
+    "initial_index_ms": 58766,
+    "per_rebuild_timeout_ms": 300000,
+    "storage": "Real Room/FTS with generated SearchSource; separate real Telephony Provider CRUD test. No target-hardware provider performance acceptance."
+  },
+  "native": {
+    "device": "ChatraFive isolated AVD API 35 arm64",
+    "doze": "IDLE",
+    "result": "SENT",
+    "attempts": 1,
+    "recipient": "5558, virtual emulator port",
+    "boot_restore": true,
+    "boot_harness": "App launched normally before reboot; BOOT delivery allowed to finish before inspection instrumentation. No explicit container creation after reboot before inspection."
+  },
+  "manual_ui": {
+    "screenshots": [
+      "scheduled.png",
+      "search.png"
+    ],
+    "checked": [
+      "Scheduled empty count and real last-sent footer",
+      "Prefix highlight in real provider SMS",
+      "Open original source; Back preserves query"
+    ]
+  },
+  "earlier_attempts": [
+    "FTS4 quoted prefix and explicit AND gave empty intersections in the standard-syntax SQLite build; fixed and covered by the benchmark.",
+    "MIME JSON escaping hid image candidates; stable media categories now cover images and text/plain documents.",
+    "Forced rebuild now refreshes FTS and batches unchanged-document generation updates, avoiding unnecessary upserts.",
+    "Initial benchmark exceeded 120s, then the complete run exceeded the 300s benchmark limit. The same final APK was rerun in isolation after boot and package compilation, with host sleep inhibited. Historical failure remains visible in app-regressions.log.",
+    "An early boot inspection coincided with skipped BOOT delivery. Repeated after normal app launch and a 120s boot grace period.",
+    "AVD ART verification caused process-start failures; packages precompiled before rerun.",
+    "Source edits during initial lint produced stale offsets; final lint ran against stable production sources."
+  ],
+  "post_test_changes": [
+    "After native/UI verification, only the benchmark timeout changed from 120s to 300s. Assertions and production APK are unchanged. The final 14-case run passed 13 cases; the remaining benchmark passed in the isolated rerun."
+  ],
   "open_acceptance": [
-    "Physical SIM/eSIM, OEM, API 31 and secured locked boot",
-    "TalkBack and G03/G09",
-    "Carrier MMS from CH030–CH034"
-  ]
+    "50k performance with real provider data on target hardware",
+    "Physical SIM/eSIM, OEM, API 31, secured locked boot, force stop/role restoration",
+    "TalkBack and G03/G09 visual acceptance",
+    "Carrier MMS remains open from CH030–CH034"
+  ],
+  "formatting_note": "Code and Markdown pass whitespace checks; raw Gradle logs preserve original whitespace."
 }

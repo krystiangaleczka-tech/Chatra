@@ -1,0 +1,234 @@
+INSTRUMENTATION_STATUS: class=app.chatra.scheduling.PersistentSchedulesTest
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=14
+INSTRUMENTATION_STATUS: stream=
+app.chatra.scheduling.PersistentSchedulesTest:
+INSTRUMENTATION_STATUS: test=recoveryDistinguishesAskFromHourWindowAt59_60_61Minutes
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=app.chatra.scheduling.PersistentSchedulesTest
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=14
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=recoveryDistinguishesAskFromHourWindowAt59_60_61Minutes
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=app.chatra.scheduling.PersistentSchedulesTest
+INSTRUMENTATION_STATUS: current=2
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=14
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=editInvalidatesOldAlarmAndStaleScreenCannotDeleteOrSendNewVersion
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=app.chatra.scheduling.PersistentSchedulesTest
+INSTRUMENTATION_STATUS: current=2
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=14
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=editInvalidatesOldAlarmAndStaleScreenCannotDeleteOrSendNewVersion
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=app.chatra.scheduling.PersistentSchedulesTest
+INSTRUMENTATION_STATUS: current=3
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=14
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=unavailableSimRevokedAlarmAndDelayedSendNowRequireDecision
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=app.chatra.scheduling.PersistentSchedulesTest
+INSTRUMENTATION_STATUS: current=3
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=14
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=unavailableSimRevokedAlarmAndDelayedSendNowRequireDecision
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=app.chatra.scheduling.PersistentSchedulesTest
+INSTRUMENTATION_STATUS: current=4
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=14
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=editAndDispatchRaceNeverChangesSubmittedSnapshotOrSendsTwice
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=app.chatra.scheduling.PersistentSchedulesTest
+INSTRUMENTATION_STATUS: current=4
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=14
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=editAndDispatchRaceNeverChangesSubmittedSnapshotOrSendsTwice
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=app.chatra.scheduling.PersistentSchedulesTest
+INSTRUMENTATION_STATUS: current=5
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=14
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=deletingUncertainScheduleRetainsEvidenceAndAcceptsLateSuccess
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=app.chatra.scheduling.PersistentSchedulesTest
+INSTRUMENTATION_STATUS: current=5
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=14
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=deletingUncertainScheduleRetainsEvidenceAndAcceptsLateSuccess
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=app.chatra.scheduling.PersistentSchedulesTest
+INSTRUMENTATION_STATUS: current=6
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=14
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=savedSnapshotSurvivesAlarmFailureRestartAndPermissionRecovery
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=app.chatra.scheduling.PersistentSchedulesTest
+INSTRUMENTATION_STATUS: current=6
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=14
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=savedSnapshotSurvivesAlarmFailureRestartAndPermissionRecovery
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=app.chatra.scheduling.PersistentSchedulesTest
+INSTRUMENTATION_STATUS: current=7
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=14
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=deviceRebootDoesNotAutoSendAskEvenInsideNormalAlarmTolerance
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=app.chatra.scheduling.PersistentSchedulesTest
+INSTRUMENTATION_STATUS: current=7
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=14
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=deviceRebootDoesNotAutoSendAskEvenInsideNormalAlarmTolerance
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=app.chatra.scheduling.PersistentSchedulesTest
+INSTRUMENTATION_STATUS: current=8
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=14
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=dstGapIsRejectedAndStoredInstantDoesNotMoveWithDeviceZone
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=app.chatra.scheduling.PersistentSchedulesTest
+INSTRUMENTATION_STATUS: current=8
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=14
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=dstGapIsRejectedAndStoredInstantDoesNotMoveWithDeviceZone
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=app.chatra.scheduling.PersistentSchedulesTest
+INSTRUMENTATION_STATUS: current=9
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=14
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=sameDeadlineAndDuplicateAlarmHaveAtMostOneTransportPerOperation
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=app.chatra.scheduling.PersistentSchedulesTest
+INSTRUMENTATION_STATUS: current=9
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=14
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=sameDeadlineAndDuplicateAlarmHaveAtMostOneTransportPerOperation
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=app.chatra.search.SystemSearchTest
+INSTRUMENTATION_STATUS: current=10
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=14
+INSTRUMENTATION_STATUS: stream=
+app.chatra.search.SystemSearchTest:
+INSTRUMENTATION_STATUS: test=queryOperatorsAreBoundAndAllFiltersNarrowTheSameSourceMessage
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=app.chatra.search.SystemSearchTest
+INSTRUMENTATION_STATUS: current=10
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=14
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=queryOperatorsAreBoundAndAllFiltersNarrowTheSameSourceMessage
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=app.chatra.search.SystemSearchTest
+INSTRUMENTATION_STATUS: current=11
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=14
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=fiftyThousandDocumentsPrefixPaginationAndRebuildStayLocal
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=app.chatra.search.SystemSearchTest
+INSTRUMENTATION_STATUS: current=11
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=14
+INSTRUMENTATION_STATUS: stack=kotlinx.coroutines.TimeoutCancellationException: Timed out waiting for 300000 ms
+	at kotlinx.coroutines.TimeoutKt.TimeoutCancellationException(Timeout.kt:281)
+	at kotlinx.coroutines.TimeoutCoroutine.run(Timeout.kt:243)
+	at kotlinx.coroutines.EventLoopImplBase$DelayedRunnableTask.run(EventLoop.common.kt:498)
+	at kotlinx.coroutines.EventLoopImplBase.processNextEvent(EventLoop.common.kt:256)
+	at kotlinx.coroutines.DefaultExecutor.run(DefaultExecutor.kt:105)
+	at java.lang.Thread.run(Thread.java:1012)
+
+INSTRUMENTATION_STATUS: stream=
+Error in fiftyThousandDocumentsPrefixPaginationAndRebuildStayLocal(app.chatra.search.SystemSearchTest):
+kotlinx.coroutines.TimeoutCancellationException: Timed out waiting for 300000 ms
+	at kotlinx.coroutines.TimeoutKt.TimeoutCancellationException(Timeout.kt:281)
+	at kotlinx.coroutines.TimeoutCoroutine.run(Timeout.kt:243)
+	at kotlinx.coroutines.EventLoopImplBase$DelayedRunnableTask.run(EventLoop.common.kt:498)
+	at kotlinx.coroutines.EventLoopImplBase.processNextEvent(EventLoop.common.kt:256)
+	at kotlinx.coroutines.DefaultExecutor.run(DefaultExecutor.kt:105)
+	at java.lang.Thread.run(Thread.java:1012)
+
+INSTRUMENTATION_STATUS: test=fiftyThousandDocumentsPrefixPaginationAndRebuildStayLocal
+INSTRUMENTATION_STATUS_CODE: -2
+INSTRUMENTATION_STATUS: class=app.chatra.search.SystemSearchTest
+INSTRUMENTATION_STATUS: current=12
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=14
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=changedAndDeletedProviderMessagesAreNeverReturnedFromStaleCache
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=app.chatra.search.SystemSearchTest
+INSTRUMENTATION_STATUS: current=12
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=14
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=changedAndDeletedProviderMessagesAreNeverReturnedFromStaleCache
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=app.chatra.search.SystemSearchTest
+INSTRUMENTATION_STATUS: current=13
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=14
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=incrementalUpdatesAndDeletedRowsReconcileThroughSourceEvents
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=app.chatra.search.SystemSearchTest
+INSTRUMENTATION_STATUS: current=13
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=14
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=incrementalUpdatesAndDeletedRowsReconcileThroughSourceEvents
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=app.chatra.search.ProviderSearchTest
+INSTRUMENTATION_STATUS: current=14
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=14
+INSTRUMENTATION_STATUS: stream=
+app.chatra.search.ProviderSearchTest:
+INSTRUMENTATION_STATUS: test=originalSourceIsRecheckedAfterEditAndDelete
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=app.chatra.search.ProviderSearchTest
+INSTRUMENTATION_STATUS: current=14
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=14
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=originalSourceIsRecheckedAfterEditAndDelete
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_RESULT: stream=
+
+Time: 1,569.137
+There was 1 failure:
+1) fiftyThousandDocumentsPrefixPaginationAndRebuildStayLocal(app.chatra.search.SystemSearchTest)
+kotlinx.coroutines.TimeoutCancellationException: Timed out waiting for 300000 ms
+	at kotlinx.coroutines.TimeoutKt.TimeoutCancellationException(Timeout.kt:281)
+	at kotlinx.coroutines.TimeoutCoroutine.run(Timeout.kt:243)
+	at kotlinx.coroutines.EventLoopImplBase$DelayedRunnableTask.run(EventLoop.common.kt:498)
+	at kotlinx.coroutines.EventLoopImplBase.processNextEvent(EventLoop.common.kt:256)
+	at kotlinx.coroutines.DefaultExecutor.run(DefaultExecutor.kt:105)
+	at java.lang.Thread.run(Thread.java:1012)
+
+FAILURES!!!
+Tests run: 14,  Failures: 1
+
+
+INSTRUMENTATION_CODE: -1

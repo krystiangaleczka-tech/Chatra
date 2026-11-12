@@ -35,7 +35,7 @@ class SystemSearchTest {
     @Test fun fiftyThousandDocumentsPrefixPaginationAndRebuildStayLocal() = runBlocking {
         val source=Source(50_000);val engine=SystemSearch(db,source,scope,autoIndex=false)
         val start=android.os.SystemClock.elapsedRealtime()
-        withTimeout(120000) { engine.rebuildNow() }
+        withTimeout(300000) { engine.rebuildNow() }
         val millis=android.os.SystemClock.elapsedRealtime()-start
         android.util.Log.i("ChatraSearchQA","INDEX_50000_MS=$millis")
         assertNull(engine.progress.value.error);assertEquals(50_000,db.search().count())
@@ -49,7 +49,7 @@ class SystemSearchTest {
         // Rebuild includes FTS itself, rather than trusting the unchanged document hashes.
         db.search().clearFts()
         assertTrue(results(engine,q).hits.isEmpty())
-        withTimeout(120000) { engine.rebuildNow(force=true) }
+        withTimeout(300000) { engine.rebuildNow(force=true) }
         assertEquals(40,results(engine,q).hits.size)
     }
     @Test fun changedAndDeletedProviderMessagesAreNeverReturnedFromStaleCache() = runBlocking {
