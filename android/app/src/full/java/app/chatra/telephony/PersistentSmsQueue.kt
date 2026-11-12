@@ -44,11 +44,12 @@ class PersistentSmsQueue(
     private val time: SmsQueueTime = AndroidSmsTime(context),
 ) : SendQueue {
     var mms: MmsEngine? = null
+    var dispatchAllowed: (suspend (OutgoingOperation) -> Boolean)? = null
     private class RetryInvalidated : IllegalStateException()
     private val dao = db.dao()
     private val startup = CoroutineScope(SupervisorJob() + Dispatchers.IO).async(start = CoroutineStart.LAZY) { recover() }
     suspend fun awaitReady() { startup.await() }
-    private suspend fun requireSim(id: SubscriptionId) {
+    internal suspend fun requireSim(id: SubscriptionId) {
         check(context.smsSend(platform) && context.smsRead(platform)) { "Brak roli SMS lub uprawnienia." }
         check(ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) { "Brak dostępu do kart SIM." }
         check(context.getSystemService(SubscriptionManager::class.java).activeSubscriptionInfoList.orEmpty().any { it.subscriptionId == id.value }) { "Karta SIM jest niedostępna. Wybierz ją ponownie." }
@@ -76,7 +77,8 @@ class PersistentSmsQueue(
             undoElapsedDeadline = row.undoElapsed, retryOf = row.retryOf?.let(::OperationId), failureDescription = if (MmsEngine.isMms(row)) mms?.failureDescription(row.id) else null)
     } }
 
-    override suspend fun enqueue(draft: Draft, undoSeconds: Int): OperationId = withContext(Dispatchers.IO) {
+    internal data class Prepared(val row: OutgoingOperation, val recipients: List<OutgoingRecipient>)
+    internal suspend fun prepare(draft: Draft, undoSeconds: Int): Prepared {
         awaitReady()
         require(draft.isSendable && draft.text.length <= 16_384 && draft.recipients.size <= 20 && draft.recipients.all { isOutgoingNumber(it.raw) })
         if (MmsEngine.isMms(draft)) requireNotNull(mms) { "MMS jest niedostępny." }.validate(draft)
@@ -91,16 +93,33 @@ class PersistentSmsQueue(
         val row = OutgoingOperation(UUID.randomUUID().toString(), draft.id.value, draft.conversationId?.value ?: group?.value ?: recipients.singleOrNull()?.second?.value,
             JSONArray(recipients.map { it.first.raw }).toString(), draft.text, draft.recipientMode.name, sim.value, card.label, "PENDING_UNDO", 0, now, now + undoSeconds * 1000L, time.boot(),
             time.elapsed() + undoSeconds * 1000L, DraftCodec.encode(draft))
+        return Prepared(row, recipients.map { (address, conversation) -> OutgoingRecipient(row.id, address.raw, conversation.value, "PENDING_UNDO") })
+    }
+    override suspend fun enqueue(draft: Draft, undoSeconds: Int): OperationId = withContext(Dispatchers.IO) {
+        val prepared = prepare(draft, undoSeconds)
+        val row = prepared.row
         val id = db.withTransaction {
             dao.operationForDraft(draft.id.value)?.let { return@withTransaction it.id }
             check(!drafts.isClosed(draft.id)) { "Ten szkic został już przyjęty lub zamknięty." }
             check(dao.insertOperation(row) != -1L)
-            recipients.forEach { (address, conversation) -> dao.recipient(OutgoingRecipient(row.id, address.raw, conversation.value, "PENDING_UNDO")) }
+            prepared.recipients.forEach { dao.recipient(it) }
             drafts.consume(draft)
             row.id
         }
         schedule(id)
         OperationId(id)
+    }
+    internal suspend fun activateScheduled(row: OutgoingOperation, sim: SubscriptionId): Boolean {
+        requireSim(sim)
+        val card = sims.cards().first().first { it.id == sim }
+        if (db.schedules().activate(row.id, row.version, time.wall(), time.elapsed(), time.boot(), sim.value, card.label) != 1) return false
+        dao.recipients(row.id).forEach { dao.recipient(it.copy(state = "PENDING_UNDO")) }
+        return true
+    }
+    internal suspend fun wake(id: String) {
+        val row = dao.operation(id) ?: return
+        val remaining = undoRemaining(row.undoElapsed, row.bootCount, time.boot(), time.elapsed()) ?: return
+        work.wakeScheduled(id, time.wall() + remaining)
     }
     private suspend fun schedule(id: String) {
         val row = dao.operation(id) ?: return
@@ -167,9 +186,12 @@ class PersistentSmsQueue(
 
     suspend fun dispatch(id: String) = withContext(Dispatchers.IO) {
         awaitReady()
+        val candidate = dao.operation(id) ?: return@withContext
+        if (candidate.state != "PENDING_UNDO") return@withContext
+        if (dispatchAllowed?.invoke(candidate) == false) return@withContext
         val row = db.withTransaction {
             val row = dao.operation(id) ?: return@withTransaction null
-            if (row.state != "PENDING_UNDO") return@withTransaction null
+            if (row.state != "PENDING_UNDO" || row.version != candidate.version) return@withTransaction null
             val left = undoRemaining(row.undoElapsed, row.bootCount, time.boot(), time.elapsed())
             if (left == null || !context.smsSend(platform)) {
                 dao.transition(id, row.state, row.version, "MISSED_NEEDS_DECISION"); return@withTransaction null

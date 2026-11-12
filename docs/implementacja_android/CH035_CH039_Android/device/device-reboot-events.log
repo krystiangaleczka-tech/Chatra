@@ -1,0 +1,9 @@
+--------- beginning of main
+11-12 18:25:48.017 22760 22784 I ChatraDeviceQA: SIM:slot=1:sub=1:embedded=true:active=1
+11-12 18:25:48.100 22760 22784 I ChatraDeviceQA: REBOOT_READY:ab9e3cf8-84f2-4c31-80ef-284052c4178d:boot=20:1794504423007
+boot_count_before=20 reboot_at=18:25:48
+--------- beginning of main
+11-12 18:28:52.319 22902 22919 I ChatraDeviceQA: REBOOT_BEFORE_CONTAINER:missed=true:rowBoot=21:state=DELIVERED:attempts=1
+--------- beginning of main
+11-12 18:30:42.073 23966 23997 I ChatraDeviceQA: REBOOT_BEFORE_CONTAINER:missedWhileOff=false:deadlineAfterBootMs=59356:rowBoot=21:state=DELIVERED:attempts=1
+11-12 18:30:42.080 23966 23997 I ChatraDeviceQA: REBOOT_FIRED_IN_NEW_BOOT:boot=21:lateMs=498:attempts=1:state=DELIVERED

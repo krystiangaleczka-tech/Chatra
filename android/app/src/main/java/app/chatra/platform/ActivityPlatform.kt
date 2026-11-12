@@ -12,6 +12,8 @@ interface ActivityPlatform : PlatformAccess {
     fun pendingComposeId(): String?
     val incomingDraftId: StateFlow<String?>
     /** Wątek z wewnętrznego PendingIntent powiadomienia, bez numeru i treści SMS. */
+    val incomingScheduled: StateFlow<Boolean>
+    fun acknowledgeScheduled()
     val incomingConversationId: StateFlow<ConversationId?>
     fun acknowledgeConversation(id: ConversationId)
     fun acknowledgeCompose(id: String)

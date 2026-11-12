@@ -86,10 +86,15 @@ fun ChatraApp(container: AppContainer, initial: Navigator?, onExit: () -> Unit, 
     val incoming by incomingState.collectAsStateWithLifecycle()
     val conversationState = remember(container) { platform?.incomingConversationId ?: kotlinx.coroutines.flow.MutableStateFlow(null) }
     val incomingConversation by conversationState.collectAsStateWithLifecycle()
-    LaunchedEffect(held, incoming, incomingConversation, navigator.screen) {
+    val scheduledRouteState = remember(container) { platform?.incomingScheduled ?: kotlinx.coroutines.flow.MutableStateFlow(false) }
+    val incomingScheduled by scheduledRouteState.collectAsStateWithLifecycle()
+    LaunchedEffect(held, incoming, incomingConversation, incomingScheduled, navigator.screen) {
         if (!container.isDemo && !held && navigator.screen !in listOf(Route.Start, Route.Help, Route.Privacy, Route.DesignCatalog)) {
             navigator.select(Tab.Conversations)
             navigator.resetTo(Route.Start)
+        } else if (held && incomingScheduled && platform != null) {
+            navigator.select(Tab.Scheduled)
+            platform.acknowledgeScheduled()
         } else if (held && incomingConversation != null && platform != null) {
             navigator.select(Tab.Conversations)
             navigator.resetTo(Route.Inbox, Route.Conversation(incomingConversation!!))
@@ -171,12 +176,14 @@ private fun Screen(route: Route, navigator: Navigator, listStates: MutableMap<Ta
                 val until = noticePrefs.mutedUntil[route.id.value] ?: 0
                 val muted = until > System.currentTimeMillis()
                 val labels = numbers.map { "Zadzwoń: ${it.label} · ${it.address.raw}" } +
-                    listOf(if (muted) "Włącz powiadomienia" else "Powiadomienia są włączone", "Wycisz na godzinę", "Wycisz na 8 godzin", "Wycisz do odwołania")
+                    listOf("Szukaj w tej rozmowie", "Zaplanuj wiadomość", if (muted) "Włącz powiadomienia" else "Powiadomienia są włączone", "Wycisz na godzinę", "Wycisz na 8 godzin", "Wycisz do odwołania")
                 ChoiceDialog(state.summary?.title ?: "Rozmowa", labels, { option ->
                     if (option < numbers.size) numbers.getOrNull(option)?.let { participant ->
                         runCatching { context.startActivity(android.content.Intent(android.content.Intent.ACTION_DIAL, android.net.Uri.fromParts("tel", participant.address.raw, null))) }
-                    } else scope.launch {
-                        val expiry = when (option - numbers.size) { 1 -> System.currentTimeMillis() + 3600000; 2 -> System.currentTimeMillis() + 28800000; 3 -> Long.MAX_VALUE; else -> 0L }
+                    } else if (option == numbers.size) navigator.push(Route.Search(conversation = route.id))
+                    else if (option == numbers.size + 1) navigator.push(Route.Schedule(route.id))
+                    else scope.launch {
+                        val expiry = when (option - numbers.size - 2) { 1 -> System.currentTimeMillis() + 3600000; 2 -> System.currentTimeMillis() + 28800000; 3 -> Long.MAX_VALUE; else -> 0L }
                         c.notifications.update { it.copy(mutedUntil = it.mutedUntil + (route.id.value to expiry)) }
                     }
                 }, { details = false })
@@ -188,7 +195,7 @@ private fun Screen(route: Route, navigator: Navigator, listStates: MutableMap<Ta
             ScheduledScreen(model, c.exactAlarms, list, { navigator.push(Route.Conversation(it)) }, dock)
         }
         is Route.Search -> {
-            val model = viewModel(key = "search") { SearchViewModel(createSavedStateHandle(), c.search, route.initialQuery, route.initialFilter) }
+            val model = viewModel(key = "search-${route.conversation?.value.orEmpty()}") { SearchViewModel(createSavedStateHandle(), c.search, route.initialQuery, route.initialFilter, route.conversation) }
             SearchScreen(model, { navigator.back() }) { navigator.push(Route.Conversation(it.conversationId, it.ref)) }
         }
         Route.Appearance -> AppearanceScreen(c.appearance) { navigator.back() }
@@ -224,7 +231,7 @@ private fun Sheet(sheet: Route.Sheet, navigator: Navigator) {
             val model = conversationModel(c, sheet.id)
             // Zaplanuj nad Dodatkami: „Wróć” w S05 wraca do Dodatków (wzorzec), Back systemowy tak samo.
             if (c.isDemo) ExtrasSheet(model, navigator::popSheets) { navigator.push(Route.Schedule(sheet.id)) }
-            else app.chatra.ui.extras.MediaExtrasSheet(model, navigator::popSheets)
+            else app.chatra.ui.extras.MediaExtrasSheet(model, navigator::popSheets) { navigator.push(Route.Schedule(sheet.id)) }
         }
         is Route.Schedule -> {
             val model = conversationModel(c, sheet.id)

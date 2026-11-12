@@ -41,6 +41,7 @@ class SystemHistory(
     private val contacts: ContactsDirectory, private val scope: CoroutineScope,
 ) : ConversationRepository {
     private val resolver = context.contentResolver
+    internal val indexChanges = MutableStateFlow(0)
     private val dao = db.dao()
     private val requests = Channel<Unit>(Channel.CONFLATED)
     private val status = MutableStateFlow<HistoryStatus>(HistoryStatus.Loading)
@@ -111,6 +112,7 @@ class SystemHistory(
             }
             db.withTransaction { requireRead(); dao.sweep(generation) }
             status.value = HistoryStatus.Ready
+            indexChanges.value++
         } catch (cancelled: CancellationException) { throw cancelled }
         catch (_: SecurityException) { status.value = HistoryStatus.PermissionRequired }
         catch (error: Exception) { diagnostic(error); status.value = if (context.smsRead(platform)) HistoryStatus.Error("Nie udało się odświeżyć historii. Poprzedni indeks pozostaje dostępny.") else HistoryStatus.PermissionRequired }
@@ -148,6 +150,7 @@ class SystemHistory(
         db.withTransaction { requireRead(); dao.upsertMedia(parts); dao.sweepParts(ref.providerId, parts.map { it.partId }) }
     }
 
+    internal suspend fun searchMessages(refs: List<IndexRef>): List<Message> = readMessages(refs)
     private suspend fun readMessages(refs: List<IndexRef>): List<Message> {
         requireRead()
         val out = mutableMapOf<ProviderRef, Message>()
@@ -156,7 +159,7 @@ class SystemHistory(
             resolver.query(Telephony.Sms.CONTENT_URI, arrayOf("_id", "address", "body", "date", "read", "type", "sub_id", "status"), "_id IN (${chunk.joinToString { "?" }})", chunk.map { it.providerId.toString() }.toTypedArray(), null)?.use { c ->
                 while (c.moveToNext()) {
                     val ref = lookup.getValue(c.long("_id")); val key = ProviderRef(ProviderTransport.SMS, ref.providerId)
-                    out[key] = Message(MessageRef.Provider(key), ConversationId(ref.conversationId), if (ref.incoming) Direction.Incoming else Direction.Outgoing, Address(c.str("address")), c.str("body"), Instant.ofEpochMilli(c.long("date")), c.long("read") != 0L,
+                    out[key] = Message(MessageRef.Provider(key), ConversationId(ref.conversationId), if (c.long("type") == 1L) Direction.Incoming else Direction.Outgoing, Address(c.str("address")), c.str("body"), Instant.ofEpochMilli(c.long("date")), c.long("read") != 0L,
                         c.long("sub_id").toInt().takeIf { it >= 0 }?.let(::SubscriptionId), when (c.long("type")) {
                             2L -> if (c.long("status") == 0L) DeliveryStatus.Delivered else DeliveryStatus.Sent
                             4L, 6L -> DeliveryStatus.Sending
@@ -168,6 +171,13 @@ class SystemHistory(
         }
         refs.filter { it.kind == "MMS" }.forEach { ref ->
             requireRead()
+            val header = resolver.query(Uri.parse("content://mms/${ref.providerId}"), arrayOf("date", "read", "msg_box", "sub_id"), null, null, null)?.use { c ->
+                if (!c.moveToFirst()) null else listOf(c.long("date") * 1000, c.long("read"), c.long("msg_box"), c.long("sub_id"))
+            } ?: return@forEach
+            var from: Address? = null
+            if (header[2] == 1L) resolver.query(Uri.parse("content://mms/${ref.providerId}/addr"), arrayOf("address"), "type=?", arrayOf("137"), null)?.use { c ->
+                if (c.moveToFirst()) c.str("address").takeIf { it.isNotBlank() && it != "insert-address-token" }?.let { from = Address(it) }
+            }
             val body = StringBuilder()
             resolver.query(Uri.parse("content://mms/${ref.providerId}/part"), arrayOf("_id", "ct", "text"), null, null, null)?.use { c -> while (c.moveToNext()) if (c.str("ct") == "text/plain") {
                 val text = c.str("text").ifEmpty { resolver.openInputStream(Uri.parse("content://mms/part/${c.long("_id")}"))?.bufferedReader()?.use { reader -> val chars = CharArray(65_536); val n = reader.read(chars); if (n > 0) String(chars, 0, n) else "" }.orEmpty() }
@@ -175,7 +185,7 @@ class SystemHistory(
             } }
             val key = ProviderRef(ProviderTransport.MMS, ref.providerId)
             val media = dao.media(ref.conversationId, ref.providerId).map { AttachmentSummary(AttachmentId("mms-part:${it.partId}"), it.mimeType, it.label, it.contentUri) }
-            out[key] = Message(MessageRef.Provider(key), ConversationId(ref.conversationId), if (ref.incoming) Direction.Incoming else Direction.Outgoing, null, body.toString(), Instant.ofEpochMilli(ref.timestamp), ref.read, status = if (ref.incoming) DeliveryStatus.None else DeliveryStatus.Sent, attachments = media)
+            out[key] = Message(MessageRef.Provider(key), ConversationId(ref.conversationId), if (header[2] == 1L) Direction.Incoming else Direction.Outgoing, from, body.toString(), Instant.ofEpochMilli(header[0]), header[1] != 0L, subscriptionId = header[3].toInt().takeIf { it >= 0 }?.let(::SubscriptionId), status = if (header[2] == 1L) DeliveryStatus.None else DeliveryStatus.Sent, attachments = media)
         }
         requireRead()
         return refs.mapNotNull { out[ProviderRef(ProviderTransport.valueOf(it.kind), it.providerId)] }.sortedBy { it.timestamp }
@@ -225,7 +235,7 @@ class SystemHistory(
             }
             val locals = links.mapNotNull { link ->
                 val operation = operations[link.operationId] ?: return@mapNotNull null
-                if (operation.state == "CANCELLED" || indexed.any { (it.ref as? MessageRef.Provider)?.ref == ProviderRef(ProviderTransport.valueOf(link.providerKind), link.providerId ?: -1) }) return@mapNotNull null
+                if (operation.state in listOf("CANCELLED", "SCHEDULED") || indexed.any { (it.ref as? MessageRef.Provider)?.ref == ProviderRef(ProviderTransport.valueOf(link.providerKind), link.providerId ?: -1) }) return@mapNotNull null
                 if (link.providerId != null && operation.state !in activeStates) return@mapNotNull null
                 Message(MessageRef.Local(OperationId(operation.id)), id, Direction.Outgoing, null, operation.body, Instant.ofEpochMilli(operation.createdAt), true, SubscriptionId(operation.subscriptionId), deliveryStatus(operation.state), OperationId(operation.id))
             }

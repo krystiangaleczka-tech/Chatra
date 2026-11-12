@@ -139,9 +139,11 @@ interface ChatraDao {
 }
 
 @Database(entities = [ConversationMeta::class, ProviderMessageRef::class, MediaRef::class, InboundReceipt::class,
-    OutgoingOperation::class, OutgoingRecipient::class, OutgoingAttempt::class, OutgoingPart::class, SavedDraft::class, ClosedDraft::class], version = 4, exportSchema = true)
+    OutgoingOperation::class, OutgoingRecipient::class, OutgoingAttempt::class, OutgoingPart::class, SavedDraft::class, ClosedDraft::class, ScheduledRow::class, SearchDocument::class, SearchFts::class], version = 5, exportSchema = true)
 abstract class ChatraDatabase : RoomDatabase() {
     abstract fun dao(): ChatraDao
+    abstract fun schedules(): ScheduleDao
+    abstract fun search(): SearchDao
     companion object {
         val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(db: SupportSQLiteDatabase) {
@@ -172,7 +174,17 @@ abstract class ChatraDatabase : RoomDatabase() {
                 db.execSQL("ALTER TABLE OutgoingRecipient ADD COLUMN providerKind TEXT NOT NULL DEFAULT 'SMS'")
             }
         }
+        val MIGRATION_4_5 = object : Migration(4, 5) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("CREATE TABLE IF NOT EXISTS ScheduledRow (id TEXT NOT NULL PRIMARY KEY, operationId TEXT NOT NULL, instant INTEGER NOT NULL, local TEXT NOT NULL, zone TEXT NOT NULL, policy TEXT NOT NULL, version INTEGER NOT NULL, token TEXT NOT NULL, title TEXT NOT NULL, createdAt INTEGER NOT NULL, registered INTEGER NOT NULL, error TEXT, manual INTEGER NOT NULL, boot INTEGER NOT NULL, FOREIGN KEY(operationId) REFERENCES OutgoingOperation(id) ON DELETE CASCADE)")
+                db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS index_ScheduledRow_operationId ON ScheduledRow(operationId)")
+                db.execSQL("CREATE TABLE IF NOT EXISTS SearchDocument (rowid INTEGER NOT NULL PRIMARY KEY, kind TEXT NOT NULL, providerId INTEGER NOT NULL, conversationId TEXT NOT NULL, body TEXT NOT NULL, title TEXT NOT NULL, sender TEXT NOT NULL, timestamp INTEGER NOT NULL, subscriptionId INTEGER, media TEXT NOT NULL, hasAttachments INTEGER NOT NULL, code TEXT, parcel TEXT, hash TEXT NOT NULL, generation TEXT NOT NULL, incoming INTEGER NOT NULL)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_SearchDocument_conversationId ON SearchDocument(conversationId)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_SearchDocument_timestamp_rowid ON SearchDocument(timestamp,rowid)")
+                db.execSQL("CREATE VIRTUAL TABLE IF NOT EXISTS SearchFts USING FTS4(tokens TEXT NOT NULL, tokenize=unicode61)")
+            }
+        }
         fun open(context: Context): ChatraDatabase = Room.databaseBuilder(context.applicationContext, ChatraDatabase::class.java, "chatra.db")
-            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4).build()
+            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5).build()
     }
 }

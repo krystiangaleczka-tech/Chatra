@@ -80,6 +80,7 @@ private val Secondary = ChatraColors.TextSecondary
 private val CardShape = RoundedCornerShape(26.dp)
 
 /** S06 Zaplanowane (CH015): decyzje nad listą oczekujących, stopka z ostatnią wysyłką i dock. */
+@OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
 @Composable
 fun ScheduledScreen(
     model: ScheduledViewModel,
@@ -96,7 +97,10 @@ fun ScheduledScreen(
         alarmsAllowed = alarms.canScheduleExact()
         onPauseOrDispose { }
     }
-    val reschedule = rememberReschedulePicker(clock) { id, local -> model.reschedule(id, local) }
+    val native = !app.chatra.ui.LocalContainer.current.isDemo
+    var editing by remember { mutableStateOf<ScheduledItem?>(null) }
+    var deleting by remember { mutableStateOf<ScheduledItem?>(null) }
+    val reschedule = rememberReschedulePicker(clock) { id, local, version -> model.reschedule(id, local, if (native) version else null) }
 
     ChatraScreen(Backgrounds.Scheduled, floating = { dock.Render(Modifier.align(Alignment.BottomStart)) }) {
         LazyColumn(
@@ -114,15 +118,32 @@ fun ScheduledScreen(
                     item, state.sims, clock,
                     busy = item.schedule.id in state.busy,
                     notice = state.notices[item.schedule.id],
-                    onSend = { sim -> model.sendNow(item.schedule.id, sim) },
+                    onSend = { sim -> if (native && item.decisionReason() == DecisionReason.Uncertain) item.operation.conversationId?.let(onOpen) else model.sendNow(item.schedule.id, sim, if (native) item.schedule.version else null) },
                     onReschedule = { reschedule(item) },
-                    onDelete = { model.delete(item.schedule.id) },
+                    onDelete = { if (native) deleting = item else model.delete(item.schedule.id) },
                 )
             }
-            if (!state.loading) item("pending") { PendingCard(state.pending, state.sims, clock, onOpen) }
+            if (native) items(state.decisions.filter { it.decisionReason() == DecisionReason.Missed }, key = { "edit-${it.schedule.id.value}" }) { item ->
+                app.chatra.ui.common.TextAction("Edytuj: ${item.title}", { editing = item })
+            }
+            if (!state.loading) item("pending") { PendingCard(state.pending, state.sims, clock, onOpen) { item ->
+                if (native) Column(Modifier.padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    androidx.compose.foundation.layout.FlowRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        app.chatra.ui.common.TextAction("Edytuj", { editing = item })
+                        app.chatra.ui.common.TextAction("Wyślij teraz", { model.sendNow(item.schedule.id, item.operation.subscriptionId, item.schedule.version) })
+                        app.chatra.ui.common.TextAction("Usuń", { deleting = item })
+                    }
+                    state.notices[item.schedule.id]?.let { BasicText(it, style = ChatraType.Preview) }
+                }
+            } }
             state.lastSent?.let { last -> item("last") { LastSentLine(last, clock) } }
         }
     }
+    editing?.let { item -> ScheduleEditor(item, state.sims, clock, item.schedule.id in state.busy, state.notices[item.schedule.id],
+        { body, sim, local, policy -> model.edit(item, body, sim, local, policy) { editing = null } }, { editing = null }) }
+    deleting?.let { item -> app.chatra.ui.common.ChoiceDialog("Usunąć zaplanowaną wiadomość dla ${item.title}? Rozmowa zostanie zachowana.", listOf("Usuń zlecenie"),
+        { model.delete(item.schedule.id, item.schedule.version) }, { deleting = null }) }
+
 }
 
 @Composable
@@ -143,7 +164,7 @@ private fun AlarmNotice(onAllow: () -> Unit) {
                 BasicText("Brak dokładnych alarmów", style = chatraText(15f, 600))
             }
             BasicText(
-                "Bez zgody na dokładne alarmy Android może opóźnić wysyłkę zaplanowanych wiadomości.",
+                "Zlecenia są zapisane. Przyznaj dostęp do dokładnych alarmów, aby telefon mógł je wybudzić o terminie.",
                 style = chatraText(13f, 400, 18f, color = Secondary),
             )
             ActionButton("Zezwól w ustawieniach", primary = false, onClick = onAllow, modifier = Modifier.fillMaxWidth())
@@ -195,7 +216,7 @@ private fun DecisionCard(
                     DecisionReason.Failed -> "Ponów"
                     DecisionReason.Uncertain -> "Wyślij ponownie"
                 }
-                ActionButton(sendLabel, primary = true, enabled = !busy && sim != null, onClick = { onSend(sim) }, modifier = Modifier.weight(1f))
+                ActionButton(if (!app.chatra.ui.LocalContainer.current.isDemo && reason == DecisionReason.Uncertain) "Otwórz rozmowę" else sendLabel, primary = true, enabled = !busy && (sim != null || !app.chatra.ui.LocalContainer.current.isDemo && reason == DecisionReason.Uncertain), onClick = { onSend(sim) }, modifier = Modifier.weight(1f))
                 if (reason == DecisionReason.Missed) {
                     ActionButton("Zmień termin", primary = false, enabled = !busy, onClick = onReschedule, modifier = Modifier.weight(1f))
                 }
@@ -210,6 +231,7 @@ private val PL = java.util.Locale.forLanguageTag("pl-PL")
 private fun decisionDetail(item: ScheduledItem, reason: DecisionReason, clock: Clock): String {
     val at = item.schedule.instant.atZone(clock.zone())
     val whenText = "${PolishDates.weekday(at.toLocalDate())}, ${at.dayOfMonth} ${PolishDates.month(at.toLocalDate())}, ${PolishDates.time(at)}"
+    item.registrationError?.let { return it }
     return when (reason) {
         DecisionReason.Missed -> "Miało wyjść $whenText. Telefon był wyłączony — nic nie zostało wysłane."
         DecisionReason.Failed -> "Wysyłka z $whenText nie powiodła się. Sprawdź zasięg i kartę SIM, potem ponów."
@@ -267,7 +289,7 @@ private fun DeleteButton(enabled: Boolean, onClick: () -> Unit) {
 }
 
 @Composable
-private fun PendingCard(pending: List<ScheduledItem>, sims: List<SimCard>, clock: Clock, onOpen: (ConversationId) -> Unit) {
+private fun PendingCard(pending: List<ScheduledItem>, sims: List<SimCard>, clock: Clock, onOpen: (ConversationId) -> Unit, actions: @Composable (ScheduledItem) -> Unit = {}) {
     val b = cssBorder()
     GlassSurface(GlassStyles.Card, CardShape, Modifier.fillMaxWidth().semantics { contentDescription = "Czeka na wysłanie" }, shadows = listOf(Shadows.Card)) {
         Column(Modifier.padding(b).clip(RoundedCornerShape(25.dp))) {
@@ -285,6 +307,7 @@ private fun PendingCard(pending: List<ScheduledItem>, sims: List<SimCard>, clock
             }
             pending.forEachIndexed { i, item ->
                 PendingRow(item, sims, clock, divider = i > 0, last = i == pending.lastIndex, onOpen = onOpen)
+                actions(item)
             }
         }
     }
@@ -387,7 +410,7 @@ private fun LastSentLine(last: LastScheduledSent, clock: Clock) {
  * walidacja i zapis w ViewModelu.
  */
 @Composable
-private fun rememberReschedulePicker(clock: Clock, onPicked: (ScheduleId, LocalDateTime) -> Unit): (ScheduledItem) -> Unit {
+private fun rememberReschedulePicker(clock: Clock, onPicked: (ScheduleId, LocalDateTime, Int) -> Unit): (ScheduledItem) -> Unit {
     val context = LocalContext.current
     return remember(context, clock) {
         { item: ScheduledItem ->
@@ -395,7 +418,7 @@ private fun rememberReschedulePicker(clock: Clock, onPicked: (ScheduleId, LocalD
             val start = maxOf(item.schedule.localDateTime, now.plusHours(1).withMinute(0))
             DatePickerDialog(context, { _, y, m, d ->
                 val date = LocalDate.of(y, m + 1, d)
-                TimePickerDialog(context, { _, h, min -> onPicked(item.schedule.id, LocalDateTime.of(date, LocalTime.of(h, min))) },
+                TimePickerDialog(context, { _, h, min -> onPicked(item.schedule.id, LocalDateTime.of(date, LocalTime.of(h, min)), item.schedule.version) },
                     start.hour, start.minute, true).show()
             }, start.year, start.monthValue - 1, start.dayOfMonth).apply {
                 datePicker.minDate = clock.now().toEpochMilli() - 1000

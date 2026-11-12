@@ -17,7 +17,7 @@ enum class DecisionReason {
     Uncertain,
 }
 
-fun ScheduledItem.decisionReason(): DecisionReason? = when (operation.state) {
+fun ScheduledItem.decisionReason(): DecisionReason? = if (registrationError != null) DecisionReason.Missed else when (operation.state) {
     SendState.MISSED_NEEDS_DECISION -> DecisionReason.Missed
     SendState.FAILED, SendState.PARTIALLY_SENT -> DecisionReason.Failed
     SendState.DISPATCH_UNCERTAIN -> DecisionReason.Uncertain
@@ -36,7 +36,7 @@ fun scheduledOverview(items: List<ScheduledItem>): ScheduledOverview {
     val sorted = items.sortedWith(compareBy({ it.schedule.instant }, { it.schedule.id.value }))
     return ScheduledOverview(
         decisions = sorted.filter { it.decisionReason() != null },
-        pending = sorted.filter { it.operation.state == SendState.SCHEDULED || it.operation.state == SendState.DUE },
+        pending = sorted.filter { it.registrationError == null && (it.operation.state == SendState.SCHEDULED || it.operation.state == SendState.DUE) },
     )
 }
 

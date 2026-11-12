@@ -77,7 +77,7 @@ fun StartScreen(model: StartViewModel, onDone: () -> Unit, onPrivacy: () -> Unit
         onPauseOrDispose { }
     }
     StartContent(state, model::onPrimary, onPrivacy, onHelp,
-        if (!app.chatra.ui.LocalContainer.current.isDemo) "Wersja testowa. Obsługuje historię oraz wysyłanie SMS/MMS; MMS czeka na odbiór u operatorów. Chatra HD i harmonogram są jeszcze niedostępne. Nadanie roli zastąpi obecną aplikację SMS. Używaj tej wersji tylko do testów." else null)
+        if (!app.chatra.ui.LocalContainer.current.isDemo) "Wersja testowa. Obsługuje historię oraz wysyłanie SMS/MMS; MMS czeka na odbiór u operatorów. Harmonogram działa lokalnie i wymaga dokładnych alarmów. Chatra HD jest jeszcze niedostępna. Nadanie roli zastąpi obecną aplikację SMS. Używaj tej wersji tylko do testów." else null)
 }
 
 private val Polish = Locale.forLanguageTag("pl-PL")

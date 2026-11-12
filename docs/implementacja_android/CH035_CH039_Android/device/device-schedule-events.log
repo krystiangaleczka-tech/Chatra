@@ -1,0 +1,4 @@
+--------- beginning of main
+11-12 18:15:06.153 29865 29885 I ChatraDeviceQA: SIM:slot=1:sub=1:embedded=true:active=1
+11-12 18:15:06.210 29865 29885 I ChatraDeviceQA: READY:345efb2a-70ab-4256-a43b-cf63369487a9:1794503776142:registered=true
+11-12 18:16:16.765 29865 29885 I ChatraDeviceQA: FINISHED:SENT:attempts=1:lateMs=37

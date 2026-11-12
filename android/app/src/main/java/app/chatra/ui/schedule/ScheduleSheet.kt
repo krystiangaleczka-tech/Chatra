@@ -110,7 +110,7 @@ fun ScheduleSheet(
     val recipient = state.summary?.title.orEmpty()
     val validation = validateSchedule(local, zone, clock.now())
     val sendLocal = (validation as? ScheduleValidation.Gap)?.suggestedLocal ?: local
-    val blocker = blocker(body, state.sim, validation)
+    val blocker = if (body.isBlank() && state.attachmentIds.isNotEmpty()) blocker("załącznik", state.sim, validation) else blocker(body, state.sim, validation)
 
     val pickDate = {
         DatePickerDialog(context, { _, y, m, d -> local = LocalDateTime.of(LocalDate.of(y, m + 1, d), local.toLocalTime()) },
@@ -141,6 +141,7 @@ fun ScheduleSheet(
             Policy(policy) { policy = it }
             Info()
             Notices(validation, blocker, alarmsAllowed, sendLocal)
+            state.error?.let { BasicText(it, style = chatraText(14f, color = ChatraColors.ErrorText)) }
         }
         val label = when {
             blocker != null -> blocker.cta
@@ -153,7 +154,7 @@ fun ScheduleSheet(
                 !alarmsAllowed -> alarms.openSettings()
                 else -> model.schedule(body, fromComposer = preset == null, validation.instant!!, sendLocal, policy, onScheduled)
             }
-        }, enabled = blocker == null)
+        }, enabled = blocker == null && !state.busy)
     }
 }
 

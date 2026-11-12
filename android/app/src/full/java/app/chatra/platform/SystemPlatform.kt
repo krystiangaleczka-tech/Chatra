@@ -24,6 +24,7 @@ import app.chatra.local.PrivateMediaStore
 /** Launchery rejestrowane przed STARTED; wynik zawsze sprawdza faktyczny stan systemu. */
 class SystemPlatform(private val context: Context) : ActivityPlatform, ObservableSmsRoleGate {
     companion object {
+        const val ACTION_OPEN_SCHEDULED = "app.chatra.action.OPEN_SCHEDULED"
         const val ACTION_OPEN_CONVERSATION = "app.chatra.action.OPEN_CONVERSATION"
         const val EXTRA_CONVERSATION_ID = "app.chatra.extra.CONVERSATION_ID"
     }
@@ -39,8 +40,11 @@ class SystemPlatform(private val context: Context) : ActivityPlatform, Observabl
     override val changes = MutableStateFlow(0)
     override val held = MutableStateFlow(isHeld())
     override val incomingDraftId = MutableStateFlow(external.pendingId())
+    override val incomingScheduled = MutableStateFlow(false)
+    override fun acknowledgeScheduled() { incomingScheduled.value = false }
     override val incomingConversationId = MutableStateFlow<ConversationId?>(null)
     override fun acceptIntent(intent: Intent): String? {
+        if (intent.action == ACTION_OPEN_SCHEDULED) { incomingScheduled.value = true; return null }
         if (intent.action == ACTION_OPEN_CONVERSATION) {
             val id = intent.getStringExtra(EXTRA_CONVERSATION_ID)
                 ?.takeIf { raw -> runCatching { java.util.UUID.fromString(raw).toString().equals(raw, ignoreCase = true) }.getOrDefault(false) }

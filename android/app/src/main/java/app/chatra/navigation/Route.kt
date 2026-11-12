@@ -7,7 +7,7 @@ sealed interface Route {
     data object Start : Route
     data object Inbox : Route
     data class Conversation(val id: ConversationId, val message: app.chatra.core.model.MessageRef? = null) : Route
-    data class Search(val initialQuery: String = "", val initialFilter: String? = null) : Route
+    data class Search(val initialQuery: String = "", val initialFilter: String? = null, val conversation: ConversationId? = null) : Route
     data object Scheduled : Route
     data object Settings : Route
     data object Appearance : Route

@@ -20,11 +20,18 @@ class NativeSmsTransport(private val text: PlatformSmsText) : SmsTransport {
 }
 interface SmsWork {
     fun schedule(id: String, deadline: Long)
+    fun wakeScheduled(id: String, deadline: Long) = schedule(id, deadline)
     fun cancel(id: String)
 }
 class PlatformSmsWork(private val context: Context) : SmsWork {
     override fun schedule(id: String, deadline: Long) {
         WorkManager.getInstance(context).enqueueUniqueWork("sms-send:$id", ExistingWorkPolicy.KEEP,
+            OneTimeWorkRequestBuilder<SmsDispatchWorker>().setInputData(workDataOf("operation" to id))
+                .setInitialDelay((deadline - System.currentTimeMillis()).coerceAtLeast(0), TimeUnit.MILLISECONDS).build())
+    }
+    override fun wakeScheduled(id: String, deadline: Long) {
+        // A previous wake may still be completing after marking this operation missed.
+        WorkManager.getInstance(context).enqueueUniqueWork("sms-send:$id", ExistingWorkPolicy.APPEND_OR_REPLACE,
             OneTimeWorkRequestBuilder<SmsDispatchWorker>().setInputData(workDataOf("operation" to id))
                 .setInitialDelay((deadline - System.currentTimeMillis()).coerceAtLeast(0), TimeUnit.MILLISECONDS).build())
     }
