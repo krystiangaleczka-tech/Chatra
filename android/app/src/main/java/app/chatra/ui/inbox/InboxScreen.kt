@@ -93,7 +93,7 @@ fun InboxScreen(
             item("header") { Header(onMore) }
             if (!container.isDemo) item("development") {
                 Column {
-                    BasicText("Wersja testowa: historia SMS/MMS i wysyłanie SMS. Wysyłanie oraz pobieranie nowych MMS, HD i harmonogram nie są jeszcze gotowe.", style = chatraText(14f, 600, color = ChatraColors.ErrorText))
+                    BasicText("Wersja testowa: SMS i MMS. Obsługa MMS czeka na sprawdzenie u operatorów. Chatra HD i harmonogram są jeszcze niedostępne.", style = chatraText(14f, 600, color = ChatraColors.ErrorText))
                     app.chatra.ui.settings.PermissionPrompt(app.chatra.platform.AccessFeature.Sms)
                     if (state.history is app.chatra.core.model.HistoryStatus.Error) {
                         BasicText((state.history as app.chatra.core.model.HistoryStatus.Error).message, style = ChatraType.Preview)

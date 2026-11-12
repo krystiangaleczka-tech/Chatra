@@ -3,7 +3,7 @@ package app.chatra.ui.extras
 import app.chatra.core.model.Template
 import app.chatra.core.model.TemplateId
 
-/** Szablony startowe (CH034 doda edycję i trwałe przechowywanie). */
+/** Szablony startowe. Zmiany i usunięcia są przechowywane lokalnie przez CH034. */
 val DefaultTemplates = listOf(
     Template(TemplateId("t-late"), "Spóźnię się", "Spóźnię się około 10 minut.", 0),
     Template(TemplateId("t-call"), "Oddzwonię", "Nie mogę teraz rozmawiać, oddzwonię później.", 1),

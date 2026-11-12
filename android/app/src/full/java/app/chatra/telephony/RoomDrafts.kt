@@ -18,6 +18,7 @@ internal object DraftCodec {
         put("variant", d.mediaVariant?.name ?: JSONObject.NULL); put("revision", d.revision)
         put("names", JSONArray(d.recipientNames)); put("input", d.recipientInput)
     }.toString()
+    fun decode(payload: String): Draft = decode(SavedDraft("snapshot", null, payload))
     fun decode(row: SavedDraft): Draft {
         val j = JSONObject(row.payload)
         fun strings(key: String) = j.optJSONArray(key)?.let { a -> (0 until a.length()).map { a.getString(it) } }.orEmpty()

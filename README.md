@@ -32,6 +32,8 @@ W PDF uzupełnienie zaczyna się na stronie 24.
 
 ## Dokumentacja implementacji Android
 
+- [CH030–CH034: powiadomienia, trwałe pliki, MMS, kopie bez lokalizacji i szablony](docs/implementacja_android/CH030_CH034_Wdrozenie_i_weryfikacja.md)
+
 - [CH029: kontakty i wielu odbiorców](docs/implementacja_android/CH029_Kontakty_i_wielu_odbiorcow.md)
 - [CH022–CH026: provider SMS/MMS, Room, odbiór, SIM, licznik i transport SMS](docs/implementacja_android/CH022_CH026_Wdrozenie_i_weryfikacja.md)
 

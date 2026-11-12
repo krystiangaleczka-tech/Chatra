@@ -70,7 +70,7 @@ class DatabaseTest {
         legacy.execSQL("INSERT INTO OutgoingPart(attemptId,partIndex,sent,delivery,resultCode) VALUES ('attempt',0,'Failed','Unknown',1)")
         legacy.version = 1
         legacy.close()
-        val db = Room.databaseBuilder(context, ChatraDatabase::class.java, name).addMigrations(ChatraDatabase.MIGRATION_1_2, ChatraDatabase.MIGRATION_2_3).build()
+        val db = Room.databaseBuilder(context, ChatraDatabase::class.java, name).addMigrations(ChatraDatabase.MIGRATION_1_2, ChatraDatabase.MIGRATION_2_3, ChatraDatabase.MIGRATION_3_4).build()
         try {
             val row = db.dao().conversation("thread")!!
             assertTrue(row.pinned)
@@ -81,6 +81,7 @@ class DatabaseTest {
             assertEquals("legacy-payload", db.dao().savedDraft("draft")!!.payload)
             assertEquals("DISPATCH_UNCERTAIN", db.dao().operation("failure")!!.state)
             assertEquals("Unknown", db.dao().parts("attempt").single().sent)
+            assertEquals("SMS", db.dao().recipients("failure").single().providerKind)
             assertEquals(42L, db.dao().attempt("attempt")!!.providerId)
         } finally { db.close(); context.deleteDatabase(name) }
     }

@@ -1,0 +1,17 @@
+{
+  "full": {
+    "path": "android/app/build/outputs/apk/full/debug/app-full-debug.apk",
+    "sha256": "2ec089c3543923234f26bb70738a62efced89541e171e52c3d3ce02351de3c36",
+    "bytes": 47444093
+  },
+  "demo": {
+    "path": "android/app/build/outputs/apk/demo/debug/app-demo-debug.apk",
+    "sha256": "a2a8bf2d7cf9bcece129e3c170b61fb85915ed895fa3da0203b9347f86bb0801",
+    "bytes": 47343368
+  },
+  "tests": {
+    "path": "android/app/build/outputs/apk/androidTest/full/debug/app-full-debug-androidTest.apk",
+    "sha256": "7f31c1ec489ffb8c3e74827e73fffead96ef7ed76cd61fe9640de03f5bdf94dd",
+    "bytes": 1266032
+  }
+}

@@ -26,7 +26,7 @@ class ExternalComposeStore(context: Context) {
     private val folder = File(context.filesDir, "external-compose").apply { mkdirs() }
     private val preferences = context.getSharedPreferences("external-compose", Context.MODE_PRIVATE)
     fun save(draft: ExternalCompose) {
-        val json = JSONObject().put("id", draft.id).put("recipients", JSONArray(draft.recipients.map { it.raw })).put("text", draft.text)
+        val json = JSONObject().put("id", draft.id).put("recipients", JSONArray(draft.recipients.map { it.raw })).put("text", draft.text).put("attachments", JSONArray(draft.attachmentIds.map { it.value })).put("error", draft.error ?: JSONObject.NULL)
         val file = AtomicFile(File(folder, "${draft.id}.json")); val stream = file.startWrite()
         try { stream.write(json.toString().toByteArray()); file.finishWrite(stream); preferences.edit().putString("pending", draft.id).commit() }
         catch (error: Exception) { file.failWrite(stream); throw error }
@@ -38,7 +38,7 @@ class ExternalComposeStore(context: Context) {
         return runCatching {
             val json = JSONObject(AtomicFile(File(folder, "$id.json")).readFully().toString(Charsets.UTF_8))
             val recipients = json.getJSONArray("recipients")
-            externalCompose((0 until recipients.length()).map { recipients.getString(it) }, json.getString("text"), id)
+            externalCompose((0 until recipients.length()).map { recipients.getString(it) }, json.getString("text"), id, json.optJSONArray("attachments")?.let { a -> (0 until a.length()).map { AttachmentId(a.getString(it)) } }.orEmpty(), allowEmptyRecipients = true)?.copy(error = json.optString("error").takeIf { it.isNotBlank() && it != "null" })
         }.getOrNull()
     }
 }

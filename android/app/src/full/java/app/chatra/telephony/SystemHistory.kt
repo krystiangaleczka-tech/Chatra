@@ -216,7 +216,7 @@ class SystemHistory(
             val indexed = readMessages(dao.page(id.value, limit))
             val mapped = indexed.map { message ->
                 val provider = (message.ref as? MessageRef.Provider)?.ref
-                val link = links.firstOrNull { provider?.transport == ProviderTransport.SMS && it.providerId == provider.providerId }
+                val link = links.firstOrNull { provider?.transport?.name == it.providerKind && it.providerId == provider.providerId }
                 if (link == null) message else {
                     val operation = operations[link.operationId]
                     val state = if (link.state == "DELIVERED") link.state else operation?.state?.takeIf { it in listOf("DISPATCH_UNCERTAIN", "MISSED_NEEDS_DECISION") } ?: link.state
@@ -225,11 +225,11 @@ class SystemHistory(
             }
             val locals = links.mapNotNull { link ->
                 val operation = operations[link.operationId] ?: return@mapNotNull null
-                if (operation.state == "CANCELLED" || indexed.any { (it.ref as? MessageRef.Provider)?.ref == ProviderRef(ProviderTransport.SMS, link.providerId ?: -1) }) return@mapNotNull null
+                if (operation.state == "CANCELLED" || indexed.any { (it.ref as? MessageRef.Provider)?.ref == ProviderRef(ProviderTransport.valueOf(link.providerKind), link.providerId ?: -1) }) return@mapNotNull null
                 if (link.providerId != null && operation.state !in activeStates) return@mapNotNull null
                 Message(MessageRef.Local(OperationId(operation.id)), id, Direction.Outgoing, null, operation.body, Instant.ofEpochMilli(operation.createdAt), true, SubscriptionId(operation.subscriptionId), deliveryStatus(operation.state), OperationId(operation.id))
             }
-            (mapped + locals).sortedBy { it.timestamp }
+            (mapped + locals.distinctBy { it.operationId }).sortedBy { it.timestamp }
         }.getOrElse { if (it is CancellationException) throw it; diagnostic(it); status.value = HistoryStatus.Error("Nie udało się odczytać rozmowy."); emptyList() }
     }.flowOn(Dispatchers.IO)
     private fun deliveryStatus(state: String) = when (state) {

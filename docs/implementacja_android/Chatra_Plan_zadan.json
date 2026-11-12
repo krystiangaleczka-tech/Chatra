@@ -549,7 +549,9 @@
         "CH026",
         "CH028"
       ],
-      "description": "Wykonanie: kanały wiadomości/błędy/harmonogram/HD, grupowanie, prywatność lockscreen i deep link. SENDTO/RESPOND_VIA_MESSAGE oraz bezpieczne udostępnianie. Szybka odpowiedź korzysta ze wspólnej kolejki i jawnie wybranej SIM. Walidować zewnętrzne argumenty i URI; nie wysyłać automatycznie po otwarciu intentu.\n\nOdbiór: właściwy wątek, aktualne badge, brak tekstu na blokadzie przy ukrytych podglądach. Weryfikacja: brak zgody na powiadomienia, urządzenie zablokowane, cold start i wielokrotne powiadomienie.\n\nUzupełnienie UX 29.10.2026: Zaimplementować wyciszenie per rozmowa i kontrolę jego trwania, czytelne stany UI oraz prawidłowe mapowanie na Android NotificationChannels i skróty konwersacji. Wyciszenie nie jest blokowaniem ani kasowaniem wiadomości (CH065).\n\nOdbiór rozszerzony: Nowa wiadomość w wyciszonej rozmowie aktualizuje historię i liczniki bez niepożądanego alertu; zmiana preferencji pozostaje skuteczna po restarcie."
+      "description": "Wykonanie: kanały wiadomości/błędy/harmonogram/HD, grupowanie, prywatność lockscreen i deep link. SENDTO/RESPOND_VIA_MESSAGE oraz bezpieczne udostępnianie. Szybka odpowiedź korzysta ze wspólnej kolejki i jawnie wybranej SIM. Walidować zewnętrzne argumenty i URI; nie wysyłać automatycznie po otwarciu intentu.\n\nOdbiór: właściwy wątek, aktualne badge, brak tekstu na blokadzie przy ukrytych podglądach. Weryfikacja: brak zgody na powiadomienia, urządzenie zablokowane, cold start i wielokrotne powiadomienie.\n\nUzupełnienie UX 29.10.2026: Zaimplementować wyciszenie per rozmowa i kontrolę jego trwania, czytelne stany UI oraz prawidłowe mapowanie na Android NotificationChannels i skróty konwersacji. Wyciszenie nie jest blokowaniem ani kasowaniem wiadomości (CH065).\n\nOdbiór rozszerzony: Nowa wiadomość w wyciszonej rozmowie aktualizuje historię i liczniki bez niepożądanego alertu; zmiana preferencji pozostaje skuteczna po restarcie.",
+      "status": "implemented_emulator_verified_device_acceptance_pending",
+      "evidence": "CH030_CH034_Wdrozenie_i_weryfikacja.md"
     },
     {
       "id": "CH031",
@@ -563,7 +565,9 @@
         "CH022",
         "CH028"
       ],
-      "description": "Wykonanie: Photo Picker i aparat, walidacja MIME/rozmiaru, trwały URI grant lub kopia prywatna, miniatury, porządek i usuwanie. Liczyć sumę rozmiarów i SHA256 poza głównym wątkiem. Zapewnić FileProvider i czyszczenie cache bez naruszenia aktywnej operacji.\n\nOdbiór: wybrane pliki nadal dostępne po restarcie; brak szerokiej zgody na galerię bez potrzeby. Weryfikacja: utracony dostęp do URI, brak miejsca, przerwane kopiowanie, duże wideo i anulowanie po wyborze.\n\nUzupełnienie UX 29.10.2026: Dodać interfejs danych dla galerii per rozmowa CH066: paginacja, rodzaj załącznika, licznik, identyfikator wiadomości źródłowej, odczyt stanu MMS/HD, bezpieczne otwieranie i udostępnianie URI. Zabezpieczyć odwołania do utraconych i usuniętych plików.\n\nOdbiór rozszerzony: Galeria nie zawyża liczby załączników, nie ładuje jednocześnie wszystkich pełnych plików, nie ujawnia danych wrażliwych przez przypadkowy URI."
+      "description": "Wykonanie: Photo Picker i aparat, walidacja MIME/rozmiaru, trwały URI grant lub kopia prywatna, miniatury, porządek i usuwanie. Liczyć sumę rozmiarów i SHA256 poza głównym wątkiem. Zapewnić FileProvider i czyszczenie cache bez naruszenia aktywnej operacji.\n\nOdbiór: wybrane pliki nadal dostępne po restarcie; brak szerokiej zgody na galerię bez potrzeby. Weryfikacja: utracony dostęp do URI, brak miejsca, przerwane kopiowanie, duże wideo i anulowanie po wyborze.\n\nUzupełnienie UX 29.10.2026: Dodać interfejs danych dla galerii per rozmowa CH066: paginacja, rodzaj załącznika, licznik, identyfikator wiadomości źródłowej, odczyt stanu MMS/HD, bezpieczne otwieranie i udostępnianie URI. Zabezpieczyć odwołania do utraconych i usuniętych plików.\n\nOdbiór rozszerzony: Galeria nie zawyża liczby załączników, nie ładuje jednocześnie wszystkich pełnych plików, nie ujawnia danych wrażliwych przez przypadkowy URI.",
+      "status": "implemented_emulator_verified_device_acceptance_pending",
+      "evidence": "CH030_CH034_Wdrozenie_i_weryfikacja.md"
     },
     {
       "id": "CH032",
@@ -579,7 +583,9 @@
         "CH029",
         "CH031"
       ],
-      "description": "Wykonanie: ocenić utrzymywany i zgodny licencyjnie adapter PDU, obsłużyć konstrukcję nagłówków/części, send/download, WAP_PUSH i zapis providera. Limity i kompresja dla operatora/SIM; tekst, zdjęcie, wspierane wideo i grupy. Rozróżnić APN, dane, timeout, przekroczony limit i częściowy błąd.\n\nOdbiór: rzeczywisty MMS w obu kierunkach oraz grupa u uzgodnionych operatorów. Weryfikacja: fizyczne urządzenia z dwiema kartami SIM, roaming, brak danych i restart. Dokumentowany brak wsparcia nie może wyglądać jak sukces."
+      "description": "Wykonanie: ocenić utrzymywany i zgodny licencyjnie adapter PDU, obsłużyć konstrukcję nagłówków/części, send/download, WAP_PUSH i zapis providera. Limity i kompresja dla operatora/SIM; tekst, zdjęcie, wspierane wideo i grupy. Rozróżnić APN, dane, timeout, przekroczony limit i częściowy błąd.\n\nOdbiór: rzeczywisty MMS w obu kierunkach oraz grupa u uzgodnionych operatorów. Weryfikacja: fizyczne urządzenia z dwiema kartami SIM, roaming, brak danych i restart. Dokumentowany brak wsparcia nie może wyglądać jak sukces.",
+      "status": "implemented_controlled_transport_verified_carrier_acceptance_pending",
+      "evidence": "CH030_CH034_Wdrozenie_i_weryfikacja.md"
     },
     {
       "id": "CH033",
@@ -591,7 +597,9 @@
       "dependencies": [
         "CH031"
       ],
-      "description": "Wykonanie: oryginał jako niezmienne bajty; osobne pochodne dla MMS i usunięcia lokalizacji. Zdefiniować formaty zdjęć/wideo i pełny zestaw wspieranych metadanych lokalizacyjnych. Dla formatów nieobsługiwanych jawny błąd albo bezpieczna konwersja z oznaczeniem. Nie nadpisywać pliku źródłowego.\n\nOdbiór: oryginał ma identyczny hash; kopia nie zawiera lokalizacji w obsługiwanych polach i nie jest opisana jako oryginał. Weryfikacja: niezależny odczyt metadanych, orientacja i jakość po konwersji, nieobsługiwany format."
+      "description": "Wykonanie: oryginał jako niezmienne bajty; osobne pochodne dla MMS i usunięcia lokalizacji. Zdefiniować formaty zdjęć/wideo i pełny zestaw wspieranych metadanych lokalizacyjnych. Dla formatów nieobsługiwanych jawny błąd albo bezpieczna konwersja z oznaczeniem. Nie nadpisywać pliku źródłowego.\n\nOdbiór: oryginał ma identyczny hash; kopia nie zawiera lokalizacji w obsługiwanych polach i nie jest opisana jako oryginał. Weryfikacja: niezależny odczyt metadanych, orientacja i jakość po konwersji, nieobsługiwany format.",
+      "status": "implemented_emulator_verified_supported_formats",
+      "evidence": "CH030_CH034_Wdrozenie_i_weryfikacja.md"
     },
     {
       "id": "CH034",
@@ -604,7 +612,9 @@
         "CH020",
         "CH028"
       ],
-      "description": "Wykonanie: lokalny katalog szablonów, dodanie/edycja/usunięcie, wybór w dodatkach. Wstawienie w kursor lub jasna reguła dopisania; zastąpienie niepustej treści wyłącznie po świadomej akcji. Zachować odbiorców, SIM i pliki. Brak synchronizacji z chmurą w tym zakresie.\n\nOdbiór: akcja Szablony jest kompletna, stan pusty prowadzi do utworzenia. Weryfikacja: polskie znaki, długa treść, reset procesu i brak podwojenia po dwukrotnym kliknięciu."
+      "description": "Wykonanie: lokalny katalog szablonów, dodanie/edycja/usunięcie, wybór w dodatkach. Wstawienie w kursor lub jasna reguła dopisania; zastąpienie niepustej treści wyłącznie po świadomej akcji. Zachować odbiorców, SIM i pliki. Brak synchronizacji z chmurą w tym zakresie.\n\nOdbiór: akcja Szablony jest kompletna, stan pusty prowadzi do utworzenia. Weryfikacja: polskie znaki, długa treść, reset procesu i brak podwojenia po dwukrotnym kliknięciu.",
+      "status": "implemented_emulator_verified",
+      "evidence": "CH030_CH034_Wdrozenie_i_weryfikacja.md"
     },
     {
       "id": "CH035",

@@ -1,6 +1,7 @@
 package app.chatra.platform
 
 import android.content.Intent
+import app.chatra.core.model.ConversationId
 import androidx.activity.ComponentActivity
 import kotlinx.coroutines.flow.StateFlow
 
@@ -10,5 +11,8 @@ interface ActivityPlatform : PlatformAccess {
     fun acceptIntent(intent: Intent): String?
     fun pendingComposeId(): String?
     val incomingDraftId: StateFlow<String?>
+    /** Wątek z wewnętrznego PendingIntent powiadomienia, bez numeru i treści SMS. */
+    val incomingConversationId: StateFlow<ConversationId?>
+    fun acknowledgeConversation(id: ConversationId)
     fun acknowledgeCompose(id: String)
 }

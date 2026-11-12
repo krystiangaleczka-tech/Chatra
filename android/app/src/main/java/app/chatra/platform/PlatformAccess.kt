@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.StateFlow
 
 enum class AccessFeature(val title: String, val explanation: String) {
     Contacts("Kontakty", "Nazwy i sugestie pojawią się podczas dodawania odbiorcy. Możesz nadal wpisywać numery ręcznie."),
-    Sims("Karty SIM", "Dostęp do stanu telefonu pozwala wyświetlić aktywne karty. Nie odczytujemy numeru Twojej karty."),
+    Sims("Karty SIM", "Dostęp do stanu telefonu pozwala wybrać aktywną kartę. Przy odbiorze grupowego MMS własny numer z SIM pomaga rozpoznać uczestników."),
     Notifications("Powiadomienia", "Pozwalają pokazywać nowe wiadomości i problemy wysyłki. Możesz odmówić i korzystać z aplikacji."),
     Sms("Dostęp do SMS", "Rola domyślnej aplikacji i dostęp do wiadomości są sprawdzane oddzielnie."),
 }

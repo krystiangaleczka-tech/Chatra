@@ -1,0 +1,355 @@
+{
+  "date": "2026-11-12",
+  "branch": "android/ch030-ch034",
+  "base": "0895fab5a8724411fdee6da459cfcf2e8f1645f5",
+  "source_sha256": "ba3ea1bc1350894a4672b51212f425185ef3b39151bf5929b2c7702b726f8bf2",
+  "jvm": {
+    "tests": 81,
+    "failures": 0,
+    "skipped": 0
+  },
+  "android": {
+    "app-instrumentation.log": {
+      "passed": 44,
+      "failures": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "class": "app.chatra.local.MediaLifecycleTest",
+          "test": "sanitizedCopyDropsAllSourceMetadataKeepsOrientationAndNeverChangesOriginal",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.local.MediaLifecycleTest",
+          "test": "ownedCopySurvivesSourceDeletionAndStoreRestartAndDetectsTamper",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.local.MediaLifecycleTest",
+          "test": "templatesAndTimedMutesPersistAndLastTemplateStaysDeleted",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.local.MediaLifecycleTest",
+          "test": "badUriEmptyOrUnsupportedFileNeverPublishesAMediaItem",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.local.SystemContactsTest",
+          "test": "providerChangesMultipleNumbersAndPermissionDenialUpdateDirectory",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.mms.MmsPipelineTest",
+          "test": "malformedBoundedPdusDoNotAllocateFromUntrustedLengthsOrLoop",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.mms.MmsPipelineTest",
+          "test": "uncertainSubmissionAndRestartNeverRepeatTransport",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.mms.MmsPipelineTest",
+          "test": "sharedQueueAssignsTheGroupConversationBeforeTheUndoWindow",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.mms.MmsPipelineTest",
+          "test": "successWithCorruptSendConfirmationIsUncertain",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.mms.MmsPipelineTest",
+          "test": "inboundDownloadPersistsOnceAndGalleryPagesIndexedMedia",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.mms.MmsPipelineTest",
+          "test": "latePositiveMmsCallbackCancelsUnsubmittedRetry",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.mms.MmsPipelineTest",
+          "test": "separateMmsTracksPartialSuccessAndRejectsBadCallbackToken",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.mms.MmsPipelineTest",
+          "test": "groupHasOnePduOneTransportAndOneOwnedMmsProviderRow",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.platform.NotificationLifecycleTest",
+          "test": "explicitSimQuickReplyUsesSharedQueueAndDuplicateActionCannotSendTwice",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.platform.NotificationLifecycleTest",
+          "test": "publicAndHiddenPreviewsNeverContainBodyAndTimedMutePreservesUnreadCount",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.platform.NotificationLifecycleTest",
+          "test": "deniedNotificationsKeepHistoryAndSafeShareKeepsTextWithoutSending",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.platform.NotificationRoutingTest",
+          "test": "notificationOpensOnlyValidatedLocalConversationId",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.telephony.NativeSmsTest",
+          "test": "polishSourceHasTwentyUnitsAndIsNeverChanged",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.telephony.NativeSmsTest",
+          "test": "asciiBoundariesUsePlatformParts",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.telephony.NativeSmsTest",
+          "test": "extensionAlphabetConsumesTwoSeptets",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.telephony.NativeSmsTest",
+          "test": "sendToValidatesUntrustedInputAndOpaqueQuery",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.telephony.NativeSmsTest",
+          "test": "emojiUseUtf16AndDoNotSplitSurrogates",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.telephony.NativeSmsTest",
+          "test": "emptyTextDoesNotBecomeOneSms",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.telephony.SystemIntegrationTest",
+          "test": "multipartCallbacksOutOfOrderKeepOriginalBodyAndSeparateParts",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.telephony.SystemIntegrationTest",
+          "test": "existingMmsPartsExposeStableLazyMediaReferences",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.telephony.SystemIntegrationTest",
+          "test": "crashAtTransportBoundaryIsUncertainAndNeverAutomaticallyRetried",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.telephony.SystemIntegrationTest",
+          "test": "providerFailureKeepsPreviouslyIndexedReferences",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.telephony.SystemIntegrationTest",
+          "test": "androidPendingIntentPreservesSentResultBeforeGoAsync",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.telephony.SystemIntegrationTest",
+          "test": "mixedRecipientsRetryOnlyDefinitelyFailedAddressesAndDeliveryFailureNeverAllowsResend",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.telephony.SystemIntegrationTest",
+          "test": "roleLossBeforeDispatchDoesNotCallTransportAndCancelRestoresDraft",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.telephony.SystemIntegrationTest",
+          "test": "multipartIncomingReplayAndRecoveryGapCreateOneCanonicalSms",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.telephony.SystemIntegrationTest",
+          "test": "multipartFailureWaitsForAllPartsAndPartialOrGenericFailureCannotRetry",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.telephony.SystemIntegrationTest",
+          "test": "duplicateEnqueueAndWorkerReplayInvokeTransportOnceAndSentIsNotDelivered",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.telephony.SystemIntegrationTest",
+          "test": "localAndInternationalRecipientShareOneChildAndNeverRevealOtherRecipients",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.telephony.SystemIntegrationTest",
+          "test": "recoveryDistinguishesPreparedFromSubmittingAndReturnedWithoutGuessingFromOutbox",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.telephony.SystemIntegrationTest",
+          "test": "sentProofWinsEvenWhenTransportThrowsAfterPartialCallback",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.telephony.SystemIntegrationTest",
+          "test": "restartWithinBootResumesDeadlineButDeviceRebootRequiresDecision",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.telephony.SystemIntegrationTest",
+          "test": "concurrentCancelVersusDispatchHasOneWinnerAndDuplicateWorkersNeverResend",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.telephony.SystemIntegrationTest",
+          "test": "draftsRoundTripAllFieldsRejectStaleWritesAndPreserveNewTextWhenUndoRestoresSnapshot",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.telephony.SystemIntegrationTest",
+          "test": "reconcileRequiresExactOwnedProviderEvidenceAndMissingDeliveryStaysSent",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.telephony.SystemIntegrationTest",
+          "test": "largeHistoryPagesAndReadOnlyShownMessagesPreserveConversationIdentity",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.telephony.SystemIntegrationTest",
+          "test": "latePositiveCallbackCancelsPendingRetryAndDeliveredDoesNotRegress",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.telephony.SystemIntegrationTest",
+          "test": "undoDeadlineIsEnforcedAtTransportAt2900Exactly3000And3100EvenAfterWallClockChange",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.telephony.SystemIntegrationTest",
+          "test": "explicitRetryUsesOnlyCertainFailuresAndSelectedLiveSimWithOneChild",
+          "code": 0
+        }
+      ]
+    },
+    "database-instrumentation.log": {
+      "passed": 3,
+      "failures": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "class": "app.chatra.core.database.DatabaseTest",
+          "test": "typedReferencesReconcileWithoutLosingMetadataOrMediaRelations",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.core.database.DatabaseTest",
+          "test": "migrationOneToThreePreservesExistingConversationPreferences",
+          "code": 0
+        },
+        {
+          "class": "app.chatra.core.database.DatabaseTest",
+          "test": "operationIdentityClaimAndCallbacksAreIdempotent",
+          "code": 0
+        }
+      ]
+    },
+    "notifications-denied.log": {
+      "passed": 1,
+      "failures": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "class": "app.chatra.platform.NotificationLifecycleTest",
+          "test": "deniedNotificationsKeepHistoryAndSafeShareKeepsTextWithoutSending",
+          "code": 0
+        }
+      ]
+    }
+  },
+  "unique_android_tests": 47,
+  "lint": {
+    "demoDebug": {
+      "errors": 0,
+      "warnings": 17
+    },
+    "fullDebug": {
+      "errors": 0,
+      "warnings": 42
+    }
+  },
+  "apk": {
+    "full": {
+      "path": "android/app/build/outputs/apk/full/debug/app-full-debug.apk",
+      "sha256": "2ec089c3543923234f26bb70738a62efced89541e171e52c3d3ce02351de3c36",
+      "bytes": 47444093
+    },
+    "demo": {
+      "path": "android/app/build/outputs/apk/demo/debug/app-demo-debug.apk",
+      "sha256": "a2a8bf2d7cf9bcece129e3c170b61fb85915ed895fa3da0203b9347f86bb0801",
+      "bytes": 47343368
+    },
+    "tests": {
+      "path": "android/app/build/outputs/apk/androidTest/full/debug/app-full-debug-androidTest.apk",
+      "sha256": "7f31c1ec489ffb8c3e74827e73fffead96ef7ed76cd61fe9640de03f5bdf94dd",
+      "bytes": 1266032
+    }
+  },
+  "environment": {
+    "device": "emulator-5556",
+    "avd": "ChatraFive",
+    "api": 35,
+    "transport": "controlled MmsTransport and SmsTransport; actual Telephony/Contacts Provider",
+    "physical_carrier_mms_verified": false
+  },
+  "earlier_attempts": [
+    {
+      "result": "AVD installation failed",
+      "reason": "Previous 2 GiB AVD lacked space; tests moved to separate AVD with larger data partition."
+    },
+    {
+      "result": "Malformed PDU assertion",
+      "resolution": "Bounded MmsCodec converts legacy assertion into decode failure; 1000 deterministic malformed PDUs now pass."
+    },
+    {
+      "result": "MMS unread flag failed",
+      "resolution": "Final provider move explicitly sets read/seen; incoming test verifies read=0."
+    },
+    {
+      "result": "Notification test process stopped",
+      "resolution": "Permission revoked from host before separate instrumentation, since Android terminates the app process."
+    },
+    {
+      "result": "Stale test operation / partially indexed gallery read",
+      "resolution": "Unique test identities, wait for media indexing and one transactional page/count snapshot."
+    }
+  ],
+  "open_acceptance": [
+    "Physical MMS send/download/group with operators, dual SIM/eSIM, reboot, roaming policy",
+    "Real storage exhaustion, interrupted provider stream and large files on target devices",
+    "API 31, TalkBack and G03/G09 UI acceptance"
+  ],
+  "behavioral_test_source_sha256": "bd9d99c9b7018fb4631945fcee8595ae3597ba8de617842c5ae19d43183ae17a",
+  "post_test_changes": [
+    "Only status copy on Start/Inbox and the MMS selection label were corrected after visual QA; both APK variants were rebuilt."
+  ],
+  "manual_ui": {
+    "device": "AVD API 35, 1080x2400",
+    "inspected": [
+      "Cold start restores a SENDTO draft without sending",
+      "Inbox opens received SMS conversation",
+      "Dodatki: picker/camera/media controls",
+      "Templates: four initial entries, insert/edit/delete and scroll"
+    ],
+    "screenshots": [
+      "extras.png",
+      "templates.png"
+    ],
+    "note": "Extras screenshot precedes the final selection-label wording correction; no layout or behavior changed."
+  },
+  "formatting_note": "Project changes pass whitespace checks. Vendored upstream Java indentation and verbatim Gradle logs retain their original whitespace."
+}

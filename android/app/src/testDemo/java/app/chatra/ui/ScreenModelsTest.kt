@@ -19,6 +19,9 @@ class ScreenModelsTest {
     private fun container(scope: CoroutineScope, draftsOverride: DraftRepository? = null, queueOverride: ((InMemoryChatra) -> SendQueue)? = null): AppContainer {
         val repo = InMemoryChatra(FixedClock(), scope, frozen = true)
         return object : AppContainer {
+            override val templates: TemplateRepository get() = error("unused in model tests")
+            override val media: AttachmentStore get() = error("unused in model tests")
+            override val notifications = InMemoryStore(NotificationPrefs())
             override val conversations = repo
             override val drafts = draftsOverride ?: repo
             override val sims = repo
@@ -37,6 +40,24 @@ class ScreenModelsTest {
             override val referenceFrame = true
             override val isDemo = true
         }
+    }
+
+    @Test fun `attachment only shared draft clears attachments after acceptance and keeps the sent snapshot`() = runTest {
+        Dispatchers.setMain(UnconfinedTestDispatcher(testScheduler))
+        try {
+            val c = container(backgroundScope)
+            val attachment = AttachmentId("shared-photo")
+            val external = ExternalCompose("share-qa", listOf(Fixture.mama.address), "", listOf(attachment))
+            val model = NewMessageViewModel(SavedStateHandle(), c, emptyList(), external)
+            runCurrent()
+            assertEquals(1, model.state.value.attachmentCount)
+            assertTrue(model.state.value.canSend)
+            var completed = 0
+            model.send { completed++ }; runCurrent()
+            assertEquals(1, completed)
+            assertEquals(0, model.state.value.attachmentCount)
+            assertTrue(c.sendQueue.operations().first().any { attachment in it.attachmentIds })
+        } finally { Dispatchers.resetMain() }
     }
 
     @Test fun `compose keeps draft removes one chip and double tap enqueues each recipient once`() = runTest {
@@ -116,6 +137,20 @@ class ScreenModelsTest {
         }
         override suspend fun delete(id: DraftId) { rows.value = rows.value.filter { it.id != id } }
     }
+    @Test fun `durable group MMS opens the whole group conversation after acceptance`() = runTest {
+        Dispatchers.setMain(UnconfinedTestDispatcher(testScheduler))
+        try {
+            val c = container(backgroundScope, draftsOverride = DurableDrafts())
+            val people = Fixture.newMessageRecipients.take(2)
+            val expected = c.conversations.conversationFor(people.map { it.address })
+            val model = NewMessageViewModel(SavedStateHandle(), c, people); runCurrent()
+            model.mode(RecipientMode.GroupMms); model.text("Grupowy MMS"); runCurrent()
+            var opened: ConversationId? = null
+            model.send { opened = it }; runCurrent()
+            assertEquals(expected, opened)
+        } finally { Dispatchers.resetMain() }
+    }
+
     @Test fun `fresh editor restores durable recipients names text unfinished input and SIM without saved state`() = runTest {
         Dispatchers.setMain(UnconfinedTestDispatcher(testScheduler))
         try {

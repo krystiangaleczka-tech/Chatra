@@ -115,14 +115,7 @@ fun ExtrasSheet(model: ConversationViewModel, onClose: () -> Unit, onSchedule: (
         }
         if (mode == Mode.Templates) {
             Column(Modifier.weight(1f).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                DefaultTemplates.forEach { t ->
-                    RadioOption(false, { model.insertText(t.body); onClose() }) {
-                        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                            BasicText(t.title, style = chatraText(16f, 600))
-                            BasicText(t.body, style = chatraText(13f, lineHeight = 18f, color = ChatraColors.TextSecondary))
-                        }
-                    }
-                }
+                TemplatePicker { model.insertText(it); onClose() }
             }
             return@SheetSurface
         }

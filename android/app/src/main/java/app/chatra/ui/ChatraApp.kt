@@ -84,10 +84,16 @@ fun ChatraApp(container: AppContainer, initial: Navigator?, onExit: () -> Unit, 
     val platform = container.platform as? ActivityPlatform
     val incomingState = remember(container) { platform?.incomingDraftId ?: kotlinx.coroutines.flow.MutableStateFlow<String?>(null) }
     val incoming by incomingState.collectAsStateWithLifecycle()
-    LaunchedEffect(held, incoming, navigator.screen) {
+    val conversationState = remember(container) { platform?.incomingConversationId ?: kotlinx.coroutines.flow.MutableStateFlow(null) }
+    val incomingConversation by conversationState.collectAsStateWithLifecycle()
+    LaunchedEffect(held, incoming, incomingConversation, navigator.screen) {
         if (!container.isDemo && !held && navigator.screen !in listOf(Route.Start, Route.Help, Route.Privacy, Route.DesignCatalog)) {
             navigator.select(Tab.Conversations)
             navigator.resetTo(Route.Start)
+        } else if (held && incomingConversation != null && platform != null) {
+            navigator.select(Tab.Conversations)
+            navigator.resetTo(Route.Inbox, Route.Conversation(incomingConversation!!))
+            platform.acknowledgeConversation(incomingConversation!!)
         } else if (held && incoming != null && platform != null && navigator.screen != Route.Start) {
             navigator.push(Route.NewMessage(externalId = incoming))
             platform.acknowledgeCompose(incoming!!)
@@ -161,11 +167,19 @@ private fun Screen(route: Route, navigator: Navigator, listStates: MutableMap<Ta
             if (simPicker) app.chatra.ui.common.SimPicker(state.sims, (state.sim as? app.chatra.core.model.SimChoice.Ready)?.sim?.id, model::selectSim, { simPicker = false })
             if(details) {
                 val numbers=state.summary?.participants.orEmpty().filter {app.chatra.core.model.isOutgoingNumber(it.address.raw)}
-                ChoiceDialog(state.summary?.title ?: "Rozmowa",numbers.map {"Zadzwoń: ${it.label} · ${it.address.raw}"},{option->
-                    numbers.getOrNull(option)?.let {participant->
-                        runCatching {context.startActivity(android.content.Intent(android.content.Intent.ACTION_DIAL,android.net.Uri.fromParts("tel",participant.address.raw,null)))}
+                val noticePrefs by c.notifications.value.collectAsStateWithLifecycle()
+                val until = noticePrefs.mutedUntil[route.id.value] ?: 0
+                val muted = until > System.currentTimeMillis()
+                val labels = numbers.map { "Zadzwoń: ${it.label} · ${it.address.raw}" } +
+                    listOf(if (muted) "Włącz powiadomienia" else "Powiadomienia są włączone", "Wycisz na godzinę", "Wycisz na 8 godzin", "Wycisz do odwołania")
+                ChoiceDialog(state.summary?.title ?: "Rozmowa", labels, { option ->
+                    if (option < numbers.size) numbers.getOrNull(option)?.let { participant ->
+                        runCatching { context.startActivity(android.content.Intent(android.content.Intent.ACTION_DIAL, android.net.Uri.fromParts("tel", participant.address.raw, null))) }
+                    } else scope.launch {
+                        val expiry = when (option - numbers.size) { 1 -> System.currentTimeMillis() + 3600000; 2 -> System.currentTimeMillis() + 28800000; 3 -> Long.MAX_VALUE; else -> 0L }
+                        c.notifications.update { it.copy(mutedUntil = it.mutedUntil + (route.id.value to expiry)) }
                     }
-                },{details=false})
+                }, { details = false })
             }
         }
         Route.Scheduled -> {
@@ -210,9 +224,7 @@ private fun Sheet(sheet: Route.Sheet, navigator: Navigator) {
             val model = conversationModel(c, sheet.id)
             // Zaplanuj nad Dodatkami: „Wróć” w S05 wraca do Dodatków (wzorzec), Back systemowy tak samo.
             if (c.isDemo) ExtrasSheet(model, navigator::popSheets) { navigator.push(Route.Schedule(sheet.id)) }
-            else DetailPage("Dodatki", navigator::popSheets) {
-                DetailCard { BasicText("Wysyłanie MMS, Chatra HD i harmonogram nie są jeszcze dostępne w tej wersji. Tekst pozostaje w szkicu.", style = ChatraType.Body) }
-            }
+            else app.chatra.ui.extras.MediaExtrasSheet(model, navigator::popSheets)
         }
         is Route.Schedule -> {
             val model = conversationModel(c, sheet.id)
@@ -231,7 +243,7 @@ private fun Sheet(sheet: Route.Sheet, navigator: Navigator) {
 /** Rozmowa i jej arkusze dzielą jeden ViewModel (szkic, SIM, zdjęcia). */
 @Composable
 private fun conversationModel(c: AppContainer, id: app.chatra.core.model.ConversationId) = viewModel(key = "conv-${id.value}") {
-    ConversationViewModel(id, c.conversations, c.drafts, c.sims, c.sendQueue, c.schedules, c.sending.value, c.clock, c.smsText, c.isDemo, c.sendAccess, c.draftWriteScope)
+    ConversationViewModel(id, c.conversations, c.drafts, c.sims, c.sendQueue, c.schedules, c.sending.value, c.clock, c.smsText, c.mmsAvailable, c.sendAccess, c.draftWriteScope)
 }
 
 @Composable

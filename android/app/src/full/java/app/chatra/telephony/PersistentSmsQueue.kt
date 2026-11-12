@@ -17,6 +17,7 @@ import app.chatra.ChatraApplication
 import app.chatra.core.database.*
 import app.chatra.core.model.*
 import app.chatra.di.FullTelephonyContainer
+import app.chatra.mms.MmsEngine
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import org.json.JSONArray
@@ -42,6 +43,7 @@ class PersistentSmsQueue(
     private val work: SmsWork = PlatformSmsWork(context),
     private val time: SmsQueueTime = AndroidSmsTime(context),
 ) : SendQueue {
+    var mms: MmsEngine? = null
     private class RetryInvalidated : IllegalStateException()
     private val dao = db.dao()
     private val startup = CoroutineScope(SupervisorJob() + Dispatchers.IO).async(start = CoroutineStart.LAZY) { recover() }
@@ -66,25 +68,27 @@ class PersistentSmsQueue(
     }
     override fun operations() = dao.operations().map { rows -> rows.map { row ->
         val attempts = dao.attempts(row.id)
-        SendOperation(OperationId(row.id), row.conversationId?.let(::ConversationId), Transport.SMS,
-            RecipientMode.valueOf(row.mode), addresses(row.recipients), row.body, emptyList(), SubscriptionId(row.subscriptionId), SendState.valueOf(row.state), row.version,
+        SendOperation(OperationId(row.id), row.conversationId?.let(::ConversationId), if (MmsEngine.isMms(row)) Transport.MMS else Transport.SMS,
+            RecipientMode.valueOf(row.mode), addresses(row.recipients), row.body, row.snapshot?.let { DraftCodec.decode(it).attachmentIds }.orEmpty(), SubscriptionId(row.subscriptionId), SendState.valueOf(row.state), row.version,
             Instant.ofEpochMilli(row.createdAt), Instant.ofEpochMilli(row.undoUntil), row.bootCount.toString(),
             canRetry = row.state in listOf("FAILED", "PARTIALLY_SENT") && dao.retryChild(row.id) == null && certainFailures(row.id).isNotEmpty(),
             deliveryFailed = attempts.any { a -> dao.parts(a.id).any { it.delivery == "Failed" } },
-            undoElapsedDeadline = row.undoElapsed, retryOf = row.retryOf?.let(::OperationId))
+            undoElapsedDeadline = row.undoElapsed, retryOf = row.retryOf?.let(::OperationId), failureDescription = if (MmsEngine.isMms(row)) mms?.failureDescription(row.id) else null)
     } }
 
     override suspend fun enqueue(draft: Draft, undoSeconds: Int): OperationId = withContext(Dispatchers.IO) {
         awaitReady()
         require(draft.isSendable && draft.text.length <= 16_384 && draft.recipients.size <= 20 && draft.recipients.all { isOutgoingNumber(it.raw) })
-        require(draft.attachmentIds.isEmpty() && draft.recipientMode != RecipientMode.GroupMms) { "MMS i załączniki wymagają CH032." }
+        if (MmsEngine.isMms(draft)) requireNotNull(mms) { "MMS jest niedostępny." }.validate(draft)
         require(undoSeconds in SendingPrefs.UNDO_OPTIONS)
         val sim = requireNotNull(draft.subscriptionId)
         requireSim(sim)
         val card = sims.cards().first().first { it.id == sim }
-        val recipients = draft.recipients.distinctBy { recipientKey(it.raw) }.map { it to history.conversationFor(listOf(it)) }
+        val unique = draft.recipients.distinctBy { recipientKey(it.raw) }
+        val group = if (draft.recipientMode == RecipientMode.GroupMms) history.conversationFor(unique) else null
+        val recipients = unique.map { it to (group ?: history.conversationFor(listOf(it))) }
         val now = time.wall()
-        val row = OutgoingOperation(UUID.randomUUID().toString(), draft.id.value, draft.conversationId?.value ?: recipients.singleOrNull()?.second?.value,
+        val row = OutgoingOperation(UUID.randomUUID().toString(), draft.id.value, draft.conversationId?.value ?: group?.value ?: recipients.singleOrNull()?.second?.value,
             JSONArray(recipients.map { it.first.raw }).toString(), draft.text, draft.recipientMode.name, sim.value, card.label, "PENDING_UNDO", 0, now, now + undoSeconds * 1000L, time.boot(),
             time.elapsed() + undoSeconds * 1000L, DraftCodec.encode(draft))
         val id = db.withTransaction {
@@ -177,6 +181,9 @@ class PersistentSmsQueue(
             }
             if (dao.transition(id, row.state, row.version, "DISPATCHING") != 1) null else row
         } ?: return@withContext
+        if (MmsEngine.isMms(row)) {
+            requireNotNull(mms).dispatch(row, dao.recipients(id)); return@withContext
+        }
         for (recipient in dao.recipients(id)) {
             var enteredTransport = false
             var attempt: OutgoingAttempt? = null
@@ -283,6 +290,7 @@ class PersistentSmsQueue(
     }
     suspend fun interrupted(id: String) {
         val row = dao.operation(id) ?: return
+        if (row.state == "DISPATCHING" && MmsEngine.isMms(row)) { requireNotNull(mms).interrupted(row); return }
         if (row.state == "DISPATCHING") db.withTransaction {
             for (recipient in dao.recipients(id)) {
                 val attempt = dao.attempts(id).lastOrNull { it.address == recipient.address }
@@ -301,6 +309,7 @@ class PersistentSmsQueue(
     override suspend fun reconcile(id: OperationId) = withContext(Dispatchers.IO) {
         if (!context.smsRead(platform)) return@withContext
         val row = dao.operation(id.value) ?: return@withContext
+        if (MmsEngine.isMms(row)) { if (row.state in listOf("DISPATCHING", "DISPATCH_UNCERTAIN")) mms?.interrupted(row); return@withContext }
         for (attempt in dao.attempts(row.id)) {
             if (attempt.phase == "RETURNED" && row.state in listOf("DISPATCHING", "DISPATCH_UNCERTAIN")) db.withTransaction {
                 dao.parts(attempt.id).filter { it.sent == "Pending" }.forEach { dao.sent(attempt.id, it.partIndex, "Unknown", 0) }
@@ -330,6 +339,7 @@ class PersistentSmsQueue(
         history.refresh()
     }
     private fun updateProvider(recipient: OutgoingRecipient, operation: OutgoingOperation) {
+        if (recipient.providerKind != "SMS") return
         val id = recipient.providerId ?: return
         if (!context.smsRead(platform)) return
         val state = recipient.state

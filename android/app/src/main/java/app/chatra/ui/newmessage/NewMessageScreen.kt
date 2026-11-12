@@ -84,6 +84,10 @@ fun NewMessageScreen(model: NewMessageViewModel, onCancel: () -> Unit, onSent: (
                 }
             }
             if (state.input.isNotBlank()) TextAction("Dodaj numer", model::addInput)
+            if (state.attachmentCount > 0) {
+                BasicText("Wybrane pliki: ${state.attachmentCount}. Wyślemy je jako MMS; tekst i pliki pozostają w szkicu do przyjęcia operacji.", style = chatraText(14f, color = ChatraColors.TextSecondary))
+                app.chatra.ui.common.TextAction("Usuń załączniki", model::clearAttachments)
+            }
             state.error?.let { BasicText(it, Modifier.semantics { liveRegion = LiveRegionMode.Polite }, style = chatraText(14f, color = ChatraColors.ErrorText)) }
             if (!state.sendingAvailable) BasicText("Wysyłanie jest niedostępne. Treść pozostaje w szkicu.", style = chatraText(14f, color = ChatraColors.TextSecondary))
             if (!state.counter.preservesText) BasicText("System zmieniłby treść. Zmień ją świadomie i sprawdź podgląd licznika.", style = chatraText(14f, color = ChatraColors.ErrorText))
