@@ -77,10 +77,10 @@ data class ConversationIndex(
 
 @Dao
 interface ChatraDao {
-    @Query("SELECT c.*, MAX(r.timestamp) AS lastAt, SUM(CASE WHEN r.incoming=1 AND r.read=0 THEN 1 ELSE 0 END) AS unreadCount, (SELECT kind FROM ProviderMessageRef WHERE conversationId=c.id ORDER BY timestamp DESC, providerId DESC LIMIT 1) AS lastKind, (SELECT providerId FROM ProviderMessageRef WHERE conversationId=c.id ORDER BY timestamp DESC, providerId DESC LIMIT 1) AS lastId FROM ConversationMeta c LEFT JOIN ProviderMessageRef r ON r.conversationId=c.id GROUP BY c.id")
+    @Query("SELECT c.*, MAX(r.timestamp) AS lastAt, SUM(CASE WHEN r.incoming=1 AND r.read=0 THEN 1 ELSE 0 END) AS unreadCount, (SELECT kind FROM ProviderMessageRef WHERE conversationId=c.id AND NOT EXISTS (SELECT 1 FROM TrashRef t WHERE t.kind=ProviderMessageRef.kind AND t.providerId=ProviderMessageRef.providerId AND t.timestamp=ProviderMessageRef.timestamp) ORDER BY timestamp DESC, providerId DESC LIMIT 1) AS lastKind, (SELECT providerId FROM ProviderMessageRef WHERE conversationId=c.id AND NOT EXISTS (SELECT 1 FROM TrashRef t WHERE t.kind=ProviderMessageRef.kind AND t.providerId=ProviderMessageRef.providerId AND t.timestamp=ProviderMessageRef.timestamp) ORDER BY timestamp DESC, providerId DESC LIMIT 1) AS lastId FROM ConversationMeta c LEFT JOIN ProviderMessageRef r ON r.conversationId=c.id AND NOT EXISTS (SELECT 1 FROM TrashRef t WHERE t.kind=r.kind AND t.providerId=r.providerId AND t.timestamp=r.timestamp) GROUP BY c.id")
     fun indices(): Flow<List<ConversationIndex>>
     @Query("SELECT COUNT(*) FROM ProviderMessageRef") fun referenceChanges(): Flow<Int>
-    @Query("SELECT COUNT(*) FROM ProviderMessageRef WHERE conversationId=:id") fun messageCount(id: String): Flow<Int>
+    @Query("SELECT COUNT(*) FROM ProviderMessageRef WHERE conversationId=:id AND NOT EXISTS (SELECT 1 FROM TrashRef t WHERE t.kind=ProviderMessageRef.kind AND t.providerId=ProviderMessageRef.providerId AND t.timestamp=ProviderMessageRef.timestamp)") fun messageCount(id: String): Flow<Int>
     @Query("SELECT * FROM ConversationMeta WHERE id=:id") fun meta(id: String): Flow<ConversationMeta?>
     @Query("SELECT * FROM ConversationMeta") fun conversations(): Flow<List<ConversationMeta>>
     @Query("SELECT * FROM ConversationMeta WHERE id=:id") suspend fun conversation(id: String): ConversationMeta?
@@ -93,16 +93,16 @@ interface ChatraDao {
     @Query("UPDATE ConversationMeta SET trashed=:value WHERE id=:id") suspend fun trash(id: String, value: Boolean)
 
     @Query("SELECT * FROM ProviderMessageRef") fun references(): Flow<List<ProviderMessageRef>>
-    @Query("SELECT * FROM ProviderMessageRef WHERE conversationId=:id ORDER BY timestamp DESC, kind, providerId DESC LIMIT :limit") suspend fun page(id: String, limit: Int): List<ProviderMessageRef>
-    @Query("SELECT * FROM ProviderMessageRef WHERE conversationId=:id AND read=0") suspend fun unreadRefs(id: String): List<ProviderMessageRef>
+    @Query("SELECT * FROM ProviderMessageRef WHERE conversationId=:id AND NOT EXISTS (SELECT 1 FROM TrashRef t WHERE t.kind=ProviderMessageRef.kind AND t.providerId=ProviderMessageRef.providerId AND t.timestamp=ProviderMessageRef.timestamp) ORDER BY timestamp DESC, kind, providerId DESC LIMIT :limit") suspend fun page(id: String, limit: Int): List<ProviderMessageRef>
+    @Query("SELECT * FROM ProviderMessageRef WHERE conversationId=:id AND read=0 AND NOT EXISTS (SELECT 1 FROM TrashRef t WHERE t.kind=ProviderMessageRef.kind AND t.providerId=ProviderMessageRef.providerId AND t.timestamp=ProviderMessageRef.timestamp)") suspend fun unreadRefs(id: String): List<ProviderMessageRef>
     @Upsert suspend fun upsertReferences(rows: List<ProviderMessageRef>)
     @Query("DELETE FROM ProviderMessageRef WHERE generation != :generation") suspend fun sweep(generation: String)
     @Upsert suspend fun upsertMedia(rows: List<MediaRef>)
     @Query("DELETE FROM MediaRef WHERE messageId=:id AND partId NOT IN (:parts)") suspend fun sweepParts(id: Long, parts: List<Long>)
     @Query("SELECT * FROM MediaRef WHERE conversationId=:id AND messageId=:message") suspend fun media(id: String, message: Long): List<MediaRef>
-    @Query("SELECT * FROM MediaRef WHERE conversationId=:id") fun conversationMedia(id: String): Flow<List<MediaRef>>
-    @Query("SELECT * FROM MediaRef WHERE conversationId=:id AND (:kind='' OR mimeType LIKE :kind) AND (:before IS NULL OR partId<:before) ORDER BY partId DESC LIMIT :limit") suspend fun galleryPage(id: String, kind: String, before: Long?, limit: Int): List<MediaRef>
-    @Query("SELECT COUNT(*) FROM MediaRef WHERE conversationId=:id AND (:kind='' OR mimeType LIKE :kind)") suspend fun galleryCount(id: String, kind: String): Int
+    @Query("SELECT * FROM MediaRef WHERE conversationId=:id AND NOT EXISTS (SELECT 1 FROM TrashRef t WHERE t.kind='MMS' AND t.providerId=MediaRef.messageId)") fun conversationMedia(id: String): Flow<List<MediaRef>>
+    @Query("SELECT * FROM MediaRef WHERE conversationId=:id AND NOT EXISTS (SELECT 1 FROM TrashRef t WHERE t.kind='MMS' AND t.providerId=MediaRef.messageId) AND (:kind='' OR mimeType LIKE :kind) AND (:before IS NULL OR partId<:before) ORDER BY partId DESC LIMIT :limit") suspend fun galleryPage(id: String, kind: String, before: Long?, limit: Int): List<MediaRef>
+    @Query("SELECT COUNT(*) FROM MediaRef WHERE conversationId=:id AND NOT EXISTS (SELECT 1 FROM TrashRef t WHERE t.kind='MMS' AND t.providerId=MediaRef.messageId) AND (:kind='' OR mimeType LIKE :kind)") suspend fun galleryCount(id: String, kind: String): Int
     @Query("SELECT * FROM MediaRef WHERE partId=:id") suspend fun mediaPart(id: Long): MediaRef?
 
 
@@ -139,11 +139,12 @@ interface ChatraDao {
 }
 
 @Database(entities = [ConversationMeta::class, ProviderMessageRef::class, MediaRef::class, InboundReceipt::class,
-    OutgoingOperation::class, OutgoingRecipient::class, OutgoingAttempt::class, OutgoingPart::class, SavedDraft::class, ClosedDraft::class, ScheduledRow::class, SearchDocument::class, SearchFts::class], version = 5, exportSchema = true)
+    OutgoingOperation::class, OutgoingRecipient::class, OutgoingAttempt::class, OutgoingPart::class, SavedDraft::class, ClosedDraft::class, ScheduledRow::class, SearchDocument::class, SearchFts::class, LocalBlock::class, TrashEntry::class, TrashRef::class], version = 6, exportSchema = true)
 abstract class ChatraDatabase : RoomDatabase() {
     abstract fun dao(): ChatraDao
     abstract fun schedules(): ScheduleDao
     abstract fun search(): SearchDao
+    abstract fun organization(): OrganizationDao
     companion object {
         val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(db: SupportSQLiteDatabase) {
@@ -184,7 +185,15 @@ abstract class ChatraDatabase : RoomDatabase() {
                 db.execSQL("CREATE VIRTUAL TABLE IF NOT EXISTS SearchFts USING FTS4(tokens TEXT NOT NULL, tokenize=unicode61)")
             }
         }
+        val MIGRATION_5_6 = object : Migration(5, 6) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("CREATE TABLE IF NOT EXISTS LocalBlock (addressKey TEXT NOT NULL PRIMARY KEY, label TEXT NOT NULL, createdAt INTEGER NOT NULL)")
+                db.execSQL("CREATE TABLE IF NOT EXISTS TrashEntry (id TEXT NOT NULL PRIMARY KEY, conversationId TEXT NOT NULL, title TEXT NOT NULL, createdAt INTEGER NOT NULL, expiresAt INTEGER NOT NULL, purging INTEGER NOT NULL)")
+                db.execSQL("CREATE TABLE IF NOT EXISTS TrashRef (kind TEXT NOT NULL, providerId INTEGER NOT NULL, entryId TEXT NOT NULL, timestamp INTEGER NOT NULL, PRIMARY KEY(kind,providerId), FOREIGN KEY(entryId) REFERENCES TrashEntry(id) ON DELETE CASCADE)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_TrashRef_entryId ON TrashRef(entryId)")
+            }
+        }
         fun open(context: Context): ChatraDatabase = Room.databaseBuilder(context.applicationContext, ChatraDatabase::class.java, "chatra.db")
-            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5).build()
+            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6).build()
     }
 }

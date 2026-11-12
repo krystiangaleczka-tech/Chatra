@@ -6,6 +6,7 @@ import androidx.room.withTransaction
 import app.chatra.core.database.*
 import app.chatra.core.model.*
 import app.chatra.platform.SystemPlatform
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -22,6 +23,7 @@ class ProviderMediaGallery(private val context: Context, private val db: ChatraD
     override suspend fun readable(id: AttachmentId): GalleryItem? = withContext(Dispatchers.IO) {
         if (!context.smsRead(role)) return@withContext null
         val part = id.value.removePrefix("mms-part:").toLongOrNull()?.let { db.dao().mediaPart(it) } ?: return@withContext null
+        if (db.organization().hidden().first().any { it.kind == "MMS" && it.providerId == part.messageId }) return@withContext null
         // URI must be exactly the provider's indexed part, not a caller-supplied authority/path.
         if (part.contentUri != "content://mms/part/${part.partId}") return@withContext null
         try { context.contentResolver.openFileDescriptor(Uri.parse(part.contentUri), "r")?.use { item(part) } }

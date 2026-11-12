@@ -487,6 +487,9 @@ Odbiór: wybory zachowane po restarcie, Auto reaguje na system, brak nieczytelne
 **Odbiór rozszerzony:** Zmiana motywu globalnego nie niszczy świadomych wyjątków; powrót do globalnego usuwa tylko nadpisania konkretnej rozmowy.
 
 
+**Wynik CH040 (12.11.2026):** DataStore wszystkich opcji i nadpisań rozmów, palety 4 kompozycji light/dark/auto, skala i compact globalnie, reset per wątek oraz pierwszeństwo dostępności. Pomiar obrazu i font 2.0 w raporcie; G03/G09 i odbiór fizyczny pozostają otwarte. [Implementacja, dowody i granice odbioru](CH040_CH044_Wdrozenie_i_weryfikacja.md).
+
+
 ### CH041 Podłączyć ustawienia wysyłania
 
 **P1 · Android · 2–3 osobodni · zależności CH019 CH020 CH024 CH025 CH028**
@@ -494,6 +497,9 @@ Odbiór: wybory zachowane po restarcie, Auto reaguje na system, brak nieczytelne
 Wykonanie: ekran SIM i preferencje, opóźnienie 0/3/5/10 s według zatwierdzenia, licznik oraz domyślne warianty HD i pytanie o link. Podsumowania ustawień wynikają z DataStore. Zmiana ustawienia nie modyfikuje zlecenia już przekazanego ani istniejącego harmonogramu bez akcji użytkownika.
 
 Odbiór: ustawienia działają w nowych szkicach, nie zmieniają treści samoczynnie. Weryfikacja: restart, brak SIM, wyłączenie licznika i zmiana delay podczas aktywnego odliczania.
+
+**Wynik CH041 (12.11.2026):** Preferencje SIM, delay, licznik, wariant plików i pytanie o link podłączone do nowych szkiców. Zmiana preferencji nie przepisuje przyjętej kolejki. HD/linki pozostają niedostępne do etapu serwera. [Implementacja, dowody i granice odbioru](CH040_CH044_Wdrozenie_i_weryfikacja.md).
+
 
 ### CH042 Wdrożyć nieznanych i blokady
 
@@ -508,6 +514,9 @@ Odbiór: reguła działa dla znormalizowanego numeru, cofnięcie blokady przywra
 **Odbiór rozszerzony:** Blokada z karty kontaktu i ekranu ustawień prowadzi do tych samych danych, a cofnięcie działa bez utraty historii.
 
 
+**Wynik CH042 (12.11.2026):** Trwałe lokalne blokady z normalizacją numeru, wspólne dane szczegółów i ustawień, brak powiadomień i przywracanie historii. Nieznany nadawca nie jest spamem; kontakt aktualizuje oznaczenie. [Implementacja, dowody i granice odbioru](CH040_CH044_Wdrozenie_i_weryfikacja.md).
+
+
 ### CH043 Wdrożyć kosz i odzyskiwanie
 
 **P0 · Android dane · 3–5 osobodni · zależności CH020 CH022 CH023 CH038**
@@ -516,6 +525,9 @@ Wykonanie: TrashEntry ze zbiorem provider refs/HD refs, local tombstone, TTL wyn
 
 Odbiór: restore bez duplikacji; purge nie usuwa nowych SMS z tego samego wątku. Weryfikacja: upływ 29, 30 i 31 dni, utrata roli, awaria w połowie usuwania, MMS parts i odbudowa indeksu.
 
+**Wynik CH043 (12.11.2026):** Room v6, zakresy TrashEntry/TrashRef, 30 dni, przywracanie, potwierdzony purge i wznowienie po awarii. Nowy SMS i części MMS objęte próbami providera. WorkManager sprząta dopiero po TTL i z dostępem. [Implementacja, dowody i granice odbioru](CH040_CH044_Wdrozenie_i_weryfikacja.md).
+
+
 ### CH044 Zbudować prywatność i pomoc
 
 **P1 · Android i produkt · 1–2 osobodni · zależności CH020 CH021 CH046**
@@ -523,6 +535,9 @@ Odbiór: restore bez duplikacji; purge nie usuwa nowych SMS z tego samego wątku
 Wykonanie: lokalna strona prywatności opisująca provider/indeks/HD/logi/backup i usuwanie danych. Pomoc z informacją o SMS/MMS/RCS, SIM i harmonogramie; docelowy kontakt dostarcza właściciel. Z obu miejsc dojście z S01/S10. Link zewnętrzny bez automatycznego udostępniania danych.
 
 Odbiór: treść zgodna z faktyczną implementacją, brak wymyślonego adresu i nieprawdziwego E2EE. Weryfikacja: offline, duży font, działające linki i porównanie z zachowaniem HD oraz kosza.
+
+**Wynik CH044 (12.11.2026):** Prywatność i pomoc offline z S01/S10, faktyczny opis providera, indeksu, plików, backupu, usuwania i nieaktywnego HD. Jawny link Google bez załączania danych; kontakt właściciela pozostaje do dostarczenia. [Implementacja, dowody i granice odbioru](CH040_CH044_Wdrozenie_i_weryfikacja.md).
+
 
 ### CH045 Wdrożyć jednorazowy zakup Pro
 

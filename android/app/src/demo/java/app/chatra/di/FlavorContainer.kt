@@ -50,6 +50,7 @@ fun createContainer(app: Application, referenceFrame: Boolean, roleScenario: Str
         override val newMessagePreset = Fixture.newMessageRecipients
         override val smsRole = FakeSmsRoleGate.scenario(roleScenario, delayMillis = if (referenceFrame) 0 else 600)
         // Tryb referencyjny zawsze startuje z ustawień domyślnych wzorca.
+        override val conversationAppearance = if (referenceFrame) InMemoryStore(emptyMap<String, app.chatra.core.model.AppearanceOverride>()) else prefs.threads
         override val appearance = if (referenceFrame) InMemoryStore(AppearancePrefs.Default) else prefs.appearance
         override val sending = if (referenceFrame) InMemoryStore(SendingPrefs(defaultSubscriptionId = Fixture.SIM1.id)) else prefs.sending
         override val organization = organization

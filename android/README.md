@@ -41,8 +41,8 @@ cd android
 Wydanie testowe: skopiuj `keystore.properties.example` do `keystore.properties`, wskaż własny keystore poza repozytorium, potem `./gradlew :app:assembleFullRelease`. Bez tego pliku release buduje się niepodpisany.
 
 Wariant `full` kompiluje się i od CH022–CH026 odczytuje historię oraz wysyła SMS.
-Pozostaje wersją testową: nowe MMS, Chatra HD, harmonogram, produkcyjny indeks
-wyszukiwania i pełne ponawianie wymagają kolejnych zadań.
+Pozostaje wersją testową. Implementuje SMS/MMS, trwałą kolejkę, harmonogram, lokalny indeks, blokady i kosz.
+Odbiór operatorów MMS i OEM jest nadal otwarty; Chatra HD oraz zakup Pro wymagają kolejnych zadań.
 [Zakres, testy i otwarty odbiór fizyczny](../docs/implementacja_android/CH022_CH026_Wdrozenie_i_weryfikacja.md).
 
 ```bash
@@ -54,7 +54,7 @@ wyszukiwania i pełne ponawianie wymagają kolejnych zadań.
 Wyszukiwanie jest dostępne ze Skrzynki, Nowa wiadomość z przycisku docka,
 a Wygląd z pełnego S10 Ustawienia (CH019).
 Demo obsługuje lokalne wyniki, szkic nowych odbiorców i ustawienia wyglądu.
-Pozostałe kompozycje i tryby S09 mają oznaczony podgląd roboczy do CH020/CH040.
+Od CH040 kompozycje, tryby i dostępność S09 są zapisane i stosowane globalnie; odbiór wizualny G03/G09 pozostaje otwarty.
 
 [Zakres i wyniki weryfikacji CH016–CH018](../docs/implementacja_android/CH016_CH018_Wdrozenie_i_weryfikacja.md),
 w tym otwarty końcowy odbiór na telefonie. Plansze referencyjne:
@@ -83,3 +83,11 @@ pozostają do akceptacji G09. Katalog dostępny z menu Skrzynki i Pomocy.
 
 CH027–CH028 rozszerzają kolejkę o bezpieczne ponawianie, rekoncyliację, trwałe szkice i atomowe anulowanie.
 [Zachowanie, testy i granice odbioru](../docs/implementacja_android/CH027_CH028_Wdrozenie_i_weryfikacja.md).
+
+## CH040–CH044
+
+Wygląd ma cztery kompozycje, Light/Dark/Auto, compact i skalę 1–7; można nadpisać kompozycję konkretnej rozmowy i osobno ją zresetować. Globalne opcje dostępności mają pierwszeństwo. Wariant domyślny zachowuje wzorzec S09.
+
+Blokady są lokalne, tłumią powiadomienia i zachowują SMS/MMS. Kosz zapisuje konkretny zakres wiadomości na 30 dni, umożliwia odzyskanie oraz potwierdzone usunięcie z providera. Nowe wiadomości tego samego wątku pozostają widoczne. Usuwanie po błędzie można ponowić. Baza ma migrację do v6. Prywatność i pomoc opisują faktyczny zakres aplikacji i działają offline.
+
+[Implementacja, testy i ograniczenia odbioru](../docs/implementacja_android/CH040_CH044_Wdrozenie_i_weryfikacja.md).

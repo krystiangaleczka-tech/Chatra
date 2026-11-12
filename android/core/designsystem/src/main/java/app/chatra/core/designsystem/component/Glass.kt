@@ -28,6 +28,7 @@ import app.chatra.core.designsystem.glass.glass
 import app.chatra.core.designsystem.icon.ChatraIcon
 import app.chatra.core.designsystem.icon.Icon
 import app.chatra.core.designsystem.theme.ChatraColors
+import app.chatra.core.designsystem.theme.LocalAppearanceTokens
 
 /** Scena tła ekranu, którą próbkują panele (ustawiana przez [app.chatra.core.designsystem.component.ChatraScreen]). */
 val LocalBackdrop = staticCompositionLocalOf<Backdrop?> { null }
@@ -93,10 +94,17 @@ fun GlassSurface(
     contentAlignment: Alignment = Alignment.TopStart,
     content: @Composable BoxScope.() -> Unit = {},
 ) {
+    val tokens = LocalAppearanceTokens.current
+    val resolved = if (tokens.dark || tokens.contrast || tokens.composition != "Glass") style.copy(
+        from = tokens.surface.copy(alpha = if (tokens.matte) 1f else .94f),
+        to = tokens.surface.copy(alpha = if (tokens.matte) 1f else .84f),
+        border = tokens.primary.copy(alpha = if (tokens.contrast) .65f else .18f),
+        topHighlight = tokens.primary.copy(alpha = .08f),
+    ) else style
     Box(
         modifier
             .cssShadow(shape, *shadows.toTypedArray())
-            .glass(backdrop, shape, style, matte = LocalReduceTransparency.current),
+            .glass(backdrop, shape, resolved, matte = LocalReduceTransparency.current || tokens.matte),
         contentAlignment = contentAlignment,
         content = content,
     )

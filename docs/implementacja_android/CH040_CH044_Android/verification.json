@@ -1,0 +1,121 @@
+{
+  "date": "2026-11-12",
+  "branch": "android/ch040-ch044",
+  "base": "ec6572a",
+  "tasks": [
+    "CH040",
+    "CH041",
+    "CH042",
+    "CH043",
+    "CH044"
+  ],
+  "runtime": {
+    "device": "emulator-5554",
+    "api": 36,
+    "fingerprint": "google/sdk_gphone64_arm64/emu64a:16/BP41.250916.009.A1/14246511:user/release-keys"
+  },
+  "sourceFingerprint": "9ba1aa4ac6e58ce355566ad15cc4bb951bca5c285e10710567e2d49a9343d9d1",
+  "artifacts": {
+    "full": {
+      "path": "android/app/build/outputs/apk/full/debug/app-full-debug.apk",
+      "sha256": "08649e5ccf177d3a485a0dd6092db7d7b81f10524127eddb61b29291b9522bad"
+    },
+    "demo": {
+      "path": "android/app/build/outputs/apk/demo/debug/app-demo-debug.apk",
+      "sha256": "99b91684ca955a936f624e0520ae4dd14a26149451f6a8f978cec3468c0d0adc"
+    },
+    "appTests": {
+      "path": "android/app/build/outputs/apk/androidTest/full/debug/app-full-debug-androidTest.apk",
+      "sha256": "b5036d6b1f2ad24fdf9f55e355cd7c1a06e9e68ebdcd6aa392b728777760ce03"
+    },
+    "databaseTests": {
+      "path": "android/core/database/build/outputs/apk/androidTest/debug/database-debug-androidTest.apk",
+      "sha256": "5718ed9d5632bf8748fdd4db572e4d54f972eb11f221c107f54c48d349e39c2b"
+    }
+  },
+  "jvm": {
+    "total": 91,
+    "passed": 91,
+    "failures": 0
+  },
+  "android": {
+    "app": {
+      "total": 39,
+      "passed": 39,
+      "seconds": 34.438,
+      "log": "app-final.log"
+    },
+    "database": {
+      "total": 3,
+      "passed": 3,
+      "seconds": 3.558,
+      "log": "database-final.log"
+    }
+  },
+  "lint": {
+    "demo": {
+      "Error": 0,
+      "Warning": 17
+    },
+    "full": {
+      "Error": 0,
+      "Warning": 47
+    }
+  },
+  "pending": [
+    "physical device / OEM",
+    "API 31",
+    "TalkBack",
+    "G03/G09 visual acceptance",
+    "carrier MMS acceptance from earlier tasks",
+    "HD server and owner support contact"
+  ],
+  "ui": {
+    "reference": "s09-reset.png",
+    "comparison": {
+      "referenceSha256": "cd77bf467d1ae6f0c745f1ad32471c24a52fc530c70df6146ad4269e566a6bfe",
+      "actualSha256": "6a1583a5ce1aad99508916b1e53d05042f41a7928c601f03994f61f01800f672",
+      "width": 1365,
+      "height": 2954,
+      "thresholdPerChannel": 16,
+      "totalPixels": 4032210,
+      "affectedPixels": 4709,
+      "affectedFraction": 0.001167845920723375,
+      "maxChannelDelta": 61,
+      "meanMaxChannelDelta": 0.17080236396417844
+    },
+    "fontScale2": [
+      "s09-font2-top.png",
+      "s09-font2-controls.png"
+    ],
+    "autoDarkLight": [
+      "s09-auto-dark.png",
+      "s09-auto-light.png"
+    ],
+    "explicitDarkAndRestart": [
+      "s09-dark-graphite.png",
+      "s09-dark-after-restart.png"
+    ],
+    "otherCompositions": [
+      "s09-mist.png",
+      "s09-contrast.png"
+    ],
+    "offlineSupport": [
+      "privacy-offline-font2.png",
+      "help-offline-font2.png"
+    ],
+    "externalHelpLink": "Resolved to Chrome FirstRunActivity; browser onboarding and page load not accepted or evaluated",
+    "fullVariantManual": {
+      "localConversationTheme": "Graphite applied, then reset to global",
+      "block": "Conversation details -> Settings list -> unblock",
+      "trash": "Move -> settings -> restore -> move again -> confirmed purge -> empty",
+      "syntheticMessageCleanedUp": true,
+      "screenshots": [
+        "conversation-local-graphite.png",
+        "blocked.png",
+        "trash.png"
+      ]
+    }
+  },
+  "privacyCopy": "The sending-default import path strips GPS, EXIF/XMP APP1 and source comment; orientation and original bytes verified by MediaLifecycleTest."
+}

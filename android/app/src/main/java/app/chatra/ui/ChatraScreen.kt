@@ -64,11 +64,13 @@ fun ChatraScreen(
     floating: @Composable BoxScope.() -> Unit = {},
     content: @Composable BoxScope.() -> Unit,
 ) {
+    val tokens = app.chatra.core.designsystem.theme.LocalAppearanceTokens.current
+    val resolvedBackground = if (tokens.dark || tokens.contrast || tokens.composition != "Glass") CssBackground(tokens.background, emptyList()) else background
     val scene = rememberBackdrop()
     val page = rememberBackdrop()
     Box(modifier.fillMaxSize()) {
         Box(Modifier.fillMaxSize().backdropSource(page)) {
-            Box(Modifier.fillMaxSize().backdropSource(scene).drawBehind { drawCssBackground(background); sceneDecoration() })
+            Box(Modifier.fillMaxSize().backdropSource(scene).drawBehind { drawCssBackground(resolvedBackground); sceneDecoration() })
             ProvideBackdrop(scene) { content() }
         }
         ProvideBackdrop(page) { floating() }

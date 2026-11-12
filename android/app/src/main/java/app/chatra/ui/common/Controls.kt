@@ -28,7 +28,7 @@ fun TextAction(text: String, onClick: () -> Unit, modifier: Modifier = Modifier,
 @Composable
 fun ChoiceDialog(title: String, options: List<String>, onSelect: (Int) -> Unit, onDismiss: () -> Unit) {
     Dialog(onDismissRequest = onDismiss) {
-        Column(Modifier.clip(RoundedCornerShape(24.dp)).background(Color.White).padding(16.dp).verticalScroll(rememberScrollState())) {
+        Column(Modifier.clip(RoundedCornerShape(24.dp)).background(app.chatra.core.designsystem.theme.LocalAppearanceTokens.current.surface).padding(16.dp).verticalScroll(rememberScrollState())) {
             BasicText(title, Modifier.padding(8.dp).semantics { heading() }, style = chatraText(20f, 700))
             options.forEachIndexed { i, label -> TextAction(label, { onSelect(i); onDismiss() }, Modifier.fillMaxWidth()) }
             TextAction("Anuluj", onDismiss, Modifier.fillMaxWidth())

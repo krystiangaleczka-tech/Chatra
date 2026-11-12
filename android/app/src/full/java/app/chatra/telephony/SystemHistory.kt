@@ -39,6 +39,7 @@ internal fun addresses(json: String): List<Address> = JSONArray(json).let { arra
 class SystemHistory(
     private val context: Context, private val db: ChatraDatabase, private val platform: SystemPlatform,
     private val contacts: ContactsDirectory, private val scope: CoroutineScope,
+    private val organization: LocalOrganization? = null,
 ) : ConversationRepository {
     private val resolver = context.contentResolver
     internal val indexChanges = MutableStateFlow(0)
@@ -67,6 +68,7 @@ class SystemHistory(
             }
         }
         scope.launch(Dispatchers.IO) { for (request in requests) reconcile() }
+        organization?.let { org -> scope.launch(Dispatchers.IO) { org.changes.collect { indexChanges.value++ } } }
         scope.launch(Dispatchers.IO) { contacts.suggestions().drop(1).collect { requests.trySend(Unit) } }
     }
     override fun historyStatus(): Flow<HistoryStatus> = status
@@ -150,7 +152,10 @@ class SystemHistory(
         db.withTransaction { requireRead(); dao.upsertMedia(parts); dao.sweepParts(ref.providerId, parts.map { it.partId }) }
     }
 
-    internal suspend fun searchMessages(refs: List<IndexRef>): List<Message> = readMessages(refs)
+    internal suspend fun searchMessages(refs: List<IndexRef>): List<Message> {
+        val hidden = db.organization().hidden().first().map { Triple(it.kind, it.providerId, it.timestamp) }.toSet()
+        return readMessages(refs.filterNot { Triple(it.kind, it.providerId, it.timestamp) in hidden })
+    }
     private suspend fun readMessages(refs: List<IndexRef>): List<Message> {
         requireRead()
         val out = mutableMapOf<ProviderRef, Message>()
@@ -195,16 +200,18 @@ class SystemHistory(
         if (!context.smsRead(platform)) return emptyList()
         val last = rows.mapNotNull { r -> val kind = r.lastKind; val id = r.lastId; val at = r.lastAt; if (id != null && kind != null && at != null) IndexRef(kind, id, r.meta.id, at, false, true, "") else null }
         val messages = readMessages(last).associateBy { (it.ref as MessageRef.Provider).ref }
+        val blocks = db.organization().blocks().first()
         return rows.map { r ->
             val participants = addresses(r.meta.participants).map { contacts.lookup(it) ?: Participant(it) }
             val message = r.lastKind?.let { kind -> r.lastId?.let { id -> messages[ProviderRef(ProviderTransport.valueOf(kind), id)] } }
             ConversationSummary(ConversationId(r.meta.id), participants, participants.joinToString(", ") { it.label }.ifEmpty { "Nieznany nadawca" }, Instant.ofEpochMilli(r.lastAt ?: 0),
                 ConversationSummary.Preview.Text(message?.body?.take(250)?.ifBlank { if (message.attachments.isNotEmpty()) "Załącznik MMS" else "" }.orEmpty()),
                 maxOf(r.unreadCount, if (r.meta.manualUnread) 1 else 0), r.meta.pinned, isGroupMms = participants.size > 1, muted = r.meta.muted, trashed = r.meta.trashed,
+                blocked = blocks.any { rule -> participants.any { recipientKey(it.address.raw) == rule.addressKey } },
                 tags = if (participants.any { it.displayName == null }) setOf(ConversationSummary.Tag.UnknownNumber) else emptySet())
         }
     }
-    override fun inbox(): Flow<List<ConversationSummary>> = combine(dao.indices(), platform.changes, dao.operations()) { rows, _, ops -> rows to ops }.map { (rows, ops) ->
+    override fun inbox(): Flow<List<ConversationSummary>> = combine(dao.indices(), platform.changes, dao.operations(), db.organization().blocks()) { rows, _, ops, _ -> rows to ops }.map { (rows, ops) ->
         if (!context.smsRead(platform)) { previousInbox = emptyList(); emptyList() }
         else try {
             val visibleOperations = ops.flatMap { operation ->
@@ -219,7 +226,7 @@ class SystemHistory(
             }.also { previousInbox = it }
         } catch (error: Exception) { if (error is CancellationException) throw error; diagnostic(error); status.value = HistoryStatus.Error("Nie udało się odczytać wiadomości. Spróbuj odświeżyć historię."); previousInbox }
     }.flowOn(Dispatchers.IO)
-    override fun conversation(id: ConversationId): Flow<ConversationSummary?> = combine(dao.indices(), platform.changes) { rows, _ -> rows.filter { it.meta.id == id.value } }.map { rows -> try { summaries(rows).firstOrNull() } catch (cancelled: CancellationException) { throw cancelled } catch (_: Exception) { null } }.flowOn(Dispatchers.IO)
+    override fun conversation(id: ConversationId): Flow<ConversationSummary?> = combine(dao.indices(), platform.changes, db.organization().blocks()) { rows, _, _ -> rows.filter { it.meta.id == id.value } }.map { rows -> try { summaries(rows).firstOrNull() } catch (cancelled: CancellationException) { throw cancelled } catch (_: Exception) { null } }.flowOn(Dispatchers.IO)
     override fun messages(id: ConversationId): Flow<List<Message>> = combine(combine(dao.referenceChanges(), dao.conversationMedia(id.value)) { _, _ -> Unit }, pages, platform.changes, dao.operations(), dao.conversationRecipients(id.value)) { _, limits, _, ops, links -> Triple(limits[id.value] ?: 200, ops, links) }.map { (limit, ops, links) ->
         if (!context.smsRead(platform)) emptyList() else runCatching {
             val operations = ops.associateBy { it.id }
@@ -256,7 +263,10 @@ class SystemHistory(
     override fun preferredSim(id: ConversationId) = dao.meta(id.value).map { it?.preferredSim?.let(::SubscriptionId) }
     override suspend fun preferSim(id: ConversationId, sim: SubscriptionId, label: String) { dao.preferSim(id.value, sim.value, label) }
     override suspend fun setPinned(id: ConversationId, pinned: Boolean) { dao.pin(id.value, pinned) }
-    override suspend fun moveToTrash(id: ConversationId) { error("Kosz i retencja wymagają CH043.") }
+    override suspend fun moveToTrash(id: ConversationId) {
+        val meta = dao.conversation(id.value) ?: return
+        checkNotNull(organization).addToTrash(id, addresses(meta.participants).map { contacts.lookup(it)?.label ?: it.raw }.joinToString(", "))
+    }
     override suspend fun conversationFor(recipients: List<Address>): ConversationId = withContext(Dispatchers.IO) {
         requireRead(); require(recipients.isNotEmpty() && recipients.all { isOutgoingNumber(it.raw) })
         val thread = Telephony.Threads.getOrCreateThreadId(context, recipients.map { it.raw }.toSet())

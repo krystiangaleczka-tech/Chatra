@@ -37,7 +37,7 @@ fun ScheduleEditor(item: ScheduledItem, cards: List<SimCard>, clock: app.chatra.
     val local = LocalDateTime.of(LocalDate.parse(date), LocalTime.parse(time))
     val validation = validateSchedule(local, clock.zone(), clock.now())
     Dialog(onDismissRequest = { if (!busy) onDismiss() }) {
-        Column(Modifier.clip(RoundedCornerShape(24.dp)).background(Color.White).padding(20.dp).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        Column(Modifier.clip(RoundedCornerShape(24.dp)).background(app.chatra.core.designsystem.theme.LocalAppearanceTokens.current.surface).padding(20.dp).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             BasicText("Edytuj zaplanowaną wiadomość", style = chatraText(20f, 700))
             BasicText(item.title, style = ChatraType.Preview)
             BasicTextField(body, { if (!busy && it.length <= 16384) body = it }, Modifier.fillMaxWidth().heightIn(min = 90.dp).semantics { contentDescription = "Treść zaplanowanej wiadomości" }, textStyle = ChatraType.Body)

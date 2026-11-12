@@ -33,6 +33,23 @@ fun PrivacyScreen(onBack: () -> Unit) {
             BasicText("Chatra HD jest osobnym, dobrowolnym transferem. W tej wersji nie jest aktywny. Nie obiecujemy RCS, iMessage ani połączeń.", style = ChatraType.Preview)
             if (c.isDemo) BasicText("Demo używa przykładowych rozmów i kart. Nie odczytuje SMS ani kontaktów urządzenia i nie wykonuje zakupów.", style = ChatraType.Preview)
         }
+        DetailCard {
+            BasicText("Dane na telefonie", style = chatraText(17f, 600))
+            BasicText("SMS i MMS zapisujemy i odczytujemy w systemowej historii telefonu. Lokalna baza Chatry zawiera referencje, szkice, kolejkę wysyłania, harmonogram, blokady oraz kosz. Wyszukiwanie przechowuje lokalną, odtwarzalną kopię treści i metadanych załączników.", style = ChatraType.Preview)
+            BasicText("Wybrane pliki mają prywatne kopie w pamięci aplikacji. Kopia bez lokalizacji powstaje przez konwersję zdjęcia do JPEG bez metadanych; oryginał pozostaje zachowany. Udostępnienie pliku innej aplikacji następuje dopiero po Twojej akcji.", style = ChatraType.Preview)
+            BasicText("Kopie zapasowe danych aplikacji w chmurze i systemowy transfer danych aplikacji są wyłączone. Inne aplikacje i usługi telefonu mogą niezależnie kopiować systemową historię SMS/MMS. SMS/MMS nie zapewniają szyfrowania od końca do końca przez Chatrę.", style = ChatraType.Preview)
+        }
+        DetailCard {
+            BasicText("Usuwanie danych", style = chatraText(17f, 600))
+            BasicText("Kosz ukrywa wyłącznie zapisany zakres wiadomości w Chatrze przez 30 dni. Nowy SMS w tym samym wątku pozostaje widoczny. Trwałe usunięcie z kosza usuwa zapisany zakres z systemowej historii, także dla innych klientów SMS. Nie usuwa kopii u odbiorcy ani operatora.", style = ChatraType.Preview)
+            BasicText("Wyczyść dane aplikacji lub odinstaluj Chatrę w ustawieniach Androida, aby usunąć lokalne szkice, pliki, indeks, ustawienia i harmonogram. Systemowa historia SMS/MMS pozostaje. Zrób to po sprawdzeniu aktywnych wysyłek: wiadomości przekazanej operatorowi nie można cofnąć. Usunięcie danych aplikacji usuwa także możliwość odzyskania lokalnego kosza; wiadomości nadal obecne w historii systemowej pojawią się przy kolejnym imporcie.", style = ChatraType.Preview)
+            if (c.platform != null) TextAction("Otwórz ustawienia aplikacji", c.platform!!::openSettings)
+        }
+        DetailCard {
+            BasicText("Sieć, HD i diagnostyka", style = chatraText(17f, 600))
+            BasicText("SMS/MMS korzystają z usług i sieci operatora oraz mogą podlegać opłatom. Chatra HD, przesyłanie oryginałów przez serwer i linki nie są aktywne w tej wersji. Nie wysyłamy historii do usługi HD.", style = ChatraType.Preview)
+            BasicText("Aplikacja nie ma automatycznego wysyłania raportów ani analityki treści. Diagnostyka lokalna obejmuje stany transportu i błędy techniczne; system Android i operator mają własne logi. Przed dobrowolnym przekazaniem raportu sprawdź, czy nie zawiera prywatnych danych.", style = ChatraType.Preview)
+        }
         c.mmsDownloads?.let { downloads ->
             val pending by downloads.pending.collectAsStateWithLifecycle()
             var downloadError by remember { mutableStateOf<String?>(null) }
@@ -68,12 +85,23 @@ fun PrivacyScreen(onBack: () -> Unit) {
 @Composable
 fun HelpScreen(onBack: () -> Unit, onPrivacy: () -> Unit, onCatalog: () -> Unit) {
     val c = LocalContainer.current
+    val uriHandler = androidx.compose.ui.platform.LocalUriHandler.current
+    var linkError by remember { mutableStateOf(false) }
     DetailPage("Pomoc", onBack) {
         DetailCard {
             BasicText("SMS i MMS są różnymi transportami. Osobne SMS nie ujawniają numerów innych odbiorców. Grupowy MMS pokazuje uczestników i zależy od operatorów.", style = ChatraType.Body)
-            BasicText("Harmonogram działa na tym telefonie. Wyłączony telefon, brak SIM i cofnięte zgody mogą wymagać decyzji po powrocie.", style = ChatraType.Preview)
+            BasicText("RCS i iMessage nie są obsługiwane. Wiadomość do iPhone jest SMS lub MMS zależnie od wybranego transportu. Nie ma gwarancji potwierdzenia odczytu.", style = ChatraType.Preview)
+            BasicText("Harmonogram działa na tym telefonie i potrzebuje dostępu Alarmy i przypomnienia. Wyłączony lub zatrzymany przez system telefon nie wyśle wiadomości. Po powrocie pokażemy zaległe zlecenia zgodnie z wybraną polityką.", style = ChatraType.Preview)
+            BasicText("Po utracie wybranej SIM nie przełączamy wysyłki na inną kartę. Zmień kartę świadomie. Zmiana opóźnienia dotyczy nowych zleceń; nie skraca już działającego odliczania ani harmonogramu. Niepewny wynik wysyłania wymaga sprawdzenia rozmowy przed ponowieniem.", style = ChatraType.Preview)
+            BasicText("Nieznany numer oznacza brak rozpoznanego kontaktu, nie spam. Blokada lokalna ukrywa rozmowę i jej powiadomienia, ale zachowuje SMS/MMS i nie blokuje połączeń. Odblokowanie w ustawieniach przywraca widoczność.", style = ChatraType.Preview)
+            BasicText("Kontakt do pomocy nie został jeszcze opublikowany przez właściciela aplikacji. Nie wysyłamy raportu automatycznie.", style = ChatraType.Preview)
             TextAction("Prywatność i uprawnienia", onPrivacy)
             TextAction("Ustawienia domyślnej aplikacji SMS", c.smsRole::openSystemSettings)
+            TextAction("Uprawnienia Androida — otwórz pomoc Google", {
+                linkError = runCatching { uriHandler.openUri("https://support.google.com/android/answer/9431959?hl=pl") }.isFailure
+            })
+            BasicText("Link otwiera zewnętrzną przeglądarkę. Nie dołączamy treści rozmów ani raportu.", style = ChatraType.Preview)
+            if (linkError) BasicText("Nie udało się otworzyć przeglądarki. Instrukcje wyżej są dostępne offline.", style = ChatraType.Preview)
         }
         DetailCard {
             BasicText("Projekty uzupełniające", style = chatraText(17f, 600))

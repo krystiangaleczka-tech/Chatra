@@ -33,7 +33,7 @@ internal fun conversationIntent(context: Context, id: String): PendingIntent = P
     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
 /** Visibility changes, unread counts and timed mutes are reconciled even after a cold start. */
-class MessageNotifications(private val context: Context, db: ChatraDatabase, private val platform: SystemPlatform,
+class MessageNotifications(private val context: Context, private val db: ChatraDatabase, private val platform: SystemPlatform,
     scope: CoroutineScope, private val prefs: PreferenceStore<NotificationPrefs>, private val sims: SimRepository) {
     private val manager = context.getSystemService(NotificationManager::class.java)
     private val dao = db.dao()
@@ -52,7 +52,7 @@ class MessageNotifications(private val context: Context, db: ChatraDatabase, pri
             combine(dao.indices(), platform.changes, prefs.value, sims.cards(), ticks) { rows, _, settings, cards, now ->
                 Snapshot(rows, settings, cards, now)
             }.distinctUntilChangedBy { s -> listOf(s.rows, s.prefs, s.cards, s.rows.map { s.prefs.muted(it.meta.id, s.now) }, permitted()) }
-                .collect { update(it) }
+                .combine(db.organization().blocks()) { snapshot, _ -> snapshot }.collect { update(it) }
         }
         scope.launch(Dispatchers.IO) {
             combine(dao.operations(), platform.changes, prefs.value) { operations, _, p -> operations to p }.collect { (ops, p) -> status(ops, p) }
@@ -77,7 +77,8 @@ class MessageNotifications(private val context: Context, db: ChatraDatabase, pri
     }
     @SuppressLint("MissingPermission")
     private suspend fun update(s: Snapshot) {
-        val visible = if (permitted()) s.rows.filter { !it.meta.trashed && (it.unreadCount > 0 || it.meta.manualUnread) } else emptyList()
+        val dbBlocks = db.organization().blocks().first()
+        val visible = if (permitted()) s.rows.filter { !it.meta.trashed && it.lastAt != null && dbBlocks.none { rule -> addresses(it.meta.participants).any { a -> recipientKey(a.raw) == rule.addressKey } } && (it.unreadCount > 0 || it.meta.manualUnread) } else emptyList()
         val audible = visible.filterNot { it.meta.muted || s.prefs.muted(it.meta.id, s.now) }
         val current = s.rows.associate { it.meta.id to (it.unreadCount to it.lastId) }
         val old = previous; previous = if (context.smsRead(platform)) current else null

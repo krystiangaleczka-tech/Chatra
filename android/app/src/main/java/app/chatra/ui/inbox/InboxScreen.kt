@@ -150,7 +150,7 @@ private fun androidx.compose.foundation.layout.RowScope.SegmentButton(text: Stri
         Modifier
             .weight(1f)
             .fillMaxHeight()
-            .then(if (active) Modifier.cssShadow(shape, Shadows.SegmentThumb).clip(shape).background(Color.White) else Modifier)
+            .then(if (active) Modifier.cssShadow(shape, Shadows.SegmentThumb).clip(shape).background(app.chatra.core.designsystem.theme.LocalAppearanceTokens.current.surface) else Modifier)
             .semantics { role = Role.Tab; selected = active }
             .pressable(onClick),
         contentAlignment = Alignment.Center,
@@ -206,7 +206,7 @@ private fun ConversationRow(row: ConversationSummary, onOpen: (ConversationId) -
         Modifier.fillMaxWidth()
             .semantics(mergeDescendants = true) { role = Role.Button }
             .combinedClickable(interactionSource = null, indication = null, onClick = { onOpen(row.id) }, onLongClickLabel = "Akcje rozmowy", onLongClick = { menu = true })
-            .padding(horizontal = 16.dp, vertical = 9.dp),
+            .padding(horizontal = 16.dp, vertical = if (app.chatra.core.designsystem.theme.LocalAppearanceTokens.current.compact) 4.dp else 9.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -223,6 +223,7 @@ private fun ConversationRow(row: ConversationSummary, onOpen: (ConversationId) -
                     style = if (unread) chatraText(13f, 600) else chatraText(13f, color = ChatraColors.TextSecondary),
                 )
             }
+            if (!container.referenceFrame && row.isUnknownSender) BasicText("Nieznany nadawca", style = ChatraType.Meta)
             Preview(row, unread)
         }
     }

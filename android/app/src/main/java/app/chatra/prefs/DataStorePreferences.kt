@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import app.chatra.core.model.AppearanceOverride
 import app.chatra.core.model.AppearancePrefs
 import app.chatra.core.model.Composition
 import app.chatra.core.model.Density
@@ -29,14 +30,15 @@ private val Context.fullStore by preferencesDataStore("chatra")
 private val Context.referenceStore by preferencesDataStore("demo-reference")
 
 /** Wygląd (S09) i ustawienia wysyłania (S10) w DataStore; zmiany stosowane od razu (CH040, CH041). */
-class DataStorePreferences(context: Context, scope: CoroutineScope, name: String) {
-    private val store: DataStore<Preferences> = when (name) {
+class DataStorePreferences(context: Context, scope: CoroutineScope, name: String, overrideStore: DataStore<Preferences>? = null) {
+    private val store: DataStore<Preferences> = overrideStore ?: when (name) {
         "demo" -> context.demoStore
         "demo-reference" -> context.referenceStore
         else -> context.fullStore
     }
 
     val appearance: PreferenceStore<AppearancePrefs> = Store(scope, ::readAppearance, ::writeAppearance)
+    val threads: PreferenceStore<Map<String, AppearanceOverride>> = Store(scope, ::readThreads, ::writeThreads)
     val sending: PreferenceStore<SendingPrefs> = Store(scope, ::readSending, ::writeSending)
 
     private inner class Store<T>(
@@ -63,6 +65,7 @@ class DataStorePreferences(context: Context, scope: CoroutineScope, name: String
         val defaultSimLabel = stringPreferencesKey("default_sim_label")
         val undoSeconds = intPreferencesKey("undo_seconds")
         val smsCounter = booleanPreferencesKey("sms_counter")
+        val askLink = booleanPreferencesKey("ask_link")
         val hdDefault = stringPreferencesKey("hd_default")
     }
 
@@ -90,6 +93,7 @@ class DataStorePreferences(context: Context, scope: CoroutineScope, name: String
         p[K.smsCounter] ?: true,
         enumOr(p[K.hdDefault], MediaVariant.OriginalHd),
         p[K.defaultSimLabel],
+        p[K.askLink] ?: true,
     )
 
     private fun writeSending(p: androidx.datastore.preferences.core.MutablePreferences, v: SendingPrefs) {
@@ -97,7 +101,25 @@ class DataStorePreferences(context: Context, scope: CoroutineScope, name: String
         v.defaultSubscriptionLabel?.let { p[K.defaultSimLabel] = it } ?: p.remove(K.defaultSimLabel)
         p[K.undoSeconds] = v.undoSeconds
         p[K.smsCounter] = v.smsCounterEnabled
+        p[K.askLink] = v.askBeforeLink
         p[K.hdDefault] = v.hdDefault.name
     }
-}
+    private fun readThreads(p: Preferences): Map<String, AppearanceOverride> = p.asMap().entries.mapNotNull { (key, value) ->
+        if (!key.name.startsWith("thread_appearance_") || value !is String) return@mapNotNull null
+        val fields = value.split('|')
+        fun field(index: Int) = fields.getOrNull(index)?.takeIf { it.isNotEmpty() }
+        key.name.removePrefix("thread_appearance_") to AppearanceOverride(
+            field(0)?.let { runCatching { Composition.valueOf(it) }.getOrNull() },
+            field(1)?.let { runCatching { ThemeMode.valueOf(it) }.getOrNull() },
+            field(2)?.let { runCatching { Density.valueOf(it) }.getOrNull() },
+            field(3)?.toIntOrNull()?.coerceIn(1, 7), field(4) == "true", field(5) == "true",
+        )
+    }.toMap()
+    private fun writeThreads(p: androidx.datastore.preferences.core.MutablePreferences, values: Map<String, AppearanceOverride>) {
+        p.asMap().keys.filter { it.name.startsWith("thread_appearance_") }.forEach { p.remove(it) }
+        values.forEach { (id, v) ->
+            p[stringPreferencesKey("thread_appearance_$id")] = listOf(v.composition?.name.orEmpty(), v.mode?.name.orEmpty(), v.density?.name.orEmpty(), v.textStep?.toString().orEmpty(), v.reduceTransparency.toString(), v.increaseContrast.toString()).joinToString("|")
+        }
+    }
 
+}

@@ -12,6 +12,11 @@ data class StoredMedia(val id: AttachmentId, val uri: String, val mime: String, 
 
 interface AttachmentStore {
     suspend fun importUri(uri: String): StoredMedia
+    /** Apply the chosen default to the owned copy before attaching it to a draft. */
+    suspend fun importUri(uri: String, variant: MediaVariant): StoredMedia {
+        val original = importUri(uri)
+        return if (variant == MediaVariant.NoLocationCopy) derive(original.id, variant) else original
+    }
     suspend fun get(id: AttachmentId): StoredMedia?
     suspend fun derive(id: AttachmentId, variant: MediaVariant, maxBytes: Long? = null): StoredMedia
     suspend fun collectUnused(protectedIds: Set<AttachmentId>, olderThan: Long)

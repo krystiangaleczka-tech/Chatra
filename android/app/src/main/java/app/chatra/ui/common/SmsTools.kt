@@ -23,7 +23,7 @@ import app.chatra.ui.settings.PermissionCard
 @Composable
 fun SimPicker(cards: List<SimCard>, selected: SubscriptionId?, onChoose: (SubscriptionId) -> Unit, onDismiss: () -> Unit) {
     Dialog(onDismissRequest = onDismiss) {
-        Column(Modifier.background(Color.White, RoundedCornerShape(24.dp)).heightIn(max = 560.dp).verticalScroll(rememberScrollState()).padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Column(Modifier.background(app.chatra.core.designsystem.theme.LocalAppearanceTokens.current.surface, RoundedCornerShape(24.dp)).heightIn(max = 560.dp).verticalScroll(rememberScrollState()).padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             BasicText("Karta SIM", Modifier.semantics { heading() }, style = chatraText(20f, 600))
             PermissionCard(AccessFeature.Sims)
             if (cards.none { it.available }) BasicText("Brak dostępnych kart. Szkic pozostaje zachowany.", style = ChatraType.Preview)
@@ -45,7 +45,7 @@ fun SmsCounterAction(text: String, sim: SubscriptionId?, onText: (String) -> Uni
     val label = count.label + if (count.encoding == SmsCounter.Encoding.Ucs2) " · Unicode" else ""
     BasicText(label, modifier.heightIn(min = 32.dp).semantics { role = Role.Button; contentDescription = "Licznik SMS: $label. Podgląd kodowania i tekstu" }.pressable({ opened = true }).padding(vertical = 6.dp), style = chatraText(12f, color = ChatraColors.TextSecondary))
     if (opened) Dialog(onDismissRequest = { opened = false }) {
-        Column(Modifier.background(Color.White, RoundedCornerShape(24.dp)).heightIn(max = 600.dp).verticalScroll(rememberScrollState()).padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Column(Modifier.background(app.chatra.core.designsystem.theme.LocalAppearanceTokens.current.surface, RoundedCornerShape(24.dp)).heightIn(max = 600.dp).verticalScroll(rememberScrollState()).padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             BasicText("Licznik SMS", Modifier.semantics { heading() }, style = chatraText(20f, 600))
             BasicText("$label. Kodowanie: ${if (count.encoding == SmsCounter.Encoding.Gsm7) "GSM 7-bit" else "Unicode (UTF-16)"}. Emoji może zajmować więcej niż jedną jednostkę. Operator może rozliczyć każdą część osobno.", style = ChatraType.Preview)
             if (!count.preservesText) BasicText("System zmieniłby treść przy podziale. Wysyłanie jest zablokowane; zmień tekst świadomie i sprawdź podgląd.", style = ChatraType.Preview)

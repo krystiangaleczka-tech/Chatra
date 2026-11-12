@@ -184,7 +184,7 @@ private fun RowScope.ActionTile(icon: ChatraIcon, label: String, selected: Boole
     val shape = RoundedCornerShape(20.dp)
     Column(
         Modifier.weight(1f).height(74.dp).clip(shape)
-            .background(if (selected) Color.White else ChatraColors.white(0.6f))
+            .background(if (selected) app.chatra.core.designsystem.theme.LocalAppearanceTokens.current.surface else ChatraColors.white(0.6f))
             .border(if (selected) 1.5.dp else 1.dp, if (selected) ChatraColors.Accent else ChatraColors.white(0.95f), shape)
             .semantics(mergeDescendants = true) { role = Role.Button }
             .pressable(onClick),

@@ -76,7 +76,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-private val Secondary = ChatraColors.TextSecondary
+private val Secondary @Composable get() = ChatraColors.TextSecondary
 private val CardShape = RoundedCornerShape(26.dp)
 
 /** S06 Zaplanowane (CH015): decyzje nad listą oczekujących, stopka z ostatnią wysyłką i dock. */
@@ -158,7 +158,7 @@ private fun Header() {
 private fun AlarmNotice(onAllow: () -> Unit) {
     val b = cssBorder()
     GlassSurface(GlassStyles.Card, CardShape, Modifier.fillMaxWidth(), shadows = listOf(Shadows.Card)) {
-        Column(Modifier.padding(horizontal = 16.dp + b, vertical = 14.dp + b), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        Column(Modifier.padding(horizontal = 16.dp + b, vertical = (if (app.chatra.core.designsystem.theme.LocalAppearanceTokens.current.compact) 8.dp else 14.dp) + b), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
                 Icon(ChatraIcons.Clock, 16.dp, ChatraColors.Decision, 2.2f)
                 BasicText("Brak dokładnych alarmów", style = chatraText(15f, 600))
@@ -198,7 +198,7 @@ private fun DecisionCard(
         Modifier.fillMaxWidth().semantics { contentDescription = "$label: ${item.title}" },
         shadows = listOf(Shadows.Decision),
     ) {
-        Column(Modifier.padding(horizontal = 16.dp + b, vertical = 14.dp + b), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        Column(Modifier.padding(horizontal = 16.dp + b, vertical = (if (app.chatra.core.designsystem.theme.LocalAppearanceTokens.current.compact) 8.dp else 14.dp) + b), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
                 Icon(icon, 16.dp, color, 2.2f)
                 BasicText(label.uppercase(PL), style = chatraText(13f, 700, letterSpacingEm = 0.04f, color = color))

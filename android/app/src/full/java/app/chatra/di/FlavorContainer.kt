@@ -26,6 +26,7 @@ import java.time.Instant
 import java.time.ZoneId
 
 interface FullTelephonyContainer : AppContainer {
+    val localOrganization: LocalOrganization
     val persistentSchedules: PersistentSchedules
     val incomingSms: IncomingSms
     val mms: MmsEngine
@@ -38,7 +39,6 @@ fun createContainer(app: Application, referenceFrame: Boolean, roleScenario: Str
     val platform = SystemPlatform(app)
     val notificationPrefs = LocalNotificationPrefs(app)
     val prefs = DataStorePreferences(app, scope, "full")
-    val organization = MemoryOrganizationPreview()
     val clock = object : Clock {
         override fun now(): Instant = Instant.now()
         override fun zone(): ZoneId = ZoneId.systemDefault()
@@ -46,8 +46,9 @@ fun createContainer(app: Application, referenceFrame: Boolean, roleScenario: Str
     }
     val contacts = SystemContacts(app, platform, scope)
     val db = ChatraDatabase.open(app)
+    val organization = LocalOrganization(app, db, platform, scope)
     val sims = SystemSim(app, platform, scope)
-    val conversations = SystemHistory(app, db, platform, contacts, scope)
+    val conversations = SystemHistory(app, db, platform, contacts, scope, organization)
     val drafts = RoomDrafts(db)
     val smsText = PlatformSmsText(app)
     val mediaStore = PrivateMediaStore(app)
@@ -62,13 +63,15 @@ fun createContainer(app: Application, referenceFrame: Boolean, roleScenario: Str
     scope.launch(Dispatchers.IO) {
         ScheduleRecoveryWorker.periodic(app)
         schedules.reconcile("startup")
+        runCatching { organization.expire() }
         mmsEngine.recoverDownloads()
         queue.awaitReady()
         val protected = db.dao().drafts().first().flatMap { DraftCodec.decode(it).attachmentIds } + db.dao().operations().first().flatMap { row -> row.snapshot?.let { DraftCodec.decode(it).attachmentIds }.orEmpty() }
         mediaStore.collectUnused(protected.toSet(), System.currentTimeMillis() - 86_400_000)
-        combine(platform.changes, sims.cards()) { _, _ -> Unit }.collect { incoming.recover(); queue.recover(false); schedules.reconcile() }
+        combine(platform.changes, sims.cards()) { _, _ -> Unit }.collect { incoming.recover(); queue.recover(false); schedules.reconcile(); runCatching { organization.expire() } }
     }
     return object : FullTelephonyContainer {
+        override val localOrganization = organization
         override val persistentSchedules = schedules
         override val gallery = ProviderMediaGallery(app, db, platform)
         override val mmsDownloads = mmsEngine
@@ -96,10 +99,11 @@ fun createContainer(app: Application, referenceFrame: Boolean, roleScenario: Str
             override fun openSettings() { app.startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM, android.net.Uri.parse("package:${app.packageName}")).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }
         }
         override val schedulePreset: SchedulePreset? = null
+        override val conversationAppearance = prefs.threads
         override val appearance = prefs.appearance
         override val sending = prefs.sending
         override val organization = organization
-        override val housekeeping = flowOf(Housekeeping(0, 0, 30))
+        override val housekeeping = combine(organization.blocked, organization.trash) { b, t -> Housekeeping(b.size, t.size, 30) }
         override fun avatarTone(id: ConversationId): String? = null
         override fun externalDraft(id: String): ExternalCompose? = platform.externalDraft(id)
         override val referenceFrame = false
