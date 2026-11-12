@@ -225,7 +225,7 @@ class ScreenModelsTest {
                 }
             }
             val saved = SavedStateHandle()
-            val model = SearchViewModel(saved, repo, "paczk", "parcels")
+            val model = SearchViewModel(saved, repo, "paczk", "parcels", debounceMillis = 0)
             val collector = backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { model.state.collect() }
             runCurrent(); assertTrue(model.state.value.error)
             model.retry(); runCurrent(); assertFalse(model.state.value.error)

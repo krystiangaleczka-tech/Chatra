@@ -84,12 +84,17 @@ interface ScheduleRepository {
      * drugie wywołanie po przejściu do DISPATCHING zwraca false. [sim] wymagane, gdy zapisana karta zniknęła.
      */
     suspend fun sendNow(id: ScheduleId, sim: SubscriptionId? = null): Boolean
+    suspend fun sendNow(id: ScheduleId, sim: SubscriptionId?, expectedVersion: Int): Boolean = sendNow(id, sim)
 
     /** Zmiana terminu: nowa wersja zlecenia, stary alarm unieważniony (token alarmu czyszczony). */
     suspend fun reschedule(id: ScheduleId, instant: Instant, local: LocalDateTime, zone: ZoneId): Boolean
+    suspend fun reschedule(id: ScheduleId, instant: Instant, local: LocalDateTime, zone: ZoneId, expectedVersion: Int): Boolean = reschedule(id, instant, local, zone)
 
     /** Usuwa harmonogram i anuluje jego operację; rozmowa i wcześniejsze wiadomości zostają. */
     suspend fun delete(id: ScheduleId): Boolean
+    suspend fun delete(id: ScheduleId, expectedVersion: Int): Boolean = delete(id)
+    suspend fun edit(id: ScheduleId, expectedVersion: Int, draft: Draft, instant: Instant, local: LocalDateTime, zone: ZoneId, policy: LatenessPolicy): Boolean = false
+    suspend fun reconcile() {}
 }
 
 /** Zgoda na dokładne alarmy (SCHEDULE_EXACT_ALARM). Bez niej S05 nie obiecuje wysyłki o czasie (CH014, CH035). */
@@ -99,7 +104,7 @@ interface ExactAlarmGate {
 }
 
 /** Pozycja listy S06: harmonogram + migawka operacji. */
-data class ScheduledItem(val schedule: ScheduledMessage, val operation: SendOperation, val title: String)
+data class ScheduledItem(val schedule: ScheduledMessage, val operation: SendOperation, val title: String, val registrationError: String? = null)
 
 /** Kontrolowany zegar: produkcyjny i stały 29.10.2026 w fixture (CH006). */
 interface Clock {

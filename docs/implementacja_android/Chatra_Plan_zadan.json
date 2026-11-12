@@ -631,7 +631,9 @@
         "CH027",
         "CH028"
       ],
-      "description": "Wykonanie: rekord instant/localDateTime/zone/polityka/SIM/version, scheduler i unikalny alarm. Sprawdzić specjalny dostęp do dokładnych alarmów. Sprawdzić, czy data jest przyszła i czy warunki przed zapisem są poprawne; rekord zapisany niezależnie od awarii rejestracji alarmu, z rekoncyliacją i widocznym błędem. WorkManager nie pełni roli dokładnego zegara.\n\nOdbiór: po zapisaniu i restarcie procesu termin pozostaje, alarm wywołuje najwyżej jednego wykonawcę. Weryfikacja: brak dostępu, dwie pozycje o tej samej godzinie, zmiana terminu i nieistniejąca godzina podczas zmiany czasu DST."
+      "description": "Wykonanie: rekord instant/localDateTime/zone/polityka/SIM/version, scheduler i unikalny alarm. Sprawdzić specjalny dostęp do dokładnych alarmów. Sprawdzić, czy data jest przyszła i czy warunki przed zapisem są poprawne; rekord zapisany niezależnie od awarii rejestracji alarmu, z rekoncyliacją i widocznym błędem. WorkManager nie pełni roli dokładnego zegara.\n\nOdbiór: po zapisaniu i restarcie procesu termin pozostaje, alarm wywołuje najwyżej jednego wykonawcę. Weryfikacja: brak dostępu, dwie pozycje o tej samej godzinie, zmiana terminu i nieistniejąca godzina podczas zmiany czasu DST.",
+      "status": "implemented_avd_verification_pending_device_acceptance",
+      "evidence": "CH035_CH039_Wdrozenie_i_weryfikacja.md"
     },
     {
       "id": "CH036",
@@ -644,7 +646,9 @@
         "CH035",
         "CH030"
       ],
-      "description": "Wykonanie: rekoncyliacja po boot/aktualizacji/czasie/SIM/roli/uprawnieniach. Polityki pytaj i do 1 h, stan missed, powiadomienie i blokada automatycznego retry niepewnej próby. Uwzględnić brak odblokowania po restarcie, force stop i ograniczenia producentów. Odtwarzać tylko aktualną wersję alarmu.\n\nOdbiór: wyłączony telefon nie jest opisywany jako źródło wysłanego SMS; po upływie okna wiadomość czeka na decyzję. Weryfikacja: spóźnienie 59, 60 i 61 min, Doze, utrata SIM, cofnięcie exact alarm i odzyskanie roli."
+      "description": "Wykonanie: rekoncyliacja po boot/aktualizacji/czasie/SIM/roli/uprawnieniach. Polityki pytaj i do 1 h, stan missed, powiadomienie i blokada automatycznego retry niepewnej próby. Uwzględnić brak odblokowania po restarcie, force stop i ograniczenia producentów. Odtwarzać tylko aktualną wersję alarmu.\n\nOdbiór: wyłączony telefon nie jest opisywany jako źródło wysłanego SMS; po upływie okna wiadomość czeka na decyzję. Weryfikacja: spóźnienie 59, 60 i 61 min, Doze, utrata SIM, cofnięcie exact alarm i odzyskanie roli.",
+      "status": "implemented_avd_verification_pending_device_acceptance",
+      "evidence": "CH035_CH039_Wdrozenie_i_weryfikacja.md"
     },
     {
       "id": "CH037",
@@ -659,7 +663,9 @@
         "CH036",
         "CH027"
       ],
-      "description": "Wykonanie: listy live, edit, cancel, delete, Wyślij teraz i Zmień termin. Wersjonować rekord; stary alarm i spóźniony callback nie zmieniają nowej wersji. Edycja nie narusza wysłanego snapshotu. Potwierdzić usunięcie zlecenia niezależne od rozmowy.\n\nOdbiór: licznik „Czeka” jest poprawny, akcje nie powodują dwóch wysyłek. Weryfikacja: edycja tuż przy terminie, kilka otwartych widoków tego samego zadania i restart między zapisem a anulowaniem alarmu."
+      "description": "Wykonanie: listy live, edit, cancel, delete, Wyślij teraz i Zmień termin. Wersjonować rekord; stary alarm i spóźniony callback nie zmieniają nowej wersji. Edycja nie narusza wysłanego snapshotu. Potwierdzić usunięcie zlecenia niezależne od rozmowy.\n\nOdbiór: licznik „Czeka” jest poprawny, akcje nie powodują dwóch wysyłek. Weryfikacja: edycja tuż przy terminie, kilka otwartych widoków tego samego zadania i restart między zapisem a anulowaniem alarmu.",
+      "status": "implemented_avd_verification_pending_device_acceptance",
+      "evidence": "CH035_CH039_Wdrozenie_i_weryfikacja.md"
     },
     {
       "id": "CH038",
@@ -673,7 +679,9 @@
         "CH022",
         "CH023"
       ],
-      "description": "Wykonanie: indeks odtwarzalny dla wspieranych treści, normalizacja polskich liter w tym „ł”, casefold, tokeny prefiksowe i mapa offsetów. Przyrostowe aktualizacje, debounce 200 ms, anulowanie starego zapytania i paginacja. Indeksowanie z postępem poza głównym wątkiem; bez sieci.\n\nOdbiór: paczk znajduje paczkę/PACZKA, łódź znajduje lodz po normalizacji; highlight trafia w oryginał. Weryfikacja: 50 tysięcy rekordów, usunięcie z providera, odtworzenie indeksu i zapytanie z emoji/interpunkcją.\n\nUzupełnienie UX 29.10.2026: Indeks i API zapytań muszą umożliwiać szukanie w kontekście konkretnej rozmowy (conversationId) z zachowaniem zakotwiczenia do messageId. Wyszukiwanie mediów dotyczy metadanych i załączonych treści, nie OCR ani semantyki AI.\n\nOdbiór rozszerzony: Wynik z ekranu kontaktu otwiera właściwą wiadomość, także ze starszej strony historii; brak Internetu nie blokuje wyszukiwania lokalnego."
+      "description": "Wykonanie: indeks odtwarzalny dla wspieranych treści, normalizacja polskich liter w tym „ł”, casefold, tokeny prefiksowe i mapa offsetów. Przyrostowe aktualizacje, debounce 200 ms, anulowanie starego zapytania i paginacja. Indeksowanie z postępem poza głównym wątkiem; bez sieci.\n\nOdbiór: paczk znajduje paczkę/PACZKA, łódź znajduje lodz po normalizacji; highlight trafia w oryginał. Weryfikacja: 50 tysięcy rekordów, usunięcie z providera, odtworzenie indeksu i zapytanie z emoji/interpunkcją.\n\nUzupełnienie UX 29.10.2026: Indeks i API zapytań muszą umożliwiać szukanie w kontekście konkretnej rozmowy (conversationId) z zachowaniem zakotwiczenia do messageId. Wyszukiwanie mediów dotyczy metadanych i załączonych treści, nie OCR ani semantyki AI.\n\nOdbiór rozszerzony: Wynik z ekranu kontaktu otwiera właściwą wiadomość, także ze starszej strony historii; brak Internetu nie blokuje wyszukiwania lokalnego.",
+      "status": "implemented_avd_verification_pending_device_acceptance",
+      "evidence": "CH035_CH039_Wdrozenie_i_weryfikacja.md"
     },
     {
       "id": "CH039",
@@ -686,7 +694,9 @@
         "CH020",
         "CH038"
       ],
-      "description": "Wykonanie: typ treści, nadawca i daty łączone operatorem AND; lokalne rozpoznawanie kodów i przesyłek. Zachować wiadomość źródłową, nadawcę i pewność wzorca. Kopiowanie precyzyjnej wartości; bez zgadywania kodu z dowolnej liczby. Powrót z rozmowy przywraca komplet filtrów.\n\nOdbiór: cztery wyniki fixture i poprawne wyróżnienia, filtry rzeczywiście zawężają zbiór. Weryfikacja: numer telefonu podobny do kodu, fałszywy nadawca, brak trafień i przedział dat obejmujący zmianę czasu DST.\n\nUzupełnienie UX 29.10.2026: Udostępnić identyczny silnik filtrów globalnie i w rozmowie: osoba/wątek, data, tekst, typ pliku, z opcjonalnym SIM jeżeli dane istnieją. Wszystkie filtry są widoczne, usuwalne i łączone AND; CH066 może otworzyć wiadomość źródłową.\n\nOdbiór rozszerzony: Filtr rozmowy nie pokazuje wyników z innych wątków; usunięcie filtra i Back przywracają stan bez fałszywych trafień."
+      "description": "Wykonanie: typ treści, nadawca i daty łączone operatorem AND; lokalne rozpoznawanie kodów i przesyłek. Zachować wiadomość źródłową, nadawcę i pewność wzorca. Kopiowanie precyzyjnej wartości; bez zgadywania kodu z dowolnej liczby. Powrót z rozmowy przywraca komplet filtrów.\n\nOdbiór: cztery wyniki fixture i poprawne wyróżnienia, filtry rzeczywiście zawężają zbiór. Weryfikacja: numer telefonu podobny do kodu, fałszywy nadawca, brak trafień i przedział dat obejmujący zmianę czasu DST.\n\nUzupełnienie UX 29.10.2026: Udostępnić identyczny silnik filtrów globalnie i w rozmowie: osoba/wątek, data, tekst, typ pliku, z opcjonalnym SIM jeżeli dane istnieją. Wszystkie filtry są widoczne, usuwalne i łączone AND; CH066 może otworzyć wiadomość źródłową.\n\nOdbiór rozszerzony: Filtr rozmowy nie pokazuje wyników z innych wątków; usunięcie filtra i Back przywracają stan bez fałszywych trafień.",
+      "status": "implemented_avd_verification_pending_device_acceptance",
+      "evidence": "CH035_CH039_Wdrozenie_i_weryfikacja.md"
     },
     {
       "id": "CH040",

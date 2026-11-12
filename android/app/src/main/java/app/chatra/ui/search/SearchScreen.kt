@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -44,7 +45,14 @@ fun SearchScreen(model: SearchViewModel, onCancel: () -> Unit, onResult: (Messag
     val filter by model.filter.collectAsStateWithLifecycle()
     val sender by model.sender.collectAsStateWithLifecycle()
     val since by model.since.collectAsStateWithLifecycle()
+    val until by model.until.collectAsStateWithLifecycle()
+    val address by model.senderAddress.collectAsStateWithLifecycle()
+    val content by model.content.collectAsStateWithLifecycle()
+    val subscription by model.sim.collectAsStateWithLifecycle()
+    val zoneName by model.dateZone.collectAsStateWithLifecycle()
+    val dateZone = java.time.ZoneId.of(zoneName)
     val container = LocalContainer.current
+    val cards by container.sims.cards().collectAsStateWithLifecycle(emptyList())
     val conversations by container.conversations.inbox().collectAsStateWithLifecycle(emptyList())
     val keyboard = LocalSoftwareKeyboardController.current
     val context = LocalContext.current
@@ -71,15 +79,23 @@ fun SearchScreen(model: SearchViewModel, onCancel: () -> Unit, onResult: (Messag
                     FilterChip("Kody", filter == SearchFilter.Codes.name) { model.filter(SearchFilter.Codes) }
                     FilterChip("Przesyłki", filter == SearchFilter.Parcels.name) { model.filter(SearchFilter.Parcels) }
                     FilterChip("Załączniki", filter == SearchFilter.Attachments.name) { model.filter(SearchFilter.Attachments) }
-                    FilterChip("Od: ${conversations.firstOrNull { it.id.value == sender }?.title ?: "wszyscy"}", false, dropdown = true) { picker = "sender" }
-                    FilterChip("Kiedy: ${if (since == null) "zawsze" else "ostatni tydzień"}", false, dropdown = true) { picker = "date" }
+                    FilterChip("${if (container.isDemo) "Od" else "Rozmowa"}: ${conversations.firstOrNull { it.id.value == sender }?.title ?: "wszyscy"}", sender != null, dropdown = true) { picker = "sender" }
+                    if (container.isDemo) FilterChip("Kiedy: ${if (since == null) "zawsze" else "ostatni tydzień"}", false, dropdown = true) { picker = "date" }
+                    else {
+                        FilterChip("Od daty: ${since?.let { java.time.Instant.ofEpochMilli(it).atZone(dateZone).toLocalDate().toString() } ?: "zawsze"}", since != null, dropdown = true) { picker = "from" }
+                        FilterChip("Do daty: ${until?.let { java.time.Instant.ofEpochMilli(it).atZone(dateZone).toLocalDate().minusDays(1).toString() } ?: "zawsze"}", until != null, dropdown = true) { picker = "until" }
+                        FilterChip("Nadawca: ${address ?: "wszyscy"}", address != null, dropdown = true) { picker = "address" }
+                        FilterChip("Plik: ${contentLabel(SearchContent.valueOf(content))}", content != SearchContent.Any.name, dropdown = true) { picker = "content" }
+                        FilterChip("SIM: ${cards.firstOrNull { it.id.value == subscription }?.label ?: subscription?.toString() ?: "wszystkie"}", subscription != null, dropdown = true) { picker = "sim" }
+                        if (sender != null || since != null || until != null || address != null || subscription != null || content != SearchContent.Any.name || filter != SearchFilter.All.name) TextAction("Usuń filtry", model::clearFilters)
+                    }
                 }
             }
             item { BasicText("„paczk” znajdzie też „paczkę” i „PACZKA” — polskie znaki i wielkość liter nie mają znaczenia. Szukamy tylko na tym telefonie.", Modifier.padding(horizontal = 4.dp), style = chatraText(13f, lineHeight = 18f, color = ChatraColors.TextSecondary)) }
             if (state.loading || state.error || state.results.indexing || state.results.hits.isEmpty()) item {
                 GlassSurface(GlassStyles.Card, RoundedCornerShape(24.dp), Modifier.fillMaxWidth()) {
                     Column(Modifier.padding(16.dp)) {
-                        BasicText(when { state.error -> "Nie udało się odczytać wiadomości."; state.loading -> "Wyszukiwanie…"; state.results.indexing -> "Indeksowanie wiadomości…"; query.isBlank() -> "Wpisz tekst, aby wyszukać wiadomości."; else -> "Brak wyników. Zmień zapytanie lub filtry." }, style = chatraText(15f))
+                        BasicText(when { state.error -> state.message ?: "Nie udało się odczytać wiadomości."; state.loading -> "Wyszukiwanie…"; state.results.indexing -> "Indeksowanie: ${state.results.indexed}/${state.results.totalDocuments}"; query.isBlank() -> "Wpisz tekst, aby wyszukać wiadomości."; else -> "Brak wyników. Zmień zapytanie lub filtry." }, style = chatraText(15f))
                         if (state.error) TextAction("Spróbuj ponownie", model::retry)
                     }
                 }
@@ -91,8 +107,10 @@ fun SearchScreen(model: SearchViewModel, onCancel: () -> Unit, onResult: (Messag
                             Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(18.dp)).then(if (i == 0) Modifier.background(Color.White) else Modifier).padding(start = 12.dp, end = 8.dp, top = 8.dp, bottom = 8.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                                 Column(Modifier.weight(1f)) {
                                     BasicText(hit.label.uppercase(), style = chatraText(12f, 600, letterSpacingEm = .04f, color = ChatraColors.TextSecondary))
+                                    if (!container.isDemo) BasicText("Wzorzec w wiadomości · nadawca niezweryfikowany", style = chatraText(12f, color = ChatraColors.TextSecondary))
                                     BasicText(hit.value, style = if (i == 0) chatraText(24f, 700, letterSpacingEm = .06f) else chatraText(16f, 600))
                                 }
+                                hit.message?.let { source -> TextAction("Pokaż", { keyboard?.hide(); onResult(source) }) }
                                 Row(Modifier.heightIn(min = 40.dp).clip(RoundedCornerShape(20.dp)).background(if (i == 0) ChatraColors.Accent else ChatraColors.white(.8f)).semantics { role = Role.Button; contentDescription = "Kopiuj: ${hit.label}" }.pressable({
                                     (context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager).setPrimaryClip(ClipData.newPlainText(hit.label, hit.value))
                                 }).padding(horizontal = 14.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -104,7 +122,7 @@ fun SearchScreen(model: SearchViewModel, onCancel: () -> Unit, onResult: (Messag
                     }
                 }
             }
-            if (state.results.hits.isNotEmpty()) item {
+            if (container.isDemo && state.results.hits.isNotEmpty()) item {
                 GlassSurface(GlassStyles.Card, RoundedCornerShape(24.dp), Modifier.fillMaxWidth(), shadows = listOf(Shadows.Card)) {
                     Column(Modifier.padding(cssBorder())) {
                         SectionLabel("Wiadomości · ${state.results.hits.size}", Modifier.padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 2.dp))
@@ -114,16 +132,50 @@ fun SearchScreen(model: SearchViewModel, onCancel: () -> Unit, onResult: (Messag
                                     BasicText(hit.title, Modifier.weight(1f), style = chatraText(15f, 600))
                                     BasicText(formatRelativeDay(hit.message.timestamp, container.clock), style = chatraText(13f, color = ChatraColors.TextSecondary))
                                 }
-                                BasicText(buildAnnotatedString { append(hit.message.body); searchRanges(hit.message.body, query).forEach { addStyle(SpanStyle(background = ChatraColors.Accent.copy(alpha = .16f), fontWeight = FontWeight.SemiBold), it.first, it.last + 1) } }, style = chatraText(14f, lineHeight = 19f, color = ChatraColors.TextTertiary))
+                                BasicText(buildAnnotatedString { append(hit.message.body); searchTermRanges(hit.message.body, query).forEach { addStyle(SpanStyle(background = ChatraColors.Accent.copy(alpha = .16f), fontWeight = FontWeight.SemiBold), it.first, it.last + 1) } }, style = chatraText(14f, lineHeight = 19f, color = ChatraColors.TextTertiary))
                             }
                         }
                     }
                 }
             }
+            if (!container.isDemo) {
+                items(state.results.hits, key = { it.message.ref.toString() }) { hit ->
+                    GlassSurface(GlassStyles.Card, RoundedCornerShape(22.dp), Modifier.fillMaxWidth()) {
+                        Column(Modifier.fillMaxWidth().semantics(mergeDescendants = true) { role = Role.Button }.pressable({ keyboard?.hide(); onResult(hit.message) }).padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                            BasicText(hit.title, style = chatraText(16f, 600))
+                            BasicText(formatRelativeDay(hit.message.timestamp, container.clock), style = chatraText(12f, color = ChatraColors.TextSecondary))
+                            BasicText(buildAnnotatedString { append(hit.message.body); searchTermRanges(hit.message.body, query).forEach { addStyle(SpanStyle(background = ChatraColors.Accent.copy(alpha = .16f), fontWeight = FontWeight.SemiBold), it.first, it.last + 1) } }, style = chatraText(14f, lineHeight = 19f))
+                            if (hit.message.attachments.isNotEmpty()) BasicText(hit.message.attachments.joinToString { it.label }, style = chatraText(12f, color = ChatraColors.TextSecondary))
+                        }
+                    }
+                }
+                if (state.results.next != null) item("more") { TextAction(if (state.loadingMore) "Wczytywanie…" else "Wczytaj kolejne", model::loadMore, enabled = !state.loadingMore) }
+            }
         }
     }
     when (picker) {
         "sender" -> ChoiceDialog("Nadawca", listOf("Wszyscy") + conversations.map { it.title }, { model.sender(if (it == 0) null else conversations[it - 1].id) }, { picker = null })
+        "address" -> {
+            val people = conversations.flatMap { it.participants }.distinctBy { recipientKey(it.address.raw) }
+            ChoiceDialog("Nadawca", listOf("Wszyscy") + people.map { "${it.label} · ${it.address.raw}" }, { model.address(if (it == 0) null else people[it - 1].address.raw) }, { picker = null })
+        }
+        "content" -> ChoiceDialog("Typ treści lub pliku", SearchContent.entries.map(::contentLabel), { model.content(SearchContent.entries[it]) }, { picker = null })
+        "sim" -> ChoiceDialog("Karta SIM", listOf("Wszystkie") + cards.map { it.label }, { model.sim(if (it == 0) null else cards[it - 1].id) }, { picker = null })
+        "from", "until" -> {
+            val ending = picker == "until"
+            ChoiceDialog(if (ending) "Data końcowa (włącznie)" else "Data początkowa", listOf("Wybierz datę", "Usuń ten filtr"), { choice ->
+                if (choice == 1) { if (ending) model.until(null) else model.since(null) }
+                else {
+                    val zone = container.clock.zone()
+                    val today = container.clock.now().atZone(zone).toLocalDate()
+                    android.app.DatePickerDialog(context, { _, year, month, day ->
+                        val date = java.time.LocalDate.of(year, month + 1, day)
+                        model.dateZone(zone)
+                        if (ending) model.until(date.plusDays(1).atStartOfDay(zone).toInstant()) else model.since(date.atStartOfDay(zone).toInstant())
+                    }, today.year, today.monthValue - 1, today.dayOfMonth).show()
+                }
+            }, { picker = null })
+        }
         "date" -> ChoiceDialog("Kiedy", listOf("Zawsze", "Ostatni tydzień"), { model.since(if (it == 0) null else container.clock.now().minusSeconds(7 * 86400)) }, { picker = null })
     }
 }
@@ -136,4 +188,8 @@ private fun FilterChip(label: String, selected: Boolean, dropdown: Boolean = fal
         BasicText(label, style = chatraText(14f, if (selected) 600 else 400, color = color))
         if (dropdown) Icon(ChatraIcons.ChevronDown, 14.dp, color)
     }
+}
+
+private fun contentLabel(type: SearchContent): String = when (type) {
+    SearchContent.Any -> "wszystkie"; SearchContent.Text -> "tekst"; SearchContent.Images -> "zdjęcia"; SearchContent.Videos -> "filmy"; SearchContent.Audio -> "dźwięk"; SearchContent.Documents -> "dokumenty"
 }

@@ -235,15 +235,18 @@ class ConversationViewModel(
         val s = state.value
         val sim = (s.sim as? SimChoice.Ready)?.sim ?: return
         val recipients = s.summary?.participants?.map { it.address } ?: return
-        if (body.isBlank()) return
+        if ((body.isBlank() && selectedAttachments.value.isEmpty()) || busy.value) return
+        busy.value = true
         viewModelScope.launch {
-            val draft = Draft(draftId ?: DraftId.new(), id, recipients, body, mode(s), emptyList(), sim.id, clock.now())
-            schedules.schedule(draft, instant, local, clock.zone(), policy)
-            if (fromComposer) {
-                draftId = null
-                text.value = ""
-            }
-            onDone()
+            try {
+                saveJob?.join()
+                val draft = Draft(draftId ?: DraftId.new(), id, recipients, body, mode(s), selectedAttachments.value, sim.id, clock.now(), mediaVariant = draftBase?.mediaVariant, attachmentBytes = draftBase?.attachmentBytes ?: 0, subscriptionLabel = sim.label, revision = revision)
+                schedules.schedule(draft, instant, local, clock.zone(), policy)
+                if (fromComposer) { draftId = null; draftBase = null; revision = 0; selectedAttachments.value = emptyList(); text.value = "" }
+                onDone()
+            } catch (cancelled: kotlinx.coroutines.CancellationException) { throw cancelled }
+            catch (e: Exception) { error.value = e.message ?: "Nie udało się zaplanować wiadomości. Szkic został zachowany." }
+            finally { busy.value = false }
         }
     }
 

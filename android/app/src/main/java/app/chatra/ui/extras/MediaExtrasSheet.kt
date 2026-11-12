@@ -21,7 +21,7 @@ import app.chatra.ui.settings.DetailPage
 import kotlinx.coroutines.launch
 
 @Composable
-fun MediaExtrasSheet(model: ConversationViewModel, onClose: () -> Unit) {
+fun MediaExtrasSheet(model: ConversationViewModel, onClose: () -> Unit, onSchedule: () -> Unit) {
     val c = LocalContainer.current
     val state by model.state.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
@@ -57,6 +57,7 @@ fun MediaExtrasSheet(model: ConversationViewModel, onClose: () -> Unit) {
     }
     DetailPage("Dodatki", onClose) {
         DetailCard {
+            TextAction("Zaplanuj wiadomość", onSchedule, enabled = !busy && !state.busy)
             TextAction(if (templates) "Zdjęcia i filmy" else "Szablony wiadomości", { templates = !templates })
             if (templates) TemplatePicker { model.insertText(it); onClose() }
             else {

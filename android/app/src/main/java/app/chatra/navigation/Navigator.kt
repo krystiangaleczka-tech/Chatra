@@ -86,7 +86,7 @@ private fun encodeRoute(route: Route): String {
         Route.Help -> listOf("help")
         Route.DesignCatalog -> listOf("catalog")
         is Route.SettingsDetail -> listOf("detail", route.kind.name)
-        is Route.Search -> listOf("search", route.initialQuery, route.initialFilter.orEmpty())
+        is Route.Search -> listOf("search", route.initialQuery, route.initialFilter.orEmpty(), route.conversation?.value.orEmpty())
         is Route.Extras -> listOf("extras", route.id.value)
         is Route.Schedule -> listOf("schedule", route.id.value, route.preset.toString())
         is Route.NewMessage -> listOf("new", route.preset.toString(), route.externalId.orEmpty())
@@ -112,7 +112,7 @@ private fun decodeRoute(value: String): Route {
         "help" -> Route.Help
         "catalog" -> Route.DesignCatalog
         "detail" -> Route.SettingsDetail(Route.SettingsDetail.Kind.valueOf(p[1]))
-        "search" -> Route.Search(p[1], p[2].ifEmpty { null })
+        "search" -> Route.Search(p[1], p[2].ifEmpty { null }, p.getOrNull(3)?.ifEmpty { null }?.let(::ConversationId))
         "extras" -> Route.Extras(ConversationId(p[1]))
         "schedule" -> Route.Schedule(ConversationId(p[1]), p[2].toBoolean())
         "new" -> Route.NewMessage(p[1].toBoolean(), p.getOrNull(2)?.ifEmpty { null })

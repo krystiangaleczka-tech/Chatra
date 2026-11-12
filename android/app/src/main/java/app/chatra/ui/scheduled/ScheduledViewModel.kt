@@ -48,23 +48,34 @@ class ScheduledViewModel(
         ScheduledState(false, o.decisions, o.pending, last, cards, b, n)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ScheduledState())
 
-    fun sendNow(id: ScheduleId, sim: SubscriptionId?) = act(id) {
-        if (!schedules.sendNow(id, sim)) notices.update { it + (id to "Nie udało się rozpocząć wysyłki. Wybierz kartę SIM i spróbuj ponownie.") }
+    fun sendNow(id: ScheduleId, sim: SubscriptionId?, expectedVersion: Int? = null) = act(id) {
+        if (!(if (expectedVersion == null) schedules.sendNow(id, sim) else schedules.sendNow(id, sim, expectedVersion))) notices.update { it + (id to "Nie udało się rozpocząć wysyłki. Wybierz kartę SIM i spróbuj ponownie.") }
     }
 
-    fun reschedule(id: ScheduleId, local: LocalDateTime) = act(id) {
+    fun reschedule(id: ScheduleId, local: LocalDateTime, expectedVersion: Int? = null) = act(id) {
         val zone = clock.zone()
         when (val v = validateSchedule(local, zone, clock.now())) {
             ScheduleValidation.Past -> notices.update { it + (id to "Ten termin już minął. Wybierz późniejszy.") }
             else -> {
                 val instant = v.instant ?: return@act
                 val stored = if (v is ScheduleValidation.Gap) v.suggestedLocal else local
-                schedules.reschedule(id, instant, stored, zone)
+                val accepted = if (expectedVersion == null) schedules.reschedule(id, instant, stored, zone) else schedules.reschedule(id, instant, stored, zone, expectedVersion)
+                if (!accepted) notices.update { it + (id to "Zlecenie zmieniło się lub wysyłanie już się rozpoczęło. Sprawdź aktualną wersję.") }
             }
         }
     }
 
-    fun delete(id: ScheduleId) = act(id) { schedules.delete(id) }
+    fun delete(id: ScheduleId, expectedVersion: Int? = null) = act(id) {
+        val deleted = if (expectedVersion == null) schedules.delete(id) else schedules.delete(id, expectedVersion)
+        if (!deleted) notices.update { it + (id to "Nie można usunąć tej wersji zlecenia. Sprawdź bieżący status.") }
+    }
+    fun edit(item: ScheduledItem, body: String, sim: SubscriptionId, local: LocalDateTime, policy: app.chatra.core.model.LatenessPolicy, onSaved: () -> Unit) = act(item.schedule.id) {
+        val instant = validateSchedule(local, clock.zone(), clock.now()).instant ?: error("Wybierz termin w przyszłości.")
+        val op = item.operation
+        val draft = app.chatra.core.model.Draft(app.chatra.core.model.DraftId("edit:${item.schedule.id.value}"), op.conversationId, op.recipients, body, op.recipientMode, op.attachmentIds, sim, clock.now(), mediaVariant = if (op.attachmentIds.isNotEmpty()) app.chatra.core.model.MediaVariant.Mms else null)
+        if (schedules.edit(item.schedule.id, item.schedule.version, draft, instant, local, clock.zone(), policy)) onSaved()
+        else notices.update { it + (item.schedule.id to "Zlecenie zmieniło się albo wysyłanie już się rozpoczęło. Wczytaj aktualną wersję.") }
+    }
 
     private fun act(id: ScheduleId, block: suspend () -> Unit) {
         if (id in busy.value) return
@@ -73,7 +84,9 @@ class ScheduledViewModel(
         viewModelScope.launch {
             try {
                 block()
-            } finally {
+            } catch (cancelled: kotlinx.coroutines.CancellationException) { throw cancelled }
+            catch (e: Exception) { notices.update { it + (id to (e.message ?: "Nie udało się zapisać zmiany. Zlecenie zachowuje poprzednią wersję.")) } }
+            finally {
                 busy.update { it - id }
             }
         }

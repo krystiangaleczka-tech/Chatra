@@ -17,7 +17,7 @@ class SearchAndComposeTest {
         assertEquals(0, repo.search(query.copy(filter = SearchFilter.Attachments)).first().hits.size)
         assertEquals(1, repo.search(query.copy(sender = Fixture.Ids.Ola)).first().hits.size)
         assertEquals(2, repo.search(query.copy(since = FixedClock().now().minusSeconds(86400))).first().hits.size)
-        assertTrue(repo.search(query.copy(text = "")).first().hits.isEmpty())
+        assertEquals(5, repo.search(query.copy(text = "")).first().hits.size) // Filters also work without a text term (CH039).
         repo.moveToTrash(Fixture.Ids.Paczka24)
         val after = repo.search(query).first()
         assertEquals(2, after.hits.size)

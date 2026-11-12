@@ -422,6 +422,8 @@ Wykonanie: rekord instant/localDateTime/zone/polityka/SIM/version, scheduler i u
 
 Odbiór: po zapisaniu i restarcie procesu termin pozostaje, alarm wywołuje najwyżej jednego wykonawcę. Weryfikacja: brak dostępu, dwie pozycje o tej samej godzinie, zmiana terminu i nieistniejąca godzina podczas zmiany czasu DST.
 
+**Implementacja 12.11.2026:** [zakres, weryfikacja i granice odbioru](CH035_CH039_Wdrozenie_i_weryfikacja.md). Kod wdrożony; odbiór urządzeń opisano w raporcie.
+
 ### CH036 Obsłużyć zaległości restart i zmianę warunków
 
 **P0 · Android platforma · 3–4 osobodni · zależności CH035 CH030**
@@ -430,6 +432,8 @@ Wykonanie: rekoncyliacja po boot/aktualizacji/czasie/SIM/roli/uprawnieniach. Pol
 
 Odbiór: wyłączony telefon nie jest opisywany jako źródło wysłanego SMS; po upływie okna wiadomość czeka na decyzję. Weryfikacja: spóźnienie 59, 60 i 61 min, Doze, utrata SIM, cofnięcie exact alarm i odzyskanie roli.
 
+**Implementacja 12.11.2026:** [zakres, weryfikacja i granice odbioru](CH035_CH039_Wdrozenie_i_weryfikacja.md). Kod wdrożony; odbiór urządzeń opisano w raporcie.
+
 ### CH037 Podłączyć edycję i decyzje harmonogramu
 
 **P1 · Android · 2–3 osobodni · zależności CH015 CH035 CH036 CH027**
@@ -437,6 +441,8 @@ Odbiór: wyłączony telefon nie jest opisywany jako źródło wysłanego SMS; p
 Wykonanie: listy live, edit, cancel, delete, Wyślij teraz i Zmień termin. Wersjonować rekord; stary alarm i spóźniony callback nie zmieniają nowej wersji. Edycja nie narusza wysłanego snapshotu. Potwierdzić usunięcie zlecenia niezależne od rozmowy.
 
 Odbiór: licznik „Czeka” jest poprawny, akcje nie powodują dwóch wysyłek. Weryfikacja: edycja tuż przy terminie, kilka otwartych widoków tego samego zadania i restart między zapisem a anulowaniem alarmu.
+
+**Implementacja 12.11.2026:** [zakres, weryfikacja i granice odbioru](CH035_CH039_Wdrozenie_i_weryfikacja.md). Kod wdrożony; odbiór urządzeń opisano w raporcie.
 
 ### CH038 Wdrożyć lokalny indeks i wyszukiwanie
 
@@ -451,6 +457,8 @@ Odbiór: paczk znajduje paczkę/PACZKA, łódź znajduje lodz po normalizacji; h
 **Odbiór rozszerzony:** Wynik z ekranu kontaktu otwiera właściwą wiadomość, także ze starszej strony historii; brak Internetu nie blokuje wyszukiwania lokalnego.
 
 
+**Implementacja 12.11.2026:** [zakres, weryfikacja i granice odbioru](CH035_CH039_Wdrozenie_i_weryfikacja.md). Kod wdrożony; odbiór urządzeń opisano w raporcie.
+
 ### CH039 Dodać filtry i szybkie trafienia
 
 **P1 · Android domena · 2–3 osobodni · zależności CH020 CH038**
@@ -463,6 +471,8 @@ Odbiór: cztery wyniki fixture i poprawne wyróżnienia, filtry rzeczywiście za
 
 **Odbiór rozszerzony:** Filtr rozmowy nie pokazuje wyników z innych wątków; usunięcie filtra i Back przywracają stan bez fałszywych trafień.
 
+
+**Implementacja 12.11.2026:** [zakres, weryfikacja i granice odbioru](CH035_CH039_Wdrozenie_i_weryfikacja.md). Kod wdrożony; odbiór urządzeń opisano w raporcie.
 
 ### CH040 Utrwalić wygląd i dostępne warianty
 

@@ -3,6 +3,8 @@ package app.chatra.di
 import android.Manifest
 import app.chatra.local.*
 import app.chatra.mms.MmsEngine
+import app.chatra.scheduling.*
+import app.chatra.search.*
 import android.app.Application
 import android.app.AlarmManager
 import android.content.Intent
@@ -24,6 +26,7 @@ import java.time.Instant
 import java.time.ZoneId
 
 interface FullTelephonyContainer : AppContainer {
+    val persistentSchedules: PersistentSchedules
     val incomingSms: IncomingSms
     val mms: MmsEngine
     val smsQueue: PersistentSmsQueue
@@ -41,14 +44,6 @@ fun createContainer(app: Application, referenceFrame: Boolean, roleScenario: Str
         override fun zone(): ZoneId = ZoneId.systemDefault()
         override fun elapsedRealtimeMillis(): Long = SystemClock.elapsedRealtime()
     }
-    val schedules = object : ScheduleRepository {
-        override fun scheduled() = flowOf(emptyList<ScheduledItem>())
-        override fun lastSent() = flowOf<LastScheduledSent?>(null)
-        override suspend fun schedule(draft: Draft, instant: Instant, local: java.time.LocalDateTime, zone: ZoneId, policy: LatenessPolicy): ScheduleId = error("Harmonogram nie jest jeszcze dostępny.")
-        override suspend fun sendNow(id: ScheduleId, sim: SubscriptionId?) = false
-        override suspend fun reschedule(id: ScheduleId, instant: Instant, local: java.time.LocalDateTime, zone: ZoneId) = false
-        override suspend fun delete(id: ScheduleId) = false
-    }
     val contacts = SystemContacts(app, platform, scope)
     val db = ChatraDatabase.open(app)
     val sims = SystemSim(app, platform, scope)
@@ -59,16 +54,22 @@ fun createContainer(app: Application, referenceFrame: Boolean, roleScenario: Str
     val queue = PersistentSmsQueue(app, db, platform, conversations, sims, smsText, drafts)
     val mmsEngine = MmsEngine(app, db, mediaStore, conversations, platform)
     queue.mms = mmsEngine
+    val schedules = PersistentSchedules(db, queue, drafts, clock, PlatformScheduleAlarms(app), PlatformScheduleConditions(app, platform), PlatformScheduleNotice(app))
+    queue.dispatchAllowed = schedules::permit
+    val search = SystemSearch(db, ProviderSearchSource(app, db, conversations, contacts, platform), scope)
     val incoming = IncomingSms(app, db, platform, conversations)
     MessageNotifications(app, db, platform, scope, notificationPrefs, sims)
     scope.launch(Dispatchers.IO) {
+        ScheduleRecoveryWorker.periodic(app)
+        schedules.reconcile("startup")
         mmsEngine.recoverDownloads()
         queue.awaitReady()
         val protected = db.dao().drafts().first().flatMap { DraftCodec.decode(it).attachmentIds } + db.dao().operations().first().flatMap { row -> row.snapshot?.let { DraftCodec.decode(it).attachmentIds }.orEmpty() }
         mediaStore.collectUnused(protected.toSet(), System.currentTimeMillis() - 86_400_000)
-        platform.changes.collect { incoming.recover(); queue.recover(false) }
+        combine(platform.changes, sims.cards()) { _, _ -> Unit }.collect { incoming.recover(); queue.recover(false); schedules.reconcile() }
     }
     return object : FullTelephonyContainer {
+        override val persistentSchedules = schedules
         override val gallery = ProviderMediaGallery(app, db, platform)
         override val mmsDownloads = mmsEngine
         override val mms = mmsEngine
@@ -86,7 +87,7 @@ fun createContainer(app: Application, referenceFrame: Boolean, roleScenario: Str
         override val contacts = contacts
         override val sendQueue = queue
         override val schedules = schedules
-        override val search = object : SearchRepository { override fun search(query: SearchQuery) = flowOf(SearchResults()) }
+        override val search = search
         override val clock = clock
         override val smsRole = platform
         override val platform = platform

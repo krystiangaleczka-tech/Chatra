@@ -1,0 +1,25 @@
+{
+  "date": "2026-11-12",
+  "branch": "android/ch035-ch039",
+  "status": "final_verification_in_progress",
+  "jvm": {
+    "tests": 87,
+    "failures": 0,
+    "skipped": 0
+  },
+  "earlier_complete_android_suite": {
+    "tests": 58,
+    "failures": 0,
+    "note": "Before final stale-worker/boot guards and FTS rebuild optimization; changed modules are being rerun."
+  },
+  "database_tests": {
+    "tests": 3,
+    "failures": 0
+  },
+  "native_alarm_verified": false,
+  "open_acceptance": [
+    "Physical SIM/eSIM, OEM, API 31 and secured locked boot",
+    "TalkBack and G03/G09",
+    "Carrier MMS from CH030–CH034"
+  ]
+}

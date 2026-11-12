@@ -131,6 +131,7 @@ fun ConversationScreen(
             if (target != null && !anchored) {
                 val index = rows.asReversed().indexOfFirst { it is Row.Bubble && it.message.ref == target }
                 if (index >= 0) { list.scrollToItem(index); anchored = true }
+                else if (state.hasOlder) model.loadOlder()
             }
         }
         // Wzorzec przycina historię do obszaru 108…(844−150); nagłówek nie leży nad wiadomościami.
