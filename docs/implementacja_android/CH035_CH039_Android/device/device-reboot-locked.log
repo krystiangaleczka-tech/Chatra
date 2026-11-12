@@ -1,0 +1,24 @@
+--- locked state 18:26:48
+    State: RUNNING_UNLOCKED
+app.chatra process: none
+11-12 18:26:39.332  2888  4405 I Pageboost: pkg info : app.chatra.demo
+11-12 18:26:39.332  2888  4405 I Pageboost: Reuse the dbinfo for this app info : app.chatra.demo /data/app/~~3UhN9juJ3Rl4eAp30_vJEQ==/app.chatra.demo-o7y3GKaaiu0oar_WEAIuMg==/base.apk
+11-12 18:26:39.374  2888  4405 I Pageboost: pkg info : app.chatra
+11-12 18:26:39.374  2888  4405 I Pageboost: Reuse the dbinfo for this app info : app.chatra /data/app/~~Prbt5A1z9qkYaK8vudloMA==/app.chatra-FaO_qpxsU33AIJhLbkeCfQ==/base.apk
+11-12 18:26:39.419  2888  3453 I AppsFilter: interaction: PackageSetting{b7d7c70 app.chatra.core.database.test/10117} -> PackageSetting{9e12ced com.microsoft.appmanager/10163} BLOCKED
+11-12 18:26:39.419  2888  3453 I AppsFilter: interaction: PackageSetting{cf630f app.chatra/10036} -> PackageSetting{9e12ced com.microsoft.appmanager/10163} BLOCKED
+11-12 18:26:39.419  2888  3453 I AppsFilter: interaction: PackageSetting{515ef9c app.chatra.test/10058} -> PackageSetting{9e12ced com.microsoft.appmanager/10163} BLOCKED
+11-12 18:26:39.419  2888  3453 I AppsFilter: interaction: PackageSetting{800bda5 app.chatra.demo/10034} -> PackageSetting{9e12ced com.microsoft.appmanager/10163} BLOCKED
+11-12 18:26:39.431  7297  7384 I FASModelGlobal: verify : ignore app.chatra
+11-12 18:26:39.438  4404  4404 D SatelliteController: packageStateChanged: package:com.microsoft.appmanager defaultSmsPackageName: app.chatra satelliteGatewayServicePackageName: 
+11-12 18:26:39.441  4404  4534 E SmsApplication: app.chatra lost android:read_cell_broadcasts:  (fixing)
+11-12 18:26:39.442  4404  9409 E SmsApplication: app.chatra lost android:read_cell_broadcasts:  (fixing)
+11-12 18:26:39.445  4404  4534 D SatelliteAccessController: Current default SMS app:ComponentInfo{app.chatra/app.chatra.platform.DeliverReceiver}
+11-12 18:26:39.452  4404  9409 E SmsApplication: app.chatra lost android:read_cell_broadcasts:  (fixing)
+11-12 18:26:39.459  4404  4404 D SatelliteController: packageStateChanged: package:com.google.android.gms defaultSmsPackageName: app.chatra satelliteGatewayServicePackageName: 
+11-12 18:26:39.470  4404  4534 E SmsApplication: app.chatra lost android:read_cell_broadcasts:  (fixing)
+11-12 18:26:39.472  4404  4534 D SatelliteAccessController: Current default SMS app:ComponentInfo{app.chatra/app.chatra.platform.DeliverReceiver}
+11-12 18:26:40.006  5595  7606 I HoneySpace.SuggestAppDecor: getInstaller: app.chatra [null]
+11-12 18:26:42.525  7297  7384 E SmsApplication: app.chatra lost android:read_cell_broadcasts:  (fixing)
+11-12 18:26:42.725  7297  7384 I FASModelGlobal: verify : ignore app.chatra
+unlocked 18:26:51

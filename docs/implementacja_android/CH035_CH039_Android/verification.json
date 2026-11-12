@@ -1,6 +1,6 @@
 {
   "date": "2026-11-12",
-  "status": "implemented_emulator_verified_device_acceptance_pending",
+  "status": "implemented_emulator_verified_partial_device_acceptance",
   "branch": "android/ch035-ch039",
   "base": "0a1b51907cb97802944b0d8e2772f467962cf0d3",
   "production_code_commit": "3fd0500321b5741385147a5a6f8f56f07576ad03",
@@ -349,5 +349,111 @@
     "TalkBack and G03/G09 visual acceptance",
     "Carrier MMS remains open from CH030–CH034"
   ],
-  "formatting_note": "Code and Markdown pass whitespace checks; raw Gradle logs preserve original whitespace."
+  "formatting_note": "Code and Markdown pass whitespace checks; raw Gradle logs preserve original whitespace.",
+  "device_acceptance": {
+    "date": "2026-11-12",
+    "device": {
+      "model": "SM-S948B",
+      "fingerprint": "samsung/m3qxeea/m3q:17/CP2A.260605.016/S948BXXU5BZJA_OXM5BZJA:user/release-keys",
+      "api": 37,
+      "active_sims": 1,
+      "sim": "eSIM slot 1 (sub 1)",
+      "sms_role": "app.chatra"
+    },
+    "app_apk_sha256": "c124e1f53ed9de31cc714a29d20b8a7999496931953440057576523b8713eb6b",
+    "test_apk_sha256": "d0e1343a6a3d0f6af4b4d2e6bedec0ea2911aa0e309f491a96b565ee2878ac3f",
+    "recipient": "operator-supplied test number, not recorded",
+    "cases": {
+      "real_provider_search": {
+        "result": "pass",
+        "documents": 6159,
+        "history_ready_ms": 6518,
+        "index_ms": 6042,
+        "reindex_unchanged_ms": 5356,
+        "first_page_ms": [
+          82,
+          159
+        ],
+        "next_page_ms": [
+          76,
+          150
+        ],
+        "filter_ms": [
+          82,
+          307
+        ],
+        "log": "device/device-search-metrics.log"
+      },
+      "synthetic_50k_on_device": {
+        "result": "pass",
+        "index_ms": 29933,
+        "total_s": 59.088,
+        "log": "device/device-benchmark-50k.log"
+      },
+      "real_scheduled_sms": {
+        "result": "pass",
+        "state": "SENT",
+        "attempts": 1,
+        "late_ms": 37,
+        "note": "required SCHEDULE_EXACT_ALARM grant (default denied on Android 14+)",
+        "log": "device/device-schedule-events.log"
+      },
+      "force_stop": {
+        "result": "pass",
+        "before_recovery": "SCHEDULED, 0 attempts, stopped=true after deadline",
+        "after_recovery": "MISSED_NEEDS_DECISION, 0 attempts",
+        "log": "device/device-forcestop-events.log"
+      },
+      "secured_reboot_pin": {
+        "result": "pass",
+        "case": "deadline after unlock: re-registered for boot 21, sent once",
+        "late_ms": 498,
+        "state": "DELIVERED",
+        "instant_unchanged": true,
+        "notes": [
+          "first attempt +60s rejected by validation; script rebooted anyway (fixed)",
+          "first inspection misclassified missed deadline (test fixed, rerun on same data)"
+        ],
+        "log": "device/device-reboot-events.log"
+      }
+    },
+    "still_open": [
+      "physical dual SIM",
+      "pre-unlock LOCKED_BOOT window not captured",
+      "deadline during power-off on hardware",
+      "SMS role recovery",
+      "other OEMs",
+      "TalkBack and G03/G09 visual acceptance",
+      "operator MMS (CH030-CH034)"
+    ]
+  },
+  "api31": {
+    "avd": "google_apis_playstore arm64-v8a",
+    "fingerprint": "google/sdk_gphone64_arm64/emulator64_arm64:12/SE1A.220203.002.A1/8151367:user/release-keys",
+    "app_regressions_2gb": {
+      "passed": 13,
+      "failures": 1,
+      "failed": "fiftyThousandDocumentsPrefixPaginationAndRebuildStayLocal (300 s timeout)",
+      "log": "api31/api31-app-regressions.log"
+    },
+    "database": {
+      "passed": 3,
+      "failures": 0,
+      "log": "api31/api31-database.log"
+    },
+    "system_server_watchdog_2gb": "StorageManagerService blocked during Doze attempt; emulator I/O starvation, AVD restarted with 4 GB/4 cores",
+    "benchmark_isolated_4gb": {
+      "result": "pass",
+      "index_ms": 184334,
+      "total_s": 333.574,
+      "log": "api31/api31-benchmark-isolated.log"
+    },
+    "native_doze_4gb": {
+      "result": "pass",
+      "state": "SENT",
+      "attempts": 1,
+      "log": "api31/api31-native-events.log"
+    },
+    "reboot": "not repeated on API 31"
+  }
 }

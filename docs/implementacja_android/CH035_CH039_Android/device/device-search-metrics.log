@@ -1,0 +1,14 @@
+--------- beginning of main
+11-12 18:13:51.947 28983 28999 I ChatraDeviceQA: HISTORY_READY_MS=6518
+11-12 18:13:57.989 28983 28999 I ChatraDeviceQA: INDEX_REAL_MS=6042:DOCS=6159:ERROR=false
+11-12 18:14:03.345 28983 28999 I ChatraDeviceQA: REINDEX_UNCHANGED_MS=5356
+11-12 18:14:03.613 28983 28999 I ChatraDeviceQA: QUERY:len=1:hits=40:quick=0:firstMs=118:nextMs=150
+11-12 18:14:03.803 28983 28999 I ChatraDeviceQA: QUERY:len=3:hits=40:quick=4:firstMs=114:nextMs=76
+11-12 18:14:04.040 28983 28999 I ChatraDeviceQA: QUERY:len=4:hits=40:quick=0:firstMs=123:nextMs=114
+11-12 18:14:04.309 28983 28999 I ChatraDeviceQA: QUERY:len=4:hits=40:quick=0:firstMs=134:nextMs=135
+11-12 18:14:04.391 28983 28999 I ChatraDeviceQA: QUERY:len=5:hits=12:quick=0:firstMs=82:nextMs=-1
+11-12 18:14:04.674 28983 28999 I ChatraDeviceQA: QUERY:len=1:hits=40:quick=0:firstMs=159:nextMs=124
+11-12 18:14:04.756 28983 28999 I ChatraDeviceQA: FILTER:All:hits=0:quick=4:ms=82
+11-12 18:14:04.869 28983 28999 I ChatraDeviceQA: FILTER:Codes:hits=26:quick=4:ms=113
+11-12 18:14:04.977 28983 28999 I ChatraDeviceQA: FILTER:Parcels:hits=40:quick=0:ms=108
+11-12 18:14:05.283 28983 28999 I ChatraDeviceQA: FILTER:Attachments:hits=40:quick=0:ms=307

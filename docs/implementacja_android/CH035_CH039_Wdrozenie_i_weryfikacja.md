@@ -34,6 +34,33 @@ Kody wymagają kontekstu kod/PIN/OTP, przesyłki odpowiedniego opisu. Dowolna li
 
 Zrzuty [Zaplanowane](CH035_CH039_Android/scheduled.png) i [wyszukiwarki](CH035_CH039_Android/search.png) pochodzą z produkcyjnego wariantu full. Ręcznie sprawdzono też otwarcie źródła wyniku i zachowanie zapytania po Back. Po tych próbach zmieniono wyłącznie limit testu indeksu z 120 s na 300 s; produkcyjny APK pozostał ten sam.
 
-Odbiór urządzeń pozostaje otwarty: wydajność 50 tys. rzeczywistych wiadomości providera na docelowym sprzęcie, fizyczne dual SIM/eSIM, OEM, API 31, zabezpieczony locked boot, rzeczywisty force stop i odzyskanie roli oraz pełny TalkBack i wizualny odbiór G03/G09. Wspólny transport MMS nadal wymaga operatorów zgodnie z raportem CH030–CH034. Wyniki AVD nie stanowią potwierdzenia tych przypadków.
+## Odbiór na urządzeniu fizycznym i API 31 (12.11.2026)
+
+Uruchomiono ten sam produkcyjny APK full (`c124e1f5…eb6b`, identyczny z zainstalowanym) na Samsungu SM-S948B z Androidem 17 (API 37, `S948BXXU5BZJA`). Chatra była domyślną aplikacją SMS z prawdziwą historią. Aktywna była jedna karta: eSIM w slocie 1 (sub 1), slot fizyczny pusty. Nowa klasa `DeviceAcceptanceTest` uruchamia każdy przypadek wyłącznie na jawne polecenie i nigdy na AVD. Odbiorcę podaje operator argumentem `recipient`, więc numer nie trafia do kodu ani do logów. Wyszukiwanie używa indeksu w pamięci i czyta provider tylko do odczytu. Logi: [device/](CH035_CH039_Android/device/).
+
+- **Prawdziwa historia providera:** historia gotowa po 6,5 s. Pierwsze indeksowanie 6 159 dokumentów zajęło 6,0 s, ponowne bez zmian 5,4 s. Pierwsza strona 40 wyników przychodziła w 82–159 ms, następna w 76–150 ms, bez powtórzeń między stronami. Filtry Kody, Przesyłki i Załączniki odpowiadały w 108–307 ms. Logowane są wyłącznie liczby, bez treści.
+- **50 tys. dokumentów na sprzęcie:** syntetyczny test Room/FTS: pierwsze indeksowanie 29,9 s, cały test z paginacją i odbudową FTS 59,1 s.
+- **Prawdziwy zaplanowany SMS (CH035):** termin +70 s, polityka Zapytaj, eSIM. Wynik: dokładnie 1 próba, SENT 37 ms po terminie. Test wymagał przyznania Chatrze specjalnego dostępu „Alarmy i przypomnienia” (`SCHEDULE_EXACT_ALARM`), który na Androidzie 14+ jest domyślnie wyłączony. Bez niego przypadek był pomijany, a nie oblewany; teraz brak dostępu lub roli kończy test błędem.
+- **Rzeczywisty force stop (CH036):** termin +90 s, `am force-stop` przed terminem. Po 2 min od terminu pakiet nadal był w stanie `stopped=true`, zlecenie w stanie SCHEDULED i bez prób. Po ponownym uruchomieniu odzyskanie przestawiło zlecenie na MISSED_NEEDS_DECISION. Przez kolejne 5 s nie było żadnej próby, po czym zlecenie usunięto.
+- **Restart z PIN-em (CH036):** termin +75 s, restart przez adb, odblokowanie PIN-em przez użytkownika o 18:26:51, termin 18:27:03. Telefon wstał przed terminem, więc alarm odtworzony dla nowego numeru boot (21) wysłał wiadomość raz, 498 ms po terminie (DELIVERED). Instant pozostał bez zmian.
+- **Przebieg w trakcie:** pierwsza próba z terminem dokładnie +60 s została poprawnie odrzucona przez walidację („co najmniej minutę w przyszłości”). Skrypt mimo to zrestartował telefon; od tej pory restart następuje tylko po zapisanym zleceniu. Pierwsza inspekcja zakwalifikowała termin jako „przegapiony”, bo porównywała go z chwilą inspekcji zamiast ze startem bootu. Poprawiono klasyfikację testu i powtórzono inspekcję na tych samych danych; aplikacji nie zmieniano.
+
+**API 31** (AVD `google_apis_playstore` arm64, Android 12 `SE1A.220203.002.A1`), logi w [api31/](CH035_CH039_Android/api31/):
+
+- Regresje harmonogramu i wyszukiwania: 13/14 przy 2 GB RAM. Ten sam pomiar 50 tys. przekroczył limit 300 s, tak jak na wcześniejszym AVD.
+- Baza: 3/3.
+- Przy 2 GB watchdog zabił system_server (zablokowany StorageManagerService, zagłodzenie I/O hosta) w trakcie próby Doze. To zdarzenie emulatora, nie aplikacji.
+- Po restarcie AVD z 4 GB RAM i 4 rdzeniami: izolowany pomiar 50 tys. przeszedł (pierwsze indeksowanie 184,3 s, cały test 333,6 s, po prekompilacji `speed`), a dokładny alarm w wymuszonym deep IDLE dał jedną próbę i SENT na wirtualny port 5558.
+- Restart z odzyskaniem na API 31 nie był powtarzany.
+
+**Nadal otwarte:**
+
+- fizyczne dual SIM (druga aktywna karta i wybór/utrata SIM);
+- stan przed pierwszym odblokowaniem po restarcie: Samsung zgłosił zakończenie bootu dopiero przy odblokowaniu, więc okno LOCKED_BOOT nie zostało zarejestrowane;
+- termin przypadający na czas wyłączenia telefonu na sprzęcie (pokryty testem AVD i JVM);
+- odzyskanie roli SMS;
+- inne OEM;
+- TalkBack oraz wizualny odbiór G03/G09;
+- transport MMS u operatorów zgodnie z raportem CH030–CH034.
 
 Kontrakty platformy: [dokładne alarmy](https://developer.android.com/develop/background-work/services/alarms), [specjalny dostęp w Androidzie 14](https://developer.android.com/about/versions/14/changes/schedule-exact-alarms), [Room FTS4](https://developer.android.com/reference/androidx/room/Fts4), [składnia SQLite FTS3/4](https://www.sqlite.org/fts3.html).

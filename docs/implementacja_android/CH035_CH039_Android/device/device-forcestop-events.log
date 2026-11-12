@@ -1,0 +1,8 @@
+18:18:45
+stopped=true
+OK (1 test)
+--------- beginning of main
+11-12 18:18:49.154 30573 30596 I ChatraDeviceQA: FORCE_STOP_BEFORE_RECOVERY:state=SCHEDULED:attempts=0
+11-12 18:18:54.392 30573 30596 I ChatraDeviceQA: FORCE_STOP_AFTER_RECOVERY:state=MISSED_NEEDS_DECISION:attempts=0
+
+[exited with code 0]
