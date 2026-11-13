@@ -1,0 +1,42 @@
+name: Android build and domain contracts
+on:
+  push:
+    paths: ["app/**", "core/model/**", "gradle/**", "*.gradle.kts", "gradle.properties", "gradlew*", "scripts/ch004_*", ".github/workflows/android.yml"]
+  pull_request:
+    paths: ["app/**", "core/model/**", "gradle/**", "*.gradle.kts", "gradle.properties", "gradlew*", "scripts/ch004_*", ".github/workflows/android.yml"]
+concurrency:
+  group: android-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: android-actions/setup-android@v3
+        with:
+          cmdline-tools-version: "13114758"
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - run: sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
+      - uses: gradle/actions/setup-gradle@v4
+      - run: ./gradlew :core:model:test :app:assembleDemoDebug :app:assembleDemoRelease :app:assembleProductionRelease :app:lint
+      - run: python3 scripts/ch004_verify_apks.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: chatra-demo-debug
+          path: app/build/outputs/apk/demo/debug/app-demo-debug.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-reports
+          path: |
+            app/build/reports/
+            core/model/build/reports/
