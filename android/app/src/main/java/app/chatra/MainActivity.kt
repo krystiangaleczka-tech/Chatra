@@ -17,6 +17,11 @@ import app.chatra.navigation.ReferenceScreens
 import app.chatra.ui.ChatraApp
 import app.chatra.ui.ProvideChrome
 import app.chatra.platform.ActivityPlatform
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,6 +30,16 @@ class MainActivity : ComponentActivity() {
         val reference = BuildConfig.DEMO && intent.getBooleanExtra(EXTRA_FRAME, false)
         val roleScenario = if (BuildConfig.DEMO) intent.getStringExtra(EXTRA_ROLE) else null
         val container = (application as ChatraApplication).container(reference, roleScenario, !BuildConfig.DEMO || intent.getBooleanExtra(EXTRA_EXACT_ALARMS, true))
+        container.billing?.let { billing ->
+            lifecycleScope.launch {
+                repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                    while (true) {
+                        billing.refresh()
+                        delay(15 * 60_000L)
+                    }
+                }
+            }
+        }
         (container.platform as? ActivityPlatform)?.apply { bindActivity(this@MainActivity); acceptIntent(intent) }
         val matte = BuildConfig.DEMO && intent.getBooleanExtra(EXTRA_MATTE, false)
         val initial = if (BuildConfig.DEMO) intent.getStringExtra(EXTRA_SCREEN)?.let(ReferenceScreens::navigatorFor) else null

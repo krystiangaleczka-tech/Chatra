@@ -802,7 +802,10 @@
         "CH040",
         "CH046"
       ],
-      "description": "Wykonanie: zatwierdzić katalog Pro i productId, pobierać lokalną cenę sklepu, paywall, purchase flow, acknowledgement/weryfikacja oraz restore. Obsłużyć oczekującą płatność, anulowanie, zwrot i brak sklepu. Uprawnienie do podstaw nie zależy od Pro; darmowe ustawienia dostępności pozostają dostępne.\n\nOdbiór: w produkcyjnym UI nie ma placeholdera [CENA], zakup jednorazowy odtwarzany zgodnie z zatwierdzonym modelem. Weryfikacja: środowisko testowe sklepu, ponowna instalacja, błędny token, oczekiwanie i cofnięta transakcja."
+      "description": "Wykonanie: zatwierdzić katalog Pro i productId, pobierać lokalną cenę sklepu, paywall, purchase flow, acknowledgement/weryfikacja oraz restore. Obsłużyć oczekującą płatność, anulowanie, zwrot i brak sklepu. Uprawnienie do podstaw nie zależy od Pro; darmowe ustawienia dostępności pozostają dostępne.\n\nOdbiór: w produkcyjnym UI nie ma placeholdera [CENA], zakup jednorazowy odtwarzany zgodnie z zatwierdzonym modelem. Weryfikacja: środowisko testowe sklepu, ponowna instalacja, błędny token, oczekiwanie i cofnięta transakcja.",
+      "status": "implemented_pending_play_sandbox_and_g08",
+      "evidence": "CH045_CH049_Wdrozenie_i_weryfikacja.md",
+      "review_note": "Jednorazowy zakup, weryfikacja i potwierdzenie Play, przywracanie oraz roboczy katalog Bursztyn i Las. Wymagane Play Console, licencjonowane próby i akceptacja G08."
     },
     {
       "id": "CH046",
@@ -816,7 +819,10 @@
         "CH005",
         "CH020"
       ],
-      "description": "Wykonanie: wybrać stos/backend, region, storage, bazę, push, hosting linku i koszty. Zamknąć G06/G07: model tożsamości, discovery, limity, retencję, usuwanie i szyfrowanie. Model zagrożeń: enumeracja numerów, przejęty link, cudzy plik, podszycie się i nadużycia. Zapisać ADR i granice obietnic prywatności.\n\nOdbiór: decyzje przed kodem, architektura obejmuje obsługę awarii i odzyskanie numeru. Weryfikacja: przegląd bezpieczeństwa i przepływu danych; brak założenia, że odczyt danych z SIM potwierdza numer."
+      "description": "Wykonanie: wybrać stos/backend, region, storage, bazę, push, hosting linku i koszty. Zamknąć G06/G07: model tożsamości, discovery, limity, retencję, usuwanie i szyfrowanie. Model zagrożeń: enumeracja numerów, przejęty link, cudzy plik, podszycie się i nadużycia. Zapisać ADR i granice obietnic prywatności.\n\nOdbiór: decyzje przed kodem, architektura obejmuje obsługę awarii i odzyskanie numeru. Weryfikacja: przegląd bezpieczeństwa i przepływu danych; brak założenia, że odczyt danych z SIM potwierdza numer.",
+      "status": "pilot_adr_written_pending_g06_g07_review",
+      "evidence": "CH045_CH049_Wdrozenie_i_weryfikacja.md",
+      "review_note": "ADR pilota określa stos, region, dane, odzyskanie numeru, limity, retencję, zagrożenia i koszt. Odbiór G06/G07 pozostaje otwarty."
     },
     {
       "id": "CH047",
@@ -828,7 +834,10 @@
       "dependencies": [
         "CH046"
       ],
-      "description": "Wykonanie: OpenAPI, modele i kody błędów, podpis/klucz instalacji, sesje i rotacja. Weryfikacja posiadania numeru z limitami prób, opt in odkrywalności i lookup tylko wybranego odbiorcy. Klient Keystore, wylogowanie/odpięcie i zmiana urządzenia. Do kontraktu dodać idempotency i paginację.\n\nOdbiór: dwa urządzenia uzyskują zweryfikowane powiązania i odbiorca nie jest publicznie enumerowalny. Weryfikacja: niewłaściwy lub zużyty kod, replay, skradziona sesja, rotacja i odmowa HD bez utraty SMS."
+      "description": "Wykonanie: OpenAPI, modele i kody błędów, podpis/klucz instalacji, sesje i rotacja. Weryfikacja posiadania numeru z limitami prób, opt in odkrywalności i lookup tylko wybranego odbiorcy. Klient Keystore, wylogowanie/odpięcie i zmiana urządzenia. Do kontraktu dodać idempotency i paginację.\n\nOdbiór: dwa urządzenia uzyskują zweryfikowane powiązania i odbiorca nie jest publicznie enumerowalny. Weryfikacja: niewłaściwy lub zużyty kod, replay, skradziona sesja, rotacja i odmowa HD bez utraty SMS.",
+      "status": "implemented_locally_verified_pending_real_sms_and_device_pair",
+      "evidence": "CH045_CH049_Wdrozenie_i_weryfikacja.md",
+      "review_note": "OpenAPI, weryfikacja numeru, podpis Android Keystore, sesje, odpięcie i ograniczone wzajemne discovery. Testy dwóch kluczy na danych syntetycznych."
     },
     {
       "id": "CH048",
@@ -841,7 +850,10 @@
         "CH046",
         "CH047"
       ],
-      "description": "Wykonanie: manifest transferu, plik/chunki, offset, checksum, finalize i stany. Limit rozmiaru/ilości/quota przed uploadem, adresy URL o krótkim okresie ważności i autoryzacja właściciela. Przerwane sesje sprzątać po upływie TTL, obiekty gotowe tylko po weryfikacji. Atomowe powiązanie finalized z kopertą.\n\nOdbiór: wznowienie nie powiela bajtów, błędny hash nie zostaje opublikowany. Weryfikacja: przerwanie w połowie, brak miejsca/quota, równoległe finalize, próba dostępu do innego transferu i opuszczony upload."
+      "description": "Wykonanie: manifest transferu, plik/chunki, offset, checksum, finalize i stany. Limit rozmiaru/ilości/quota przed uploadem, adresy URL o krótkim okresie ważności i autoryzacja właściciela. Przerwane sesje sprzątać po upływie TTL, obiekty gotowe tylko po weryfikacji. Atomowe powiązanie finalized z kopertą.\n\nOdbiór: wznowienie nie powiela bajtów, błędny hash nie zostaje opublikowany. Weryfikacja: przerwanie w połowie, brak miejsca/quota, równoległe finalize, próba dostępu do innego transferu i opuszczony upload.",
+      "status": "implemented_locally_verified_pending_hosted_pilot",
+      "evidence": "CH045_CH049_Wdrozenie_i_weryfikacja.md",
+      "review_note": "Porcje, checksum, wznawianie, bilety, limity i sprzątanie. Finalize idempotentnie zapisuje roboczą kopertę."
     },
     {
       "id": "CH049",
@@ -856,7 +868,10 @@
         "CH047",
         "CH048"
       ],
-      "description": "Wykonanie: trwała kolejka, kontrola sieci, postęp, resume/backoff i anulowanie. Dobór mechanizmu długiego transferu zgodnego z docelowym Androidem. Jawne zużycie danych i możliwość wstrzymania. Błąd lub restart nie usuwa prywatnej kopii aktywnego pliku.\n\nOdbiór: upload działa po zmianie ekranu i odtwarza stan po ponownym uruchomieniu procesu; nie pokazuje sukcesu przed finalize. Weryfikacja: zmiana sieci Wi-Fi na komórkową, brak sieci, błędy 401/413/429/5xx, anulowanie i 2 równoległe transfery."
+      "description": "Wykonanie: trwała kolejka, kontrola sieci, postęp, resume/backoff i anulowanie. Dobór mechanizmu długiego transferu zgodnego z docelowym Androidem. Jawne zużycie danych i możliwość wstrzymania. Błąd lub restart nie usuwa prywatnej kopii aktywnego pliku.\n\nOdbiór: upload działa po zmianie ekranu i odtwarza stan po ponownym uruchomieniu procesu; nie pokazuje sukcesu przed finalize. Weryfikacja: zmiana sieci Wi-Fi na komórkową, brak sieci, błędy 401/413/429/5xx, anulowanie i 2 równoległe transfery.",
+      "status": "implemented_instrumented_pending_live_network_acceptance",
+      "evidence": "CH045_CH049_Wdrozenie_i_weryfikacja.md",
+      "review_note": "Trwała kolejka WorkManager, ograniczenie sieci, postęp, pauza, resume, anulowanie, backoff oraz zachowanie lokalnych kopii. Odbiór z aktywną usługą pozostaje otwarty."
     },
     {
       "id": "CH050",
@@ -870,7 +885,10 @@
         "CH048",
         "CH049"
       ],
-      "description": "Wykonanie: outbox serwera, koperty wyłącznie dla uprawnionych instalacji, cursor sync i push jako sygnał. Lokalna deduplikacja, historia HD i receipt pobrania po integralnym zapisaniu. Odebranie push nie jest pobraniem; pobranie nie jest odczytem. Uzgodnić zachowanie przy zmianie numeru/klucza.\n\nOdbiór: odbiorca offline dostaje zaległe koperty raz po synchronizacji; nadawca widzi prawdziwy etap. Weryfikacja: duplikat push, utrata cursora, dwie instalacje, powtórny receipt i próba cudzej skrzynki."
+      "description": "Wykonanie: outbox serwera, koperty wyłącznie dla uprawnionych instalacji, cursor sync i push jako sygnał. Lokalna deduplikacja, historia HD i receipt pobrania po integralnym zapisaniu. Odebranie push nie jest pobraniem; pobranie nie jest odczytem. Uzgodnić zachowanie przy zmianie numeru/klucza.\n\nOdbiór: odbiorca offline dostaje zaległe koperty raz po synchronizacji; nadawca widzi prawdziwy etap. Weryfikacja: duplikat push, utrata cursora, dwie instalacje, powtórny receipt i próba cudzej skrzynki.",
+      "status": "implemented_local_sync_verified_fcm_acceptance_pending",
+      "review_note": "Outbox transakcyjny, kursor HMAC, Room, wznawiane pobieranie i idempotentny receipt. Lokalne testy przeszły; rzeczywiste FCM i dwa telefony wymagają konfiguracji dostawców.",
+      "evidence": "CH050_CH054_Wdrozenie_i_weryfikacja.md"
     },
     {
       "id": "CH051",
@@ -885,7 +903,10 @@
         "CH048",
         "CH050"
       ],
-      "description": "Wykonanie: zgoda na link dla nieposiadającego Chatry, sekretny token, expiry/revoke i strona pobrania na Androidzie/iOS/przeglądarce. Podgląd liczby i rozmiaru plików dopiero przy ważnym dostępie. Brak indeksowania/wycieku przez nagłówek Referer/niepotrzebnych trackerów; przycisk pobierz i stan wygasły.\n\nOdbiór: uprawniony odbiorca pobiera, odwołany link nie działa, sekret nie trafia do logów. Weryfikacja: incognito, iOS, zły/wygasły/odwołany token i wielokrotny klik. SMS z linkiem wymaga osobnego zatwierdzenia."
+      "description": "Wykonanie: zgoda na link dla nieposiadającego Chatry, sekretny token, expiry/revoke i strona pobrania na Androidzie/iOS/przeglądarce. Podgląd liczby i rozmiaru plików dopiero przy ważnym dostępie. Brak indeksowania/wycieku przez nagłówek Referer/niepotrzebnych trackerów; przycisk pobierz i stan wygasły.\n\nOdbiór: uprawniony odbiorca pobiera, odwołany link nie działa, sekret nie trafia do logów. Weryfikacja: incognito, iOS, zły/wygasły/odwołany token i wielokrotny klik. SMS z linkiem wymaga osobnego zatwierdzenia.",
+      "status": "implemented_chromium_verified_ios_acceptance_pending",
+      "review_note": "Link po zgodzie, sekret we fragmencie, TTL/revoke, strona i szkic SMS po osobnym potwierdzeniu. Chromium sprawdzony; Safari iOS do odbioru.",
+      "evidence": "CH050_CH054_Wdrozenie_i_weryfikacja.md"
     },
     {
       "id": "CH052",
@@ -901,7 +922,10 @@
         "CH050",
         "CH051"
       ],
-      "description": "Wykonanie: egzekwować TTL, revoke, usunięcie obiektu lub powiązania, politykę backupu i audyt bez danych. Limity lookup/upload/download i alerty nadużyć. Jeśli G07 wybiera E2EE, uzupełnić uzgodniony protokół i ponownie oszacować zadanie przed implementacją; TLS nie zastępuje E2EE. Sekrety w zarządzanym magazynie, rotacja i separacja środowisk.\n\nOdbiór: polityka serwera zgodna z UI, brak dostępu po cofnięciu i brak wycieków poprzez publiczny magazyn plików. Weryfikacja: negatywne testy obiektowe, granice TTL, odtworzenie backupu i skan logów."
+      "description": "Wykonanie: egzekwować TTL, revoke, usunięcie obiektu lub powiązania, politykę backupu i audyt bez danych. Limity lookup/upload/download i alerty nadużyć. Jeśli G07 wybiera E2EE, uzupełnić uzgodniony protokół i ponownie oszacować zadanie przed implementacją; TLS nie zastępuje E2EE. Sekrety w zarządzanym magazynie, rotacja i separacja środowisk.\n\nOdbiór: polityka serwera zgodna z UI, brak dostępu po cofnięciu i brak wycieków poprzez publiczny magazyn plików. Weryfikacja: negatywne testy obiektowe, granice TTL, odtworzenie backupu i skan logów.",
+      "status": "implemented_local_security_verified_deployment_review_pending",
+      "review_note": "Autoryzacja porcji, TTL/revoke, limity, bezosobowy audyt i health probe, bariera snapshot restore. Wymagany odbiór G06/G07 i wdrożenie konfiguracji/monitoringu.",
+      "evidence": "CH050_CH054_Wdrozenie_i_weryfikacja.md"
     },
     {
       "id": "CH053",
@@ -920,7 +944,10 @@
         "CH051",
         "CH052"
       ],
-      "description": "Wykonanie: discovery, oryginał, kopia bez GPS i MMS, dynamiczne CTA, postęp, otrzymanie koperty i karta HD. Rozpoznać nieznany stan dostępności HD bez udawania braku aplikacji. Wyświetlić źródło transportu; odbiór HD nie zamienia się w SMS. Fallback/link tylko po zgodzie.\n\nOdbiór: scenariusz 4 zdjęcia / 38,2 MB ze wzorca działa z rzeczywistymi plikami i potwierdzonym hashem. Weryfikacja: odbiorca Chatra, odbiorca bez Chatry, niedostępny backend, restart i częściowe pobranie."
+      "description": "Wykonanie: discovery, oryginał, kopia bez GPS i MMS, dynamiczne CTA, postęp, otrzymanie koperty i karta HD. Rozpoznać nieznany stan dostępności HD bez udawania braku aplikacji. Wyświetlić źródło transportu; odbiór HD nie zamienia się w SMS. Fallback/link tylko po zgodzie.\n\nOdbiór: scenariusz 4 zdjęcia / 38,2 MB ze wzorca działa z rzeczywistymi plikami i potwierdzonym hashem. Weryfikacja: odbiorca Chatra, odbiorca bez Chatry, niedostępny backend, restart i częściowe pobranie.",
+      "status": "implemented_local_files_verified_physical_e2e_pending",
+      "review_note": "Karta i historia HD, pliki i relacje galerii, stan pobrania i odczytu. Rzeczywiste PNG 38,2 MB sprawdzone przez API; Android restart/receipt sprawdzony kontrolowanym transportem. Fizyczny E2E do odbioru.",
+      "evidence": "CH050_CH054_Wdrozenie_i_weryfikacja.md"
     },
     {
       "id": "CH054",
@@ -937,7 +964,10 @@
         "CH038",
         "CH043"
       ],
-      "description": "Wykonanie: testy istotnych reguł kodowania, deduplikacji, wersji zleceń, multi recipient, indeksu i kosza. Testy DAO i migracji na danych z różnych wersji; kontrolowany zegar i awarie. Nie ograniczać się do testu, który powtarza implementację.\n\nOdbiór: scenariusze duplikacji i utraty danych mają niezależne asercje i przechodzą w CI. Weryfikacja: wstrzykiwanie awarii, callbacki poza kolejnością, częściowe sprzątanie i zachowanie po odtworzeniu.\n\nUzupełnienie UX 29.10.2026: Do testów domeny dodać ustawienia per conversationId, relacje galerii do źródła oraz reguły mark-read/unread, przypięć i wyciszenia. Nie dopuszczać zduplikowanego indeksu mediów po rekoncyliacji.\n\nOdbiór rozszerzony: Testy migracji i awarii potwierdzają zachowanie ustawień i prawidłowe liczniki galerii."
+      "description": "Wykonanie: testy istotnych reguł kodowania, deduplikacji, wersji zleceń, multi recipient, indeksu i kosza. Testy DAO i migracji na danych z różnych wersji; kontrolowany zegar i awarie. Nie ograniczać się do testu, który powtarza implementację.\n\nOdbiór: scenariusze duplikacji i utraty danych mają niezależne asercje i przechodzą w CI. Weryfikacja: wstrzykiwanie awarii, callbacki poza kolejnością, częściowe sprzątanie i zachowanie po odtworzeniu.\n\nUzupełnienie UX 29.10.2026: Do testów domeny dodać ustawienia per conversationId, relacje galerii do źródła oraz reguły mark-read/unread, przypięć i wyciszenia. Nie dopuszczać zduplikowanego indeksu mediów po rekoncyliacji.\n\nOdbiór rozszerzony: Testy migracji i awarii potwierdzają zachowanie ustawień i prawidłowe liczniki galerii.",
+      "status": "implemented_local_regression_passed_ci_configured",
+      "review_note": "Regresja domeny, 4 testy Room z migracjami 1–6→7, pełna seria 82 przypadków Androida (73 zaliczone, 9 sprzętowych/reboot pominiętych). Ostatnie odpinanie sprawdzone na końcowym APK serią wszystkich 9 testów HD. Workflow CI przygotowany; zdalne uruchomienie po publikacji zmian.",
+      "evidence": "CH050_CH054_Wdrozenie_i_weryfikacja.md"
     },
     {
       "id": "CH055",

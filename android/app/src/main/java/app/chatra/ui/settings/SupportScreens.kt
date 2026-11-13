@@ -30,7 +30,7 @@ fun PrivacyScreen(onBack: () -> Unit) {
     DetailPage("Prywatność", onBack) {
         DetailCard {
             BasicText("Historia i wyszukiwanie pozostają na telefonie. Dane nie trafiają do chmury przez samo nadanie roli SMS.", style = ChatraType.Body)
-            BasicText("Chatra HD jest osobnym, dobrowolnym transferem. W tej wersji nie jest aktywny. Nie obiecujemy RCS, iMessage ani połączeń.", style = ChatraType.Preview)
+            BasicText("Chatra HD jest dobrowolną usługą wymagającą aktywacji. SMS i MMS działają niezależnie.", style = ChatraType.Preview)
             if (c.isDemo) BasicText("Demo używa przykładowych rozmów i kart. Nie odczytuje SMS ani kontaktów urządzenia i nie wykonuje zakupów.", style = ChatraType.Preview)
         }
         DetailCard {
@@ -47,7 +47,9 @@ fun PrivacyScreen(onBack: () -> Unit) {
         }
         DetailCard {
             BasicText("Sieć, HD i diagnostyka", style = chatraText(17f, 600))
-            BasicText("SMS/MMS korzystają z usług i sieci operatora oraz mogą podlegać opłatom. Chatra HD, przesyłanie oryginałów przez serwer i linki nie są aktywne w tej wersji. Nie wysyłamy historii do usługi HD.", style = ChatraType.Preview)
+            BasicText("SMS/MMS korzystają z usług operatora i mogą podlegać opłatom.", style = ChatraType.Preview)
+            if (c.hd != null) BasicText("W pilocie HD Twilio otrzymuje Twój numer na potrzeby weryfikacji. Usługa przechowuje numer routingu w postaci zaszyfrowanej do wygaśnięcia wiązania po 90 dniach. Otrzymuje wybrany numer podczas sprawdzania zgodności HD oraz wskazane pliki. Numer odbiorcy linku pozostaje w telefonie. Upload wygasa po 24 godzinach, gotowe pliki po 7 dniach, a link po 24 godzinach. Link daje dostęp każdemu, kto go posiada. Możesz odwołać dostęp i usunąć pliki na serwerze. Odpięcie usuwa dane instalacji. Zdarzenia synchronizacji i bezosobowe liczniki audytu są przechowywane do 30 dni. FCM przekazuje tylko sygnał synchronizacji. Połączenie jest szyfrowane, a serwer ma dostęp do plików; HD nie zapewnia szyfrowania od końca do końca. Pobrane kopie pozostają u odbiorcy.", style = ChatraType.Preview)
+            if (c.billing != null) BasicText("Google Play obsługuje płatność. Serwer Chatry przekazuje token zakupu do Google w celu weryfikacji. Zakup nie wymaga aktywacji HD.", style = ChatraType.Preview)
             BasicText("Aplikacja nie ma automatycznego wysyłania raportów ani analityki treści. Diagnostyka lokalna obejmuje stany transportu i błędy techniczne; system Android i operator mają własne logi. Przed dobrowolnym przekazaniem raportu sprawdź, czy nie zawiera prywatnych danych.", style = ChatraType.Preview)
         }
         c.mmsDownloads?.let { downloads ->

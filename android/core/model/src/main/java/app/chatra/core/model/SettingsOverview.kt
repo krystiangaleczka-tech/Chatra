@@ -12,7 +12,7 @@ sealed interface ProOffer {
 }
 
 fun proSummary(offer: ProOffer, demo: Boolean): String = when {
-    offer is ProOffer.Available -> "Jednorazowo ${offer.formattedPrice}. Dodatkowe kompozycje i reguły porządku. Podstawy zostają darmowe."
+    offer is ProOffer.Available -> "Jednorazowo ${offer.formattedPrice}. Kompozycje Bursztyn i Las."
     demo && offer == ProOffer.DemoPlaceholder -> "Jednorazowo [CENA]. Dodatkowe kompozycje i reguły porządku. Podstawy zostają darmowe."
     else -> "Oferta zakupu jest teraz niedostępna. Podstawowe funkcje pozostają darmowe."
 }
@@ -25,7 +25,7 @@ fun simSettingsSummary(cards: List<SimCard>, default: SubscriptionId?): String {
 }
 
 fun appearanceSummary(p: AppearancePrefs): String =
-    listOf("Szkło", "Mgła", "Grafit", "Kontrast")[p.composition.ordinal] + " · " +
+    p.composition.label + " · " +
         listOf("jasny", "ciemny", "automatyczny")[p.mode.ordinal] + " · " +
         if (p.density == Density.Standard) "standardowa gęstość" else "kompaktowa gęstość"
 

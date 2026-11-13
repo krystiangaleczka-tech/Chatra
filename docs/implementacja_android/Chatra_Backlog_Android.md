@@ -547,6 +547,8 @@ Wykonanie: zatwierdzić katalog Pro i productId, pobierać lokalną cenę sklepu
 
 Odbiór: w produkcyjnym UI nie ma placeholdera [CENA], zakup jednorazowy odtwarzany zgodnie z zatwierdzonym modelem. Weryfikacja: środowisko testowe sklepu, ponowna instalacja, błędny token, oczekiwanie i cofnięta transakcja.
 
+**Wynik CH045 (12.11.2026):** Jednorazowy zakup, weryfikacja i potwierdzenie Play, przywracanie oraz roboczy katalog Bursztyn i Las. Wymagane Play Console, licencjonowane próby i akceptacja G08. [Implementacja i weryfikacja](CH045_CH049_Wdrozenie_i_weryfikacja.md).
+
 ## 6 Backend i Chatra HD
 
 ### CH046 Zaprojektować usługę i zasady danych HD
@@ -557,6 +559,8 @@ Wykonanie: wybrać stos/backend, region, storage, bazę, push, hosting linku i k
 
 Odbiór: decyzje przed kodem, architektura obejmuje obsługę awarii i odzyskanie numeru. Weryfikacja: przegląd bezpieczeństwa i przepływu danych; brak założenia, że odczyt danych z SIM potwierdza numer.
 
+**Wynik CH046 (12.11.2026):** ADR pilota określa stos, region, dane, odzyskanie numeru, limity, retencję, zagrożenia i koszt. Odbiór G06/G07 pozostaje otwarty. [Implementacja i weryfikacja](CH045_CH049_Wdrozenie_i_weryfikacja.md).
+
 ### CH047 Zdefiniować API i tożsamość instalacji
 
 **P0 · BE i Android · 4–6 osobodni · zależności CH046**
@@ -564,6 +568,8 @@ Odbiór: decyzje przed kodem, architektura obejmuje obsługę awarii i odzyskani
 Wykonanie: OpenAPI, modele i kody błędów, podpis/klucz instalacji, sesje i rotacja. Weryfikacja posiadania numeru z limitami prób, opt in odkrywalności i lookup tylko wybranego odbiorcy. Klient Keystore, wylogowanie/odpięcie i zmiana urządzenia. Do kontraktu dodać idempotency i paginację.
 
 Odbiór: dwa urządzenia uzyskują zweryfikowane powiązania i odbiorca nie jest publicznie enumerowalny. Weryfikacja: niewłaściwy lub zużyty kod, replay, skradziona sesja, rotacja i odmowa HD bez utraty SMS.
+
+**Wynik CH047 (12.11.2026):** OpenAPI, weryfikacja numeru, podpis Android Keystore, sesje, odpięcie i ograniczone wzajemne discovery. Testy dwóch kluczy na danych syntetycznych. [Implementacja i weryfikacja](CH045_CH049_Wdrozenie_i_weryfikacja.md).
 
 ### CH048 Zbudować magazyn i wznawialny upload
 
@@ -573,6 +579,8 @@ Wykonanie: manifest transferu, plik/chunki, offset, checksum, finalize i stany. 
 
 Odbiór: wznowienie nie powiela bajtów, błędny hash nie zostaje opublikowany. Weryfikacja: przerwanie w połowie, brak miejsca/quota, równoległe finalize, próba dostępu do innego transferu i opuszczony upload.
 
+**Wynik CH048 (12.11.2026):** Porcje, checksum, wznawianie, bilety, limity i sprzątanie. Finalize idempotentnie zapisuje roboczą kopertę. [Implementacja i weryfikacja](CH045_CH049_Wdrozenie_i_weryfikacja.md).
+
 ### CH049 Zbudować klienta transferów HD
 
 **P1 · Android sieć · 3–5 osobodni · zależności CH031 CH033 CH047 CH048**
@@ -580,6 +588,8 @@ Odbiór: wznowienie nie powiela bajtów, błędny hash nie zostaje opublikowany.
 Wykonanie: trwała kolejka, kontrola sieci, postęp, resume/backoff i anulowanie. Dobór mechanizmu długiego transferu zgodnego z docelowym Androidem. Jawne zużycie danych i możliwość wstrzymania. Błąd lub restart nie usuwa prywatnej kopii aktywnego pliku.
 
 Odbiór: upload działa po zmianie ekranu i odtwarza stan po ponownym uruchomieniu procesu; nie pokazuje sukcesu przed finalize. Weryfikacja: zmiana sieci Wi-Fi na komórkową, brak sieci, błędy 401/413/429/5xx, anulowanie i 2 równoległe transfery.
+
+**Wynik CH049 (12.11.2026):** Trwała kolejka WorkManager, ograniczenie sieci, postęp, pauza, resume, anulowanie, backoff oraz zachowanie lokalnych kopii. Odbiór z aktywną usługą pozostaje otwarty. [Implementacja i weryfikacja](CH045_CH049_Wdrozenie_i_weryfikacja.md).
 
 ### CH050 Zbudować routing kopert i statusy pobrania
 
@@ -589,6 +599,8 @@ Wykonanie: outbox serwera, koperty wyłącznie dla uprawnionych instalacji, curs
 
 Odbiór: odbiorca offline dostaje zaległe koperty raz po synchronizacji; nadawca widzi prawdziwy etap. Weryfikacja: duplikat push, utrata cursora, dwie instalacje, powtórny receipt i próba cudzej skrzynki.
 
+**Stan 13.11.2026:** Implementacja i lokalne testy gotowe; [dowody i pozostałe próby integracyjne](CH050_CH054_Wdrozenie_i_weryfikacja.md).
+
 ### CH051 Zbudować bezpieczny link i stronę odbioru
 
 **P1 · BE i web i UX · 3–5 osobodni · zależności CH020 CH046 CH048 CH050**
@@ -596,6 +608,8 @@ Odbiór: odbiorca offline dostaje zaległe koperty raz po synchronizacji; nadawc
 Wykonanie: zgoda na link dla nieposiadającego Chatry, sekretny token, expiry/revoke i strona pobrania na Androidzie/iOS/przeglądarce. Podgląd liczby i rozmiaru plików dopiero przy ważnym dostępie. Brak indeksowania/wycieku przez nagłówek Referer/niepotrzebnych trackerów; przycisk pobierz i stan wygasły.
 
 Odbiór: uprawniony odbiorca pobiera, odwołany link nie działa, sekret nie trafia do logów. Weryfikacja: incognito, iOS, zły/wygasły/odwołany token i wielokrotny klik. SMS z linkiem wymaga osobnego zatwierdzenia.
+
+**Stan 13.11.2026:** Implementacja i lokalne testy gotowe; [dowody i pozostałe próby integracyjne](CH050_CH054_Wdrozenie_i_weryfikacja.md).
 
 ### CH052 Wdrożyć retencję usuwanie i ochronę HD
 
@@ -605,6 +619,8 @@ Wykonanie: egzekwować TTL, revoke, usunięcie obiektu lub powiązania, polityk�
 
 Odbiór: polityka serwera zgodna z UI, brak dostępu po cofnięciu i brak wycieków poprzez publiczny magazyn plików. Weryfikacja: negatywne testy obiektowe, granice TTL, odtworzenie backupu i skan logów.
 
+**Stan 13.11.2026:** Implementacja i lokalne testy gotowe; [dowody i pozostałe próby integracyjne](CH050_CH054_Wdrozenie_i_weryfikacja.md).
+
 ### CH053 Połączyć HD z rozmową i dodatkami
 
 **P1 · Android · 3–4 osobodni · zależności CH012 CH013 CH033 CH041 CH049 CH050 CH051 CH052**
@@ -612,6 +628,8 @@ Odbiór: polityka serwera zgodna z UI, brak dostępu po cofnięciu i brak wyciek
 Wykonanie: discovery, oryginał, kopia bez GPS i MMS, dynamiczne CTA, postęp, otrzymanie koperty i karta HD. Rozpoznać nieznany stan dostępności HD bez udawania braku aplikacji. Wyświetlić źródło transportu; odbiór HD nie zamienia się w SMS. Fallback/link tylko po zgodzie.
 
 Odbiór: scenariusz 4 zdjęcia / 38,2 MB ze wzorca działa z rzeczywistymi plikami i potwierdzonym hashem. Weryfikacja: odbiorca Chatra, odbiorca bez Chatry, niedostępny backend, restart i częściowe pobranie.
+
+**Stan 13.11.2026:** Implementacja i lokalne testy gotowe; [dowody i pozostałe próby integracyjne](CH050_CH054_Wdrozenie_i_weryfikacja.md).
 
 ## 7 Testy odbiór i dystrybucja
 
@@ -627,6 +645,7 @@ Odbiór: scenariusze duplikacji i utraty danych mają niezależne asercje i prze
 
 **Odbiór rozszerzony:** Testy migracji i awarii potwierdzają zachowanie ustawień i prawidłowe liczniki galerii.
 
+**Stan 13.11.2026:** Implementacja i lokalne testy gotowe; [dowody i pozostałe próby integracyjne](CH050_CH054_Wdrozenie_i_weryfikacja.md).
 
 ### CH055 Odebrać zgodność wizualną wszystkich ekranów
 

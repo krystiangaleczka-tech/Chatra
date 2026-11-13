@@ -11,6 +11,20 @@ val keystoreProperties = Properties().apply {
     if (file.exists()) file.inputStream().use { load(it) }
 }
 
+val backendOrigin = providers.gradleProperty("chatraBackendOrigin").orElse("").get()
+val playProduct = providers.gradleProperty("chatraPlayProduct").orElse("").get()
+val hdPilot = providers.gradleProperty("chatraHdPilot").orElse("false").get().toBooleanStrict()
+require(backendOrigin.isEmpty() || Regex("https://[A-Za-z0-9.-]+(:[0-9]{1,5})?").matches(backendOrigin))
+require(playProduct.isEmpty() || Regex("[a-z0-9_.]{1,100}").matches(playProduct))
+require(backendOrigin.isNotEmpty() || (!hdPilot && playProduct.isEmpty()))
+
+val firebaseConfig = listOf("ApiKey", "ApplicationId", "SenderId", "ProjectId").associateWith {
+    providers.gradleProperty("chatraFirebase$it").orElse("").get().also { value ->
+        require(value.matches(Regex("[A-Za-z0-9_:.\\-]*")))
+    }
+}
+require(firebaseConfig.values.all { it.isEmpty() } || firebaseConfig.values.all { it.isNotEmpty() })
+
 android {
     namespace = "app.chatra"
     compileSdk = 37
@@ -48,6 +62,10 @@ android {
         create("full") {
             dimension = "data"
             buildConfigField("boolean", "DEMO", "false")
+            buildConfigField("String", "BACKEND_ORIGIN", "\"$backendOrigin\"")
+            buildConfigField("String", "PLAY_PRODUCT", "\"$playProduct\"")
+            buildConfigField("boolean", "HD_PILOT", hdPilot.toString())
+            firebaseConfig.forEach { (name, value) -> buildConfigField("String", "FIREBASE_${name.uppercase()}", "\"$value\"") }
         }
     }
 
@@ -84,6 +102,10 @@ dependencies {
     "demoImplementation"(project(":core:testing"))
     "fullImplementation"(project(":core:database"))
     "fullImplementation"(libs.androidx.work.runtime)
+    "fullImplementation"(libs.play.billing)
+    "fullImplementation"("com.google.firebase:firebase-messaging:25.1.3")
+    // Billing brings Fragment 1.1 through Play Services. Activity Result needs 1.3 or newer.
+    "fullImplementation"(libs.androidx.fragment)
     debugImplementation(libs.compose.ui.tooling)
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)

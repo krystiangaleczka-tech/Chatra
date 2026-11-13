@@ -34,9 +34,11 @@ class LocalOrganization(private val context: Context, private val db: ChatraData
         access()
         db.withTransaction {
             val refs = dao.snapshot(id.value)
-            check(refs.isNotEmpty()) { "Brak wiadomości do przeniesienia. Zlecenia wysyłania pozostają poza koszem." }
+            val hd = db.hd().snapshot(id.value)
+            check(refs.isNotEmpty() || hd.isNotEmpty()) { "Brak wiadomości do przeniesienia. Zlecenia wysyłania pozostają poza koszem." }
             val at = now(); val entry = TrashEntry(UUID.randomUUID().toString(), id.value, title, at, at + RETENTION)
             dao.insert(entry); dao.hide(refs.map { TrashRef(it.kind, it.providerId, entry.id, it.timestamp) })
+            db.hd().hide(hd.map { TrashHdRef(it.id, entry.id) })
         }
     } }
     override suspend fun restore(id: ConversationId) { dao.trash().first().filter { it.conversationId == id.value }.forEach { restoreEntry(it.id) } }
@@ -64,7 +66,10 @@ class LocalOrganization(private val context: Context, private val db: ChatraData
             }
             db.withTransaction { dao.forget(ref.kind, ref.providerId, ref.timestamp); if (ref.kind == "MMS") dao.forgetMedia(ref.providerId, ref.timestamp) }
         }
-        dao.remove(entryId)
+        db.withTransaction {
+            for (id in db.hd().hidden(entryId)) { db.hd().dismiss(HdDismissed(id)); db.hd().delete(id) }
+            dao.remove(entryId)
+        }
     } }
     suspend fun expire() {
         if (!allowed()) return

@@ -42,7 +42,7 @@ Wydanie testowe: skopiuj `keystore.properties.example` do `keystore.properties`,
 
 Wariant `full` kompiluje się i od CH022–CH026 odczytuje historię oraz wysyła SMS.
 Pozostaje wersją testową. Implementuje SMS/MMS, trwałą kolejkę, harmonogram, lokalny indeks, blokady i kosz.
-Odbiór operatorów MMS i OEM jest nadal otwarty; Chatra HD oraz zakup Pro wymagają kolejnych zadań.
+Odbiór operatorów MMS i OEM pozostaje otwarty. Pro i pilot uploadu Chatra HD wymagają konfiguracji usługi oraz odbioru przed udostępnieniem.
 [Zakres, testy i otwarty odbiór fizyczny](../docs/implementacja_android/CH022_CH026_Wdrozenie_i_weryfikacja.md).
 
 ```bash
@@ -91,3 +91,16 @@ Wygląd ma cztery kompozycje, Light/Dark/Auto, compact i skalę 1–7; można na
 Blokady są lokalne, tłumią powiadomienia i zachowują SMS/MMS. Kosz zapisuje konkretny zakres wiadomości na 30 dni, umożliwia odzyskanie oraz potwierdzone usunięcie z providera. Nowe wiadomości tego samego wątku pozostają widoczne. Usuwanie po błędzie można ponowić. Baza ma migrację do v6. Prywatność i pomoc opisują faktyczny zakres aplikacji i działają offline.
 
 [Implementacja, testy i ograniczenia odbioru](../docs/implementacja_android/CH040_CH044_Wdrozenie_i_weryfikacja.md).
+
+
+## CH045–CH049
+
+W pełnym wariancie `chatraBackendOrigin` wskazuje adres HTTPS serwera. `chatraHdPilot` włącza aktywację HD, upload, synchronizację kopert, pobieranie i linki, a `chatraPlayProduct` wskazuje jednorazowy produkt Google Play. Wartości domyślne pozostawiają oba połączenia wyłączone. Opcjonalne FCM wymaga właściwości `chatraFirebaseApiKey`, `chatraFirebaseApplicationId`, `chatraFirebaseSenderId`, `chatraFirebaseProjectId` z jednej aplikacji Firebase. Auto-init i analityka są wyłączone; rejestracja push następuje po aktywacji HD.
+
+[Konfiguracja backendu](../backend/README.md) i [weryfikacja CH045–CH049](../docs/implementacja_android/CH045_CH049_Wdrozenie_i_weryfikacja.md).
+
+## CH050–CH054
+
+Wiadomości HD są częścią rozmowy i galerii; Room v7 przechowuje historię, lokalne pliki, stan odczytu, kursor i zakres kosza. Push uruchamia uwierzytelnioną synchronizację, a pobranie wymaga osobnego działania. WorkManager domyślnie czeka na sieć nietaryfową i wznawia prywatne porcje po restarcie. Dopiero komplet zweryfikowanych i zapisanych plików pozwala potwierdzić pobranie nadawcy. SMS z linkiem jest osobnym szkicem do zatwierdzenia.
+
+[Zakres, dowody i pozostałe próby dostawców](../docs/implementacja_android/CH050_CH054_Wdrozenie_i_weryfikacja.md).

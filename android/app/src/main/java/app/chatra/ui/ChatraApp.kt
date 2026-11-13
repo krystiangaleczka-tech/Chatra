@@ -77,7 +77,9 @@ fun ChatraApp(container: AppContainer, initial: Navigator?, onExit: () -> Unit, 
     val globalAppearance by container.appearance.value.collectAsStateWithLifecycle()
     val overridesFlow = remember(container) { container.conversationAppearance?.value ?: kotlinx.coroutines.flow.MutableStateFlow(emptyMap()) }
     val overrides by overridesFlow.collectAsStateWithLifecycle()
-    val appearance = app.chatra.core.model.resolveAppearance(globalAppearance, (navigator.screen as? Route.Conversation)?.id?.let { overrides[it.value] })
+    val pro = container.billing?.state?.collectAsStateWithLifecycle()?.value?.entitled == true
+    val threadAppearance = (navigator.screen as? Route.Conversation)?.id?.let { overrides[it.value] }
+    val appearance = app.chatra.core.model.resolveAppearance(globalAppearance, threadAppearance, proAllowed = pro)
     val keyboard = LocalSoftwareKeyboardController.current
     val focus = LocalFocusManager.current
     val imeVisible = LocalChrome.current.ime > 0.dp
@@ -193,11 +195,13 @@ private fun Screen(route: Route, navigator: Navigator, listStates: MutableMap<Ta
             var organizeError by remember { mutableStateOf<String?>(null) }
             var threadTheme by remember { mutableStateOf(false) }
             var trashConfirm by remember { mutableStateOf(false) }
-            if (threadTheme) ChoiceDialog("Wygląd tej rozmowy", listOf("Użyj wyglądu globalnego", "Szkło", "Mgła", "Grafit", "Kontrast"), { choice ->
+            val pro = c.billing?.state?.collectAsStateWithLifecycle()?.value?.entitled == true
+            val themes = app.chatra.core.model.Composition.entries.filter { !it.pro || pro }
+            if (threadTheme) ChoiceDialog("Wygląd tej rozmowy", listOf("Użyj wyglądu globalnego") + themes.map { it.label }, { choice ->
                 scope.launch {
                     try { c.conversationAppearance?.update { all ->
                         if (choice == 0) all - route.id.value
-                        else all + (route.id.value to ((all[route.id.value] ?: app.chatra.core.model.AppearanceOverride()).copy(composition = app.chatra.core.model.Composition.entries[choice - 1])))
+                        else themes.getOrNull(choice - 1)?.let { theme -> all + (route.id.value to ((all[route.id.value] ?: app.chatra.core.model.AppearanceOverride()).copy(composition = theme))) } ?: all
                     } } catch (e: Exception) { organizeError = e.message ?: "Nie udało się zapisać wyglądu." }
                 }
             }, { threadTheme = false })
@@ -247,7 +251,7 @@ private fun Screen(route: Route, navigator: Navigator, listStates: MutableMap<Ta
             val model = viewModel(key = "search-${route.conversation?.value.orEmpty()}") { SearchViewModel(createSavedStateHandle(), c.search, route.initialQuery, route.initialFilter, route.conversation) }
             SearchScreen(model, { navigator.back() }) { navigator.push(Route.Conversation(it.conversationId, it.ref)) }
         }
-        Route.Appearance -> AppearanceScreen(c.appearance) { navigator.back() }
+        Route.Appearance -> AppearanceScreen(c.appearance, onPro = { navigator.push(Route.SettingsDetail(Route.SettingsDetail.Kind.Pro)) }) { navigator.back() }
         Route.Settings -> SettingsScreen({ action ->
             when (action) {
                 SettingsEntry.Appearance -> navigator.push(Route.Appearance)

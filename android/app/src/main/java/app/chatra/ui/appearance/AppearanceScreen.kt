@@ -35,12 +35,17 @@ import app.chatra.core.model.Density as ListDensity
 import app.chatra.di.PreferenceStore
 import app.chatra.ui.*
 import app.chatra.ui.common.drawTopLine
+import app.chatra.ui.common.TextAction
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 @Composable
-fun AppearanceScreen(store: PreferenceStore<AppearancePrefs>, onBack: () -> Unit) {
-    val prefs by store.value.collectAsState()
+fun AppearanceScreen(store: PreferenceStore<AppearancePrefs>, onPro: () -> Unit = {}, onBack: () -> Unit) {
+    val stored by store.value.collectAsState()
+    val billing = LocalContainer.current.billing
+    val entitlement = billing?.state?.collectAsStateWithLifecycle()?.value?.entitled == true
+    val prefs = stored.withProAccess(entitlement)
     val scope = rememberCoroutineScope()
     fun update(transform: (AppearancePrefs) -> AppearancePrefs) { scope.launch { store.update(transform) } }
     val chrome = LocalChrome.current
@@ -52,9 +57,8 @@ fun AppearanceScreen(store: PreferenceStore<AppearancePrefs>, onBack: () -> Unit
             }
             ConversationPreview(prefs)
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                val names = listOf("Szkło", "Mgła", "Grafit", "Kontrast")
                 val swatches = listOf(listOf(Color(0xFF9CC3FF), Color(0xFFFFC2AE)), listOf(Color(0xFFE4E8F2), Color(0xFFF7F8FC)), listOf(Color(0xFF1A1F2E), Color(0xFF3A3F5C)), listOf(Color.Black, Color.White))
-                AppearanceComposition.entries.chunked(if (LocalDensity.current.fontScale > 1.3f) 2 else 4).forEach { chunk ->
+                AppearanceComposition.entries.filter { !it.pro }.chunked(if (LocalDensity.current.fontScale > 1.3f) 2 else 4).forEach { chunk ->
                     Row(Modifier.fillMaxWidth().semantics { selectableGroup() }, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         chunk.forEach { item ->
                             val i = item.ordinal
@@ -62,10 +66,28 @@ fun AppearanceScreen(store: PreferenceStore<AppearancePrefs>, onBack: () -> Unit
                             val shape = RoundedCornerShape(20.dp)
                             Column(Modifier.weight(1f).heightIn(min = 84.dp).clip(shape).background(app.chatra.core.designsystem.theme.LocalAppearanceTokens.current.surface.copy(alpha = if (active) 1f else .6f)).border(if (active) 2.dp else cssBorder(), if (active) ChatraColors.Accent else ChatraColors.white(.95f), shape).selectable(active, role = Role.RadioButton) { update { it.copy(composition = item) } }, horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterVertically)) {
                                 Box(Modifier.size(38.dp).clip(CircleShape).background(if (i == 3) Brush.horizontalGradient(0f to Color.Black, .5f to Color.Black, .5f to Color.White, 1f to Color.White) else Brush.linearGradient(swatches[i])).border(cssBorder(), ChatraColors.ink(if (i == 3) .3f else .1f), CircleShape))
-                                BasicText(names[i], style = chatraText(12f, if (active) 600 else 500))
+                                BasicText(item.label, style = chatraText(12f, if (active) 600 else 500))
                             }
                         }
                     }
+                }
+                if (entitlement) {
+                    AppearanceComposition.entries.filter { it.pro }.forEach { item ->
+                        val active = prefs.composition == item
+                        Row(
+                            Modifier.fillMaxWidth().heightIn(min = 48.dp).selectable(active, role = Role.RadioButton) {
+                                update { it.copy(composition = item) }
+                            },
+                            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            val palette = AppearanceTokens(composition = item.name)
+                            Box(Modifier.size(32.dp).clip(CircleShape).background(Brush.linearGradient(listOf(palette.background, palette.surface))))
+                            BasicText(item.label, style = chatraText(16f, if (active) 600 else 400))
+                        }
+                    }
+                } else if (billing != null) {
+                    TextAction("Bursztyn i Las w Chatra Pro", onPro)
                 }
             }
             GlassSurface(GlassStyles.Card.copy(from = ChatraColors.white(.82f), to = ChatraColors.white(.58f), border = ChatraColors.white(.9f)), RoundedCornerShape(24.dp), Modifier.fillMaxWidth(), shadows = listOf(Shadows.Card)) {

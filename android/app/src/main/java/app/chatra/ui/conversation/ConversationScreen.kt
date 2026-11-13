@@ -35,6 +35,7 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.distinctUntilChanged
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -189,7 +190,7 @@ private fun RowContent(row: Row, state: ConversationState, model: ConversationVi
         }
         is Row.Bubble -> Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             MessageBubble(row.message)
-            row.message.attachments.forEach { app.chatra.ui.common.ProviderThumbnail(it) }
+            if (row.message.hd == null) row.message.attachments.forEach { app.chatra.ui.common.ProviderThumbnail(it) }
             if (row.showStatus || row.message.status in setOf(DeliveryStatus.Failed, DeliveryStatus.PendingUndo, DeliveryStatus.Uncertain, DeliveryStatus.PartiallySent)) {
                 Status(row.message, state, model)
             }
@@ -236,6 +237,7 @@ private fun MessageBubble(m: Message) {
 @Composable
 private fun HdCard(m: Message) {
     val hd = m.hd ?: return
+    if (hd.envelopeId != null) { LiveHdCard(m); return }
     val tiles = listOf(
         Triple(Color(0xFFF3C6A8), Color(0xFFC98E7A), RoundedCornerShape(16.dp, 6.dp, 6.dp, 6.dp)),
         Triple(Color(0xFFA9C7E8), Color(0xFF6C8FB8), RoundedCornerShape(6.dp)),
@@ -268,6 +270,77 @@ private fun HdCard(m: Message) {
                     BasicText("${formatMegabytes(hd.totalBytes)} · przesłano przez internet", style = chatraText(12f, color = ChatraColors.TextSecondary))
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun LiveHdCard(m: Message) {
+    val hd = m.hd ?: return
+    val container = app.chatra.ui.LocalContainer.current
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val scope = androidx.compose.runtime.rememberCoroutineScope()
+    var error by remember { mutableStateOf<String?>(null) }
+    var metered by remember { mutableStateOf(false) }
+    var busy by remember { mutableStateOf(false) }
+    fun download() {
+        busy = true
+        scope.launch {
+            try { container.hd?.download(requireNotNull(hd.envelopeId), metered); error = null }
+            catch (e: kotlinx.coroutines.CancellationException) { throw e }
+            catch (_: Exception) { error = "Nie udało się rozpocząć pobierania. Spróbuj ponownie." }
+            finally { busy = false }
+        }
+    }
+    GlassSurface(GlassStyles.HdCard, RoundedCornerShape(22.dp), Modifier.width(248.dp), shadows = listOf(Shadows.HdCard)) {
+        Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            HdBadge()
+            BasicText("Pliki: ${hd.itemCount} · ${formatMegabytes(hd.totalBytes)}", style = ChatraType.Body)
+            BasicText(when (hd.stage) {
+                "QUEUED" -> "Czeka na sieć"
+                "DOWNLOADING" -> "Pobieranie · ${hd.bytes / 1024} KiB"
+                "RECEIPT" -> "Zapisano pliki · potwierdzanie pobrania"
+                "READY" -> "Pobrano i sprawdzono wszystkie pliki"
+                "LOCAL" -> "Link wygasł lub został odwołany · dostępne kopie lokalne"
+                "EXPIRED" -> "Pliki wygasły lub zostały odwołane"
+                "FAILED" -> "Nie udało się sprawdzić pliku. Możesz ponowić pobieranie."
+                "AUTH" -> "Pobieranie wymaga ponownej aktywacji HD w ustawieniach."
+                "SENT" -> if (hd.downloadedBy != null) "Odbiorca pobrał pliki" else "Wysłano · oczekiwanie na pobranie"
+                else -> "Gotowe do pobrania"
+            }, style = ChatraType.Preview)
+            if (m.direction == Direction.Incoming && hd.stage in setOf("AVAILABLE", "QUEUED", "DOWNLOADING", "RECEIPT", "FAILED", "AUTH")) {
+                if (hd.stage in setOf("AVAILABLE", "FAILED", "AUTH")) {
+                    app.chatra.core.designsystem.component.ChatraSwitch(metered, { metered = it }, "Zezwalaj na sieć taryfową")
+                    BasicText(if (metered) "Pobieranie zużyje pakiet danych." else "Pobieranie tylko przez sieć nietaryfową.", style = ChatraType.Preview)
+                }
+                app.chatra.ui.common.TextAction(if (hd.stage == "AVAILABLE") "Pobierz pliki" else "Ponów pobieranie", ::download, enabled = !busy)
+            }
+            if (m.attachments.isNotEmpty()) Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                m.attachments.take(3).forEachIndexed { index, attachment ->
+                    Box(Modifier.weight(1f).clip(RoundedCornerShape(8.dp))) {
+                        app.chatra.ui.common.ProviderThumbnail(attachment.copy(label = "Plik HD ${index + 1}"), height = 76.dp, showLabel = false)
+                        if (index == 2 && m.attachments.size > 3) BasicText("+${m.attachments.size - 3}",
+                            Modifier.align(Alignment.BottomEnd).background(ChatraColors.TextPrimary).padding(4.dp),
+                            style = chatraText(14f, 700, color = Color.White))
+                    }
+                }
+            }
+            m.attachments.forEachIndexed { index, attachment ->
+                app.chatra.ui.common.TextAction("Otwórz plik ${index + 1}", {
+                    scope.launch {
+                        try {
+                            val item = container.gallery?.readable(attachment.id) ?: error("file_unavailable")
+                            val uri = android.net.Uri.parse(item.uri)
+                            context.startActivity(android.content.Intent(android.content.Intent.ACTION_VIEW).apply {
+                                setDataAndType(uri, item.mime)
+                                clipData = android.content.ClipData.newUri(context.contentResolver, "Załącznik HD", uri)
+                                addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            })
+                        } catch (_: Exception) { error = "Plik lub aplikacja do jego obsługi są niedostępne." }
+                    }
+                })
+            }
+            error?.let { BasicText(it, style = ChatraType.Preview) }
         }
     }
 }

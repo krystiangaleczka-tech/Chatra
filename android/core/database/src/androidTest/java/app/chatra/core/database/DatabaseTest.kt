@@ -70,7 +70,7 @@ class DatabaseTest {
         legacy.execSQL("INSERT INTO OutgoingPart(attemptId,partIndex,sent,delivery,resultCode) VALUES ('attempt',0,'Failed','Unknown',1)")
         legacy.version = 1
         legacy.close()
-        val db = Room.databaseBuilder(context, ChatraDatabase::class.java, name).addMigrations(ChatraDatabase.MIGRATION_1_2, ChatraDatabase.MIGRATION_2_3, ChatraDatabase.MIGRATION_3_4, ChatraDatabase.MIGRATION_4_5, ChatraDatabase.MIGRATION_5_6).build()
+        val db = Room.databaseBuilder(context, ChatraDatabase::class.java, name).addMigrations(ChatraDatabase.MIGRATION_1_2, ChatraDatabase.MIGRATION_2_3, ChatraDatabase.MIGRATION_3_4, ChatraDatabase.MIGRATION_4_5, ChatraDatabase.MIGRATION_5_6, ChatraDatabase.MIGRATION_6_7).build()
         try {
             val row = db.dao().conversation("thread")!!
             assertTrue(row.pinned)
@@ -85,4 +85,39 @@ class DatabaseTest {
             assertEquals(42L, db.dao().attempt("attempt")!!.providerId)
         } finally { db.close(); context.deleteDatabase(name) }
     }
+    @Test fun allExportedVersionsMigrateWithPinnedMutedUnreadAndSourceRelations() = runBlocking {
+        for (version in 2..6) {
+            val name = "migration-from-$version.db"
+            context.deleteDatabase(name)
+            val legacy = SQLiteDatabase.openOrCreateDatabase(context.getDatabasePath(name).apply { parentFile!!.mkdirs() }, null)
+            val json = InstrumentationRegistry.getInstrumentation().context.assets
+                .open("app.chatra.core.database.ChatraDatabase/$version.json").bufferedReader().use { org.json.JSONObject(it.readText()).getJSONObject("database") }
+            val entities = json.getJSONArray("entities")
+            for (i in 0 until entities.length()) {
+                val entity = entities.getJSONObject(i)
+                legacy.execSQL(entity.getString("createSql").replace("\${TABLE_NAME}", entity.getString("tableName")))
+                val indices = entity.optJSONArray("indices") ?: continue
+                for (j in 0 until indices.length()) legacy.execSQL(indices.getJSONObject(j).getString("createSql").replace("\${TABLE_NAME}", entity.getString("tableName")))
+            }
+            legacy.execSQL("INSERT INTO ConversationMeta(id,threadId,participantsKey,participants,pinned,muted,manualUnread,trashed) VALUES ('thread',1,'123','[\"123\"]',1,1,1,0)")
+            legacy.execSQL("INSERT INTO ProviderMessageRef VALUES ('MMS',7,'thread',20,1,0,'seed')")
+            legacy.execSQL("INSERT INTO MediaRef VALUES (9,'MMS',7,'thread','image/jpeg','photo','content://mms/part/9')")
+            legacy.version = version; legacy.close()
+            val db = Room.databaseBuilder(context, ChatraDatabase::class.java, name).addMigrations(
+                ChatraDatabase.MIGRATION_2_3, ChatraDatabase.MIGRATION_3_4, ChatraDatabase.MIGRATION_4_5,
+                ChatraDatabase.MIGRATION_5_6, ChatraDatabase.MIGRATION_6_7).build()
+            try {
+                val row = db.dao().conversation("thread")!!
+                assertTrue(row.pinned && row.muted && row.manualUnread)
+                assertEquals(7L, db.dao().mediaPart(9)!!.messageId)
+                db.dao().upsertMedia(listOf(MediaRef(9, messageId = 7, conversationId = "thread", mimeType = "image/jpeg", label = "photo", contentUri = "content://mms/part/9")))
+                assertEquals(1, db.dao().galleryCount("thread", ""))
+                val hd = HdRecord("hd", "owner", "thread", "+12025550101", "+12025550102", true, 30, 40, "[]")
+                db.hd().put(hd); db.hd().put(hd)
+                assertEquals(1, db.hd().all().size)
+                db.hd().shown("thread", listOf("hd")); assertTrue(db.hd().get("hd")!!.read)
+            } finally { db.close(); context.deleteDatabase(name) }
+        }
+    }
+
 }
