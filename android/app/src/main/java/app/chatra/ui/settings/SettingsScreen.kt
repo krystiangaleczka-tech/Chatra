@@ -28,6 +28,8 @@ import kotlinx.coroutines.launch
 fun SettingsScreen(onAction: (SettingsEntry) -> Unit, dock: MainDock, onHelp: () -> Unit = {}) {
     val c = LocalContainer.current
     val sending by c.sending.value.collectAsStateWithLifecycle()
+    val pro = c.billing?.state?.collectAsStateWithLifecycle()?.value
+    val hd = c.hd?.identity?.collectAsStateWithLifecycle()?.value
     val appearance by c.appearance.value.collectAsStateWithLifecycle()
     val sims by c.sims.cards().collectAsStateWithLifecycle(emptyList())
     val systemDefault by c.sims.defaultSubscription().collectAsStateWithLifecycle(null)
@@ -43,7 +45,7 @@ fun SettingsScreen(onAction: (SettingsEntry) -> Unit, dock: MainDock, onHelp: ()
                     Row(Modifier.padding(start = 16.dp + cssBorder(), end = 14.dp + cssBorder(), top = 14.dp + cssBorder(), bottom = 14.dp + cssBorder()), horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
                         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                             BasicText("Chatra Pro", style = chatraText(16f, 700))
-                            BasicText(proSummary(c.proOffer, c.isDemo), style = chatraText(13f, lineHeight = 18f, color = ChatraColors.TextSecondary))
+                            BasicText(if (pro?.entitled == true) "Zakup potwierdzony" else proSummary(pro?.offer ?: c.proOffer, c.isDemo), style = chatraText(13f, lineHeight = 18f, color = ChatraColors.TextSecondary))
                         }
                         Box(Modifier.heightIn(min = 40.dp).clip(RoundedCornerShape(20.dp)).background(ChatraColors.Accent).semantics { role = Role.Button; contentDescription = "Więcej o Chatra Pro" }.pressable({ onAction(SettingsEntry.Pro) }).padding(horizontal = 16.dp), contentAlignment = Alignment.Center) {
                             BasicText("Więcej", style = chatraText(15f, 600, color = Color.White))
@@ -59,7 +61,12 @@ fun SettingsScreen(onAction: (SettingsEntry) -> Unit, dock: MainDock, onHelp: ()
                         ChatraSwitch(sending.smsCounterEnabled, { value -> scope.launch { c.sending.update { it.copy(smsCounterEnabled = value) } } }, "Licznik części SMS")
                     })
                     SettingsRow("Chatra HD", when (sending.hdDefault) {
-                        MediaVariant.OriginalHd -> if (sending.askBeforeLink) "Domyślnie oryginał · pytanie o link (HD niedostępne)" else "Domyślnie oryginał · bez propozycji linku"
+                        MediaVariant.OriginalHd -> when {
+                            hd?.installation != null -> "Domyślnie oryginał · aktywacja HD zapisana"
+                            c.hd != null -> "Domyślnie oryginał · wymaga aktywacji HD"
+                            sending.askBeforeLink -> "Domyślnie oryginał · pytanie o link (HD niedostępne)"
+                            else -> "Domyślnie oryginał · bez propozycji linku"
+                        }
                         MediaVariant.NoLocationCopy -> "Domyślnie kopia bez lokalizacji"
                         MediaVariant.Mms -> "Domyślnie MMS · w limicie operatora"
                     }, null, Color(0xFF0B0D14), last = true, onClick = { onAction(SettingsEntry.Hd) })
@@ -67,7 +74,7 @@ fun SettingsScreen(onAction: (SettingsEntry) -> Unit, dock: MainDock, onHelp: ()
             }
             item {
                 SettingsCard(card, "Wygląd i porządek") {
-                    SettingsRow("Wygląd", appearanceSummary(appearance), ChatraIcons.Appearance, Color(0xFF6A4FD8), first = true, onClick = { onAction(SettingsEntry.Appearance) })
+                    SettingsRow("Wygląd", appearanceSummary(appearance.withProAccess(pro?.entitled == true)), ChatraIcons.Appearance, Color(0xFF6A4FD8), first = true, onClick = { onAction(SettingsEntry.Appearance) })
                     SettingsRow("Nieznani nadawcy", "Zostają w skrzynce z oznaczeniem · to nie spam", ChatraIcons.Person, Color(0xFF5B6275), onClick = { onAction(SettingsEntry.Unknown) })
                     SettingsRow("Zablokowani", polishCount(housekeeping.blockedCount, "numer", "numery", "numerów") + " · możesz przywrócić", ChatraIcons.Blocked, ChatraColors.Error, onClick = { onAction(SettingsEntry.Blocked) })
                     SettingsRow("Kosz", polishCount(housekeeping.trashCount, "rozmowa", "rozmowy", "rozmów") + " · odzyskasz przez ${housekeeping.trashDays} dni", ChatraIcons.Trash, Color(0xFF5B6275), last = true, onClick = { onAction(SettingsEntry.Trash) })

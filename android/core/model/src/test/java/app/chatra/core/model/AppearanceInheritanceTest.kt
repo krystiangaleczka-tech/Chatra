@@ -15,4 +15,18 @@ class AppearanceInheritanceTest {
         assertEquals(Composition.Graphite, resolveAppearance(AppearancePrefs.Default, custom).composition)
         assertEquals(global, resolveAppearance(global, null))
     }
+
+    @Test fun revokedProFallsBackWithoutChangingAccessibilityOrSavedSelection() {
+        val global = AppearancePrefs(composition = Composition.Amber, textStep = 7, increaseContrast = true)
+        val thread = AppearanceOverride(composition = Composition.Forest, reduceTransparency = true)
+        assertEquals(Composition.Forest, resolveAppearance(global, thread, proAllowed = true).composition)
+        val fallback = resolveAppearance(global, thread, proAllowed = false)
+        assertEquals(Composition.Glass, fallback.composition)
+        assertEquals(7, fallback.textStep)
+        assertTrue(fallback.increaseContrast)
+        assertTrue(fallback.reduceTransparency)
+        assertEquals(Composition.Amber, global.composition)
+        assertEquals(Composition.Forest, thread.composition)
+        assertEquals(Composition.Mist, resolveAppearance(global.copy(composition = Composition.Mist), thread, proAllowed = false).composition)
+    }
 }

@@ -42,7 +42,7 @@ Wydanie testowe: skopiuj `keystore.properties.example` do `keystore.properties`,
 
 Wariant `full` kompiluje się i od CH022–CH026 odczytuje historię oraz wysyła SMS.
 Pozostaje wersją testową. Implementuje SMS/MMS, trwałą kolejkę, harmonogram, lokalny indeks, blokady i kosz.
-Odbiór operatorów MMS i OEM jest nadal otwarty; Chatra HD oraz zakup Pro wymagają kolejnych zadań.
+Odbiór operatorów MMS i OEM pozostaje otwarty. Pro i pilot uploadu Chatra HD wymagają konfiguracji usługi oraz odbioru przed udostępnieniem.
 [Zakres, testy i otwarty odbiór fizyczny](../docs/implementacja_android/CH022_CH026_Wdrozenie_i_weryfikacja.md).
 
 ```bash
@@ -91,3 +91,10 @@ Wygląd ma cztery kompozycje, Light/Dark/Auto, compact i skalę 1–7; można na
 Blokady są lokalne, tłumią powiadomienia i zachowują SMS/MMS. Kosz zapisuje konkretny zakres wiadomości na 30 dni, umożliwia odzyskanie oraz potwierdzone usunięcie z providera. Nowe wiadomości tego samego wątku pozostają widoczne. Usuwanie po błędzie można ponowić. Baza ma migrację do v6. Prywatność i pomoc opisują faktyczny zakres aplikacji i działają offline.
 
 [Implementacja, testy i ograniczenia odbioru](../docs/implementacja_android/CH040_CH044_Wdrozenie_i_weryfikacja.md).
+
+
+## CH045–CH049
+
+W pełnym wariancie `chatraBackendOrigin` wskazuje adres HTTPS serwera. `chatraHdPilot` włącza testową aktywację HD i kolejkę uploadu, a `chatraPlayProduct` wskazuje jednorazowy produkt Google Play. Wartości domyślne pozostawiają oba połączenia wyłączone. Dopiero CH050–CH052 obejmują dostarczenie plików i linki.
+
+[Konfiguracja backendu](../backend/README.md) i [weryfikacja CH045–CH049](../docs/implementacja_android/CH045_CH049_Wdrozenie_i_weryfikacja.md).

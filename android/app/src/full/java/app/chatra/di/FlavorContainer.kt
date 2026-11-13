@@ -1,6 +1,9 @@
 package app.chatra.di
 
 import android.Manifest
+import app.chatra.BuildConfig
+import app.chatra.online.HdQueue
+import app.chatra.online.PlayProBilling
 import app.chatra.local.*
 import app.chatra.mms.MmsEngine
 import app.chatra.scheduling.*
@@ -52,6 +55,8 @@ fun createContainer(app: Application, referenceFrame: Boolean, roleScenario: Str
     val drafts = RoomDrafts(db)
     val smsText = PlatformSmsText(app)
     val mediaStore = PrivateMediaStore(app)
+    val onlineHd = if (BuildConfig.HD_PILOT) HdQueue(app, mediaStore) else null
+    val playBilling = if (BuildConfig.PLAY_PRODUCT.isNotEmpty()) PlayProBilling(app, scope) else null
     val queue = PersistentSmsQueue(app, db, platform, conversations, sims, smsText, drafts)
     val mmsEngine = MmsEngine(app, db, mediaStore, conversations, platform)
     queue.mms = mmsEngine
@@ -61,13 +66,15 @@ fun createContainer(app: Application, referenceFrame: Boolean, roleScenario: Str
     val incoming = IncomingSms(app, db, platform, conversations)
     MessageNotifications(app, db, platform, scope, notificationPrefs, sims)
     scope.launch(Dispatchers.IO) {
+        onlineHd?.registerRepair()
+        onlineHd?.recover()
         ScheduleRecoveryWorker.periodic(app)
         schedules.reconcile("startup")
         runCatching { organization.expire() }
         mmsEngine.recoverDownloads()
         queue.awaitReady()
         val protected = db.dao().drafts().first().flatMap { DraftCodec.decode(it).attachmentIds } + db.dao().operations().first().flatMap { row -> row.snapshot?.let { DraftCodec.decode(it).attachmentIds }.orEmpty() }
-        mediaStore.collectUnused(protected.toSet(), System.currentTimeMillis() - 86_400_000)
+        mediaStore.collectUnused(protected.toSet() + onlineHd?.protectedIds().orEmpty(), System.currentTimeMillis() - 86_400_000)
         combine(platform.changes, sims.cards()) { _, _ -> Unit }.collect { incoming.recover(); queue.recover(false); schedules.reconcile(); runCatching { organization.expire() } }
     }
     return object : FullTelephonyContainer {
@@ -82,6 +89,8 @@ fun createContainer(app: Application, referenceFrame: Boolean, roleScenario: Str
         override val smsText = smsText
         override val templates = LocalTemplates(app)
         override val media = mediaStore
+        override val billing = playBilling
+        override val hd = onlineHd
         override val notifications = notificationPrefs
         override val conversations = conversations
         override val draftWriteScope = scope

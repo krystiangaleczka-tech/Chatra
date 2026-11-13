@@ -12,8 +12,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.chatra.core.designsystem.theme.*
+import app.chatra.core.designsystem.component.ChatraSwitch
 import app.chatra.core.model.*
 import app.chatra.ui.LocalContainer
+import app.chatra.online.hdPhone
+import kotlinx.coroutines.CancellationException
 import app.chatra.ui.common.*
 import app.chatra.ui.conversation.ConversationViewModel
 import app.chatra.ui.settings.DetailCard
@@ -30,6 +33,8 @@ fun MediaExtrasSheet(model: ConversationViewModel, onClose: () -> Unit, onSchedu
     var busy by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<String?>(null) }
     var templates by rememberSaveable { mutableStateOf(false) }
+    var metered by rememberSaveable { mutableStateOf(false) }
+    var lookupResult by remember { mutableStateOf<Pair<String, Boolean>?>(null) }
     var cameraUri by rememberSaveable { mutableStateOf<String?>(null) }
     var variant by rememberSaveable { mutableStateOf(state.mediaVariant ?: c.sending.value.value.hdDefault) }
     fun import(uris: List<Uri>) {
@@ -116,9 +121,48 @@ fun MediaExtrasSheet(model: ConversationViewModel, onClose: () -> Unit, onSchedu
                 }, enabled = !busy && items.isNotEmpty())
                 BasicText(when (variant) {
                     MediaVariant.Mms -> "Pliki są w szkicu. MMS przygotuje pomniejszone kopie w limicie wybranej SIM. Wyślij z rozmowy."
-                    MediaVariant.OriginalHd -> "Oryginały pozostają niezmienione w szkicu. Wysyłanie przez Chatra HD nie jest jeszcze dostępne."
-                    MediaVariant.NoLocationCopy -> "Kopie JPEG zawierają tylko piksele, bez metadanych źródła. Konwersja może zmienić jakość i rozmiar zdjęcia; oryginały są zachowane. Aby je wysłać, wybierz MMS; Chatra HD nie jest jeszcze dostępne."
+                    MediaVariant.OriginalHd -> "Oryginały pozostają niezmienione w szkicu."
+                    MediaVariant.NoLocationCopy -> "Kopie JPEG zawierają tylko piksele. Konwersja może zmienić jakość i rozmiar zdjęcia. Oryginały są zachowane."
                 }, style = ChatraType.Preview)
+                if (variant != MediaVariant.Mms) {
+                    val hd = c.hd
+                    val identity = hd?.identity?.collectAsStateWithLifecycle()?.value
+                    val number = state.summary?.participants?.singleOrNull()?.address?.raw?.let(::hdPhone)
+                    when {
+                        hd == null -> BasicText("Transfer przez Chatra HD jest niedostępny. Wybierz MMS, aby użyć sieci operatora.", style = ChatraType.Preview)
+                        identity?.installation == null || !identity.discoverable -> BasicText("Aktywuj pilot HD i odkrywalność w ustawieniach Chatra HD.", style = ChatraType.Preview)
+                        number == null -> BasicText("Pilot HD obsługuje jednego odbiorcę z numerem telefonu.", style = ChatraType.Preview)
+                        else -> {
+                            val checked = lookupResult?.takeIf { it.first == number }?.second
+                            TextAction("Sprawdź odbiorcę HD", {
+                                busy = true
+                                lookupResult = null
+                                scope.launch {
+                                    try { lookupResult = number to hd.lookup(number); error = null }
+                                    catch (e: CancellationException) { throw e }
+                                    catch (_: Exception) { error = "Nie udało się sprawdzić odbiorcy HD." }
+                                    finally { busy = false }
+                                }
+                            }, enabled = !busy)
+                            if (checked == false) BasicText("Odbiorca jest niedostępny. Włączcie odkrywalność i sprawdźcie siebie nawzajem.", style = ChatraType.Preview)
+                            if (checked == true) {
+                                BasicText("Pliki trafią do serwera pilota. Odbiorca nie dostanie powiadomienia. Postęp znajdziesz w ustawieniach Chatra HD.", style = ChatraType.Preview)
+                                ChatraSwitch(metered, { metered = it }, "Zezwalaj na sieć taryfową")
+                                BasicText(if (metered) "Transfer może zużyć pakiet danych." else "Transfer tylko przez sieć oznaczoną jako nietaryfowa.", style = ChatraType.Preview)
+                                TextAction("Prześlij do serwera · ${items.sumOf { it.bytes } / 1024} KiB", {
+                                    busy = true
+                                    scope.launch {
+                                        try { hd.enqueue(number, items, metered); onClose() }
+                                        catch (e: CancellationException) { throw e }
+                                        catch (e: IllegalArgumentException) { error = e.message }
+                                        catch (_: Exception) { error = "Nie udało się dodać plików do kolejki HD." }
+                                        finally { busy = false }
+                                    }
+                                }, enabled = !busy && items.isNotEmpty() && items.all { it.sanitized == (variant == MediaVariant.NoLocationCopy) })
+                            }
+                        }
+                    }
+                }
             }
             error?.let { BasicText(it, style = ChatraType.Preview) }
         }

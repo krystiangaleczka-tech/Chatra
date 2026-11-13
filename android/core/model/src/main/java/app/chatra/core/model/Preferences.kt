@@ -1,7 +1,13 @@
 package app.chatra.core.model
 
 /** Kompozycje S09. Tylko Szkło ma pełny wzorzec; pozostałe wymagają osobnego odbioru. */
-enum class Composition { Glass, Mist, Graphite, Contrast }
+enum class Composition(val label: String, val pro: Boolean = false) {
+    Glass("Szkło"), Mist("Mgła"), Graphite("Grafit"), Contrast("Kontrast"),
+    Amber("Bursztyn", pro = true), Forest("Las", pro = true),
+}
+
+fun AppearancePrefs.withProAccess(allowed: Boolean): AppearancePrefs =
+    if (composition.pro && !allowed) copy(composition = Composition.Glass) else this
 
 enum class ThemeMode { Light, Dark, Auto }
 
@@ -50,11 +56,15 @@ data class AppearanceOverride(
     val reduceTransparency: Boolean = false,
     val increaseContrast: Boolean = false,
 )
-fun resolveAppearance(global: AppearancePrefs, thread: AppearanceOverride?): AppearancePrefs = if (thread == null) global else global.copy(
-    composition = thread.composition ?: global.composition,
-    mode = thread.mode ?: global.mode,
-    density = thread.density ?: global.density,
-    textStep = maxOf(thread.textStep?.coerceIn(1, 7) ?: global.textStep, if (global.textStep > 4) global.textStep else 1),
-    reduceTransparency = global.reduceTransparency || thread.reduceTransparency,
-    increaseContrast = global.increaseContrast || thread.increaseContrast,
-)
+fun resolveAppearance(global: AppearancePrefs, thread: AppearanceOverride?, proAllowed: Boolean = true): AppearancePrefs {
+    val base = global.withProAccess(proAllowed)
+    if (thread == null) return base
+    return base.copy(
+        composition = thread.composition?.takeIf { proAllowed || !it.pro } ?: base.composition,
+        mode = thread.mode ?: base.mode,
+        density = thread.density ?: base.density,
+        textStep = maxOf(thread.textStep?.coerceIn(1, 7) ?: base.textStep, if (base.textStep > 4) base.textStep else 1),
+        reduceTransparency = base.reduceTransparency || thread.reduceTransparency,
+        increaseContrast = base.increaseContrast || thread.increaseContrast,
+    )
+}

@@ -87,12 +87,13 @@ fun SettingsDetailScreen(kind: Route.SettingsDetail.Kind, onBack: () -> Unit, on
                 SendingPrefs.UNDO_OPTIONS.forEach { seconds -> ChoiceRow(if (seconds == 0) "Bez opóźnienia" else "$seconds s", prefs.undoSeconds == seconds) { scope.launch { c.sending.update { it.copy(undoSeconds = seconds) } } } }
             }
             Route.SettingsDetail.Kind.Hd -> DetailCard {
-                BasicText("Chatra HD wymaga osobnej aktywacji i serwera. W tej wersji nie wysyła plików przez internet. Wybór poniżej ustala domyślny wariant formularza.", style = ChatraType.Preview)
+                c.hd?.let { HdControls(it) }
+                    ?: BasicText("Chatra HD wymaga osobnej aktywacji i serwera. Wybór poniżej ustala domyślny wariant formularza.", style = ChatraType.Preview)
                 listOf("Oryginał HD", "Kopia bez lokalizacji", "MMS").forEachIndexed { i, label ->
                     val variant = listOf(MediaVariant.OriginalHd, MediaVariant.NoLocationCopy, MediaVariant.Mms)[i]
                     ChoiceRow(label, prefs.hdDefault == variant) { scope.launch { c.sending.update { it.copy(hdDefault = variant) } } }
                 }
-                BasicText("HD i wysyłka linku są obecnie niedostępne. Ta preferencja nie jest zgodą na przesłanie pliku ani wysłanie linku.", style = ChatraType.Preview)
+                BasicText("Opcja linku jest zapisana na później. Każdy transfer plików wymaga potwierdzenia w rozmowie.", style = ChatraType.Preview)
                 ChoiceRow("Proponuj pytanie o link", prefs.askBeforeLink) { scope.launch { c.sending.update { it.copy(askBeforeLink = true) } } }
                 ChoiceRow("Nie proponuj linku", !prefs.askBeforeLink) { scope.launch { c.sending.update { it.copy(askBeforeLink = false) } } }
             }
@@ -125,12 +126,7 @@ fun SettingsDetailScreen(kind: Route.SettingsDetail.Kind, onBack: () -> Unit, on
                     }
                 }
             }
-            Route.SettingsDetail.Kind.Pro -> DetailCard {
-                BasicText(proSummary(c.proOffer, c.isDemo), style = ChatraType.Body)
-                BasicText("SMS/MMS, wyszukiwanie, harmonogram i dostępność pozostają darmowe. Katalog dodatków Pro i cena wymagają potwierdzonej oferty sklepu.", style = ChatraType.Preview)
-                BasicText(if (c.isDemo) "W demo nie wykonujemy zakupów." else "Zakup i przywrócenie zakupu są teraz niedostępne.", style = ChatraType.Preview)
-                TextAction("Wróć do ustawień", onBack)
-            }
+            Route.SettingsDetail.Kind.Pro -> DetailCard { ProControls(c.billing, c.proOffer, c.isDemo) }
         }
     }
 }

@@ -50,6 +50,8 @@ interface AppContainer {
     val sending: PreferenceStore<SendingPrefs>
     val housekeeping: Flow<Housekeeping>
     val organization: OrganizationPreview get() = MemoryOrganizationPreview()
+    val billing: app.chatra.online.ProBilling? get() = null
+    val hd: app.chatra.online.HdPilot? get() = null
     val proOffer: app.chatra.core.model.ProOffer get() = app.chatra.core.model.ProOffer.Unavailable
     /** Transporty full są dopiero w CH026/CH032; nigdy nie zastępujemy ich atrapą. */
     val canSendMessages: Boolean get() = isDemo

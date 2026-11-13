@@ -32,6 +32,8 @@ W PDF uzupełnienie zaczyna się na stronie 24.
 
 ## Dokumentacja implementacji Android
 
+- [CH045–CH049: Pro, backend pilota Chatra HD i wznawialny upload](docs/implementacja_android/CH045_CH049_Wdrozenie_i_weryfikacja.md)
+
 - [CH040–CH044: trwały wygląd i nadpisania rozmów, ustawienia wysyłania, lokalne blokady, kosz i pomoc](docs/implementacja_android/CH040_CH044_Wdrozenie_i_weryfikacja.md)
 
 - [CH035–CH039: trwały harmonogram, odzyskiwanie, edycja, indeks i filtry](docs/implementacja_android/CH035_CH039_Wdrozenie_i_weryfikacja.md)

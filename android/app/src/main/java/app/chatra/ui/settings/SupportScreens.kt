@@ -30,7 +30,7 @@ fun PrivacyScreen(onBack: () -> Unit) {
     DetailPage("Prywatność", onBack) {
         DetailCard {
             BasicText("Historia i wyszukiwanie pozostają na telefonie. Dane nie trafiają do chmury przez samo nadanie roli SMS.", style = ChatraType.Body)
-            BasicText("Chatra HD jest osobnym, dobrowolnym transferem. W tej wersji nie jest aktywny. Nie obiecujemy RCS, iMessage ani połączeń.", style = ChatraType.Preview)
+            BasicText("Chatra HD jest dobrowolną usługą wymagającą aktywacji. SMS i MMS działają niezależnie.", style = ChatraType.Preview)
             if (c.isDemo) BasicText("Demo używa przykładowych rozmów i kart. Nie odczytuje SMS ani kontaktów urządzenia i nie wykonuje zakupów.", style = ChatraType.Preview)
         }
         DetailCard {
@@ -47,7 +47,9 @@ fun PrivacyScreen(onBack: () -> Unit) {
         }
         DetailCard {
             BasicText("Sieć, HD i diagnostyka", style = chatraText(17f, 600))
-            BasicText("SMS/MMS korzystają z usług i sieci operatora oraz mogą podlegać opłatom. Chatra HD, przesyłanie oryginałów przez serwer i linki nie są aktywne w tej wersji. Nie wysyłamy historii do usługi HD.", style = ChatraType.Preview)
+            BasicText("SMS/MMS korzystają z usług operatora i mogą podlegać opłatom.", style = ChatraType.Preview)
+            if (c.hd != null) BasicText("W pilocie HD Twilio otrzymuje Twój numer na potrzeby weryfikacji. Usługa otrzymuje numer wybranego odbiorcy oraz wskazane pliki. Niezakończony upload wygasa po 24 godzinach, zweryfikowane pliki po 7 dniach. Odpięcie usuwa dane instalacji na serwerze. Połączenie jest szyfrowane, a serwer ma dostęp do plików.", style = ChatraType.Preview)
+            if (c.billing != null) BasicText("Google Play obsługuje płatność. Serwer Chatry przekazuje token zakupu do Google w celu weryfikacji. Zakup nie wymaga aktywacji HD.", style = ChatraType.Preview)
             BasicText("Aplikacja nie ma automatycznego wysyłania raportów ani analityki treści. Diagnostyka lokalna obejmuje stany transportu i błędy techniczne; system Android i operator mają własne logi. Przed dobrowolnym przekazaniem raportu sprawdź, czy nie zawiera prywatnych danych.", style = ChatraType.Preview)
         }
         c.mmsDownloads?.let { downloads ->

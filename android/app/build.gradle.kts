@@ -11,6 +11,13 @@ val keystoreProperties = Properties().apply {
     if (file.exists()) file.inputStream().use { load(it) }
 }
 
+val backendOrigin = providers.gradleProperty("chatraBackendOrigin").orElse("").get()
+val playProduct = providers.gradleProperty("chatraPlayProduct").orElse("").get()
+val hdPilot = providers.gradleProperty("chatraHdPilot").orElse("false").get().toBooleanStrict()
+require(backendOrigin.isEmpty() || Regex("https://[A-Za-z0-9.-]+(:[0-9]{1,5})?").matches(backendOrigin))
+require(playProduct.isEmpty() || Regex("[a-z0-9_.]{1,100}").matches(playProduct))
+require(backendOrigin.isNotEmpty() || (!hdPilot && playProduct.isEmpty()))
+
 android {
     namespace = "app.chatra"
     compileSdk = 37
@@ -48,6 +55,9 @@ android {
         create("full") {
             dimension = "data"
             buildConfigField("boolean", "DEMO", "false")
+            buildConfigField("String", "BACKEND_ORIGIN", "\"$backendOrigin\"")
+            buildConfigField("String", "PLAY_PRODUCT", "\"$playProduct\"")
+            buildConfigField("boolean", "HD_PILOT", hdPilot.toString())
         }
     }
 
@@ -84,6 +94,7 @@ dependencies {
     "demoImplementation"(project(":core:testing"))
     "fullImplementation"(project(":core:database"))
     "fullImplementation"(libs.androidx.work.runtime)
+    "fullImplementation"("com.android.billingclient:billing:9.1.0")
     debugImplementation(libs.compose.ui.tooling)
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)

@@ -547,6 +547,8 @@ Wykonanie: zatwierdzić katalog Pro i productId, pobierać lokalną cenę sklepu
 
 Odbiór: w produkcyjnym UI nie ma placeholdera [CENA], zakup jednorazowy odtwarzany zgodnie z zatwierdzonym modelem. Weryfikacja: środowisko testowe sklepu, ponowna instalacja, błędny token, oczekiwanie i cofnięta transakcja.
 
+**Wynik CH045 (12.11.2026):** Jednorazowy zakup, weryfikacja i potwierdzenie Play, przywracanie oraz roboczy katalog Bursztyn i Las. Wymagane Play Console, licencjonowane próby i akceptacja G08. [Implementacja i weryfikacja](CH045_CH049_Wdrozenie_i_weryfikacja.md).
+
 ## 6 Backend i Chatra HD
 
 ### CH046 Zaprojektować usługę i zasady danych HD
@@ -557,6 +559,8 @@ Wykonanie: wybrać stos/backend, region, storage, bazę, push, hosting linku i k
 
 Odbiór: decyzje przed kodem, architektura obejmuje obsługę awarii i odzyskanie numeru. Weryfikacja: przegląd bezpieczeństwa i przepływu danych; brak założenia, że odczyt danych z SIM potwierdza numer.
 
+**Wynik CH046 (12.11.2026):** ADR pilota określa stos, region, dane, odzyskanie numeru, limity, retencję, zagrożenia i koszt. Odbiór G06/G07 pozostaje otwarty. [Implementacja i weryfikacja](CH045_CH049_Wdrozenie_i_weryfikacja.md).
+
 ### CH047 Zdefiniować API i tożsamość instalacji
 
 **P0 · BE i Android · 4–6 osobodni · zależności CH046**
@@ -564,6 +568,8 @@ Odbiór: decyzje przed kodem, architektura obejmuje obsługę awarii i odzyskani
 Wykonanie: OpenAPI, modele i kody błędów, podpis/klucz instalacji, sesje i rotacja. Weryfikacja posiadania numeru z limitami prób, opt in odkrywalności i lookup tylko wybranego odbiorcy. Klient Keystore, wylogowanie/odpięcie i zmiana urządzenia. Do kontraktu dodać idempotency i paginację.
 
 Odbiór: dwa urządzenia uzyskują zweryfikowane powiązania i odbiorca nie jest publicznie enumerowalny. Weryfikacja: niewłaściwy lub zużyty kod, replay, skradziona sesja, rotacja i odmowa HD bez utraty SMS.
+
+**Wynik CH047 (12.11.2026):** OpenAPI, weryfikacja numeru, podpis Android Keystore, sesje, odpięcie i ograniczone wzajemne discovery. Testy dwóch kluczy na danych syntetycznych. [Implementacja i weryfikacja](CH045_CH049_Wdrozenie_i_weryfikacja.md).
 
 ### CH048 Zbudować magazyn i wznawialny upload
 
@@ -573,6 +579,8 @@ Wykonanie: manifest transferu, plik/chunki, offset, checksum, finalize i stany. 
 
 Odbiór: wznowienie nie powiela bajtów, błędny hash nie zostaje opublikowany. Weryfikacja: przerwanie w połowie, brak miejsca/quota, równoległe finalize, próba dostępu do innego transferu i opuszczony upload.
 
+**Wynik CH048 (12.11.2026):** Porcje, checksum, wznawianie, bilety, limity i sprzątanie. Finalize idempotentnie zapisuje roboczą kopertę. [Implementacja i weryfikacja](CH045_CH049_Wdrozenie_i_weryfikacja.md).
+
 ### CH049 Zbudować klienta transferów HD
 
 **P1 · Android sieć · 3–5 osobodni · zależności CH031 CH033 CH047 CH048**
@@ -580,6 +588,8 @@ Odbiór: wznowienie nie powiela bajtów, błędny hash nie zostaje opublikowany.
 Wykonanie: trwała kolejka, kontrola sieci, postęp, resume/backoff i anulowanie. Dobór mechanizmu długiego transferu zgodnego z docelowym Androidem. Jawne zużycie danych i możliwość wstrzymania. Błąd lub restart nie usuwa prywatnej kopii aktywnego pliku.
 
 Odbiór: upload działa po zmianie ekranu i odtwarza stan po ponownym uruchomieniu procesu; nie pokazuje sukcesu przed finalize. Weryfikacja: zmiana sieci Wi-Fi na komórkową, brak sieci, błędy 401/413/429/5xx, anulowanie i 2 równoległe transfery.
+
+**Wynik CH049 (12.11.2026):** Trwała kolejka WorkManager, ograniczenie sieci, postęp, pauza, resume, anulowanie, backoff oraz zachowanie lokalnych kopii. Odbiór z aktywną usługą pozostaje otwarty. [Implementacja i weryfikacja](CH045_CH049_Wdrozenie_i_weryfikacja.md).
 
 ### CH050 Zbudować routing kopert i statusy pobrania
 
