@@ -599,6 +599,8 @@ Wykonanie: outbox serwera, koperty wyłącznie dla uprawnionych instalacji, curs
 
 Odbiór: odbiorca offline dostaje zaległe koperty raz po synchronizacji; nadawca widzi prawdziwy etap. Weryfikacja: duplikat push, utrata cursora, dwie instalacje, powtórny receipt i próba cudzej skrzynki.
 
+**Stan 13.11.2026:** Implementacja i lokalne testy gotowe; [dowody i pozostałe próby integracyjne](CH050_CH054_Wdrozenie_i_weryfikacja.md).
+
 ### CH051 Zbudować bezpieczny link i stronę odbioru
 
 **P1 · BE i web i UX · 3–5 osobodni · zależności CH020 CH046 CH048 CH050**
@@ -606,6 +608,8 @@ Odbiór: odbiorca offline dostaje zaległe koperty raz po synchronizacji; nadawc
 Wykonanie: zgoda na link dla nieposiadającego Chatry, sekretny token, expiry/revoke i strona pobrania na Androidzie/iOS/przeglądarce. Podgląd liczby i rozmiaru plików dopiero przy ważnym dostępie. Brak indeksowania/wycieku przez nagłówek Referer/niepotrzebnych trackerów; przycisk pobierz i stan wygasły.
 
 Odbiór: uprawniony odbiorca pobiera, odwołany link nie działa, sekret nie trafia do logów. Weryfikacja: incognito, iOS, zły/wygasły/odwołany token i wielokrotny klik. SMS z linkiem wymaga osobnego zatwierdzenia.
+
+**Stan 13.11.2026:** Implementacja i lokalne testy gotowe; [dowody i pozostałe próby integracyjne](CH050_CH054_Wdrozenie_i_weryfikacja.md).
 
 ### CH052 Wdrożyć retencję usuwanie i ochronę HD
 
@@ -615,6 +619,8 @@ Wykonanie: egzekwować TTL, revoke, usunięcie obiektu lub powiązania, polityk�
 
 Odbiór: polityka serwera zgodna z UI, brak dostępu po cofnięciu i brak wycieków poprzez publiczny magazyn plików. Weryfikacja: negatywne testy obiektowe, granice TTL, odtworzenie backupu i skan logów.
 
+**Stan 13.11.2026:** Implementacja i lokalne testy gotowe; [dowody i pozostałe próby integracyjne](CH050_CH054_Wdrozenie_i_weryfikacja.md).
+
 ### CH053 Połączyć HD z rozmową i dodatkami
 
 **P1 · Android · 3–4 osobodni · zależności CH012 CH013 CH033 CH041 CH049 CH050 CH051 CH052**
@@ -622,6 +628,8 @@ Odbiór: polityka serwera zgodna z UI, brak dostępu po cofnięciu i brak wyciek
 Wykonanie: discovery, oryginał, kopia bez GPS i MMS, dynamiczne CTA, postęp, otrzymanie koperty i karta HD. Rozpoznać nieznany stan dostępności HD bez udawania braku aplikacji. Wyświetlić źródło transportu; odbiór HD nie zamienia się w SMS. Fallback/link tylko po zgodzie.
 
 Odbiór: scenariusz 4 zdjęcia / 38,2 MB ze wzorca działa z rzeczywistymi plikami i potwierdzonym hashem. Weryfikacja: odbiorca Chatra, odbiorca bez Chatry, niedostępny backend, restart i częściowe pobranie.
+
+**Stan 13.11.2026:** Implementacja i lokalne testy gotowe; [dowody i pozostałe próby integracyjne](CH050_CH054_Wdrozenie_i_weryfikacja.md).
 
 ## 7 Testy odbiór i dystrybucja
 
@@ -637,6 +645,7 @@ Odbiór: scenariusze duplikacji i utraty danych mają niezależne asercje i prze
 
 **Odbiór rozszerzony:** Testy migracji i awarii potwierdzają zachowanie ustawień i prawidłowe liczniki galerii.
 
+**Stan 13.11.2026:** Implementacja i lokalne testy gotowe; [dowody i pozostałe próby integracyjne](CH050_CH054_Wdrozenie_i_weryfikacja.md).
 
 ### CH055 Odebrać zgodność wizualną wszystkich ekranów
 

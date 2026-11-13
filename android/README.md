@@ -95,6 +95,12 @@ Blokady są lokalne, tłumią powiadomienia i zachowują SMS/MMS. Kosz zapisuje 
 
 ## CH045–CH049
 
-W pełnym wariancie `chatraBackendOrigin` wskazuje adres HTTPS serwera. `chatraHdPilot` włącza testową aktywację HD i kolejkę uploadu, a `chatraPlayProduct` wskazuje jednorazowy produkt Google Play. Wartości domyślne pozostawiają oba połączenia wyłączone. Dopiero CH050–CH052 obejmują dostarczenie plików i linki.
+W pełnym wariancie `chatraBackendOrigin` wskazuje adres HTTPS serwera. `chatraHdPilot` włącza aktywację HD, upload, synchronizację kopert, pobieranie i linki, a `chatraPlayProduct` wskazuje jednorazowy produkt Google Play. Wartości domyślne pozostawiają oba połączenia wyłączone. Opcjonalne FCM wymaga właściwości `chatraFirebaseApiKey`, `chatraFirebaseApplicationId`, `chatraFirebaseSenderId`, `chatraFirebaseProjectId` z jednej aplikacji Firebase. Auto-init i analityka są wyłączone; rejestracja push następuje po aktywacji HD.
 
 [Konfiguracja backendu](../backend/README.md) i [weryfikacja CH045–CH049](../docs/implementacja_android/CH045_CH049_Wdrozenie_i_weryfikacja.md).
+
+## CH050–CH054
+
+Wiadomości HD są częścią rozmowy i galerii; Room v7 przechowuje historię, lokalne pliki, stan odczytu, kursor i zakres kosza. Push uruchamia uwierzytelnioną synchronizację, a pobranie wymaga osobnego działania. WorkManager domyślnie czeka na sieć nietaryfową i wznawia prywatne porcje po restarcie. Dopiero komplet zweryfikowanych i zapisanych plików pozwala potwierdzić pobranie nadawcy. SMS z linkiem jest osobnym szkicem do zatwierdzenia.
+
+[Zakres, dowody i pozostałe próby dostawców](../docs/implementacja_android/CH050_CH054_Wdrozenie_i_weryfikacja.md).

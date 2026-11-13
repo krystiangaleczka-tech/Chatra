@@ -44,7 +44,7 @@ class HdQueueTest {
             assertEquals(file.bytes, reopened.transfers.value.single().bytes)
             assertEquals(listOf(0L, 262_144L), remote.requests.getValue(id).offsets)
             assertEquals(file.sha256, remote.requests.getValue(id).content.toByteArray().sha256())
-            assertFalse(file.id in reopened.protectedIds())
+            assertTrue(file.id in reopened.protectedIds()) // Source remains available in local HD history.
         }
     }
 
@@ -117,6 +117,33 @@ class HdQueueTest {
         }
     }
 
+    @Test
+    fun linkSurvivesLostCreationResponseAndQueueRestartWithoutSendingSms() = runBlocking {
+        withQueue { context, store, remote, file ->
+            val origin = "https://hd.example.test"
+            val queue = activated(context, store, remote)
+            remote.loseShareResponse = true
+            queue.enqueueLink("+48222111222", listOf(file), false)
+            val id = queue.transfers.value.single().id
+            assertFalse(queue.run(id, 0))
+            assertEquals("link", remote.manifest!!.getString("delivery"))
+            assertTrue(remote.manifest!!.isNull("recipient"))
+            assertNull(queue.transfers.value.single().link)
+            val reopened = HdQueue(context, store, remote, origin)
+            reopened.recover()
+            assertTrue(reopened.run(id, 0))
+            assertEquals(HdStatus.Verified, reopened.transfers.value.single().status)
+            val link = "$origin/r/#$id.${"a".repeat(64)}"
+            assertEquals(link, reopened.transfers.value.single().link)
+            assertEquals(2, remote.shareCalls)
+            assertEquals(remote.shareExpiry, reopened.transfers.value.single().linkExpires)
+            // Reopening again restores the same secret URL. No SMS API is part of this queue.
+            val restored = HdQueue(context, store, remote, origin)
+            restored.recover()
+            assertEquals(link, restored.transfers.value.single().link)
+        }
+    }
+
     private suspend fun activated(context: Context, store: AttachmentStore, remote: Remote): HdQueue =
         HdQueue(context, store, remote).also {
             it.requestCode("+48222111221")
@@ -159,6 +186,10 @@ class HdQueueTest {
         var unmetered = false
         var failure: OnlineError? = null
         var createCalls = 0
+        var manifest: JSONObject? = null
+        var loseShareResponse = false
+        var shareCalls = 0
+        val shareExpiry = unixTime() + 86400
         private val owner = newOnlineId()
         private val challenge = newOnlineId()
 
@@ -184,13 +215,22 @@ class HdQueueTest {
                 synchronized(this) { createCalls++ }
                 failure?.let { throw it }
                 val id = headers.getValue("Idempotency-Key")
-                val file = JSONObject(body.toString(Charsets.UTF_8)).getJSONArray("files").getJSONObject(0)
+                manifest = JSONObject(body.toString(Charsets.UTF_8))
+                val file = requireNotNull(manifest).getJSONArray("files").getJSONObject(0)
                 val upload = requests.computeIfAbsent(id) { Upload(file.getLong("size"), file.getString("sha256")) }
                 return response(id, upload)
             }
             val id = path.substringAfter("/v1/transfers/").substringBefore('/')
             val upload = requests.getValue(id)
             return when {
+                path.endsWith("/shares") -> {
+                    assertTrue(upload.ready)
+                    assertEquals(id, headers["Idempotency-Key"])
+                    assertTrue(JSONObject(body.toString(Charsets.UTF_8)).getBoolean("consent"))
+                    shareCalls++
+                    if (loseShareResponse) { loseShareResponse = false; throw IOException("lost_share_response") }
+                    JSONObject().put("path", "/r/#$id.${"a".repeat(64)}").put("expiresAt", shareExpiry)
+                }
                 path.endsWith("/ticket") -> JSONObject().put("offset", upload.content.size())
                     .put("path", "/v1/transfers/$id/files/0/chunks?ticket=test")
                     .put("chunkSize", 262_144).put("expiresAt", unixTime() + 300)

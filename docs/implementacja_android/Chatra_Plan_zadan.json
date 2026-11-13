@@ -885,7 +885,10 @@
         "CH048",
         "CH049"
       ],
-      "description": "Wykonanie: outbox serwera, koperty wyłącznie dla uprawnionych instalacji, cursor sync i push jako sygnał. Lokalna deduplikacja, historia HD i receipt pobrania po integralnym zapisaniu. Odebranie push nie jest pobraniem; pobranie nie jest odczytem. Uzgodnić zachowanie przy zmianie numeru/klucza.\n\nOdbiór: odbiorca offline dostaje zaległe koperty raz po synchronizacji; nadawca widzi prawdziwy etap. Weryfikacja: duplikat push, utrata cursora, dwie instalacje, powtórny receipt i próba cudzej skrzynki."
+      "description": "Wykonanie: outbox serwera, koperty wyłącznie dla uprawnionych instalacji, cursor sync i push jako sygnał. Lokalna deduplikacja, historia HD i receipt pobrania po integralnym zapisaniu. Odebranie push nie jest pobraniem; pobranie nie jest odczytem. Uzgodnić zachowanie przy zmianie numeru/klucza.\n\nOdbiór: odbiorca offline dostaje zaległe koperty raz po synchronizacji; nadawca widzi prawdziwy etap. Weryfikacja: duplikat push, utrata cursora, dwie instalacje, powtórny receipt i próba cudzej skrzynki.",
+      "status": "implemented_local_sync_verified_fcm_acceptance_pending",
+      "review_note": "Outbox transakcyjny, kursor HMAC, Room, wznawiane pobieranie i idempotentny receipt. Lokalne testy przeszły; rzeczywiste FCM i dwa telefony wymagają konfiguracji dostawców.",
+      "evidence": "CH050_CH054_Wdrozenie_i_weryfikacja.md"
     },
     {
       "id": "CH051",
@@ -900,7 +903,10 @@
         "CH048",
         "CH050"
       ],
-      "description": "Wykonanie: zgoda na link dla nieposiadającego Chatry, sekretny token, expiry/revoke i strona pobrania na Androidzie/iOS/przeglądarce. Podgląd liczby i rozmiaru plików dopiero przy ważnym dostępie. Brak indeksowania/wycieku przez nagłówek Referer/niepotrzebnych trackerów; przycisk pobierz i stan wygasły.\n\nOdbiór: uprawniony odbiorca pobiera, odwołany link nie działa, sekret nie trafia do logów. Weryfikacja: incognito, iOS, zły/wygasły/odwołany token i wielokrotny klik. SMS z linkiem wymaga osobnego zatwierdzenia."
+      "description": "Wykonanie: zgoda na link dla nieposiadającego Chatry, sekretny token, expiry/revoke i strona pobrania na Androidzie/iOS/przeglądarce. Podgląd liczby i rozmiaru plików dopiero przy ważnym dostępie. Brak indeksowania/wycieku przez nagłówek Referer/niepotrzebnych trackerów; przycisk pobierz i stan wygasły.\n\nOdbiór: uprawniony odbiorca pobiera, odwołany link nie działa, sekret nie trafia do logów. Weryfikacja: incognito, iOS, zły/wygasły/odwołany token i wielokrotny klik. SMS z linkiem wymaga osobnego zatwierdzenia.",
+      "status": "implemented_chromium_verified_ios_acceptance_pending",
+      "review_note": "Link po zgodzie, sekret we fragmencie, TTL/revoke, strona i szkic SMS po osobnym potwierdzeniu. Chromium sprawdzony; Safari iOS do odbioru.",
+      "evidence": "CH050_CH054_Wdrozenie_i_weryfikacja.md"
     },
     {
       "id": "CH052",
@@ -916,7 +922,10 @@
         "CH050",
         "CH051"
       ],
-      "description": "Wykonanie: egzekwować TTL, revoke, usunięcie obiektu lub powiązania, politykę backupu i audyt bez danych. Limity lookup/upload/download i alerty nadużyć. Jeśli G07 wybiera E2EE, uzupełnić uzgodniony protokół i ponownie oszacować zadanie przed implementacją; TLS nie zastępuje E2EE. Sekrety w zarządzanym magazynie, rotacja i separacja środowisk.\n\nOdbiór: polityka serwera zgodna z UI, brak dostępu po cofnięciu i brak wycieków poprzez publiczny magazyn plików. Weryfikacja: negatywne testy obiektowe, granice TTL, odtworzenie backupu i skan logów."
+      "description": "Wykonanie: egzekwować TTL, revoke, usunięcie obiektu lub powiązania, politykę backupu i audyt bez danych. Limity lookup/upload/download i alerty nadużyć. Jeśli G07 wybiera E2EE, uzupełnić uzgodniony protokół i ponownie oszacować zadanie przed implementacją; TLS nie zastępuje E2EE. Sekrety w zarządzanym magazynie, rotacja i separacja środowisk.\n\nOdbiór: polityka serwera zgodna z UI, brak dostępu po cofnięciu i brak wycieków poprzez publiczny magazyn plików. Weryfikacja: negatywne testy obiektowe, granice TTL, odtworzenie backupu i skan logów.",
+      "status": "implemented_local_security_verified_deployment_review_pending",
+      "review_note": "Autoryzacja porcji, TTL/revoke, limity, bezosobowy audyt i health probe, bariera snapshot restore. Wymagany odbiór G06/G07 i wdrożenie konfiguracji/monitoringu.",
+      "evidence": "CH050_CH054_Wdrozenie_i_weryfikacja.md"
     },
     {
       "id": "CH053",
@@ -935,7 +944,10 @@
         "CH051",
         "CH052"
       ],
-      "description": "Wykonanie: discovery, oryginał, kopia bez GPS i MMS, dynamiczne CTA, postęp, otrzymanie koperty i karta HD. Rozpoznać nieznany stan dostępności HD bez udawania braku aplikacji. Wyświetlić źródło transportu; odbiór HD nie zamienia się w SMS. Fallback/link tylko po zgodzie.\n\nOdbiór: scenariusz 4 zdjęcia / 38,2 MB ze wzorca działa z rzeczywistymi plikami i potwierdzonym hashem. Weryfikacja: odbiorca Chatra, odbiorca bez Chatry, niedostępny backend, restart i częściowe pobranie."
+      "description": "Wykonanie: discovery, oryginał, kopia bez GPS i MMS, dynamiczne CTA, postęp, otrzymanie koperty i karta HD. Rozpoznać nieznany stan dostępności HD bez udawania braku aplikacji. Wyświetlić źródło transportu; odbiór HD nie zamienia się w SMS. Fallback/link tylko po zgodzie.\n\nOdbiór: scenariusz 4 zdjęcia / 38,2 MB ze wzorca działa z rzeczywistymi plikami i potwierdzonym hashem. Weryfikacja: odbiorca Chatra, odbiorca bez Chatry, niedostępny backend, restart i częściowe pobranie.",
+      "status": "implemented_local_files_verified_physical_e2e_pending",
+      "review_note": "Karta i historia HD, pliki i relacje galerii, stan pobrania i odczytu. Rzeczywiste PNG 38,2 MB sprawdzone przez API; Android restart/receipt sprawdzony kontrolowanym transportem. Fizyczny E2E do odbioru.",
+      "evidence": "CH050_CH054_Wdrozenie_i_weryfikacja.md"
     },
     {
       "id": "CH054",
@@ -952,7 +964,10 @@
         "CH038",
         "CH043"
       ],
-      "description": "Wykonanie: testy istotnych reguł kodowania, deduplikacji, wersji zleceń, multi recipient, indeksu i kosza. Testy DAO i migracji na danych z różnych wersji; kontrolowany zegar i awarie. Nie ograniczać się do testu, który powtarza implementację.\n\nOdbiór: scenariusze duplikacji i utraty danych mają niezależne asercje i przechodzą w CI. Weryfikacja: wstrzykiwanie awarii, callbacki poza kolejnością, częściowe sprzątanie i zachowanie po odtworzeniu.\n\nUzupełnienie UX 29.10.2026: Do testów domeny dodać ustawienia per conversationId, relacje galerii do źródła oraz reguły mark-read/unread, przypięć i wyciszenia. Nie dopuszczać zduplikowanego indeksu mediów po rekoncyliacji.\n\nOdbiór rozszerzony: Testy migracji i awarii potwierdzają zachowanie ustawień i prawidłowe liczniki galerii."
+      "description": "Wykonanie: testy istotnych reguł kodowania, deduplikacji, wersji zleceń, multi recipient, indeksu i kosza. Testy DAO i migracji na danych z różnych wersji; kontrolowany zegar i awarie. Nie ograniczać się do testu, który powtarza implementację.\n\nOdbiór: scenariusze duplikacji i utraty danych mają niezależne asercje i przechodzą w CI. Weryfikacja: wstrzykiwanie awarii, callbacki poza kolejnością, częściowe sprzątanie i zachowanie po odtworzeniu.\n\nUzupełnienie UX 29.10.2026: Do testów domeny dodać ustawienia per conversationId, relacje galerii do źródła oraz reguły mark-read/unread, przypięć i wyciszenia. Nie dopuszczać zduplikowanego indeksu mediów po rekoncyliacji.\n\nOdbiór rozszerzony: Testy migracji i awarii potwierdzają zachowanie ustawień i prawidłowe liczniki galerii.",
+      "status": "implemented_local_regression_passed_ci_configured",
+      "review_note": "Regresja domeny, 4 testy Room z migracjami 1–6→7, pełna seria 82 przypadków Androida (73 zaliczone, 9 sprzętowych/reboot pominiętych). Ostatnie odpinanie sprawdzone na końcowym APK serią wszystkich 9 testów HD. Workflow CI przygotowany; zdalne uruchomienie po publikacji zmian.",
+      "evidence": "CH050_CH054_Wdrozenie_i_weryfikacja.md"
     },
     {
       "id": "CH055",

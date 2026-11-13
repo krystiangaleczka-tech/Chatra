@@ -1,0 +1,7 @@
+
+app.chatra.online.HdQueueTest:.....
+app.chatra.online.HdMailboxTest:....
+
+Time: 3.163
+
+OK (9 tests)

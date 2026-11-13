@@ -67,6 +67,8 @@ internal fun HdControls(hd: HdPilot) {
     var busy by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<String?>(null) }
     var reverify by remember { mutableStateOf(false) }
+    val context = androidx.compose.ui.platform.LocalContext.current
+    var smsLink by remember { mutableStateOf<HdProgress?>(null) }
     var confirmDetach by remember { mutableStateOf(false) }
     fun action(block: suspend () -> Unit) {
         if (busy) return
@@ -79,7 +81,7 @@ internal fun HdControls(hd: HdPilot) {
             finally { busy = false }
         }
     }
-    BasicText("Pilot HD przygotowuje pliki na serwerze. Dostarczenie odbiorcy i linki będą dostępne w kolejnych etapach.", style = ChatraType.Body)
+    BasicText("Chatra HD udostępnia pliki w rozmowie na 7 dni. Link dla osoby bez Chatry działa 24 godziny. Pobranie plików i przeczytanie wiadomości to osobne zdarzenia.", style = ChatraType.Body)
     if (identity.installation == null || reverify || identity.challenge != null) {
         BasicText("Po Twojej zgodzie wyślemy numer do usługi weryfikacji SMS Twilio. Odkrywalność możesz włączyć osobno.", style = ChatraType.Preview)
         if (identity.challenge == null || reverify) {
@@ -98,6 +100,7 @@ internal fun HdControls(hd: HdPilot) {
         TextAction(if (identity.discoverable) "Wyłącz odkrywalność" else "Włącz odkrywalność", {
             action { hd.setDiscoverable(!identity.discoverable) }
         }, enabled = !busy)
+        TextAction("Synchronizuj wiadomości HD", { action { hd.sync() } }, enabled = !busy)
         TextAction("Zweryfikuj numer ponownie", { reverify = true }, enabled = !busy)
         TextAction("Odłącz instalację…", { confirmDetach = true }, enabled = !busy)
     }
@@ -108,9 +111,28 @@ internal fun HdControls(hd: HdPilot) {
         { confirmDetach = false },
     )
     error?.let { BasicText(it, Modifier.semantics { liveRegion = LiveRegionMode.Polite }, style = ChatraType.Preview) }
+    smsLink?.let { row -> ChoiceDialog(
+        "Przygotujemy SMS z linkiem dla ${row.recipient}. Treść sprawdzisz i wyślesz z rozmowy. Operator może naliczyć opłatę za SMS.",
+        listOf("Przygotuj SMS"), {
+            try {
+                check((row.linkExpires ?: 0) > System.currentTimeMillis() / 1000)
+                val expiry = java.text.DateFormat.getDateTimeInstance(java.text.DateFormat.SHORT, java.text.DateFormat.SHORT).format(java.util.Date(requireNotNull(row.linkExpires) * 1000))
+                context.startActivity(android.content.Intent(android.content.Intent.ACTION_SENDTO,
+                android.net.Uri.fromParts("smsto", row.recipient, null)).apply {
+                    setPackage(context.packageName)
+                    putExtra("sms_body", "Pliki Chatra HD (link ważny do $expiry): ${row.link}")
+                }) }
+            catch (_: Exception) { error = "Nie udało się otworzyć szkicu SMS." }
+        }, { smsLink = null },
+    ) }
     transfers.asReversed().forEach { row ->
         if (row.status != HdStatus.Cancelled) {
             BasicText("${row.bytes / 1024} z ${row.total / 1024} KiB · ${transferStatus(row)}", style = ChatraType.Preview)
+            if (row.status == HdStatus.Verified && row.link != null && (row.linkExpires ?: 0) > System.currentTimeMillis() / 1000) {
+                BasicText("Link do plików jest gotowy. Odwołanie usuwa dostęp na serwerze, także z przygotowanego SMS.", style = ChatraType.Preview)
+                BasicText("Dostęp do ${java.text.DateFormat.getDateTimeInstance().format(java.util.Date(requireNotNull(row.linkExpires) * 1000))}", style = ChatraType.Preview)
+                TextAction("Przygotuj SMS z linkiem…", { smsLink = row }, enabled = !busy)
+            }
             when (row.status) {
                 HdStatus.Queued, HdStatus.Uploading, HdStatus.Waiting ->
                     TextAction("Wstrzymaj", { action { hd.pause(row.id) } }, enabled = !busy)
@@ -119,7 +141,7 @@ internal fun HdControls(hd: HdPilot) {
                 else -> Unit
             }
             if (row.status != HdStatus.Cancelling) {
-                TextAction(if (row.status == HdStatus.Verified) "Usuń z serwera" else "Anuluj transfer", { action { hd.cancel(row.id) } }, enabled = !busy)
+                TextAction(if (row.status == HdStatus.Verified) "Odwołaj dostęp i usuń z serwera" else "Anuluj transfer", { action { hd.cancel(row.id) } }, enabled = !busy)
             }
         }
     }

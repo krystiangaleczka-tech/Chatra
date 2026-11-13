@@ -105,3 +105,31 @@ class GooglePlay:
                 return self._verified(token)
         except (requests.RequestException, ValueError, GoogleAuthError):
             raise ProviderUnavailable from None
+
+
+class FirebasePush:
+    def __init__(self, project):
+        if not re.fullmatch(r"[a-z][a-z0-9-]{4,62}", project):
+            raise ValueError("Invalid Firebase project")
+        from google.auth import default
+        from google.auth.transport.requests import AuthorizedSession
+        credentials, _ = default(scopes=["https://www.googleapis.com/auth/firebase.messaging"])
+        self.session = AuthorizedSession(credentials)
+        self.url = f"https://fcm.googleapis.com/v1/projects/{project}/messages:send"
+
+    def send(self, token, data):
+        from google.auth.exceptions import GoogleAuthError
+        try:
+            response = self.session.post(self.url, json={"message": {
+                "token": token, "data": data,
+                "android": {"priority": "normal", "collapse_key": "chatra-hd-sync", "ttl": "3600s"},
+            }}, timeout=(4, 8))
+            if response.status_code == 404:
+                details = response.json().get("error", {}).get("details", [])
+                if any(item.get("errorCode") == "UNREGISTERED" for item in details):
+                    return False
+            if response.status_code != 200:
+                raise ProviderUnavailable
+            return True
+        except (requests.RequestException, ValueError, GoogleAuthError):
+            raise ProviderUnavailable from None

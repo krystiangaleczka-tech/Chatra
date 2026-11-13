@@ -35,6 +35,7 @@ fun MediaExtrasSheet(model: ConversationViewModel, onClose: () -> Unit, onSchedu
     var templates by rememberSaveable { mutableStateOf(false) }
     var metered by rememberSaveable { mutableStateOf(false) }
     var lookupResult by remember { mutableStateOf<Pair<String, Boolean>?>(null) }
+    var linkConsent by remember { mutableStateOf(false) }
     var cameraUri by rememberSaveable { mutableStateOf<String?>(null) }
     var variant by rememberSaveable { mutableStateOf(state.mediaVariant ?: c.sending.value.value.hdDefault) }
     fun import(uris: List<Uri>) {
@@ -130,7 +131,7 @@ fun MediaExtrasSheet(model: ConversationViewModel, onClose: () -> Unit, onSchedu
                     val number = state.summary?.participants?.singleOrNull()?.address?.raw?.let(::hdPhone)
                     when {
                         hd == null -> BasicText("Transfer przez Chatra HD jest niedostępny. Wybierz MMS, aby użyć sieci operatora.", style = ChatraType.Preview)
-                        identity?.installation == null || !identity.discoverable -> BasicText("Aktywuj pilot HD i odkrywalność w ustawieniach Chatra HD.", style = ChatraType.Preview)
+                        identity?.installation == null -> BasicText("Aktywuj pilot HD w ustawieniach Chatra HD.", style = ChatraType.Preview)
                         number == null -> BasicText("Pilot HD obsługuje jednego odbiorcę z numerem telefonu.", style = ChatraType.Preview)
                         else -> {
                             val checked = lookupResult?.takeIf { it.first == number }?.second
@@ -143,13 +144,28 @@ fun MediaExtrasSheet(model: ConversationViewModel, onClose: () -> Unit, onSchedu
                                     catch (_: Exception) { error = "Nie udało się sprawdzić odbiorcy HD." }
                                     finally { busy = false }
                                 }
-                            }, enabled = !busy)
+                            }, enabled = !busy && identity.discoverable)
                             if (checked == false) BasicText("Odbiorca jest niedostępny. Włączcie odkrywalność i sprawdźcie siebie nawzajem.", style = ChatraType.Preview)
+                            if (checked != true) {
+                                if (checked == null) BasicText("Nie potwierdzono dostępności odbiorcy HD. Możesz osobno utworzyć link. Odkrywanie HD wymaga zgody obu stron.", style = ChatraType.Preview)
+                                ChatraSwitch(metered, { metered = it }, "Zezwalaj na sieć taryfową")
+                                TextAction("Utwórz link do plików…", { linkConsent = true }, enabled = !busy && items.isNotEmpty())
+                                if (linkConsent) ChoiceDialog(
+                                    "Prześlemy te pliki na serwer i utworzymy link ważny 24 godziny. Każdy posiadacz linku będzie mógł je pobrać. Link możesz odwołać w ustawieniach HD. SMS przygotujesz osobno po przesłaniu plików.",
+                                    listOf("Zgadzam się · utwórz link"),
+                                    { busy = true; scope.launch {
+                                        try { hd.enqueueLink(number, items, metered); onClose() }
+                                        catch (e: CancellationException) { throw e }
+                                        catch (_: Exception) { error = "Nie udało się dodać plików do kolejki linku." }
+                                        finally { busy = false }
+                                    } }, { linkConsent = false },
+                                )
+                            }
                             if (checked == true) {
-                                BasicText("Pliki trafią do serwera pilota. Odbiorca nie dostanie powiadomienia. Postęp znajdziesz w ustawieniach Chatra HD.", style = ChatraType.Preview)
+                                BasicText("Pliki będą dostępne w rozmowie odbiorcy przez 7 dni. Pobranie wymaga jego działania. Postęp znajdziesz w ustawieniach Chatra HD.", style = ChatraType.Preview)
                                 ChatraSwitch(metered, { metered = it }, "Zezwalaj na sieć taryfową")
                                 BasicText(if (metered) "Transfer może zużyć pakiet danych." else "Transfer tylko przez sieć oznaczoną jako nietaryfowa.", style = ChatraType.Preview)
-                                TextAction("Prześlij do serwera · ${items.sumOf { it.bytes } / 1024} KiB", {
+                                TextAction("Wyślij przez Chatra HD · ${items.sumOf { it.bytes } / 1024} KiB", {
                                     busy = true
                                     scope.launch {
                                         try { hd.enqueue(number, items, metered); onClose() }

@@ -1,6 +1,6 @@
 # Chatra HD i weryfikacja Pro
 
-Backend pilota CH045–CH049. Python 3.12 z SQLite 3.35 lub nowszym. [ADR](../docs/implementacja_android/adr/ADR-002_Chatra_HD.md) określa model danych, limity i warunki wdrożenia. [OpenAPI](openapi.json) opisuje działające endpointy. Koperty po finalize są robocze i widoczne tylko dla właściciela transferu. CH050–CH052 obejmują dostarczenie, odbiór, statusy i linki.
+Backend pilota CH045–CH054. Python 3.12 z SQLite 3.35 lub nowszym. [ADR](../docs/implementacja_android/adr/ADR-002_Chatra_HD.md) i [uzupełnienie dostarczania](../docs/implementacja_android/adr/ADR-003_Dostarczenie_HD_i_linki.md) określają dane, limity i wdrożenie. [OpenAPI](openapi.json) obejmuje upload, skrzynkę zdarzeń, pobieranie, receipt i linki. Bez zewnętrznej konfiguracji kod nie uruchamia publicznego pilota ani płatności.
 
 ## Uruchomienie
 
@@ -22,6 +22,8 @@ Zachowaj `CHATRA_SECRET_HEX` między restartami z tą samą bazą, ponieważ sł
 | `CHATRA_TWILIO_SERVICE`, `CHATRA_TWILIO_KEY`, `CHATRA_TWILIO_SECRET` | Verify Service SID, klucz i sekret dostawcy. Bez konfiguracji usługa nie wysyła SMS. Przy pilocie ustaw regiony docelowe i limity kosztu w Twilio. |
 | `CHATRA_PLAY_PRODUCT` | Identyfikator jednorazowego produktu w Google Play dla `app.chatra`. Bez wartości endpoint zakupów zwraca 503. |
 | Application Default Credentials | Tożsamość usługi z dostępem do sprawdzania i potwierdzania zakupów w Play Developer API. Nie umieszczaj klucza w APK ani repozytorium. |
+| `CHATRA_FIREBASE_PROJECT` | Opcjonalny projekt FCM HTTP v1. ADC potrzebuje uprawnienia wysyłania wiadomości w tym projekcie. Bez konfiguracji działają synchronizacja ręczna i okresowa. |
+| `CHATRA_SECRET_FILE` | Alternatywa dla `CHATRA_SECRET_HEX`: plik zawierający sekret szesnastkowy, montowany z magazynu sekretów. Podaj dokładnie jedno źródło; nie zapisuj pliku w repo. |
 
 W Androidzie konfiguracja pochodzi z właściwości Gradle. Przykład dla instancji testowej:
 
@@ -63,3 +65,25 @@ Próby używają losowych kluczy i danych syntetycznych. Nie wymagają konta Pla
 ```sh
 python -c 'import json; from api import create_app; print(json.dumps(create_app(None).openapi(), indent=2))' > openapi.json
 ```
+
+Powtarzalny zestaw zależności testowych: `pip install -r requirements-dev.txt`. Nie podłączaj testów do danych ani kont produkcyjnych.
+
+## Dostarczenie i linki
+
+Finalize zapisuje kopertę i dwa zdarzenia w tej samej transakcji. `/v1/inbox` używa kursora HMAC przypisanego do instalacji. Po `409 cursor_expired` klient usuwa kursor i odtwarza stronę od początku; lokalne ID i trwałe znaczniki usunięcia zapobiegają duplikatom i wskrzeszaniu kosza. Zdarzenia istnieją 30 dni, pliki 7 dni. Zdarzenie `downloaded` powstaje po idempotentnym receipt z hashami wszystkich plików. Nie ma receipt odczytu. FCM zawiera tylko niejawny identyfikator zdarzenia; duplikaty, opóźnienia i brak push nie zmieniają historii.
+
+Transfer `delivery=link` nie przekazuje numeru odbiorcy do serwera. Po ukończeniu właściciel wywołuje `/shares` z `consent=true`, `Idempotency-Key` i opcjonalnym `ttlSeconds` (60–604800, domyślnie 86400). Android używa 24 h. Sekret jest w fragmencie `/r/#…`, usuwanym z adresu po otwarciu; do API trafia w ciele POST. Nie umieszczaj go w query string ani logach. Strona działa w tej samej domenie HTTPS co API, ma CSP, no-referrer, no-store i noindex, bez trackerów. Odświeżenie strony wymaga ponownego otwarcia oryginalnego linku. Przeglądarka pobiera porcje do 25 MiB na plik, sprawdza SHA-256 i dopiero wtedy udostępnia zapis. Odwołanie dostępu nie usuwa już pobranych kopii odbiorcy.
+
+## Retencja, alerty i odtwarzanie
+
+Brak kopii danych HD w pilocie. Wyłącz snapshoty i kopie wolumenu u hostera; samo szyfrowanie nie zapobiega odtworzeniu odwołanego linku ze starej kopii. Dostęp jest blokowany dokładnie na granicy TTL, niezależnie od sprzątania co 5 min. Skasowanie transferu lub wiązania kaskadowo usuwa porcje, linki i receipts. Zdarzenia cofnięcia pozostają do synchronizacji drugiej strony.
+
+Lokalny monitoring co 5 min: `python health.py /path/chatra.sqlite3`. Wynik zawiera wyłącznie liczniki, rozmiar danych i `alert`; kod wyjścia 2 oznacza zaległe usuwanie >10 min, co najmniej sześć nieudanych prób push, 100 odmów limitu w dniu lub zapełnienie 1800 MiB. Skieruj ten kod do monitora procesu i alertu operatora. Dziennik audytu agreguje rodzaje zdarzeń dziennie przez 30 dni, bez numerów, ID, tokenów i treści. Limity porcji pobierania to 4096/h na instalację lub źródło linku; resolve 60/min na źródło. Proxy musi dodatkowo ograniczać ruch, rozmiar URL i liczbę połączeń przed odczytem ciała.
+
+Jeżeli operator mimo polityki odzyskuje kopię bazy, musi przed wystawieniem usługi wykonać **na odtworzonej kopii**:
+
+```sh
+python restore.py /path/restored.sqlite3 --invalidate-bindings
+```
+
+Bariera usuwa wszystkie odtworzone wiązania, sesje, pliki, receipts i linki. Wymagane są nowa aktywacja i upload; nie da się bezpiecznie zachować ważności starych linków bez niezależnego dziennika odwołań. Rotację głównego sekretu w pilocie przeprowadzaj przez zatrzymanie starej instancji, tę samą barierę i podanie nowego sekretu z magazynu. Nie przełączaj sekretu przy zachowanych danych: numer routingu jest zaszyfrowany kluczem od niego pochodnym. Test/staging/produkcja mają osobne bazy, sekrety, projekty Firebase, ADC i konfiguracje Twilio. Dla Play nadaj tylko uprawnienia zakupu, dla FCM tylko wysyłkę. Nie publikuj SQLite ani katalogu bazowego przez serwer HTTP.

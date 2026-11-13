@@ -46,9 +46,12 @@ internal class HdQueue(
     private val context: Context,
     private val media: AttachmentStore,
     transport: OnlineTransport? = null,
+    private val linkOrigin: String = BuildConfig.BACKEND_ORIGIN,
 ) : HdPilot {
     private val key by lazy { InstallationKey() }
     private val api by lazy { transport ?: OnlineApi(context, key) }
+    internal var mailbox: HdMailbox? = null
+    internal val transport: OnlineTransport get() = api
     private val lock = Mutex()
     private val identityLock = Mutex()
     private val store = AtomicFile(File(context.noBackupFilesDir, "hd-transfers.json"))
@@ -64,10 +67,12 @@ internal class HdQueue(
         val id: String, val owner: String, val recipient: String, val attachments: List<AttachmentId>,
         val total: Long, val metered: Boolean, val status: HdStatus = HdStatus.Queued,
         val generation: Int = 0, val bytes: Long = 0, val nextAttempt: Long = 0, val detail: String? = null,
+        val linkDelivery: Boolean = false, val link: String? = null, val completedAt: Long = 0, val linkExpires: Long = 0,
     ) {
         fun json() = JSONObject().put("id", id).put("owner", owner).put("recipient", recipient)
             .put("attachments", JSONArray(attachments.map { it.value })).put("total", total).put("metered", metered)
-            .put("status", status.name).put("generation", generation).put("bytes", bytes).put("retry", nextAttempt).put("detail", detail)
+            .put("status", status.name).put("generation", generation).put("bytes", bytes).put("retry", nextAttempt).put("detail", detail).put("linkDelivery", linkDelivery).put("link", link)
+            .put("completedAt", completedAt).put("linkExpires", linkExpires)
 
         companion object {
             fun read(json: JSONObject): Upload {
@@ -77,7 +82,9 @@ internal class HdQueue(
                     List(attachments.length()) { AttachmentId(attachments.getString(it)) },
                     json.getLong("total"), json.getBoolean("metered"), HdStatus.valueOf(json.getString("status")),
                     json.getInt("generation"), json.getLong("bytes"), json.getLong("retry"),
-                    json.optString("detail").takeIf { it.isNotEmpty() },
+                    json.optString("detail").takeIf { it.isNotEmpty() && it != "null" },
+                    json.optBoolean("linkDelivery"), json.optString("link").takeIf { it.startsWith("https://") },
+                    json.optLong("completedAt"), json.optLong("linkExpires"),
                 )
             }
         }
@@ -124,6 +131,7 @@ internal class HdQueue(
             saveIdentity(owner, discoverable = owner == old.installation && old.discoverable)
             api.forget()
             if (old.installation != null && old.installation != owner) discard(old.installation)
+            HdPush.signal(context)
         }
     }
 
@@ -156,13 +164,16 @@ internal class HdQueue(
         }
     }
 
-    private suspend fun discard(owner: String) = lock.withLock {
-        val old = all()
-        val discarded = old.filter { it.owner == owner }
-        if (discarded.isNotEmpty()) {
-            save(old - discarded.toSet())
-            discarded.forEach { WorkManager.getInstance(context).cancelUniqueWork(workName(it)) }
+    private suspend fun discard(owner: String) {
+        lock.withLock {
+            val old = all()
+            val discarded = old.filter { it.owner == owner }
+            if (discarded.isNotEmpty()) {
+                save(old - discarded.toSet())
+                discarded.forEach { WorkManager.getInstance(context).cancelUniqueWork(workName(it)) }
+            }
         }
+        mailbox?.detached(owner)
     }
 
     private fun all(): List<Upload> {
@@ -173,7 +184,7 @@ internal class HdQueue(
     }
 
     private fun publish(rows: List<Upload>) {
-        progress.value = rows.map { HdProgress(it.id, it.bytes, it.total, it.status, it.detail) }
+        progress.value = rows.map { HdProgress(it.id, it.bytes, it.total, it.status, it.detail, it.link, it.recipient, it.linkExpires.takeIf { expiry -> expiry > 0 }) }
     }
 
     private fun save(rows: List<Upload>) {
@@ -190,11 +201,12 @@ internal class HdQueue(
     }
 
     suspend fun protectedIds(): Set<AttachmentId> = withContext(Dispatchers.IO) {
-        lock.withLock { all().filter { it.status !in terminal }.flatMap { it.attachments }.toSet() }
+        lock.withLock { all().filter { it.status != HdStatus.Cancelled }.flatMap { it.attachments }.toSet() } + mailbox?.protectedIds().orEmpty()
     }
 
     suspend fun recover() = withContext(Dispatchers.IO) {
         lock.withLock { all().filter { it.status in inProgress }.forEach { schedule(it) } }
+        mailbox?.recover()
     }
 
     fun registerRepair() {
@@ -203,11 +215,21 @@ internal class HdQueue(
         )
     }
 
-    override suspend fun enqueue(recipient: String, files: List<StoredMedia>, allowMetered: Boolean) = withContext(Dispatchers.IO) {
+    override suspend fun sync() { mailbox?.sync(); kotlinx.coroutines.withTimeoutOrNull(10_000) { registerPush() } }
+    internal suspend fun registerPush() {
+        val owner = identity.value.installation ?: return
+        val token = HdPush.token(context) ?: return
+        api.signed(owner, "PUT", "/v1/push-registration", JSONObject().put("token", token).bytes())
+    }
+    override suspend fun download(id: String, allowMetered: Boolean) { mailbox?.enqueue(id, allowMetered) }
+    override suspend fun enqueue(recipient: String, files: List<StoredMedia>, allowMetered: Boolean) = enqueueFiles(recipient, files, allowMetered, false)
+    override suspend fun enqueueLink(recipient: String, files: List<StoredMedia>, allowMetered: Boolean) = enqueueFiles(recipient, files, allowMetered, true)
+
+    private suspend fun enqueueFiles(recipient: String, files: List<StoredMedia>, allowMetered: Boolean, link: Boolean) = withContext(Dispatchers.IO) {
         identityLock.withLock {
             val state = currentIdentity.value
             val owner = state.installation ?: throw OnlineError(401, "binding_required", 0)
-            check(state.discoverable) { "Włącz odkrywalność w ustawieniach Chatra HD." }
+            check(link || state.discoverable) { "Włącz odkrywalność w ustawieniach Chatra HD." }
             val number = requireNotNull(hdPhone(recipient))
             val total = files.sumOf { it.bytes }
             require(files.size in 1..5 && files.all { it.bytes in 1..(25 * MIB) } && total <= 50 * MIB) {
@@ -216,10 +238,11 @@ internal class HdQueue(
             val ids = files.map { it.id }
             lock.withLock queue@{
                 val old = all()
-                if (old.any { it.owner == owner && it.recipient == number && it.attachments == ids && it.status !in setOf(HdStatus.Failed, HdStatus.Cancelled) }) return@queue
+                if (old.any { it.owner == owner && it.recipient == number && it.attachments == ids && it.linkDelivery == link && it.status !in setOf(HdStatus.Failed, HdStatus.Cancelled) && (!link || it.linkExpires == 0L || it.linkExpires > unixTime()) }) return@queue
                 require(old.count { it.status !in terminal } < 16) { "Kolejka HD jest pełna." }
-                val row = Upload(newOnlineId(), owner, number, ids, total, allowMetered)
-                val recent = old.filter { it.status in terminal }.takeLast(16).toSet()
+                val row = Upload(newOnlineId(), owner, number, ids, total, allowMetered, linkDelivery = link)
+                val recent = old.filter { it.status == HdStatus.Verified && it.completedAt > unixTime() - 7 * 86400 }.toSet()
+                require(recent.size < 128) { "Lista ostatnich transferów jest pełna. Usuń zbędne transfery z serwera." }
                 save(old.filter { it.status !in terminal || it in recent } + row)
                 schedule(row)
             }
@@ -329,7 +352,7 @@ internal class HdQueue(
         })
         val unmetered = !row.metered
         val created = api.signed(
-            row.owner, "POST", "/v1/transfers", JSONObject().put("recipient", row.recipient).put("files", manifest).bytes(),
+            row.owner, "POST", "/v1/transfers", JSONObject().put("recipient", if (row.linkDelivery) JSONObject.NULL else row.recipient).put("delivery", if (row.linkDelivery) "link" else "hd").put("files", manifest).bytes(),
             headers = mapOf("Idempotency-Key" to row.id), unmetered = unmetered,
         )
         val transferId = created.getString("transferId")
@@ -380,7 +403,21 @@ internal class HdQueue(
 
     private suspend fun markVerified(row: Upload, result: JSONObject): Boolean {
         check(result.getString("state") == "finalized" && !result.isNull("envelopeId"))
-        update(row) { it.copy(status = HdStatus.Verified, bytes = row.total, detail = null) }
+        var expiry = 0L
+        val link = if (row.linkDelivery) {
+            val transfer = result.getString("transferId")
+            val shared = api.signed(row.owner, "POST", "/v1/transfers/$transfer/shares",
+                JSONObject().put("consent", true).put("ttlSeconds", 86400).bytes(),
+                mapOf("Idempotency-Key" to row.id), !row.metered)
+            val path = shared.getString("path")
+            expiry = shared.getLong("expiresAt")
+            require(path.matches(Regex("/r/#[0-9a-f]{32}\\.[0-9a-f]{64}")))
+            linkOrigin + path
+        } else {
+            mailbox?.sent(result.getString("envelopeId"), row.attachments)
+            null
+        }
+        update(row) { it.copy(status = HdStatus.Verified, bytes = row.total, detail = null, link = link, completedAt = unixTime(), linkExpires = expiry) }
         return true
     }
 }
@@ -399,6 +436,8 @@ class HdRecoveryWorker(context: Context, parameters: WorkerParameters) : Corouti
         if (!BuildConfig.HD_PILOT) return Result.success()
         val queue = (applicationContext as ChatraApplication).container(false).hd as? HdQueue ?: return Result.failure()
         queue.recover()
-        return Result.success()
+        return try { queue.sync(); Result.success() }
+        catch (e: CancellationException) { throw e }
+        catch (_: Exception) { Result.retry() }
     }
 }

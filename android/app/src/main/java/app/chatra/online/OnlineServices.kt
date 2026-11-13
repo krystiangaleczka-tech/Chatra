@@ -23,7 +23,8 @@ data class HdIdentity(val installation: String? = null, val challenge: String? =
 
 enum class HdStatus { Queued, Uploading, Waiting, Paused, NeedsActivation, Failed, Cancelling, Verified, Cancelled }
 
-data class HdProgress(val id: String, val bytes: Long, val total: Long, val status: HdStatus, val detail: String? = null)
+data class HdProgress(val id: String, val bytes: Long, val total: Long, val status: HdStatus, val detail: String? = null,
+    val link: String? = null, val recipient: String? = null, val linkExpires: Long? = null)
 
 interface HdPilot {
     val identity: StateFlow<HdIdentity>
@@ -37,6 +38,9 @@ interface HdPilot {
     suspend fun pause(id: String)
     suspend fun resume(id: String)
     suspend fun cancel(id: String)
+    suspend fun sync() {}
+    suspend fun download(id: String, allowMetered: Boolean = false) {}
+    suspend fun enqueueLink(recipient: String, files: List<StoredMedia>, allowMetered: Boolean) {}
 }
 
 fun hdPhone(raw: String): String? {

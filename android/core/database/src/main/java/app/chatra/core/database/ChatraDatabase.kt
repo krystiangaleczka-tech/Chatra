@@ -139,12 +139,14 @@ interface ChatraDao {
 }
 
 @Database(entities = [ConversationMeta::class, ProviderMessageRef::class, MediaRef::class, InboundReceipt::class,
-    OutgoingOperation::class, OutgoingRecipient::class, OutgoingAttempt::class, OutgoingPart::class, SavedDraft::class, ClosedDraft::class, ScheduledRow::class, SearchDocument::class, SearchFts::class, LocalBlock::class, TrashEntry::class, TrashRef::class], version = 6, exportSchema = true)
+    OutgoingOperation::class, OutgoingRecipient::class, OutgoingAttempt::class, OutgoingPart::class, SavedDraft::class, ClosedDraft::class, ScheduledRow::class, SearchDocument::class, SearchFts::class, LocalBlock::class, TrashEntry::class, TrashRef::class,
+    HdRecord::class, HdCursor::class, HdDismissed::class, TrashHdRef::class], version = 7, exportSchema = true)
 abstract class ChatraDatabase : RoomDatabase() {
     abstract fun dao(): ChatraDao
     abstract fun schedules(): ScheduleDao
     abstract fun search(): SearchDao
     abstract fun organization(): OrganizationDao
+    abstract fun hd(): HdDao
     companion object {
         val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(db: SupportSQLiteDatabase) {
@@ -193,7 +195,17 @@ abstract class ChatraDatabase : RoomDatabase() {
                 db.execSQL("CREATE INDEX IF NOT EXISTS index_TrashRef_entryId ON TrashRef(entryId)")
             }
         }
+        val MIGRATION_6_7 = object : Migration(6, 7) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("CREATE TABLE IF NOT EXISTS HdRecord (id TEXT NOT NULL PRIMARY KEY, owner TEXT NOT NULL, conversationId TEXT NOT NULL, sender TEXT NOT NULL, recipient TEXT NOT NULL, incoming INTEGER NOT NULL, createdAt INTEGER NOT NULL, expiresAt INTEGER NOT NULL, manifest TEXT NOT NULL, localFiles TEXT NOT NULL, state TEXT NOT NULL, downloadedAt INTEGER, read INTEGER NOT NULL, bytes INTEGER NOT NULL, metered INTEGER NOT NULL)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_HdRecord_conversationId ON HdRecord(conversationId)")
+                db.execSQL("CREATE TABLE IF NOT EXISTS HdCursor (owner TEXT NOT NULL PRIMARY KEY, cursor TEXT NOT NULL)")
+                db.execSQL("CREATE TABLE IF NOT EXISTS HdDismissed (id TEXT NOT NULL PRIMARY KEY)")
+                db.execSQL("CREATE TABLE IF NOT EXISTS TrashHdRef (id TEXT NOT NULL PRIMARY KEY, entryId TEXT NOT NULL, FOREIGN KEY(entryId) REFERENCES TrashEntry(id) ON DELETE CASCADE)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_TrashHdRef_entryId ON TrashHdRef(entryId)")
+            }
+        }
         fun open(context: Context): ChatraDatabase = Room.databaseBuilder(context.applicationContext, ChatraDatabase::class.java, "chatra.db")
-            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6).build()
+            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7).build()
     }
 }

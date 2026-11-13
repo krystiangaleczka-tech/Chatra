@@ -73,6 +73,8 @@ internal interface OnlineTransport {
         bearer: Boolean = false, headers: Map<String, String> = emptyMap(), unmetered: Boolean = false,
     ): JSONObject
 
+    suspend fun download(installation: String, path: String, unmetered: Boolean): ByteArray = throw IOException("download_unavailable")
+
     suspend fun forget()
 }
 
@@ -100,6 +102,15 @@ internal class OnlineApi(context: Context, private val key: InstallationKey? = n
         }
     }
 
+    override suspend fun download(installation: String, path: String, unmetered: Boolean): ByteArray {
+        val token = tokenFor(installation, unmetered)
+        return try { wire("GET", path, byteArrayOf(), token, true, emptyMap(), unmetered, true) }
+        catch (e: OnlineError) {
+            if (e.status != 401 || e.code != "session_expired") throw e
+            wire("GET", path, byteArrayOf(), tokenFor(installation, unmetered, token), true, emptyMap(), unmetered, true)
+        }
+    }
+
     override suspend fun forget() = sessionLock.withLock { session = null }
 
     private suspend fun tokenFor(owner: String, unmetered: Boolean, rejected: String? = null): String = sessionLock.withLock {
@@ -116,7 +127,13 @@ internal class OnlineApi(context: Context, private val key: InstallationKey? = n
         bearer: Boolean,
         headers: Map<String, String>,
         unmetered: Boolean,
-    ): JSONObject = withContext(Dispatchers.IO) {
+    ): JSONObject {
+        val bytes = wire(method, path, body, credential, bearer, headers, unmetered, false)
+        return if (bytes.isEmpty()) JSONObject() else JSONObject(bytes.toString(Charsets.UTF_8))
+    }
+
+    private suspend fun wire(method: String, path: String, body: ByteArray, credential: String?,
+        bearer: Boolean, headers: Map<String, String>, unmetered: Boolean, binary: Boolean): ByteArray = withContext(Dispatchers.IO) {
         require(path.startsWith("/v1/") && !path.contains('#'))
         val url = URL(BuildConfig.BACKEND_ORIGIN + path)
         val connection = if (unmetered) {
@@ -133,7 +150,7 @@ internal class OnlineApi(context: Context, private val key: InstallationKey? = n
             connection.readTimeout = 12_000
             connection.instanceFollowRedirects = false
             connection.useCaches = false
-            connection.setRequestProperty("Accept", "application/json")
+            connection.setRequestProperty("Accept", if (binary) "application/octet-stream" else "application/json")
             if (credential != null) {
                 val timestamp = unixTime().toString()
                 val nonce = newOnlineId()
@@ -164,19 +181,20 @@ internal class OnlineApi(context: Context, private val key: InstallationKey? = n
                 while (true) {
                     val count = input.read(buffer)
                     if (count < 0) break
-                    if (output.size() + count > 32_768) throw IOException("invalid_response")
+                    if (output.size() + count > if (binary && success) 262_144 else 32_768) throw IOException("invalid_response")
                     output.write(buffer, 0, count)
                 }
-                output.toString(Charsets.UTF_8.name())
+                output.toByteArray()
             }
             val result = data?.takeIf { it.isNotEmpty() }?.let {
-                try { JSONObject(it) } catch (_: org.json.JSONException) { null }
+                try { JSONObject(it.toString(Charsets.UTF_8)) } catch (_: org.json.JSONException) { null }
             }
             if (!success) throw OnlineError(
                 status, result?.optString("code") ?: "http_error",
                 (connection.getHeaderField("Retry-After")?.toLongOrNull() ?: 0).coerceIn(0, 86_400),
             )
-            result ?: if (status == 204) JSONObject() else throw IOException("invalid_response")
+            if (!binary && result == null && status != 204) throw IOException("invalid_response")
+            data ?: byteArrayOf()
         } finally {
             connection.disconnect()
         }

@@ -1,0 +1,234 @@
+Starting a Gradle Daemon, 5 stopped Daemons could not be reused, use --status for details
+Calculating task graph as no cached configuration is available for tasks: :app:assembleFullDebug :app:compileDemoDebugKotlin :app:lintFullDebug :app:lintDemoDebug :core:model:test :core:testing:test :app:testFullDebugUnitTest :app:testDemoDebugUnitTest
+> Task :app:preBuild UP-TO-DATE
+> Task :core:model:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :app:preFullDebugBuild UP-TO-DATE
+> Task :app:mergeFullDebugNativeDebugMetadata NO-SOURCE
+> Task :core:model:processResources NO-SOURCE
+> Task :app:generateFullDebugBuildConfig UP-TO-DATE
+> Task :app:generateFullDebugResources UP-TO-DATE
+> Task :app:packageFullDebugResources UP-TO-DATE
+> Task :core:database:preBuild UP-TO-DATE
+> Task :core:database:preDebugBuild UP-TO-DATE
+> Task :core:database:processDebugNavigationResources UP-TO-DATE
+> Task :core:model:compileKotlin UP-TO-DATE
+> Task :core:designsystem:preBuild UP-TO-DATE
+> Task :core:designsystem:preDebugBuild UP-TO-DATE
+> Task :core:model:compileJava NO-SOURCE
+> Task :core:model:classes UP-TO-DATE
+> Task :core:designsystem:processDebugNavigationResources UP-TO-DATE
+> Task :core:model:jar UP-TO-DATE
+> Task :core:database:generateDebugResources UP-TO-DATE
+> Task :core:database:packageDebugResources UP-TO-DATE
+> Task :core:database:parseDebugLocalResources UP-TO-DATE
+> Task :core:database:generateDebugRFile UP-TO-DATE
+> Task :core:database:kspDebugKotlin UP-TO-DATE
+> Task :core:database:compileDebugKotlin UP-TO-DATE
+> Task :core:database:javaPreCompileDebug UP-TO-DATE
+> Task :core:database:compileDebugJavaWithJavac NO-SOURCE
+> Task :core:database:copyRoomSchemas NO-SOURCE
+> Task :core:database:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :core:designsystem:generateDebugResources UP-TO-DATE
+> Task :core:designsystem:packageDebugResources UP-TO-DATE
+> Task :core:designsystem:parseDebugLocalResources UP-TO-DATE
+> Task :core:designsystem:generateDebugRFile UP-TO-DATE
+> Task :core:designsystem:compileDebugKotlin UP-TO-DATE
+> Task :core:designsystem:javaPreCompileDebug UP-TO-DATE
+> Task :core:designsystem:compileDebugJavaWithJavac NO-SOURCE
+> Task :core:designsystem:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :app:javaPreCompileFullDebug UP-TO-DATE
+> Task :app:generateFullDebugAssets UP-TO-DATE
+> Task :core:database:generateDebugAssets UP-TO-DATE
+> Task :core:database:mergeDebugAssets UP-TO-DATE
+> Task :core:designsystem:generateDebugAssets UP-TO-DATE
+> Task :core:designsystem:mergeDebugAssets UP-TO-DATE
+> Task :app:processFullDebugNavigationResources UP-TO-DATE
+> Task :app:parseFullDebugLocalResources UP-TO-DATE
+> Task :app:generateFullDebugRFile UP-TO-DATE
+> Task :app:mergeFullDebugAssets UP-TO-DATE
+> Task :app:compressFullDebugAssets UP-TO-DATE
+> Task :app:generateFullDebugGlobalSynthetics UP-TO-DATE
+> Task :app:checkFullDebugDuplicateClasses UP-TO-DATE
+> Task :app:desugarFullDebugFileDependencies UP-TO-DATE
+> Task :app:mergeExtDexFullDebug UP-TO-DATE
+> Task :core:database:compressDebugJavaRes UP-TO-DATE
+> Task :core:designsystem:compressDebugJavaRes UP-TO-DATE
+> Task :core:database:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :core:designsystem:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :app:mergeLibDexFullDebug UP-TO-DATE
+> Task :core:database:writeDebugAarMetadata UP-TO-DATE
+> Task :core:designsystem:writeDebugAarMetadata UP-TO-DATE
+> Task :app:checkFullDebugAarMetadata UP-TO-DATE
+> Task :app:mapFullDebugSourceSetPaths UP-TO-DATE
+> Task :app:compileFullDebugNavigationResources UP-TO-DATE
+> Task :app:mergeFullDebugResources UP-TO-DATE
+> Task :app:createFullDebugCompatibleScreenManifests UP-TO-DATE
+> Task :app:extractDeepLinksFullDebug UP-TO-DATE
+> Task :core:database:extractDeepLinksDebug UP-TO-DATE
+> Task :core:database:processDebugManifest UP-TO-DATE
+> Task :core:designsystem:extractDeepLinksDebug UP-TO-DATE
+> Task :core:designsystem:processDebugManifest UP-TO-DATE
+> Task :app:processFullDebugMainManifest UP-TO-DATE
+> Task :app:processFullDebugManifest UP-TO-DATE
+> Task :app:processFullDebugManifestForPackage UP-TO-DATE
+> Task :core:database:mapDebugSourceSetPaths UP-TO-DATE
+> Task :core:database:compileDebugLibraryResources UP-TO-DATE
+> Task :core:designsystem:mapDebugSourceSetPaths UP-TO-DATE
+> Task :core:designsystem:compileDebugLibraryResources UP-TO-DATE
+> Task :app:processFullDebugResources UP-TO-DATE
+> Task :app:mergeFullDebugJniLibFolders UP-TO-DATE
+> Task :core:database:mergeDebugJniLibFolders UP-TO-DATE
+> Task :core:database:mergeDebugNativeLibs NO-SOURCE
+> Task :core:database:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :core:designsystem:mergeDebugJniLibFolders UP-TO-DATE
+> Task :core:designsystem:mergeDebugNativeLibs NO-SOURCE
+> Task :core:designsystem:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :app:mergeFullDebugNativeLibs UP-TO-DATE
+> Task :app:stripFullDebugDebugSymbols UP-TO-DATE
+> Task :app:validateSigningFullDebug UP-TO-DATE
+> Task :app:writeFullDebugAppMetadata UP-TO-DATE
+> Task :app:writeFullDebugSigningConfigVersions UP-TO-DATE
+> Task :core:testing:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :core:testing:compileKotlin UP-TO-DATE
+> Task :core:testing:compileJava NO-SOURCE
+> Task :core:testing:processResources NO-SOURCE
+> Task :core:testing:classes UP-TO-DATE
+> Task :core:testing:jar UP-TO-DATE
+> Task :app:preDemoDebugBuild UP-TO-DATE
+> Task :app:generateDemoDebugBuildConfig UP-TO-DATE
+> Task :app:generateDemoDebugResources UP-TO-DATE
+> Task :app:packageDemoDebugResources UP-TO-DATE
+> Task :app:processDemoDebugNavigationResources UP-TO-DATE
+> Task :app:parseDemoDebugLocalResources UP-TO-DATE
+> Task :app:generateDemoDebugRFile UP-TO-DATE
+
+> Task :app:compileFullDebugKotlin
+w: file:///Users/krystiangaleczka/Documents/Chatra/android/app/src/full/java/app/chatra/di/FlavorContainer.kt:62:33 Unnecessary safe call on a non-null receiver of type 'HdQueue'.
+
+> Task :app:compileDemoDebugKotlin
+> Task :core:database:checkDebugAarMetadata UP-TO-DATE
+> Task :core:database:extractDebugAnnotations UP-TO-DATE
+> Task :app:compressFullDebugJavaRes UP-TO-DATE
+> Task :app:mergeFullDebugJavaResource UP-TO-DATE
+> Task :core:database:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :core:database:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :core:database:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :core:database:prepareDebugArtProfile UP-TO-DATE
+> Task :core:database:prepareLintJarForPublish UP-TO-DATE
+> Task :core:database:mergeDebugJavaResource UP-TO-DATE
+> Task :core:database:syncDebugLibJars UP-TO-DATE
+> Task :core:database:bundleDebugLocalLintAar UP-TO-DATE
+> Task :core:designsystem:checkDebugAarMetadata UP-TO-DATE
+> Task :core:designsystem:extractDebugAnnotations UP-TO-DATE
+> Task :core:designsystem:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :core:designsystem:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :core:designsystem:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :core:designsystem:prepareDebugArtProfile UP-TO-DATE
+> Task :core:designsystem:prepareLintJarForPublish UP-TO-DATE
+> Task :core:designsystem:mergeDebugJavaResource UP-TO-DATE
+> Task :core:designsystem:syncDebugLibJars UP-TO-DATE
+> Task :core:designsystem:bundleDebugLocalLintAar UP-TO-DATE
+> Task :app:preFullDebugAndroidTestBuild SKIPPED
+> Task :core:database:bundleLibRuntimeToJarDebug UP-TO-DATE
+> Task :core:database:createFullJarDebug UP-TO-DATE
+> Task :core:database:writeDebugLintModelMetadata UP-TO-DATE
+> Task :core:designsystem:bundleLibRuntimeToJarDebug UP-TO-DATE
+> Task :core:designsystem:createFullJarDebug UP-TO-DATE
+> Task :core:designsystem:writeDebugLintModelMetadata UP-TO-DATE
+> Task :app:extractProguardFiles UP-TO-DATE
+> Task :core:database:extractProguardFiles UP-TO-DATE
+> Task :core:database:generateDebugLintModel UP-TO-DATE
+> Task :core:designsystem:extractProguardFiles UP-TO-DATE
+> Task :app:compileFullDebugJavaWithJavac UP-TO-DATE
+> Task :core:designsystem:generateDebugLintModel UP-TO-DATE
+> Task :app:bundleFullDebugClassesToCompileJar
+> Task :app:generateFullDebugAndroidTestLintModel
+> Task :app:generateFullDebugLintReportModel
+> Task :app:preFullDebugUnitTestBuild UP-TO-DATE
+> Task :app:generateFullDebugUnitTestLintModel
+> Task :core:database:lintAnalyzeDebug UP-TO-DATE
+> Task :core:designsystem:lintAnalyzeDebug UP-TO-DATE
+> Task :app:dexBuilderFullDebug
+> Task :app:mergeProjectDexFullDebug
+> Task :app:packageFullDebug
+> Task :app:createFullDebugApkListingFileRedirect UP-TO-DATE
+> Task :app:assembleFullDebug
+> Task :app:lintAnalyzeFullDebug
+> Task :app:lintAnalyzeFullDebugAndroidTest
+> Task :app:lintAnalyzeFullDebugUnitTest
+> Task :core:database:preDebugAndroidTestBuild UP-TO-DATE
+> Task :core:database:generateDebugAndroidTestLintModel UP-TO-DATE
+> Task :core:database:preDebugUnitTestBuild UP-TO-DATE
+> Task :core:database:generateDebugUnitTestLintModel UP-TO-DATE
+> Task :core:database:lintAnalyzeDebugAndroidTest UP-TO-DATE
+> Task :core:database:lintAnalyzeDebugUnitTest UP-TO-DATE
+> Task :core:designsystem:preDebugAndroidTestBuild UP-TO-DATE
+> Task :core:designsystem:generateDebugAndroidTestLintModel UP-TO-DATE
+> Task :core:designsystem:preDebugUnitTestBuild UP-TO-DATE
+> Task :core:designsystem:generateDebugUnitTestLintModel UP-TO-DATE
+> Task :core:designsystem:lintAnalyzeDebugAndroidTest UP-TO-DATE
+> Task :core:designsystem:lintAnalyzeDebugUnitTest UP-TO-DATE
+> Task :app:javaPreCompileDemoDebug UP-TO-DATE
+> Task :app:compileDemoDebugJavaWithJavac UP-TO-DATE
+> Task :app:checkDemoDebugAarMetadata UP-TO-DATE
+> Task :app:mapDemoDebugSourceSetPaths UP-TO-DATE
+> Task :app:compileDemoDebugNavigationResources UP-TO-DATE
+> Task :app:mergeDemoDebugResources UP-TO-DATE
+> Task :app:createDemoDebugCompatibleScreenManifests UP-TO-DATE
+> Task :app:extractDeepLinksDemoDebug UP-TO-DATE
+> Task :app:processDemoDebugMainManifest UP-TO-DATE
+> Task :app:processDemoDebugManifest UP-TO-DATE
+> Task :app:processDemoDebugManifestForPackage UP-TO-DATE
+> Task :app:processDemoDebugResources UP-TO-DATE
+> Task :app:bundleDemoDebugClassesToCompileJar
+> Task :app:preDemoDebugAndroidTestBuild SKIPPED
+> Task :app:generateDemoDebugAndroidTestLintModel
+> Task :app:generateDemoDebugLintReportModel
+> Task :app:preDemoDebugUnitTestBuild UP-TO-DATE
+> Task :app:generateDemoDebugUnitTestLintModel
+> Task :app:lintAnalyzeDemoDebug
+> Task :app:lintAnalyzeDemoDebugAndroidTest
+> Task :app:lintAnalyzeDemoDebugUnitTest
+
+> Task :app:lintReportDemoDebug
+Wrote HTML report to file:///Users/krystiangaleczka/Documents/Chatra/android/app/build/reports/lint-results-demoDebug.html
+Wrote SARIF report to file:///Users/krystiangaleczka/Documents/Chatra/android/app/build/reports/lint-results-demoDebug.sarif
+
+> Task :app:lintDemoDebug
+> Task :core:model:compileTestKotlin UP-TO-DATE
+> Task :core:model:compileTestJava NO-SOURCE
+> Task :core:model:processTestResources NO-SOURCE
+> Task :core:model:testClasses UP-TO-DATE
+> Task :core:model:test UP-TO-DATE
+> Task :core:testing:compileTestKotlin UP-TO-DATE
+> Task :core:testing:compileTestJava NO-SOURCE
+> Task :core:testing:processTestResources NO-SOURCE
+> Task :core:testing:testClasses UP-TO-DATE
+> Task :core:testing:test UP-TO-DATE
+> Task :app:bundleFullDebugClassesToRuntimeJar
+> Task :app:compileFullDebugUnitTestKotlin
+> Task :app:javaPreCompileFullDebugUnitTest UP-TO-DATE
+> Task :app:compileFullDebugUnitTestJavaWithJavac NO-SOURCE
+> Task :app:compressFullDebugUnitTestJavaRes UP-TO-DATE
+> Task :app:extractFullDebugUnitTestJavaRes UP-TO-DATE
+> Task :app:testFullDebugUnitTest
+> Task :app:bundleDemoDebugClassesToRuntimeJar
+> Task :app:compileDemoDebugUnitTestKotlin UP-TO-DATE
+> Task :app:javaPreCompileDemoDebugUnitTest UP-TO-DATE
+> Task :app:compileDemoDebugUnitTestJavaWithJavac NO-SOURCE
+> Task :app:compressDemoDebugJavaRes UP-TO-DATE
+> Task :app:compressDemoDebugUnitTestJavaRes UP-TO-DATE
+> Task :app:extractDemoDebugUnitTestJavaRes UP-TO-DATE
+
+> Task :app:lintReportFullDebug
+Wrote HTML report to file:///Users/krystiangaleczka/Documents/Chatra/android/app/build/reports/lint-results-fullDebug.html
+Wrote SARIF report to file:///Users/krystiangaleczka/Documents/Chatra/android/app/build/reports/lint-results-fullDebug.sarif
+
+> Task :app:lintFullDebug
+> Task :app:testDemoDebugUnitTest
+
+[Incubating] Problems report is available at: file:///Users/krystiangaleczka/Documents/Chatra/android/build/reports/problems/problems-report.html
+
+BUILD SUCCESSFUL in 2m 55s
+174 actionable tasks: 28 executed, 146 up-to-date
+Configuration cache entry stored.

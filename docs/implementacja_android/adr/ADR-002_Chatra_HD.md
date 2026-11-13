@@ -2,6 +2,8 @@
 
 Status: decyzje dla pilota technicznego CH045–CH049, do odbioru G06–G08 przed uruchomieniem publicznym.
 
+Aktualizacja CH050–CH054: [ADR-003](ADR-003_Dostarczenie_HD_i_linki.md) rozszerza ten historyczny opis o zaszyfrowany numer routingu, działający outbox/FCM, jedną domenę strony linku i API, receipts, retencję i barierę odtwarzania. W tych punktach obowiązuje ADR-003.
+
 ## Usługa i dane
 
 Python 3.12, FastAPI i SQLite w trybie WAL na jednym hoście z zaszyfrowanym wolumenem w Niemczech (Hetzner NBG). Pliki są prywatnymi porcjami w SQLite. Stan, limity, porcje i koperta robocza mieszczą się w jednej transakcji. Pilot działa na pojedynczym hoście bez wysokiej dostępności. Po utracie dysku użytkownik ponawia upload z kopii na telefonie i weryfikuje numer ponownie. Przed otwarciem usługi ocenić przeniesienie metadanych do PostgreSQL, prywatny storage obiektowy oraz odtwarzanie z szyfrowanych kopii. Pilot nie robi kopii danych HD. Konfiguracja publiczna wymaga TLS z przodu usługi, szyfrowania wolumenu i nadzorowanego sprzątania. SQLite zwalnia strony do ponownego użycia, nie gwarantuje usuwania śladów z nośnika i jego snapshotów.

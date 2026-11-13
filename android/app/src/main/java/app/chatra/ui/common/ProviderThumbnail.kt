@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.Dp
 import app.chatra.core.designsystem.theme.ChatraType
 import app.chatra.core.model.AttachmentSummary
 import app.chatra.ui.LocalContainer
@@ -20,7 +21,7 @@ import kotlinx.coroutines.withContext
 
 /** Dekodowanie dopiero po wejściu bąbelka do LazyColumn; bez kopiowania oryginału. */
 @Composable
-fun ProviderThumbnail(attachment: AttachmentSummary) {
+fun ProviderThumbnail(attachment: AttachmentSummary, height: Dp = 140.dp, showLabel: Boolean = true) {
     val context = LocalContext.current
     val container = LocalContainer.current
     val bitmap by produceState<ImageBitmap?>(null, attachment.contentUri) {
@@ -36,7 +37,7 @@ fun ProviderThumbnail(attachment: AttachmentSummary) {
         }
     }
     Column(Modifier.widthIn(max = 270.dp)) {
-        bitmap?.let { Image(it, attachment.label, Modifier.fillMaxWidth().height(140.dp), contentScale = ContentScale.Fit) }
-        BasicText(attachment.label, style = ChatraType.Preview)
+        bitmap?.let { Image(it, attachment.label, Modifier.fillMaxWidth().height(height), contentScale = ContentScale.Fit) }
+        if (showLabel) BasicText(attachment.label, style = ChatraType.Preview)
     }
 }

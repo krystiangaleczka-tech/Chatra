@@ -5,15 +5,16 @@ import os
 import sqlite3
 from typing import Annotated, Literal
 from uuid import uuid4
+from pathlib import Path
 
 from fastapi import Depends, FastAPI, Header, Query, Request, Response
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
-from pydantic import BaseModel
+from fastapi.responses import JSONResponse, FileResponse
+from pydantic import BaseModel, Field
 from starlette.exceptions import HTTPException
 
-from providers import GooglePlay, ProviderUnavailable, TwilioVerify
-from service import CHUNK, Challenge, Discovery, Lookup, Manifest, Problem, Proof, Purchase, Service, Verification
+from providers import GooglePlay, ProviderUnavailable, TwilioVerify, FirebasePush
+from service import CHUNK, DIGEST, Challenge, Discovery, Lookup, Manifest, Payload, Problem, Proof, Purchase, Service, Verification
 from storage import Storage
 
 
@@ -123,7 +124,82 @@ class Entitlement(BaseModel):
     state: Literal["active", "pending", "invalid"]
 
 
-def create_app(service):
+class DownloadReceipt(Payload):
+    files: list[DIGEST] = Field(min_length=1, max_length=5)
+
+
+class PushRegistration(Payload):
+    token: str = Field(min_length=16, max_length=4096)
+
+
+class ShareCreation(Payload):
+    consent: bool
+    ttlSeconds: int = Field(default=86400, ge=60, le=604800)
+
+
+class ShareAccess(Payload):
+    token: str = Field(min_length=1, max_length=128)
+
+
+class ShareChunk(ShareAccess):
+    position: int = Field(ge=0, le=4)
+    offset: int = Field(ge=0)
+
+
+class MailEvent(BaseModel):
+    sequence: int
+    envelope: str
+    kind: Literal["envelope", "sent", "downloaded", "revoked"]
+
+
+class InboxPage(BaseModel):
+    items: list[MailEvent]
+    cursor: str
+    hasMore: bool
+
+
+class PublicFile(BaseModel):
+    position: int
+    size: int
+    mime: str
+    sha256: DIGEST
+
+
+class EnvelopeFile(PublicFile):
+    variant: Literal["original", "no_location"]
+
+
+class Envelope(BaseModel):
+    id: str
+    transferId: str
+    sender: str
+    recipient: str
+    incoming: bool
+    createdAt: int
+    expiresAt: int
+    files: list[EnvelopeFile]
+    downloadedAt: int | None
+
+
+class ReceiptResult(BaseModel):
+    downloadedAt: int
+
+
+class ShareResult(BaseModel):
+    id: str
+    path: str
+    expiresAt: int
+
+
+class PublicManifest(BaseModel):
+    expiresAt: int
+    files: list[PublicFile]
+
+
+BINARY_RESPONSE = {200: {"content": {"application/octet-stream": {"schema": {"type": "string", "format": "binary"}}}}}
+
+
+def create_app(service, push=None):
     @contextlib.asynccontextmanager
     async def lifespan(app):
         async def sweep():
@@ -135,12 +211,24 @@ def create_app(service):
                 await asyncio.sleep(300)
 
         task = asyncio.create_task(sweep())
+        async def push_loop():
+            while True:
+                try:
+                    await asyncio.to_thread(service.dispatch_push, push, int(service.clock()))
+                except sqlite3.Error:
+                    logging.getLogger("chatra").error("Push outbox operation failed")
+                await asyncio.sleep(5)
+
+        push_task = asyncio.create_task(push_loop())
         try:
             yield
         finally:
             task.cancel()
+            push_task.cancel()
             with contextlib.suppress(asyncio.CancelledError):
                 await task
+            with contextlib.suppress(asyncio.CancelledError):
+                await push_task
 
     app = FastAPI(
         title="Chatra HD and Pro", version="1.0.0", lifespan=lifespan,
@@ -256,6 +344,69 @@ def create_app(service):
     def purchase(payload: Purchase, request: Request) -> Entitlement:
         return service.purchase(Proof(request, request.state.raw_body, int(service.clock())), payload)
 
+    @app.get("/v1/inbox")
+    def inbox(owner: Owner, p: Signed, cursor: str | None = None, limit: Annotated[int, Query(ge=1, le=50)] = 20) -> InboxPage:
+        return service.inbox(owner, p.now, cursor, limit)
+
+    @app.get("/v1/envelopes/{envelope}")
+    def envelope(envelope: str, owner: Owner, p: Signed) -> Envelope:
+        return service.envelope(owner, envelope, p.now)
+
+    @app.get("/v1/envelopes/{envelope}/files/{position}/chunks", response_class=Response, responses=BINARY_RESPONSE)
+    def download(envelope: str, position: int, owner: Owner, p: Signed, offset: int = 0):
+        return binary(service.download_chunk(owner, envelope, position, offset, p.now))
+
+    @app.post("/v1/envelopes/{envelope}/receipt")
+    def receipt(envelope: str, payload: DownloadReceipt, owner: Owner, p: Signed) -> ReceiptResult:
+        return service.receipt(owner, envelope, p.now, payload.files)
+
+    @app.put("/v1/push-registration", status_code=204)
+    def register_push(payload: PushRegistration, owner: Owner, p: Signed):
+        service.register_push(owner, p.now, payload.token)
+        return Response(status_code=204)
+
+    @app.post("/v1/transfers/{transfer}/shares", status_code=201)
+    def share(transfer: str, payload: ShareCreation, owner: Owner, p: Signed, key: Annotated[str, Header(alias="Idempotency-Key")]) -> ShareResult:
+        return service.create_share(owner, transfer, p.now, key, payload.consent, payload.ttlSeconds)
+
+    @app.delete("/v1/shares/{share}", status_code=204)
+    def revoke_share(share: str, owner: Owner, p: Signed):
+        service.revoke_share(owner, share, p.now)
+        return Response(status_code=204)
+
+    @app.post("/v1/public-shares/resolve")
+    def resolve(payload: ShareAccess, p: Signed) -> PublicManifest:
+        return service.resolve_share(p, payload.token)
+
+    @app.post("/v1/public-shares/chunk", response_class=Response, responses=BINARY_RESPONSE)
+    def public_chunk(payload: ShareChunk, p: Signed):
+        return binary(service.public_chunk(p, payload.token, payload.position, payload.offset))
+
+    def binary(data):
+        return Response(data, media_type="application/octet-stream", headers={
+            "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff",
+            "Content-Disposition": "attachment", "Referrer-Policy": "no-referrer",
+        })
+
+    @app.get("/r/", include_in_schema=False)
+    def share_page():
+        return public_file("index.html", "text/html")
+
+    @app.get("/r/app.js", include_in_schema=False)
+    def share_script():
+        return public_file("app.js", "application/javascript")
+
+    @app.get("/r/style.css", include_in_schema=False)
+    def share_style():
+        return public_file("style.css", "text/css")
+
+    def public_file(name, content_type):
+        return FileResponse(Path(__file__).parent / "public" / name, media_type=content_type, headers={
+            "Cache-Control": "no-store", "Referrer-Policy": "no-referrer", "X-Robots-Tag": "noindex, nofollow, noarchive",
+            "X-Content-Type-Options": "nosniff",
+            "Content-Security-Policy": "default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'",
+        })
+
     return app
 
 
@@ -273,4 +424,9 @@ def from_environment():
                 raise ProviderUnavailable
 
         otp = DisabledVerification()
-    return create_app(Service(Storage(os.environ["CHATRA_DB"]), bytes.fromhex(os.environ["CHATRA_SECRET_HEX"]), otp, play))
+    project = os.getenv("CHATRA_FIREBASE_PROJECT")
+    secret_file = os.getenv("CHATRA_SECRET_FILE")
+    if secret_file and os.getenv("CHATRA_SECRET_HEX"):
+        raise ValueError("Configure exactly one service secret source")
+    secret = Path(secret_file).read_text().strip() if secret_file else os.environ["CHATRA_SECRET_HEX"]
+    return create_app(Service(Storage(os.environ["CHATRA_DB"]), bytes.fromhex(secret), otp, play), FirebasePush(project) if project else None)

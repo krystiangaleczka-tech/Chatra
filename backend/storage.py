@@ -53,7 +53,61 @@ CREATE TABLE IF NOT EXISTS transfer_keys (
     owner TEXT NOT NULL REFERENCES installations(id) ON DELETE CASCADE, request_key TEXT NOT NULL,
     expires INTEGER NOT NULL, PRIMARY KEY (owner, request_key)
 );
+CREATE TABLE IF NOT EXISTS mailbox_events (
+    sequence INTEGER PRIMARY KEY AUTOINCREMENT,
+    recipient TEXT NOT NULL REFERENCES installations(id) ON DELETE CASCADE,
+    envelope TEXT NOT NULL, kind TEXT NOT NULL, created INTEGER NOT NULL,
+    expires INTEGER NOT NULL, push_after INTEGER NOT NULL, push_attempts INTEGER NOT NULL DEFAULT 0,
+    pushed INTEGER NOT NULL DEFAULT 0,
+    UNIQUE(recipient, envelope, kind)
+);
+CREATE INDEX IF NOT EXISTS mailbox_page ON mailbox_events(recipient, sequence);
+CREATE TABLE IF NOT EXISTS download_receipts (
+    envelope TEXT PRIMARY KEY REFERENCES draft_envelopes(id) ON DELETE CASCADE,
+    installation TEXT NOT NULL REFERENCES installations(id) ON DELETE CASCADE,
+    downloaded INTEGER NOT NULL
+);
+CREATE TABLE IF NOT EXISTS push_tokens (
+    installation TEXT PRIMARY KEY REFERENCES installations(id) ON DELETE CASCADE,
+    token TEXT NOT NULL, updated INTEGER NOT NULL
+);
+CREATE TABLE IF NOT EXISTS shares (
+    id TEXT PRIMARY KEY, transfer TEXT NOT NULL REFERENCES transfers(id) ON DELETE CASCADE,
+    owner TEXT NOT NULL REFERENCES installations(id) ON DELETE CASCADE,
+    request_key TEXT NOT NULL, secret_hash TEXT NOT NULL,
+    expires INTEGER NOT NULL, revoked INTEGER NOT NULL DEFAULT 0,
+    UNIQUE(owner, request_key)
+);
+CREATE TABLE IF NOT EXISTS audit_totals (
+    day INTEGER NOT NULL, kind TEXT NOT NULL, count INTEGER NOT NULL,
+    PRIMARY KEY(day, kind)
+);
+CREATE TABLE IF NOT EXISTS mailbox_floor (id INTEGER PRIMARY KEY CHECK(id=1), sequence INTEGER NOT NULL);
+INSERT OR IGNORE INTO mailbox_floor VALUES (1, 0);
 """
+
+
+def event(db, recipient, envelope, kind, now):
+    db.execute(
+        """INSERT OR IGNORE INTO mailbox_events(recipient,envelope,kind,created,expires,push_after)
+           VALUES (?,?,?,?,?,?)""",
+        (recipient, envelope, kind, now, now + 30 * 86400, now),
+    )
+
+
+def audit(db, now, kind, count=1):
+    db.execute(
+        """INSERT INTO audit_totals VALUES (?,?,?)
+           ON CONFLICT(day,kind) DO UPDATE SET count=count+excluded.count""",
+        (now // 86400, kind, count),
+    )
+
+
+def revoke_events(db, transfer, now):
+    envelope = db.execute("SELECT id FROM draft_envelopes WHERE transfer=?", (transfer["id"],)).fetchone()
+    if envelope is not None and transfer["delivery"] == "hd":
+        for recipient in {transfer["owner"], transfer["target"]}:
+            event(db, recipient, envelope["id"], "revoked", now)
 
 
 class Storage:
@@ -61,6 +115,20 @@ class Storage:
         self.path = path
         with self.transaction() as db:
             db.executescript(SCHEMA)
+            # Additive migration preserves CH048 transfers and their idempotency keys.
+            for table, name, declaration in (
+                ("installations", "phone_cipher", "BLOB"),
+                ("transfers", "delivery", "TEXT NOT NULL DEFAULT 'hd'"),
+                ("transfers", "created", "INTEGER NOT NULL DEFAULT 0"),
+            ):
+                if name not in {row["name"] for row in db.execute(f"PRAGMA table_info({table})")}:
+                    db.execute(f"ALTER TABLE {table} ADD COLUMN {name} {declaration}")
+            # Upgrade old finalized draft envelopes exactly once, even after a crash.
+            for row in db.execute("""SELECT t.*,e.id AS envelope FROM transfers t
+                JOIN draft_envelopes e ON e.transfer=t.id WHERE t.state='finalized' AND t.delivery='hd'""").fetchall():
+                at = row["created"] or row["expires"] - 7 * 86400
+                event(db, row["target"], row["envelope"], "envelope", at)
+                event(db, row["owner"], row["envelope"], "sent", at)
 
     @contextlib.contextmanager
     def transaction(self, write=True):
@@ -86,6 +154,22 @@ class Storage:
             "transfer_keys": "expires",
         }
         with self.transaction() as db:
+            expired = db.execute("SELECT * FROM transfers WHERE expires<=?", (now,)).fetchall()
+            for row in expired:
+                revoke_events(db, row, now)
+            lost = db.execute("SELECT id FROM installations WHERE verified_until<=?", (now,)).fetchall()
+            for installation in lost:
+                for row in db.execute("SELECT * FROM transfers WHERE owner=? OR target=?", (installation[0], installation[0])).fetchall():
+                    revoke_events(db, row, now)
+            if expired:
+                audit(db, now, "expired_transfers", len(expired))
+            floor = db.execute("SELECT max(sequence) FROM mailbox_events WHERE expires<=?", (now,)).fetchone()[0]
+            if floor is not None:
+                db.execute("UPDATE mailbox_floor SET sequence=max(sequence,?) WHERE id=1", (floor,))
+            db.execute("DELETE FROM mailbox_events WHERE expires<=?", (now,))
+            # Keep expired/revoked share keys until their transfer is deleted. A lost
+            # response followed by an idempotent retry must never resurrect a link.
+            db.execute("DELETE FROM audit_totals WHERE day<?", (now // 86400 - 30,))
             for table, column in columns.items():
                 db.execute(f"DELETE FROM {table} WHERE {column} <= ?", (now,))
         with contextlib.closing(sqlite3.connect(self.path)) as db:
