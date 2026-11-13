@@ -94,7 +94,9 @@ dependencies {
     "demoImplementation"(project(":core:testing"))
     "fullImplementation"(project(":core:database"))
     "fullImplementation"(libs.androidx.work.runtime)
-    "fullImplementation"("com.android.billingclient:billing:9.1.0")
+    "fullImplementation"(libs.play.billing)
+    // Billing brings Fragment 1.1 through Play Services. Activity Result needs 1.3 or newer.
+    "fullImplementation"(libs.androidx.fragment)
     debugImplementation(libs.compose.ui.tooling)
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
