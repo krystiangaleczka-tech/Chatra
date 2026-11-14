@@ -82,7 +82,8 @@ fun ChatraApp(container: AppContainer, initial: Navigator?, onExit: () -> Unit, 
     val appearance = app.chatra.core.model.resolveAppearance(globalAppearance, threadAppearance, proAllowed = pro)
     val keyboard = LocalSoftwareKeyboardController.current
     val focus = LocalFocusManager.current
-    val imeVisible = LocalChrome.current.ime > 0.dp
+    // Czytane w chwili cofnięcia, nie w kompozycji — inaczej korzeń przebudowuje się w każdej klatce animacji IME.
+    val chrome = LocalChrome.current
     val observableRole = container.smsRole as? ObservableSmsRoleGate
     val roleState = remember(container) { observableRole?.held ?: kotlinx.coroutines.flow.MutableStateFlow(true) }
     val held by roleState.collectAsStateWithLifecycle()
@@ -111,6 +112,7 @@ fun ChatraApp(container: AppContainer, initial: Navigator?, onExit: () -> Unit, 
     }
     // Back: najpierw IME, potem arkusz, potem ekran (specyfikacja 5).
     BackHandler {
+        val imeVisible = chrome.ime > 0.dp
         focus.clearFocus()
         keyboard?.hide()
         if (!imeVisible && !navigator.back()) onExit()

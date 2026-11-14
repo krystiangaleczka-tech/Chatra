@@ -88,6 +88,41 @@ Wnioski dla A15:
 
 Sprawdzone, ale bez efektu: osobna warstwa graficzna dla treści panelu (przerysowanie treści bez ponownego rysowania szkła) — wynik bez zmian, wycofane. Zostawione: nagrywanie warstwy rozmycia tylko po zmianie położenia lub rozmiaru panelu (zmiany sceny przechodzą przez RenderNode) — obraz identyczny co do piksela z wersją bez cache, także po przewinięciu.
 
+## Skrzynka z setkami rozmów na A15 (14.11.2026)
+
+Build `fullDebug` (QA), ~450 prawdziwych wątków, przewijanie środka listy w obie strony. GPU = czas `waiting for GPU completion` z `atrace -a app.chatra.qa gfx view` (bufor `-b 8192`), budżet 90 Hz = 11,1 ms.
+
+Wcześniej (osobna poprawka) lista rozmów stała się wirtualizowana, a szkło karty rysuje się tylko pod widocznym fragmentem. Zostało ograniczenie GPU: **10,4–10,7 ms p50 / 11,3–11,6 ms p90** na klatkę, czyli na granicy budżetu.
+
+Pomiar składników (każdy wyłączony osobno, build eksperymentalny): gradienty tła −2,7 ms, cienie −1,8, gradient powierzchni karty −1,8, rozmycie −0,8, obramowanie −0,6, refleks −0,4, ikony ≈ 0. Kosztem nie jest samo rozmycie, tylko liczba pełnoekranowych przebiegów malowanych od nowa w każdej klatce przesuwania treści.
+
+Zmiana: statyczne warstwy są trzymane przez HWUI jako gotowe tekstury (`CompositingStrategy.Offscreen`).
+- Tło sceny w `ChatraScreen` (gdy ma warstwy radialne) — dotyczy wszystkich ekranów. Szkło nadal próbkuje nagranie sceny.
+- Szkło karty rozmów w S02 (cień, rozmycie, gradient, refleks, obramowanie) w jednej warstwie wielkości listy. W środku listy karta stoi, więc warstwa nie jest renderowana ponownie.
+
+| Scenariusz | Przed | Po |
+| --- | --- | --- |
+| Przewijanie środka listy — GPU p50 / p90 | 10,4–10,7 / 11,3–11,6 ms | **4,9 / 5,5 ms** |
+| Przewijanie przy górze listy — GPU p50 / p90 | 8,6–9,4 / 11,8–12,2 ms (tło już w teksturze, karta bez warstwy) | **4,1 / 7,3 ms** |
+| Powrót z wyszukiwania (chowanie IME) — `gfxinfo` GPU p50 / p90 | 13–17 / 20–21 ms | **7 / 9 ms** |
+
+Obraz: wariant z warstwami i bez nich różni się najwyżej o 3/255 na kanale (0 % pikseli > 2); demo S02 w trybie referencyjnym identyczne co do bajtu. Pamięć: dwie tekstury wielkości ekranu (≈ 2 × 10 MB na 1080 × 2340); cała pamięć GPU aplikacji na S02 ≈ 52 MB.
+
+**Przewijanie przy górze listy (14.11.2026).** Po powyższej zmianie zostało ≈ 16–18 % spóźnionych klatek, ograniczonych przez wątek UI. Pomiar składników (flagi eksperymentalne, 3 × przeciągnięcie w obie strony przy górze listy):
+
+| Wariant | Spóźnione klatki | doFrame p50 | `AndroidOwner:draw` p50 |
+| --- | --- | --- | --- |
+| stan wyjściowy | 16,0 % | 25 ms | 2,1 ms (p90 14,5) |
+| karta zamrożona | 3,6 % | 15 ms | 4,4 ms |
+| bez cieni | 4,0 % | 18 ms | 4,9 ms |
+| szkło nie przerysowuje się przy ruchu / bez rozmycia | 17,4 / 16,9 % | 22 / 24 ms | — |
+
+Przyczyny i zmiany:
+1. Fragment karty zmieniał wysokość w każdej klatce (góra jechała z listą, dół stał za ekranem), co wymuszało ponowne wygenerowanie dużego rozmytego cienia. Teraz, gdy jeden brzeg karty jest poza ekranem, fragment ma stałą wysokość (ekran + zapas) i tylko się przesuwa: **16 % → 7–7,7 %**.
+2. Każdy szklany panel przy ruchu przerysowywał węzeł tylko po to, by przesunąć próbkę sceny. Teraz scena jest w osobnej warstwie, a przesunięcie to jej właściwość `translationX/Y` (RenderNode); HWUI i tak przelicza rozmycie. `AndroidOwner:draw` p50 5,7 → 1,6 ms, **7–7,7 % → 3,2–3,3 %**. Środek listy bez zmian (3,6 %).
+
+Obraz: stary i nowy `GlassNode` — demo S02, S03, S07 oraz skrzynka QA po powtarzalnym przeciągnięciu (`input motionevent` z zatrzymaniem palca, bez rzutu) identyczne co do bajtu.
+
 ## Ryzyka i działania
 
 1. **Minimalne API (31)**: słabszy sprzęt jest już zmierzony (A15, powyżej), ale na Androidzie 16. Brakuje sprawdzenia `RenderEffect` i wyglądu na Androidzie 12 (emulator albo urządzenie) — ryzyko głównie zgodności, nie wydajności. Przełącznik S09 (mat) zostaje jako wyjście awaryjne.

@@ -58,17 +58,23 @@ fun SearchScreen(model: SearchViewModel, onCancel: () -> Unit, onResult: (Messag
     val context = LocalContext.current
     val chrome = LocalChrome.current
     var picker by remember { mutableStateOf<String?>(null) }
+    // Pole trzyma tekst lokalnie i synchronicznie: wartość okrężnie przez StateFlow docierała z opóźnieniem,
+    // więc przy szybkim pisaniu (zwłaszcza pod obciążeniem) klawiatura gubiła znaki.
+    var typed by remember(model) { mutableStateOf(model.query.value) }
+    val onText: (String) -> Unit = { value -> typed = value.take(512); model.text(value) }
     ChatraScreen(Backgrounds.Search) {
         LazyColumn(Modifier.fillMaxSize(), state = rememberLazyListState(), contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = chrome.top(54.dp), bottom = chrome.bottom(26.dp)), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             item {
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     GlassSurface(GlassStyles.Input.copy(from = Color.White.copy(alpha = .9f), to = Color.White.copy(alpha = .66f)), RoundedCornerShape(22.dp), Modifier.weight(1f).heightIn(min = 46.dp), shadows = listOf(Shadows.Control)) {
-                        Row(Modifier.fillMaxSize().padding(start = 14.dp + cssBorder(), end = 6.dp + cssBorder()), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                        // Wiersz ma wysokość pola (46): przy fillMaxSize w nieograniczonej wysokości kurczył się do treści
+                        // i stał u góry pola, więc ikona, tekst i „Wyczyść” były przesunięte w górę.
+                        Row(Modifier.fillMaxWidth().heightIn(min = 46.dp).padding(start = 14.dp + cssBorder(), end = 6.dp + cssBorder()), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
                             Icon(ChatraIcons.Search, 20.dp, ChatraColors.TextSecondary)
-                            BasicTextField(query, model::text, Modifier.weight(1f).semantics { contentDescription = "Szukaj w rozmowach" }, singleLine = true, textStyle = chatraText(17f), keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search), keyboardActions = KeyboardActions(onSearch = { keyboard?.hide() }), decorationBox = { field ->
-                                Box { if (query.isEmpty()) BasicText("Szukaj w rozmowach", style = chatraText(17f, color = ChatraColors.TextSecondary)); field() }
+                            BasicTextField(typed, onText, Modifier.weight(1f).semantics { contentDescription = "Szukaj w rozmowach" }, singleLine = true, textStyle = chatraText(17f), keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search), keyboardActions = KeyboardActions(onSearch = { keyboard?.hide() }), decorationBox = { field ->
+                                Box { if (typed.isEmpty()) BasicText("Szukaj w rozmowach", style = chatraText(17f, color = ChatraColors.TextSecondary)); field() }
                             })
-                            Box(Modifier.size(32.dp).clip(CircleShape).background(ChatraColors.ink(.1f)).semantics { contentDescription = "Wyczyść"; role = Role.Button }.pressable({ model.text("") }), contentAlignment = Alignment.Center) { Icon(ChatraIcons.Close, 16.dp, ChatraColors.TextTertiary) }
+                            Box(Modifier.size(32.dp).clip(CircleShape).background(ChatraColors.ink(.1f)).semantics { contentDescription = "Wyczyść"; role = Role.Button }.pressable({ onText("") }), contentAlignment = Alignment.Center) { Icon(ChatraIcons.Close, 16.dp, ChatraColors.TextTertiary) }
                         }
                     }
                     TextAction("Anuluj", onCancel)
