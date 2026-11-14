@@ -123,6 +123,18 @@ Przyczyny i zmiany:
 
 Obraz: stary i nowy `GlassNode` — demo S02, S03, S07 oraz skrzynka QA po powtarzalnym przeciągnięciu (`input motionevent` z zatrzymaniem palca, bez rzutu) identyczne co do bajtu.
 
+**Release na A15 (14.11.2026).** Te same scenariusze na `fullRelease` (R8, bez `debuggable`), zbudowanym lokalnie w pakiecie `app.chatra.qa` z kluczem debug i wgranym przez `adb install -r` (bez kompilacji AOT z profilu bazowego). Po dwa przebiegi:
+
+| Scenariusz | `fullDebug` | `fullRelease` |
+| --- | --- | --- |
+| Przewijanie przy górze listy — spóźnione klatki | 3,2–3,3 % | **1,0–1,1 %** |
+| ↳ `AndroidOwner:draw` p50 / `doFrame` p50 | 1,6 ms / — | 0,6 ms / 11 ms |
+| Przewijanie środka listy — spóźnione klatki | 3,6 % | **0–0,2 %** |
+| ↳ GPU p50 / p90 | 4,9 / 5,5 ms | 5,1 / 5,7 ms |
+| Powrót z wyszukiwania — `gfxinfo` p50 / p90 | 36 / 65 ms (7 % spóźnionych) | **22–24 / 27–34 ms** (1,7–4,7 %) |
+
+Wątek UI w release jest 2–3 × szybszy; GPU bez zmian, więc w środku listy ograniczeniem pozostaje rysowanie (≈ 5 ms z budżetu 11,1 ms).
+
 ## Ryzyka i działania
 
 1. **Minimalne API (31)**: słabszy sprzęt jest już zmierzony (A15, powyżej), ale na Androidzie 16. Brakuje sprawdzenia `RenderEffect` i wyglądu na Androidzie 12 (emulator albo urządzenie) — ryzyko głównie zgodności, nie wydajności. Przełącznik S09 (mat) zostaje jako wyjście awaryjne.
