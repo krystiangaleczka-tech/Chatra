@@ -1,6 +1,7 @@
 name: Chatra domain, migrations and HD
 on:
   push:
+    branches: [main]
     paths: ["android/**", "backend/**", "scripts/ch062_*", ".github/workflows/chatra-verification.yml"]
   pull_request:
     paths: ["android/**", "backend/**", "scripts/ch062_*", ".github/workflows/chatra-verification.yml"]
@@ -8,7 +9,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: verification-${{ github.head_ref || github.ref_name }}
+  group: checks-${{ github.head_ref || github.ref_name }}
   cancel-in-progress: true
 jobs:
   backend:
