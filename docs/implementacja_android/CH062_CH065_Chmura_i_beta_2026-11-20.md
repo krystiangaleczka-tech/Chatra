@@ -103,8 +103,8 @@ Nie dodano zbierania treści wiadomości, kontaktów ani automatycznej analityki
 
 Backend w tym środowisku: **18 testów PASS**, OpenAPI zgodne z trasami.
 Weryfikacja końcowego Androida i emulatora jest w trakcie; wynik zostanie dopisany
-po zakończeniu przebiegu. Pierwsza poprawka CI przeszła wcześniejszą blokadę SDK
-i uruchomiła Gradle oraz emulator. Nie stanowi to jeszcze wyniku końcowego.
+po zakończeniu przebiegu. [Pierwsza poprawka CI, `9d00eda`](https://github.com/krystiangaleczka-tech/Chatra/actions/runs/44817784843)
+przeszła buildy, lint i instrumentację full/Room. Nie zawierała jeszcze nowego panelu.
 
 Testy UI demo obejmują szkic, przypięcie, wyciszenie, odczyt nowej wiadomości
 pod panelem, nadawcę alfanumerycznego, uczestników grupy i anulowanie blokady/kosza.

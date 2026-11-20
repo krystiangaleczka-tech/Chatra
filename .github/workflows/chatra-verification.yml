@@ -8,7 +8,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: verification-${{ github.ref }}
+  group: verification-${{ github.head_ref || github.ref_name }}
   cancel-in-progress: true
 jobs:
   backend:
@@ -78,6 +78,8 @@ jobs:
           path: |
             android/**/build/reports/tests/**
             android/**/build/reports/androidTests/**
+            android/**/build/test-results/**
+            android/**/build/outputs/androidTest-results/**
             android/app/build/reports/lint-results-fullDebug.html
             android/app/build/reports/lint-results-demoDebug.html
             android/app/build/reports/ui/**
