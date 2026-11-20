@@ -21,8 +21,11 @@ class ScreenModelsTest {
         val models = androidx.lifecycle.ViewModelStore()
         try {
             val base = container(backgroundScope)
+            var failPreference = true
             val repo = object : ConversationRepository by base.conversations {
-                override suspend fun preferSim(id: ConversationId, sim: SubscriptionId, label: String) { error("storage unavailable") }
+                override suspend fun preferSim(id: ConversationId, sim: SubscriptionId, label: String) {
+                    if (failPreference) error("storage unavailable")
+                }
             }
             val model = app.chatra.ui.conversation.ConversationViewModel(Fixture.Ids.Ola, repo, base.drafts, base.sims,
                 base.sendQueue, base.schedules, base.sending.value, base.clock)
@@ -37,6 +40,10 @@ class ScreenModelsTest {
             assertEquals(Fixture.SIM2.id, draft.subscriptionId)
             assertEquals(Fixture.SIM2.label, draft.subscriptionLabel)
             assertTrue(model.state.value.error!!.contains("wybierz kartę ponownie"))
+            failPreference = false
+            model.selectSim(Fixture.SIM2.id)
+            runCurrent()
+            assertNull(model.state.value.error)
             collector.cancel()
         } finally { models.clear(); runCurrent(); Dispatchers.resetMain() }
     }

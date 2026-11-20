@@ -135,6 +135,7 @@ class ConversationViewModel(
 
     fun selectSim(sim: SubscriptionId) {
         if (busy.value) return
+        error.value = null
         chosenSim.value = sim
         selectedLabel = state.value.sims.firstOrNull { it.id == sim }?.label
         val label = selectedLabel.orEmpty()
