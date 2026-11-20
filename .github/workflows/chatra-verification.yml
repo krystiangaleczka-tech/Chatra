@@ -1,9 +1,9 @@
 name: Chatra domain, migrations and HD
 on:
   push:
-    paths: ["android/**", "backend/**", ".github/workflows/chatra-verification.yml"]
+    paths: ["android/**", "backend/**", "scripts/ch062_*", ".github/workflows/chatra-verification.yml"]
   pull_request:
-    paths: ["android/**", "backend/**", ".github/workflows/chatra-verification.yml"]
+    paths: ["android/**", "backend/**", "scripts/ch062_*", ".github/workflows/chatra-verification.yml"]
   workflow_dispatch:
 permissions:
   contents: read
@@ -61,16 +61,7 @@ jobs:
           target: google_apis
           working-directory: android
           disable-animations: true
-          script: |
-            mkdir -p app/build/reports/ui
-            trap 'adb pull /sdcard/Android/data/app.chatra.demo/files/qa/. app/build/reports/ui/ || true' EXIT
-            ./gradlew :app:installFullDebug
-            adb shell cmd role add-role-holder --user 0 android.app.role.SMS app.chatra
-            adb shell pm grant app.chatra android.permission.READ_SMS
-            adb shell pm grant app.chatra android.permission.SEND_SMS
-            adb shell pm grant app.chatra android.permission.READ_PHONE_STATE
-            adb shell pm grant app.chatra android.permission.POST_NOTIFICATIONS
-            ./gradlew :core:database:connectedDebugAndroidTest :app:connectedFullDebugAndroidTest :app:connectedDemoDebugAndroidTest
+          script: bash ../scripts/ch062_emulator_checks.sh
       - uses: actions/upload-artifact@v4
         if: always()
         with:

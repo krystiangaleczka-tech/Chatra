@@ -36,13 +36,16 @@ class ConversationDetailsTest {
 
     @Test fun detailsKeepDraftAndDoNotReadMessagesCoveredByThePanel() {
         val shown = AtomicInteger()
+        val readRefs = java.util.concurrent.ConcurrentHashMap.newKeySet<MessageRef>()
+        val newRef = MessageRef.Provider(ProviderRef(ProviderTransport.SMS, 999999))
+        val newBody = "Nowa wiadomość QA pod panelem"
         lateinit var messages: MutableStateFlow<List<Message>>
         val (c, nav) = launch(Fixture.Ids.Ola) { base ->
             messages = MutableStateFlow(Fixture.messages.getValue(Fixture.Ids.Ola))
             object : AppContainer by base {
                 override val conversations = object : ConversationRepository by base.conversations {
                     override fun messages(id: ConversationId) = if (id == Fixture.Ids.Ola) messages else base.conversations.messages(id)
-                    override suspend fun markShown(id: ConversationId, refs: Set<MessageRef>) { shown.incrementAndGet() }
+                    override suspend fun markShown(id: ConversationId, refs: Set<MessageRef>) { shown.incrementAndGet(); readRefs.addAll(refs) }
                 }
             }
         }
@@ -53,10 +56,12 @@ class ConversationDetailsTest {
         assertTrue("The visible conversation must exercise read tracking first", callsBefore > 0)
         ui.runOnIdle {
             val incoming = messages.value.first { it.direction == Direction.Incoming }
-            messages.value = messages.value + incoming.copy(ref = MessageRef.Provider(ProviderRef(ProviderTransport.SMS, 999999)), read = false)
+            messages.value = messages.value + incoming.copy(ref = newRef, body = newBody,
+                timestamp = messages.value.maxOf { it.timestamp }.plusSeconds(1), read = false)
         }
         ui.waitForIdle()
         assertEquals("A covered message must not be marked read", callsBefore, shown.get())
+        assertFalse(readRefs.contains(newRef))
         ui.onNodeWithText("Odepnij rozmowę").performScrollTo().performClick()
         ui.onNodeWithText("Przypnij rozmowę").assertExists()
         ui.onNodeWithText("Wycisz rozmowę").performScrollTo().performClick()
@@ -65,7 +70,10 @@ class ConversationDetailsTest {
         ui.onNodeWithText("Wróć do wiadomości").performScrollTo().performClick()
         ui.onNodeWithContentDescription("Wiadomość SMS do Ola Nowak").assertTextContains("Szkic zachowany po szczegółach")
         ui.runOnIdle { assertNull(nav.sheet) }
-        ui.waitUntil { shown.get() > callsBefore }
+        // A new item must not steal the saved history position. Explicitly reveal it first.
+        ui.onNode(hasScrollToIndexAction()).performScrollToNode(hasText(newBody))
+        ui.onNodeWithText(newBody).assertIsDisplayed()
+        ui.waitUntil(5_000) { readRefs.contains(newRef) }
     }
 
     @Test fun alphanumericSenderCannotDialAndTrashRequiresConfirmation() {
