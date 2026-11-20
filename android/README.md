@@ -104,3 +104,25 @@ W pełnym wariancie `chatraBackendOrigin` wskazuje adres HTTPS serwera. `chatraH
 Wiadomości HD są częścią rozmowy i galerii; Room v7 przechowuje historię, lokalne pliki, stan odczytu, kursor i zakres kosza. Push uruchamia uwierzytelnioną synchronizację, a pobranie wymaga osobnego działania. WorkManager domyślnie czeka na sieć nietaryfową i wznawia prywatne porcje po restarcie. Dopiero komplet zweryfikowanych i zapisanych plików pozwala potwierdzić pobranie nadawcy. SMS z linkiem jest osobnym szkicem do zatwierdzenia.
 
 [Zakres, dowody i pozostałe próby dostawców](../docs/implementacja_android/CH050_CH054_Wdrozenie_i_weryfikacja.md).
+
+## Beta bez usług zdalnych i szczegóły rozmowy
+
+Z czystego commitu uruchom `bash scripts/ch062_build_beta.sh` w katalogu głównym.
+Skrypt jawnie wyłącza HD, backend, FCM i Pro także wtedy, gdy inne wartości są
+zapisane w lokalnych właściwościach Gradle. W `build/beta/` zapisuje pełny APK debug,
+SHA-256, commit źródłowy i informacje dla testerów. Pełny wariant po nadaniu roli SMS
+może wysyłać prawdziwe wiadomości i zmieniać historię. Testuj na urządzeniu QA.
+Do aktualizacji zachowuj ten sam klucz podpisu; domyślny klucz debug jest lokalny
+dla komputera i nie jest kluczem wydania do Google Play.
+
+CI zachowuje APK demo/full oraz raporty. Firebase App Distribution można wykorzystać
+do prywatnej bety po skonfigurowaniu własnej aplikacji Firebase, testerów i dostępu.
+Repozytorium nie zawiera ich identyfikatorów ani poświadczeń i niczego automatycznie
+nie wysyła do Firebase. App Distribution nie uruchamia backendu HD.
+
+Nagłówek S03 otwiera teraz osobny panel szczegółów: uczestnicy, dialer, wyszukiwanie,
+harmonogram, przypięcie, wyciszenie, SIM, kompozycja, blokada i kosz. Panel zachowuje
+zamontowaną rozmowę i szkic; zasłonięta historia nie jest oznaczana jako przeczytana.
+Pełna galeria CH066 i ustawienia wyglądu CH068 pozostają osobnym zakresem.
+
+[Audyt i ograniczenia odbioru](../docs/implementacja_android/CH062_CH065_Chmura_i_beta_2026-11-20.md).

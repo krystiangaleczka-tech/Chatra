@@ -697,6 +697,8 @@ Odbiór: raport liczbowy i spełnione lub jawnie ponownie uzgodnione cele, bez r
 **Odbiór rozszerzony:** Nie ma wycieków bitmap ani blokowania UI przy szybkim przełączaniu filtrów i otwieraniu galerii.
 
 
+**Stan roboczy 20.11.2026:** Optymalizacja skrzynki i pomiary A15 z 14.11 są na gałęzi roboczej; pełny profil rozmowy, galerii, HD i macierz urządzeń pozostają otwarte. [Audyt i weryfikacja](CH062_CH065_Chmura_i_beta_2026-11-20.md).
+
 ### CH060 Odebrać dostępność i układy adaptacyjne
 
 **P1 · QA i UX i Android · 2–3 osobodni · zależności CH020 CH040 CH055 CH065 CH066 CH068 CH069 CH070**
@@ -725,6 +727,8 @@ Odbiór: historia providera nienaruszona, brak drugiej wysyłki po przywróceniu
 Wykonanie: lint/build/test, obrazy regresji, migracje bazy BE, staging, secrets i podpisywanie. Instrukcja budowy lokalnej, wdrożenia, wycofania zgodnego z migracjami, rotacji kluczy i alarmów produkcyjnych. Oddzielić środowiska i testowych odbiorców; fixture i sekrety nie trafiają do wydania produkcyjnego.
 
 Odbiór: nowa osoba z zespołu odtwarza build i środowisko testowe z instrukcji. Weryfikacja: pipeline z czystego commitu, kontrola paczek i próbne wycofanie bez utraty danych.
+
+**Stan roboczy 20.11.2026:** Poprawiono pakiety SDK, dodano artefakty APK, testy UI i skrypt bety bez usług zdalnych. Staging, podpis wydania, Firebase i próba rollback pozostają otwarte. [Audyt i weryfikacja](CH062_CH065_Chmura_i_beta_2026-11-20.md).
 
 ### CH063 Przeprowadzić pełny odbiór produktu
 
@@ -759,6 +763,8 @@ Wykonanie: na podstawie CH020 stworzyć osobny podwidok otwierany z nagłówka S
 
 Odbiór: wszystkie akcje działają lub jawnie wyjaśniają niedostępność; po powrocie zachowana pozycja historii i szkic. Weryfikacja: jeden/wiele numerów, alfanumeryczny nadawca, brak dialera/roli, grupa i TalkBack.
 
+**Stan roboczy 20.11.2026:** Osobny panel szczegółów zachowuje rozmowę i szkic, ma jawne mutacje i błędy. Galeria jest jawnie niedostępna do CH066; fizyczny dialer, rola i odsłuch TalkBack pozostają do odbioru. [Audyt i weryfikacja](CH062_CH065_Chmura_i_beta_2026-11-20.md).
+
 ### CH066 Zbudować galerię mediów jednej rozmowy
 
 **P1 · Android UI i dane · 4–6 osobodni · zależności CH020 CH022 CH031 CH038 CH065**
@@ -766,6 +772,8 @@ Odbiór: wszystkie akcje działają lub jawnie wyjaśniają niedostępność; po
 Wykonanie: podwidok Wspólne z zakładkami zdjęcia, filmy, linki, dokumenty i pozostałe; paginacja miniaturek, realny licznik elementów, zachowanie po obrocie, otwarcie pliku, zapisz i Sharesheet bez wycieku URI. Każdy element zachowuje MessageRef i akcję Pokaż w rozmowie. Ująć załączniki MMS i Chatra HD z ich realnym stanem.
 
 Odbiór: 67 i 1000 plików wyświetla się kompletnie bez OOM i bez zgubionych stron. Weryfikacja: usunięty plik, brak URI, załącznik HD oczekujący na pobranie, wyszukiwanie źródłowej wiadomości.
+
+**Stan roboczy 20.11.2026:** Adaptery galerii MMS/HD istnieją; brak pełnego podwidoku Wspólne, zakładek, paginacji UI i odbioru 67/1000 plików. [Audyt i weryfikacja](CH062_CH065_Chmura_i_beta_2026-11-20.md).
 
 ### CH067 Renderować kolaże i stosy załączników w wiadomości
 
@@ -775,6 +783,8 @@ Wykonanie: połączyć zestaw mediów należących do jednej wiadomości w zwię
 
 Odbiór: 1, 2, 3 i co najmniej 4 zdjęcia są prezentowane czytelnie, każde otwiera prawidłowy oryginał lub stan błędu. Weryfikacja: szybkie przewijanie, długie wiadomości, MMS i HD, dostępność i pamięć.
 
+**Stan roboczy 20.11.2026:** Karta HD pokazuje miniatury i licznik nadmiarowych plików. Pełny zakres MMS/HD, podgląd i macierz 1/2/3/4+ pozostają do odbioru. [Audyt i weryfikacja](CH062_CH065_Chmura_i_beta_2026-11-20.md).
+
 ### CH068 Dodać indywidualny wygląd i ustawienia konwersacji
 
 **P1 · UX i Android UI · 3–5 osobodni · zależności CH020 CH040 CH065**
@@ -782,6 +792,8 @@ Odbiór: 1, 2, 3 i co najmniej 4 zdjęcia są prezentowane czytelnie, każde otw
 Wykonanie: per conversationId udostępnić nadpisania globalnego stylu dla tła, koloru akcentu, dymków i powiadomień. Zapewnić podgląd na żywo, wskazanie co pochodzi z motywu globalnego i reset wyłącznie tej rozmowy. Przestrzegać kontrastu, redukcji szkła i ustawień dostępności. W SMS/MMS wygląd jest wyłącznie lokalny; odbiorca nie widzi wspólnego tła.
 
 Odbiór: kilka rozmów ma różne ustawienia, a zmiana globalna nie usuwa wyjątków; reset przywraca dziedziczenie. Weryfikacja: restart, ciemny/jasny, zdjęcie o małym kontraście, TalkBack, brak zmian wzorca S09.
+
+**Stan roboczy 20.11.2026:** Działa lokalna kompozycja i reset do dziedziczenia. Niezależne tło, akcent, dymki i pełny podgląd nie są ukończone. [Audyt i weryfikacja](CH062_CH065_Chmura_i_beta_2026-11-20.md).
 
 ### CH069 Wdrożyć gesty i menu szybkich działań skrzynki
 
@@ -791,6 +803,8 @@ Wykonanie: długie przytrzymanie i opcjonalne gesty przesunięcia na liście roz
 
 Odbiór: gesty nie konfliktują z nawigacją systemową, nie usuwają przypadkowo wątku; opcje menu i gest prowadzą do identycznego stanu. Weryfikacja: przełożenie przypięć, długi swipe, TalkBack, mały ekran i restart.
 
+**Stan roboczy 20.11.2026:** Istnieje menu przytrzymania do przypięcia i przeczytania. Pełne menu, gesty, cofanie i akceptacja mapowania pozostają otwarte. [Audyt i weryfikacja](CH062_CH065_Chmura_i_beta_2026-11-20.md).
+
 ### CH070 Ujednolicić nieprzeczytane i skok do wiadomości
 
 **P1 · Android dane i UI · 2–3 osobodni · zależności CH012 CH022 CH023 CH038 CH020**
@@ -798,6 +812,8 @@ Odbiór: gesty nie konfliktują z nawigacją systemową, nie usuwają przypadkow
 Wykonanie: implementować oznacz jako nieprzeczytane, oznacz wszystkie jako przeczytane i nawigację do pierwszej nieprzeczytanej wiadomości. Zdefiniować spójność ręcznego stanu z providerem, badge i powiadomieniami, w tym realny odczyt tylko po pokazaniu treści. Potwierdzenie masowego oznaczenia przy dużej liczbie rozmów do decyzji UX.
 
 Odbiór: otwarcie starszej części historii nie oznacza z automatu niewidocznych nowych wiadomości; restart, napływ SMS i aktualizacja danych zachowują logiczne stany. Weryfikacja: wiele nieprzeczytanych, duże stronicowanie, głęboki link, powrót do skrzynki.
+
+**Stan roboczy 20.11.2026:** Istnieją markUnread, markAllRead i kotwica wiadomości; poprawiono odczyt pod zasłaniającymi panelami. Skok do pierwszej nieprzeczytanej i pełna regresja stronicowania pozostają otwarte. [Audyt i weryfikacja](CH062_CH065_Chmura_i_beta_2026-11-20.md).
 
 ### CH071 Opcjonalnie dodać eksport i skrót rozmowy na pulpicie
 

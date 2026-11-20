@@ -266,11 +266,15 @@ class ScreenModelsTest {
         nav.push(Route.Search("a|b\nŁÓDŹ", "parcels"))
         val anchor = MessageRef.Provider(ProviderRef(ProviderTransport.SMS, 42))
         nav.push(Route.Conversation(Fixture.Ids.Paczka24, anchor))
+        nav.push(Route.ConversationDetails(Fixture.Ids.Paczka24))
         nav.select(Tab.Settings); nav.push(Route.Appearance)
         val saved = with(Navigator.Saver) { SaverScope { true }.save(nav)!! }
         val restored = Navigator.Saver.restore(saved)!!
         assertEquals(Route.Appearance, restored.top)
         restored.select(Tab.Conversations)
+        assertEquals(Route.ConversationDetails(Fixture.Ids.Paczka24), restored.top)
+        assertEquals(Route.Conversation(Fixture.Ids.Paczka24, anchor), restored.screen)
+        restored.back()
         assertEquals(Route.Conversation(Fixture.Ids.Paczka24, anchor), restored.top)
         restored.back()
         assertEquals(Route.Search("a|b\nŁÓDŹ", "parcels"), restored.top)

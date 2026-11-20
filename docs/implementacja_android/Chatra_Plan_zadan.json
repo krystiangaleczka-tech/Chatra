@@ -1064,7 +1064,12 @@
         "CH066",
         "CH067"
       ],
-      "description": "Wykonanie: uruchomienie aplikacji, 50 tys. wiadomości, scroll, otwarcie arkusza, pamięć miniatur i transfer HD. Zmierzyć cele P95 na ustalonym urządzeniu, profilować koszt rejestrowania warstw i rozmycia i indeksowania. Backend monitorować bez prywatnych danych. Poprawić potwierdzone wąskie gardła.\n\nOdbiór: raport liczbowy i spełnione lub jawnie ponownie uzgodnione cele, bez rezygnacji ze szkła 1 do 1. Weryfikacja: identyczny scenariusz przed/po, brak zwiększenia wycieków pamięci i degradacji po dłuższym użyciu.\n\nUzupełnienie UX 29.10.2026: Profilować galerię przy 67 i 1000 załączników, kolaże wielu zdjęć, skok do wiadomości źródłowej, gesture actions i aktualizację tła. Pamiętać o oddzielnych bitmapach miniatur i oryginałów.\n\nOdbiór rozszerzony: Nie ma wycieków bitmap ani blokowania UI przy szybkim przełączaniu filtrów i otwieraniu galerii."
+      "description": "Wykonanie: uruchomienie aplikacji, 50 tys. wiadomości, scroll, otwarcie arkusza, pamięć miniatur i transfer HD. Zmierzyć cele P95 na ustalonym urządzeniu, profilować koszt rejestrowania warstw i rozmycia i indeksowania. Backend monitorować bez prywatnych danych. Poprawić potwierdzone wąskie gardła.\n\nOdbiór: raport liczbowy i spełnione lub jawnie ponownie uzgodnione cele, bez rezygnacji ze szkła 1 do 1. Weryfikacja: identyczny scenariusz przed/po, brak zwiększenia wycieków pamięci i degradacji po dłuższym użyciu.\n\nUzupełnienie UX 29.10.2026: Profilować galerię przy 67 i 1000 załączników, kolaże wielu zdjęć, skok do wiadomości źródłowej, gesture actions i aktualizację tła. Pamiętać o oddzielnych bitmapach miniatur i oryginałów.\n\nOdbiór rozszerzony: Nie ma wycieków bitmap ani blokowania UI przy szybkim przełączaniu filtrów i otwieraniu galerii.",
+      "status": "partially_implemented_inbox_optimized_device_matrix_pending",
+      "review_note": "Optymalizacja skrzynki i pomiary A15 z 14.11 są na gałęzi roboczej; pełny profil rozmowy, galerii, HD i macierz urządzeń pozostają otwarte.",
+      "evidence_files": [
+        "docs/implementacja_android/CH062_CH065_Chmura_i_beta_2026-11-20.md"
+      ]
     },
     {
       "id": "CH060",
@@ -1114,7 +1119,12 @@
         "CH047",
         "CH054"
       ],
-      "description": "Wykonanie: lint/build/test, obrazy regresji, migracje bazy BE, staging, secrets i podpisywanie. Instrukcja budowy lokalnej, wdrożenia, wycofania zgodnego z migracjami, rotacji kluczy i alarmów produkcyjnych. Oddzielić środowiska i testowych odbiorców; fixture i sekrety nie trafiają do wydania produkcyjnego.\n\nOdbiór: nowa osoba z zespołu odtwarza build i środowisko testowe z instrukcji. Weryfikacja: pipeline z czystego commitu, kontrola paczek i próbne wycofanie bez utraty danych."
+      "description": "Wykonanie: lint/build/test, obrazy regresji, migracje bazy BE, staging, secrets i podpisywanie. Instrukcja budowy lokalnej, wdrożenia, wycofania zgodnego z migracjami, rotacji kluczy i alarmów produkcyjnych. Oddzielić środowiska i testowych odbiorców; fixture i sekrety nie trafiają do wydania produkcyjnego.\n\nOdbiór: nowa osoba z zespołu odtwarza build i środowisko testowe z instrukcji. Weryfikacja: pipeline z czystego commitu, kontrola paczek i próbne wycofanie bez utraty danych.",
+      "status": "partially_implemented_ci_repaired_beta_build_added_acceptance_pending",
+      "review_note": "Poprawiono pakiety SDK, dodano artefakty APK, testy UI i skrypt bety bez usług zdalnych. Staging, podpis wydania, Firebase i próba rollback pozostają otwarte.",
+      "evidence_files": [
+        "docs/implementacja_android/CH062_CH065_Chmura_i_beta_2026-11-20.md"
+      ]
     },
     {
       "id": "CH063",
@@ -1174,7 +1184,12 @@
         "CH030",
         "CH042"
       ],
-      "description": "Wykonanie: na podstawie CH020 stworzyć osobny podwidok otwierany z nagłówka S03. Pokazać prawidłowy kontakt, numer lub członków grupy, akcje Zadzwoń przez systemowy dialer, Szukaj w rozmowie, Wycisz i Więcej; przypięcie, dostęp do galerii CH066, ustawień wyglądu CH068, SIM, blokowania i usuwania. Rozróżnić wyciszenie, blokadę i usunięcie. Nie zakładać wsparcia iMessage/RCS i nie zmieniać planszy S03.\n\nOdbiór: wszystkie akcje działają lub jawnie wyjaśniają niedostępność; po powrocie zachowana pozycja historii i szkic. Weryfikacja: jeden/wiele numerów, alfanumeryczny nadawca, brak dialera/roli, grupa i TalkBack."
+      "description": "Wykonanie: na podstawie CH020 stworzyć osobny podwidok otwierany z nagłówka S03. Pokazać prawidłowy kontakt, numer lub członków grupy, akcje Zadzwoń przez systemowy dialer, Szukaj w rozmowie, Wycisz i Więcej; przypięcie, dostęp do galerii CH066, ustawień wyglądu CH068, SIM, blokowania i usuwania. Rozróżnić wyciszenie, blokadę i usunięcie. Nie zakładać wsparcia iMessage/RCS i nie zmieniać planszy S03.\n\nOdbiór: wszystkie akcje działają lub jawnie wyjaśniają niedostępność; po powrocie zachowana pozycja historii i szkic. Weryfikacja: jeden/wiele numerów, alfanumeryczny nadawca, brak dialera/roli, grupa i TalkBack.",
+      "status": "implemented_details_panel_gallery_and_device_acceptance_pending",
+      "review_note": "Osobny panel szczegółów zachowuje rozmowę i szkic, ma jawne mutacje i błędy. Galeria jest jawnie niedostępna do CH066; fizyczny dialer, rola i odsłuch TalkBack pozostają do odbioru.",
+      "evidence_files": [
+        "docs/implementacja_android/CH062_CH065_Chmura_i_beta_2026-11-20.md"
+      ]
     },
     {
       "id": "CH066",
@@ -1190,7 +1205,12 @@
         "CH038",
         "CH065"
       ],
-      "description": "Wykonanie: podwidok Wspólne z zakładkami zdjęcia, filmy, linki, dokumenty i pozostałe; paginacja miniaturek, realny licznik elementów, zachowanie po obrocie, otwarcie pliku, zapisz i Sharesheet bez wycieku URI. Każdy element zachowuje MessageRef i akcję Pokaż w rozmowie. Ująć załączniki MMS i Chatra HD z ich realnym stanem.\n\nOdbiór: 67 i 1000 plików wyświetla się kompletnie bez OOM i bez zgubionych stron. Weryfikacja: usunięty plik, brak URI, załącznik HD oczekujący na pobranie, wyszukiwanie źródłowej wiadomości."
+      "description": "Wykonanie: podwidok Wspólne z zakładkami zdjęcia, filmy, linki, dokumenty i pozostałe; paginacja miniaturek, realny licznik elementów, zachowanie po obrocie, otwarcie pliku, zapisz i Sharesheet bez wycieku URI. Każdy element zachowuje MessageRef i akcję Pokaż w rozmowie. Ująć załączniki MMS i Chatra HD z ich realnym stanem.\n\nOdbiór: 67 i 1000 plików wyświetla się kompletnie bez OOM i bez zgubionych stron. Weryfikacja: usunięty plik, brak URI, załącznik HD oczekujący na pobranie, wyszukiwanie źródłowej wiadomości.",
+      "status": "data_adapter_only_gallery_ui_pending",
+      "review_note": "Adaptery galerii MMS/HD istnieją; brak pełnego podwidoku Wspólne, zakładek, paginacji UI i odbioru 67/1000 plików.",
+      "evidence_files": [
+        "docs/implementacja_android/CH062_CH065_Chmura_i_beta_2026-11-20.md"
+      ]
     },
     {
       "id": "CH067",
@@ -1204,7 +1224,12 @@
         "CH031",
         "CH020"
       ],
-      "description": "Wykonanie: połączyć zestaw mediów należących do jednej wiadomości w zwięzły kolaż/stos, z licznikiem pozostałych zdjęć i pełnoekranowym podglądem; zachować kolejność plików i obsłużyć stany wysyłki, brak miniatury i wielkie obrazy. Nie grupować osobnych wiadomości według podobnej godziny.\n\nOdbiór: 1, 2, 3 i co najmniej 4 zdjęcia są prezentowane czytelnie, każde otwiera prawidłowy oryginał lub stan błędu. Weryfikacja: szybkie przewijanie, długie wiadomości, MMS i HD, dostępność i pamięć."
+      "description": "Wykonanie: połączyć zestaw mediów należących do jednej wiadomości w zwięzły kolaż/stos, z licznikiem pozostałych zdjęć i pełnoekranowym podglądem; zachować kolejność plików i obsłużyć stany wysyłki, brak miniatury i wielkie obrazy. Nie grupować osobnych wiadomości według podobnej godziny.\n\nOdbiór: 1, 2, 3 i co najmniej 4 zdjęcia są prezentowane czytelnie, każde otwiera prawidłowy oryginał lub stan błędu. Weryfikacja: szybkie przewijanie, długie wiadomości, MMS i HD, dostępność i pamięć.",
+      "status": "partially_implemented_hd_thumbnails_full_acceptance_pending",
+      "review_note": "Karta HD pokazuje miniatury i licznik nadmiarowych plików. Pełny zakres MMS/HD, podgląd i macierz 1/2/3/4+ pozostają do odbioru.",
+      "evidence_files": [
+        "docs/implementacja_android/CH062_CH065_Chmura_i_beta_2026-11-20.md"
+      ]
     },
     {
       "id": "CH068",
@@ -1218,7 +1243,12 @@
         "CH040",
         "CH065"
       ],
-      "description": "Wykonanie: per conversationId udostępnić nadpisania globalnego stylu dla tła, koloru akcentu, dymków i powiadomień. Zapewnić podgląd na żywo, wskazanie co pochodzi z motywu globalnego i reset wyłącznie tej rozmowy. Przestrzegać kontrastu, redukcji szkła i ustawień dostępności. W SMS/MMS wygląd jest wyłącznie lokalny; odbiorca nie widzi wspólnego tła.\n\nOdbiór: kilka rozmów ma różne ustawienia, a zmiana globalna nie usuwa wyjątków; reset przywraca dziedziczenie. Weryfikacja: restart, ciemny/jasny, zdjęcie o małym kontraście, TalkBack, brak zmian wzorca S09."
+      "description": "Wykonanie: per conversationId udostępnić nadpisania globalnego stylu dla tła, koloru akcentu, dymków i powiadomień. Zapewnić podgląd na żywo, wskazanie co pochodzi z motywu globalnego i reset wyłącznie tej rozmowy. Przestrzegać kontrastu, redukcji szkła i ustawień dostępności. W SMS/MMS wygląd jest wyłącznie lokalny; odbiorca nie widzi wspólnego tła.\n\nOdbiór: kilka rozmów ma różne ustawienia, a zmiana globalna nie usuwa wyjątków; reset przywraca dziedziczenie. Weryfikacja: restart, ciemny/jasny, zdjęcie o małym kontraście, TalkBack, brak zmian wzorca S09.",
+      "status": "partially_implemented_composition_override_only",
+      "review_note": "Działa lokalna kompozycja i reset do dziedziczenia. Niezależne tło, akcent, dymki i pełny podgląd nie są ukończone.",
+      "evidence_files": [
+        "docs/implementacja_android/CH062_CH065_Chmura_i_beta_2026-11-20.md"
+      ]
     },
     {
       "id": "CH069",
@@ -1234,7 +1264,12 @@
         "CH030",
         "CH042"
       ],
-      "description": "Wykonanie: długie przytrzymanie i opcjonalne gesty przesunięcia na liście rozmów do przypięcia, wyciszania, przeczytane/nieprzeczytane i zarządzania rozmową. Maksymalnie jedna szybka akcja na kierunek; mapowanie do zatwierdzenia po teście; działania destrukcyjne nie mogą wykonać się przypadkiem. Każda akcja ma alternatywę menu i czytnika ekranu; cofnięcie operacji odwracalnych.\n\nOdbiór: gesty nie konfliktują z nawigacją systemową, nie usuwają przypadkowo wątku; opcje menu i gest prowadzą do identycznego stanu. Weryfikacja: przełożenie przypięć, długi swipe, TalkBack, mały ekran i restart."
+      "description": "Wykonanie: długie przytrzymanie i opcjonalne gesty przesunięcia na liście rozmów do przypięcia, wyciszania, przeczytane/nieprzeczytane i zarządzania rozmową. Maksymalnie jedna szybka akcja na kierunek; mapowanie do zatwierdzenia po teście; działania destrukcyjne nie mogą wykonać się przypadkiem. Każda akcja ma alternatywę menu i czytnika ekranu; cofnięcie operacji odwracalnych.\n\nOdbiór: gesty nie konfliktują z nawigacją systemową, nie usuwają przypadkowo wątku; opcje menu i gest prowadzą do identycznego stanu. Weryfikacja: przełożenie przypięć, długi swipe, TalkBack, mały ekran i restart.",
+      "status": "partially_implemented_long_press_menu_gestures_pending",
+      "review_note": "Istnieje menu przytrzymania do przypięcia i przeczytania. Pełne menu, gesty, cofanie i akceptacja mapowania pozostają otwarte.",
+      "evidence_files": [
+        "docs/implementacja_android/CH062_CH065_Chmura_i_beta_2026-11-20.md"
+      ]
     },
     {
       "id": "CH070",
@@ -1250,7 +1285,12 @@
         "CH038",
         "CH020"
       ],
-      "description": "Wykonanie: implementować oznacz jako nieprzeczytane, oznacz wszystkie jako przeczytane i nawigację do pierwszej nieprzeczytanej wiadomości. Zdefiniować spójność ręcznego stanu z providerem, badge i powiadomieniami, w tym realny odczyt tylko po pokazaniu treści. Potwierdzenie masowego oznaczenia przy dużej liczbie rozmów do decyzji UX.\n\nOdbiór: otwarcie starszej części historii nie oznacza z automatu niewidocznych nowych wiadomości; restart, napływ SMS i aktualizacja danych zachowują logiczne stany. Weryfikacja: wiele nieprzeczytanych, duże stronicowanie, głęboki link, powrót do skrzynki."
+      "description": "Wykonanie: implementować oznacz jako nieprzeczytane, oznacz wszystkie jako przeczytane i nawigację do pierwszej nieprzeczytanej wiadomości. Zdefiniować spójność ręcznego stanu z providerem, badge i powiadomieniami, w tym realny odczyt tylko po pokazaniu treści. Potwierdzenie masowego oznaczenia przy dużej liczbie rozmów do decyzji UX.\n\nOdbiór: otwarcie starszej części historii nie oznacza z automatu niewidocznych nowych wiadomości; restart, napływ SMS i aktualizacja danych zachowują logiczne stany. Weryfikacja: wiele nieprzeczytanych, duże stronicowanie, głęboki link, powrót do skrzynki.",
+      "status": "partially_implemented_read_tracking_first_unread_pending",
+      "review_note": "Istnieją markUnread, markAllRead i kotwica wiadomości; poprawiono odczyt pod zasłaniającymi panelami. Skok do pierwszej nieprzeczytanej i pełna regresja stronicowania pozostają otwarte.",
+      "evidence_files": [
+        "docs/implementacja_android/CH062_CH065_Chmura_i_beta_2026-11-20.md"
+      ]
     },
     {
       "id": "CH071",
