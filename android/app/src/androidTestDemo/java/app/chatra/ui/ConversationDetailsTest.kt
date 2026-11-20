@@ -6,6 +6,7 @@ import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.core.app.ApplicationProvider
+import androidx.test.platform.app.InstrumentationRegistry
 import app.chatra.core.model.*
 import app.chatra.core.testing.Fixture
 import app.chatra.di.*
@@ -100,8 +101,16 @@ class ConversationDetailsTest {
         // Capture the actual rendered panel for review, without reading a real user's data.
         ui.onNodeWithText("Szczegóły rozmowy").performScrollTo()
         val image = ui.onRoot().captureToImage().asAndroidBitmap()
-        File(app.getExternalFilesDir(null), "qa").apply { mkdirs() }.resolve("CH065-details.png").outputStream().use {
+        val screenshot = File(app.getExternalFilesDir(null), "qa").apply { mkdirs() }.resolve("CH065-details.png")
+        screenshot.outputStream().use {
             image.compress(Bitmap.CompressFormat.PNG, 100, it)
         }
+        // UTP uninstalls the demo after the suite, deleting its external-files directory.
+        // Copy synthetic QA output while the package is installed, using the shell identity.
+        check(screenshot.absolutePath.matches(Regex("[A-Za-z0-9_./-]+")))
+        val command = "mkdir -p /sdcard/Download/chatra-qa && cp '${screenshot.absolutePath}' /sdcard/Download/chatra-qa/CH065-details.png && test -s /sdcard/Download/chatra-qa/CH065-details.png && echo captured"
+        val output = InstrumentationRegistry.getInstrumentation().uiAutomation.executeShellCommand(command)
+        val result = android.os.ParcelFileDescriptor.AutoCloseInputStream(output).use { it.readBytes().toString(Charsets.UTF_8).trim() }
+        assertEquals("captured", result)
     }
 }

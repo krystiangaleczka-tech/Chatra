@@ -8,7 +8,7 @@ if [[ "$(adb shell getprop ro.kernel.qemu | tr -d '\r')" != 1 ]]; then
   exit 2
 fi
 mkdir -p app/build/reports/ui
-trap 'adb pull /sdcard/Android/data/app.chatra.demo/files/qa/. app/build/reports/ui/ || true' EXIT
+trap 'adb pull /sdcard/Download/chatra-qa/. app/build/reports/ui/ || true' EXIT
 ./gradlew :app:installFullDebug
 adb shell cmd role add-role-holder --user 0 android.app.role.SMS app.chatra
 for permission in READ_SMS SEND_SMS READ_PHONE_STATE POST_NOTIFICATIONS; do
@@ -18,3 +18,6 @@ done
 # The two app variants must not compete for the foreground/lifecycle on one device.
 adb shell am force-stop app.chatra
 ./gradlew :app:connectedDemoDebugAndroidTest
+adb pull /sdcard/Download/chatra-qa/. app/build/reports/ui/
+test -s app/build/reports/ui/CH065-details.png
+trap - EXIT
