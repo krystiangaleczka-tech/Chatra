@@ -97,6 +97,7 @@ fun ConversationScreen(
     onExtras: () -> Unit,
     onPickSim: () -> Unit,
     target: app.chatra.core.model.MessageRef? = null,
+    contentVisible: Boolean = true,
 ) {
     val state by model.state.collectAsStateWithLifecycle()
     val chrome = LocalChrome.current
@@ -117,7 +118,8 @@ fun ConversationScreen(
     ) {
         val list = rememberLazyListState()
         val rows = remember(state.messages) { buildRows(state.messages) }
-        LaunchedEffect(list, rows, lifecycle) {
+        LaunchedEffect(list, rows, lifecycle, contentVisible) {
+            if (!contentVisible) return@LaunchedEffect
             lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 snapshotFlow {
                     val layout = list.layoutInfo
@@ -457,7 +459,8 @@ private fun Header(state: ConversationState, onBack: () -> Unit, onDetails: () -
     Row(modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
         GlassCircleButton(ChatraIcons.ChevronLeft, "Wróć do rozmów", onBack, strokeWidth = 2.2f)
         Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
-            if (s != null) GlassSurface(GlassStyles.Control, RoundedCornerShape(24.dp), Modifier.height(48.dp), shadows = listOf(Shadows.Control)) {
+            if (s != null) GlassSurface(GlassStyles.Control, RoundedCornerShape(24.dp), Modifier.height(48.dp)
+                .semantics { role = Role.Button; contentDescription = "Szczegóły: ${s.title}" }.pressable(onDetails), shadows = listOf(Shadows.Control)) {
                 Row(Modifier.fillMaxHeight().padding(start = 5.dp, end = 16.dp), horizontalArrangement = Arrangement.spacedBy(9.dp), verticalAlignment = Alignment.CenterVertically) {
                     val (content, tone) = avatarFor(s)
                     Avatar(content, tone, 38.dp, chatraText(14f, 600), 18.dp)

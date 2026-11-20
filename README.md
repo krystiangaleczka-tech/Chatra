@@ -23,14 +23,17 @@ Dokumentacja zawiera:
 **Zakres:** aplikacja SMS i MMS z kierunkiem własnego transferu załączników przez internet.
 Połączenia głosowe i wideo pozostają poza zakresem.
 
-**Status:** dokumentacja i koncepcja. Nie oznacza zaimplementowanej obsługi RCS,
-iMessage ani transferu HD. Kotlin i Rust są rekomendacją do weryfikacji w prototypie.
+**Status raportu bazowego:** dokumentacja i koncepcja. Aktualny kod Androida
+implementuje SMS/MMS i lokalne funkcje; Chatra HD i Pro pozostają pilotem do odbioru.
+RCS i iMessage nie są obsługiwane. Kod i komendy budowania: [android/README.md](android/README.md).
 
 Rozdziały 1-21 zawierają część bazową. Rozdziały 22-27 zawierają uzupełnienie rozmowy.
 W PDF uzupełnienie zaczyna się na stronie 24.
 
 
 ## Dokumentacja implementacji Android
+
+- [Stan prac, CI i przygotowanie bety — 20.11.2026](docs/implementacja_android/CH062_CH065_Chmura_i_beta_2026-11-20.md)
 
 - [CH045–CH049: Pro, backend pilota Chatra HD i wznawialny upload](docs/implementacja_android/CH045_CH049_Wdrozenie_i_weryfikacja.md)
 - [CH050–CH054: odbiór HD, linki, retencja i regresja bazy](docs/implementacja_android/CH050_CH054_Wdrozenie_i_weryfikacja.md)

@@ -9,10 +9,16 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
@@ -29,8 +35,16 @@ import app.chatra.core.designsystem.glass.rememberBackdrop
  * a dock 26 od dołu. Jeden mechanizm insets — górny odstęp to większa z wartości: projekt albo
  * pasek stanu + 8; bez podwójnego paddingu. W trybie referencyjnym paski są ukryte (0).
  */
-@Immutable
-data class Chrome(val statusBar: Dp, val navigationBar: Dp, val ime: Dp) {
+@Stable
+class Chrome(val statusBar: Dp, val navigationBar: Dp, private val imeHeight: State<Dp>) {
+    constructor(statusBar: Dp, navigationBar: Dp, ime: Dp) : this(statusBar, navigationBar, mutableStateOf(ime))
+
+    /**
+     * Wysokość klawiatury czytana dopiero przy użyciu: animacja IME unieważnia tylko te zakresy,
+     * które ją odczytują, a nie całe drzewo pod [LocalChrome] (lokalna statyczna przebudowywała
+     * w każdej klatce całą aplikację, z listą rozmów włącznie).
+     */
+    val ime: Dp get() = imeHeight.value
     fun top(design: Dp): Dp = max(design, statusBar + 8.dp)
     fun bottom(design: Dp): Dp = max(design, max(navigationBar, ime) + 8.dp)
 }
@@ -40,13 +54,11 @@ val LocalChrome = staticCompositionLocalOf { Chrome(0.dp, 0.dp, 0.dp) }
 @Composable
 fun ProvideChrome(referenceFrame: Boolean, content: @Composable () -> Unit) {
     val density = LocalDensity.current
-    val chrome = if (referenceFrame) Chrome(0.dp, 0.dp, with(density) { WindowInsets.ime.getBottom(this).toDp() }) else with(density) {
-        Chrome(
-            WindowInsets.statusBars.getTop(this).toDp(),
-            WindowInsets.navigationBars.getBottom(this).toDp(),
-            WindowInsets.ime.getBottom(this).toDp(),
-        )
-    }
+    val imeInsets = WindowInsets.ime
+    val ime = remember(imeInsets, density) { derivedStateOf { with(density) { imeInsets.getBottom(this).toDp() } } }
+    val statusBar = if (referenceFrame) 0.dp else with(density) { WindowInsets.statusBars.getTop(this).toDp() }
+    val navigationBar = if (referenceFrame) 0.dp else with(density) { WindowInsets.navigationBars.getBottom(this).toDp() }
+    val chrome = remember(statusBar, navigationBar, ime) { Chrome(statusBar, navigationBar, ime) }
     CompositionLocalProvider(LocalChrome provides chrome, content = content)
 }
 
@@ -68,9 +80,18 @@ fun ChatraScreen(
     val resolvedBackground = if (tokens.dark || tokens.contrast || tokens.composition != "Glass") CssBackground(tokens.background, emptyList()) else background
     val scene = rememberBackdrop()
     val page = rememberBackdrop()
+    // Tło z warstwami radialnymi to kilka pełnoekranowych wypełnień gradientem w każdej klatce, w której
+    // przesuwa się treść (na A15 ≈ 2,5 ms GPU na klatkę). Jest statyczne, więc HWUI trzyma je jako gotową
+    // teksturę i tylko ją kopiuje. Szkło nadal próbkuje nagranie sceny, nie tę teksturę.
+    val cacheScene = resolvedBackground.layers.isNotEmpty()
     Box(modifier.fillMaxSize()) {
         Box(Modifier.fillMaxSize().backdropSource(page)) {
-            Box(Modifier.fillMaxSize().backdropSource(scene).drawBehind { drawCssBackground(resolvedBackground); sceneDecoration() })
+            Box(
+                Modifier.fillMaxSize()
+                    .then(if (cacheScene) Modifier.graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen } else Modifier)
+                    .backdropSource(scene)
+                    .drawBehind { drawCssBackground(resolvedBackground); sceneDecoration() },
+            )
             ProvideBackdrop(scene) { content() }
         }
         ProvideBackdrop(page) { floating() }

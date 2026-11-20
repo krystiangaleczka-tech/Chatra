@@ -99,29 +99,57 @@ private class GlassNode(
 ) : Modifier.Node(), DrawModifierNode, GlobalPositionAwareModifierNode, CompositionLocalConsumerModifierNode {
 
     private var blurLayer: GraphicsLayer? = null
+
+    /**
+     * Scena przesunięta pod panel. Przesunięcie to właściwość warstwy (RenderNode), więc ruch panelu —
+     * np. przewijanie przy górze skrzynki — nie wymaga ponownego nagrania ani rysowania węzła. HWUI i tak
+     * przelicza rozmycie, bo zmiana właściwości uszkadza warstwę z efektem. Przerysowanie węzła przy każdym
+     * przesunięciu kosztowało na A15 kilka ms wątku UI na klatkę.
+     */
+    private var shiftLayer: GraphicsLayer? = null
     private var position = Offset.Unspecified
     private var effectFor: Triple<Float, Float, Float>? = null
 
-    /** Ostatnio nagrany wycinek sceny (przesunięcie, rozmiar, skala). */
+    /** Ostatnio nagrana warstwa rozmycia (scena, rozmiar, skala, zapas); położenie nie należy do klucza. */
     private var recordedFor: RecordKey? = null
 
+    /** Zapas warstwy rozmycia z ostatniego rysowania (px) — potrzebny do przesunięcia sceny bez rysowania. */
+    private var margin = Float.NaN
+
     override fun onAttach() {
-        blurLayer = currentValueOf(LocalGraphicsContext).createGraphicsLayer()
+        val graphics = currentValueOf(LocalGraphicsContext)
+        blurLayer = graphics.createGraphicsLayer()
+        shiftLayer = graphics.createGraphicsLayer()
     }
 
     override fun onDetach() {
-        blurLayer?.let { currentValueOf(LocalGraphicsContext).releaseGraphicsLayer(it) }
+        val graphics = currentValueOf(LocalGraphicsContext)
+        blurLayer?.let(graphics::releaseGraphicsLayer)
+        shiftLayer?.let(graphics::releaseGraphicsLayer)
         blurLayer = null
+        shiftLayer = null
         effectFor = null
         recordedFor = null
+        margin = Float.NaN
     }
 
     override fun onGloballyPositioned(coordinates: LayoutCoordinates) {
         val p = coordinates.positionInRoot()
-        if (p != position) {
-            position = p
-            invalidateDraw()
-        }
+        if (p == position) return
+        val first = !position.isSpecified
+        position = p
+        if (first || (!matte && !shiftScene())) invalidateDraw()
+    }
+
+    /** Ustawia przesunięcie sceny pod panelem; false, gdy warstwa nie jest jeszcze nagrana. */
+    private fun shiftScene(): Boolean {
+        val source = backdrop ?: return false
+        val shift = shiftLayer ?: return false
+        if (recordedFor == null || margin.isNaN() || !source.positionInRoot.isSpecified || !position.isSpecified) return false
+        val offset = position - source.positionInRoot
+        shift.translationX = margin - offset.x
+        shift.translationY = margin - offset.y
+        return true
     }
 
     override fun ContentDrawScope.draw() {
@@ -129,10 +157,11 @@ private class GlassNode(
         val path = outline.toPath()
         val source = backdrop
         val layer = blurLayer
-        if (!matte && source != null && layer != null && source.recorded &&
+        val shift = shiftLayer
+        if (!matte && source != null && layer != null && shift != null && source.recorded &&
             source.positionInRoot.isSpecified && position.isSpecified
         ) {
-            drawBackdrop(source, layer, path)
+            drawBackdrop(source, layer, shift, path)
         }
         val surface = if (matte) style.copy(from = style.from.copy(alpha = 1f), to = style.to.copy(alpha = 1f)) else style
         drawOutline(outline, cssLinearGradient(surface.angleDegrees, size, surface.from, surface.to))
@@ -142,7 +171,7 @@ private class GlassNode(
         drawContent()
     }
 
-    private fun DrawScope.drawBackdrop(source: Backdrop, layer: GraphicsLayer, clip: Path) {
+    private fun DrawScope.drawBackdrop(source: Backdrop, layer: GraphicsLayer, shift: GraphicsLayer, clip: Path) {
         val sigma = style.blur.toPx()
         val margin = ceil(sigma * 3f)
         // Scena próbkowana w obniżonej rozdzielczości: przy σ 28–40 dp (≈ 100–140 px) rozmycie i tak usuwa
@@ -157,20 +186,21 @@ private class GlassNode(
             ).asComposeRenderEffect()
             effectFor = key
         }
-        val offset = position - source.positionInRoot
         val layerSize = IntSize(ceil((size.width + 2 * margin) * k).toInt(), ceil((size.height + 2 * margin) * k).toInt())
-        // Nagrywać tylko po zmianie położenia lub rozmiaru panelu. Zmiany treści sceny przechodzą same przez
+        // Nagrywać tylko po zmianie rozmiaru panelu lub sceny. Zmiany treści sceny przechodzą same przez
         // odwołanie do jej RenderNode, a niezmieniona warstwa pozwala HWUI nie liczyć rozmycia od nowa,
         // gdy przerysowuje się tylko treść panelu (np. przewijanie wariantów w arkuszu S04, CH003).
-        val recordKey = RecordKey(offset, layerSize, k, margin)
+        // Położenie panelu ustawia shiftScene() jako przesunięcie warstwy sceny.
+        val recordKey = RecordKey(source, source.layer.size, layerSize, k, margin)
         if (recordedFor != recordKey) {
+            shift.record(source.layer.size) { drawLayer(source.layer) }
             layer.record(layerSize) {
-                scale(k, k, pivot = Offset.Zero) {
-                    translate(margin - offset.x, margin - offset.y) { drawLayer(source.layer) }
-                }
+                scale(k, k, pivot = Offset.Zero) { drawLayer(shift) }
             }
             recordedFor = recordKey
         }
+        this@GlassNode.margin = margin
+        shiftScene()
         clipPath(clip) {
             translate(-margin, -margin) { scale(1f / k, 1f / k, pivot = Offset.Zero) { drawLayer(layer) } }
         }
@@ -192,7 +222,7 @@ private class GlassNode(
     }
 }
 
-private data class RecordKey(val offset: Offset, val size: IntSize, val scale: Float, val margin: Float)
+private data class RecordKey(val source: Backdrop, val sourceSize: IntSize, val size: IntSize, val scale: Float, val margin: Float)
 
 /**
  * Współczynnik próbkowania warstwy rozmycia: σ po zmniejszeniu ≥ 16 px (bez widocznych schodków przy

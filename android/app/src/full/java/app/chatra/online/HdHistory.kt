@@ -2,6 +2,7 @@ package app.chatra.online
 
 import app.chatra.core.database.*
 import app.chatra.core.model.*
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import java.time.Instant
@@ -10,7 +11,10 @@ import org.json.JSONArray
 /** One inbox and one read model for canonical SMS/MMS and private HD records. */
 internal class HdHistory(
     private val base: ConversationRepository, private val db: ChatraDatabase,
-    private val media: AttachmentStore, private val allowed: () -> Boolean,
+    private val media: AttachmentStore,
+    /** Gdy podany, wszyscy odbiorcy skrzynki dzielą jedno źródło z ostatnią listą (patrz [inbox]). */
+    shareScope: CoroutineScope? = null,
+    private val allowed: () -> Boolean,
 ) : ConversationRepository by base {
     private suspend fun merge(summary: ConversationSummary, rows: List<HdRecord>): ConversationSummary {
         val latest = rows.maxByOrNull { it.createdAt } ?: return summary
@@ -22,7 +26,16 @@ internal class HdHistory(
             unreadCount = maxOf(providerUnread + unread, if (manual) 1 else 0))
     }
 
-    override fun inbox(): Flow<List<ConversationSummary>> = combine(base.inbox(), db.hd().visible()) { sms, rows ->
+    /**
+     * Skrzynka czyta ostatnią wiadomość każdego wątku z providera — przy setkach rozmów to sekundy pracy.
+     * Lista i wyszukiwarka dzielą więc jedno źródło, a powrót na listę od razu dostaje ostatni wynik,
+     * zamiast liczyć wszystko od nowa (świeża lista przychodzi zaraz po nim).
+     */
+    private val sharedInbox = shareScope?.let { scope -> inboxSource().shareIn(scope, SharingStarted.WhileSubscribed(30_000), replay = 1) }
+
+    override fun inbox(): Flow<List<ConversationSummary>> = sharedInbox ?: inboxSource()
+
+    private fun inboxSource(): Flow<List<ConversationSummary>> = combine(base.inbox(), db.hd().visible()) { sms, rows ->
         if (!allowed()) emptyList() else {
             val grouped = rows.groupBy { it.conversationId }
             val summaries = sms.associateBy { it.id.value }.toMutableMap()

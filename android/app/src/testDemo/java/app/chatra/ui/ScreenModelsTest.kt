@@ -16,6 +16,38 @@ import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ScreenModelsTest {
+    @Test fun `SIM preference failure preserves the draft and reports an actionable error`() = runTest {
+        Dispatchers.setMain(UnconfinedTestDispatcher(testScheduler))
+        val models = androidx.lifecycle.ViewModelStore()
+        try {
+            val base = container(backgroundScope)
+            var failPreference = true
+            val repo = object : ConversationRepository by base.conversations {
+                override suspend fun preferSim(id: ConversationId, sim: SubscriptionId, label: String) {
+                    if (failPreference) error("storage unavailable")
+                }
+            }
+            val model = app.chatra.ui.conversation.ConversationViewModel(Fixture.Ids.Ola, repo, base.drafts, base.sims,
+                base.sendQueue, base.schedules, base.sending.value, base.clock)
+            models.put("conversation", model)
+            val collector = backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { model.state.collect() }
+            runCurrent()
+            model.onText("Szkic przy błędzie wyboru SIM")
+            model.selectSim(Fixture.SIM2.id)
+            runCurrent()
+            val draft = base.drafts.draft(Fixture.Ids.Ola).first()!!
+            assertEquals("Szkic przy błędzie wyboru SIM", draft.text)
+            assertEquals(Fixture.SIM2.id, draft.subscriptionId)
+            assertEquals(Fixture.SIM2.label, draft.subscriptionLabel)
+            assertTrue(model.state.value.error!!.contains("wybierz kartę ponownie"))
+            failPreference = false
+            model.selectSim(Fixture.SIM2.id)
+            runCurrent()
+            assertNull(model.state.value.error)
+            collector.cancel()
+        } finally { models.clear(); runCurrent(); Dispatchers.resetMain() }
+    }
+
     @Test fun `counter reacts with unchanged SIM and preferences do not rewrite accepted countdown`() = runTest {
         Dispatchers.setMain(UnconfinedTestDispatcher(testScheduler))
         try {
@@ -266,11 +298,15 @@ class ScreenModelsTest {
         nav.push(Route.Search("a|b\nŁÓDŹ", "parcels"))
         val anchor = MessageRef.Provider(ProviderRef(ProviderTransport.SMS, 42))
         nav.push(Route.Conversation(Fixture.Ids.Paczka24, anchor))
+        nav.push(Route.ConversationDetails(Fixture.Ids.Paczka24))
         nav.select(Tab.Settings); nav.push(Route.Appearance)
         val saved = with(Navigator.Saver) { SaverScope { true }.save(nav)!! }
         val restored = Navigator.Saver.restore(saved)!!
         assertEquals(Route.Appearance, restored.top)
         restored.select(Tab.Conversations)
+        assertEquals(Route.ConversationDetails(Fixture.Ids.Paczka24), restored.top)
+        assertEquals(Route.Conversation(Fixture.Ids.Paczka24, anchor), restored.screen)
+        restored.back()
         assertEquals(Route.Conversation(Fixture.Ids.Paczka24, anchor), restored.top)
         restored.back()
         assertEquals(Route.Search("a|b\nŁÓDŹ", "parcels"), restored.top)
