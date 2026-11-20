@@ -83,7 +83,7 @@ class ConversationDetailsTest {
     @Test fun groupShowsEveryRecipientAndBlockingCanBeCancelled() {
         val (c, _) = launch(Fixture.Ids.Brygada)
         ui.onNodeWithContentDescription("Szczegóły rozmowy").performClick()
-        for (p in Fixture.brygada) ui.onNodeWithText("Zadzwoń: ${p.label}").assertExists()
+        for (p in Fixture.brygada) ui.onNodeWithText("Zadzwoń: ${p.label}").assertExists().assertIsNotEnabled()
         ui.onNodeWithText("Zablokuj: Kuba").performScrollTo().performClick()
         ui.onNodeWithText("Anuluj").performClick()
         assertFalse(c.organization.blocked.value.any { it.id == recipientKey(Fixture.kuba.address.raw) })

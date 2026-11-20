@@ -99,6 +99,7 @@ fun ConversationDetailsScreen(
             DetailCard {
                 BasicText(summary.title, style = chatraText(22f, 700))
                 BasicText(if (summary.isGroupMms) "Grupowy MMS · ${summary.participants.size} odbiorców" else "Kontakt i numery", style = ChatraType.Preview)
+                if (c.isDemo) BasicText("Połączenia są wyłączone w podglądzie demonstracyjnym.", style = ChatraType.Preview)
                 if (summary.participants.isEmpty()) BasicText("Brak danych uczestników.", style = ChatraType.Preview)
                 summary.participants.forEach { participant ->
                     val blocked = blocks.any { it.id == recipientKey(participant.address.raw) }
@@ -110,7 +111,7 @@ fun ConversationDetailsScreen(
                             DetailsAction("Zadzwoń: ${participant.label}", {
                                 try { context.startActivity(Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", participant.address.raw, null))) }
                                 catch (_: Exception) { error = "Nie można otworzyć systemowego dialera na tym urządzeniu." }
-                            }, !busy)
+                            }, !busy && !c.isDemo)
                         } else BasicText("Ten nadawca nie udostępnia numeru, pod który można zadzwonić lub odpowiedzieć.", style = ChatraType.Preview)
                         DetailsAction("Kopiuj adres: ${participant.label}", {
                             try { context.getSystemService(ClipboardManager::class.java).setPrimaryClip(ClipData.newPlainText("Adres rozmówcy", participant.address.raw)) }
