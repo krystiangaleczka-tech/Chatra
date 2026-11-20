@@ -137,8 +137,13 @@ class ConversationViewModel(
         if (busy.value) return
         chosenSim.value = sim
         selectedLabel = state.value.sims.firstOrNull { it.id == sim }?.label
+        val label = selectedLabel.orEmpty()
         persistDraft()
-        viewModelScope.launch { conversations.preferSim(id, sim, selectedLabel.orEmpty()) }
+        viewModelScope.launch {
+            try { conversations.preferSim(id, sim, label) }
+            catch (e: kotlinx.coroutines.CancellationException) { throw e }
+            catch (_: Exception) { error.value = "Nie udało się zapisać preferowanej karty rozmowy. Sprawdź szkic i wybierz kartę ponownie." }
+        }
     }
 
     private fun persistDraft() {

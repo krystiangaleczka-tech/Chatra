@@ -77,6 +77,7 @@ fun ConversationDetailsScreen(
     DetailPage("Szczegóły rozmowy", { if (!busy) onBack() }) {
         if (c.isDemo) BasicText("Dane demonstracyjne. Zmiany dotyczą wyłącznie podglądu.", style = ChatraType.Preview)
         error?.let { BasicText(it, Modifier.semantics { liveRegion = LiveRegionMode.Polite }, style = chatraText(14f, color = ChatraColors.ErrorText)) }
+        state.error?.let { BasicText(it, Modifier.semantics { liveRegion = LiveRegionMode.Polite }, style = chatraText(14f, color = ChatraColors.ErrorText)) }
         if (busy) BasicText("Zapisywanie…", Modifier.semantics { liveRegion = LiveRegionMode.Polite }, style = ChatraType.Preview)
         if (summary == null) {
             DetailCard {

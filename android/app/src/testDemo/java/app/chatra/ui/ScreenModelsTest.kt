@@ -16,6 +16,29 @@ import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ScreenModelsTest {
+    @Test fun `SIM preference failure preserves the draft and reports an actionable error`() = runTest {
+        Dispatchers.setMain(UnconfinedTestDispatcher(testScheduler))
+        try {
+            val base = container(backgroundScope)
+            val repo = object : ConversationRepository by base.conversations {
+                override suspend fun preferSim(id: ConversationId, sim: SubscriptionId, label: String) { error("storage unavailable") }
+            }
+            val model = app.chatra.ui.conversation.ConversationViewModel(Fixture.Ids.Ola, repo, base.drafts, base.sims,
+                base.sendQueue, base.schedules, base.sending.value, base.clock)
+            val collector = backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { model.state.collect() }
+            runCurrent()
+            model.onText("Szkic przy błędzie wyboru SIM")
+            model.selectSim(Fixture.SIM2.id)
+            runCurrent()
+            val draft = base.drafts.draft(Fixture.Ids.Ola).first()!!
+            assertEquals("Szkic przy błędzie wyboru SIM", draft.text)
+            assertEquals(Fixture.SIM2.id, draft.subscriptionId)
+            assertEquals(Fixture.SIM2.label, draft.subscriptionLabel)
+            assertTrue(model.state.value.error!!.contains("wybierz kartę ponownie"))
+            collector.cancel()
+        } finally { Dispatchers.resetMain() }
+    }
+
     @Test fun `counter reacts with unchanged SIM and preferences do not rewrite accepted countdown`() = runTest {
         Dispatchers.setMain(UnconfinedTestDispatcher(testScheduler))
         try {
