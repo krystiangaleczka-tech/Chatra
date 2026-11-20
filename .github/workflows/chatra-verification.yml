@@ -42,9 +42,12 @@ jobs:
           distribution: temurin
           java-version: "17"
       - uses: android-actions/setup-android@v3
+        with:
+          # Legacy `tools` was removed from the Android SDK repository.
+          packages: platform-tools
       - uses: gradle/actions/setup-gradle@v4
-      - run: sdkmanager "platforms;android-37" "build-tools;36.1.0"
-      - run: ./gradlew :core:model:test :core:testing:test :app:testDemoDebugUnitTest :app:testFullDebugUnitTest :app:assembleDemoDebug :app:assembleFullDebug :app:lintFullDebug
+      - run: sdkmanager "platforms;android-37.0" "build-tools;36.1.0"
+      - run: ./gradlew :core:model:test :core:testing:test :core:designsystem:testDebugUnitTest :app:testDemoDebugUnitTest :app:testFullDebugUnitTest :app:assembleDemoDebug :app:assembleFullDebug :app:lintFullDebug :app:lintDemoDebug
         working-directory: android
       - name: Enable emulator acceleration
         run: |
@@ -74,3 +77,9 @@ jobs:
             android/**/build/reports/tests/**
             android/**/build/reports/androidTests/**
             android/app/build/reports/lint-results-fullDebug.html
+            android/app/build/reports/lint-results-demoDebug.html
+      - uses: actions/upload-artifact@v4
+        with:
+          name: chatra-debug-apks
+          if-no-files-found: error
+          path: android/app/build/outputs/apk/**/*.apk
