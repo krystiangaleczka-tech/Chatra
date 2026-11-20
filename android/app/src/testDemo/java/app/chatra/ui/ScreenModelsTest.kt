@@ -18,6 +18,7 @@ import org.junit.Test
 class ScreenModelsTest {
     @Test fun `SIM preference failure preserves the draft and reports an actionable error`() = runTest {
         Dispatchers.setMain(UnconfinedTestDispatcher(testScheduler))
+        val models = androidx.lifecycle.ViewModelStore()
         try {
             val base = container(backgroundScope)
             val repo = object : ConversationRepository by base.conversations {
@@ -25,6 +26,7 @@ class ScreenModelsTest {
             }
             val model = app.chatra.ui.conversation.ConversationViewModel(Fixture.Ids.Ola, repo, base.drafts, base.sims,
                 base.sendQueue, base.schedules, base.sending.value, base.clock)
+            models.put("conversation", model)
             val collector = backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { model.state.collect() }
             runCurrent()
             model.onText("Szkic przy błędzie wyboru SIM")
@@ -36,7 +38,7 @@ class ScreenModelsTest {
             assertEquals(Fixture.SIM2.label, draft.subscriptionLabel)
             assertTrue(model.state.value.error!!.contains("wybierz kartę ponownie"))
             collector.cancel()
-        } finally { Dispatchers.resetMain() }
+        } finally { models.clear(); runCurrent(); Dispatchers.resetMain() }
     }
 
     @Test fun `counter reacts with unchanged SIM and preferences do not rewrite accepted countdown`() = runTest {
