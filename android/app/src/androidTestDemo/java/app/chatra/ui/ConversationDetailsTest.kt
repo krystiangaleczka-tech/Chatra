@@ -102,13 +102,17 @@ class ConversationDetailsTest {
         val image = ui.onRoot().captureToImage().asAndroidBitmap()
         // Stream to the ADB shell. UTP removes the app's files when it uninstalls the APK.
         val automation = InstrumentationRegistry.getInstrumentation().uiAutomation
-        val command = "cat > /data/local/tmp/CH065-details.png && test -s /data/local/tmp/CH065-details.png && echo captured"
-        val (stdout, stdin) = automation.executeShellCommandRw(command)
+        val path = "/data/local/tmp/CH065-details.png"
+        // UiAutomation launches commands directly, so no shell redirection is available.
+        val (stdout, stdin) = automation.executeShellCommandRw("dd of=$path")
         ParcelFileDescriptor.AutoCloseInputStream(stdout).use { output ->
             ParcelFileDescriptor.AutoCloseOutputStream(stdin).use { input ->
                 assertTrue("Could not encode the panel as PNG", image.compress(Bitmap.CompressFormat.PNG, 100, input))
             }
-            assertEquals("captured", output.bufferedReader().readText().trim())
+            output.readBytes() // Wait for dd to close the output file.
         }
+        val stat = automation.executeShellCommand("stat -c %s $path")
+        val size = ParcelFileDescriptor.AutoCloseInputStream(stat).use { it.bufferedReader().readText().trim().toLongOrNull() }
+        assertTrue("The exported panel PNG is empty or missing", size != null && size > 0)
     }
 }
