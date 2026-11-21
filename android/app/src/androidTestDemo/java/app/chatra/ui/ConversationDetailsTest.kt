@@ -2,6 +2,7 @@ package app.chatra.ui
 
 import android.app.Application
 import android.graphics.Bitmap
+import android.os.ParcelFileDescriptor
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -15,7 +16,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Assert.*
 import org.junit.Rule
 import org.junit.Test
-import java.io.File
 import java.util.concurrent.atomic.AtomicInteger
 
 /** Synthetic demo data only; no SMS role, physical recipient, network or real contact access. */
@@ -96,21 +96,19 @@ class ConversationDetailsTest {
         ui.onNodeWithText("Zablokuj: Kuba").performScrollTo().performClick()
         ui.onNodeWithText("Anuluj").performClick()
         assertFalse(c.organization.blocked.value.any { it.id == recipientKey(Fixture.kuba.address.raw) })
-        val app = ApplicationProvider.getApplicationContext<Application>()
         ui.onNodeWithText("Kontakt i numery").assertDoesNotExist()
-        // Capture the actual rendered panel for review, without reading a real user's data.
+        if (InstrumentationRegistry.getArguments().getString("captureChatraQa") != "true") return
         ui.onNodeWithText("Szczegóły rozmowy").performScrollTo()
         val image = ui.onRoot().captureToImage().asAndroidBitmap()
-        val screenshot = File(app.getExternalFilesDir(null), "qa").apply { mkdirs() }.resolve("CH065-details.png")
-        screenshot.outputStream().use {
-            image.compress(Bitmap.CompressFormat.PNG, 100, it)
+        // Stream to the ADB shell. UTP removes the app's files when it uninstalls the APK.
+        val automation = InstrumentationRegistry.getInstrumentation().uiAutomation
+        val command = "cat > /data/local/tmp/CH065-details.png && test -s /data/local/tmp/CH065-details.png && echo captured"
+        val (stdout, stdin) = automation.executeShellCommandRw(command)
+        ParcelFileDescriptor.AutoCloseInputStream(stdout).use { output ->
+            ParcelFileDescriptor.AutoCloseOutputStream(stdin).use { input ->
+                assertTrue("Could not encode the panel as PNG", image.compress(Bitmap.CompressFormat.PNG, 100, input))
+            }
+            assertEquals("captured", output.bufferedReader().readText().trim())
         }
-        // UTP uninstalls the demo after the suite, deleting its external-files directory.
-        // Copy synthetic QA output while the package is installed, using the shell identity.
-        check(screenshot.absolutePath.matches(Regex("[A-Za-z0-9_./-]+")))
-        val command = "mkdir -p /sdcard/Download/chatra-qa && cp '${screenshot.absolutePath}' /sdcard/Download/chatra-qa/CH065-details.png && test -s /sdcard/Download/chatra-qa/CH065-details.png && echo captured"
-        val output = InstrumentationRegistry.getInstrumentation().uiAutomation.executeShellCommand(command)
-        val result = android.os.ParcelFileDescriptor.AutoCloseInputStream(output).use { it.readBytes().toString(Charsets.UTF_8).trim() }
-        assertEquals("captured", result)
     }
 }
