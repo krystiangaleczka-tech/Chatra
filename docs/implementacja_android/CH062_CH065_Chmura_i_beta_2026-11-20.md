@@ -16,10 +16,15 @@ Nie zamyka odbioru telefonii, bezpieczeństwa HD ani całej bramki wydania.
 - `setup-android@v3` domyślnie instalował `tools platform-tools`. Pakiet `tools`
   nie występuje już w repozytorium SDK; to zatrzymywało instalację przed Gradle.
   Workflow instaluje teraz jawnie `platform-tools` oraz `platforms;android-37.0`.
+  Workflow uruchamia się przy zmianach w PR i po pushu do `main`.
 - Pipeline obejmuje domenę, fixture, design system, oba warianty aplikacji, oba
   linty, migracje Room oraz instrumentację full i nowe testy UI demo.
 - Raporty i APK są artefaktami GitHub Actions. Zrzut panelu z testu jest pobierany
   z emulatora do `android/app/build/reports/ui/`.
+- `scripts/ch062_emulator_checks.sh` wymaga emulatora i uruchamia full oraz demo
+  w osobnych komendach Gradle. Test demo przesyła PNG do katalogu tymczasowego
+  ADB. Skrypt pobiera obraz po teście, sprawdza obecność pliku i usuwa kopię
+  tymczasową z emulatora.
 - `scripts/ch062_build_beta.sh` buduje pełny APK debug z jawnym wyłączeniem HD,
   backendu, FCM i Play Billing, niezależnie od lokalnych właściwości Gradle.
   Wymaga czystego drzewa Git; zapisuje APK, SHA-256, SHA źródła i notatkę testową
@@ -101,12 +106,49 @@ Nie dodano zbierania treści wiadomości, kontaktów ani automatycznej analityki
 
 ## Weryfikacja
 
-Backend w tym środowisku: **18 testów PASS**, OpenAPI zgodne z trasami.
-Weryfikacja końcowego Androida i emulatora jest w trakcie; wynik zostanie dopisany
-po zakończeniu przebiegu. [Pierwsza poprawka CI, `9d00eda`](https://github.com/krystiangaleczka-tech/Chatra/actions/runs/44817784843)
+Źródło APK: `2d9c97764569151db25463c9aabba75ea3de7fcc`.
+Przebieg weryfikacji funkcji sprawdził `c81d7d03996be87af5284d0a8fe8ab82edc0a6b3`.
+Późniejsze commity dotyczą eksportu zrzutu oraz dokumentacji.
+[Wyniki maszynowe](CH062_CH065_Cloud/verification.json).
+
+| Sprawdzenie lokalne | Wynik |
+| --- | --- |
+| Backend / OpenAPI | 18 testów PASS; specyfikacja zgodna z trasami |
+| JVM | 93 testy, 0 błędów i pominięć |
+| Kompilacja | APK demo/full oraz pakiet trzech testów UI demo |
+| Lint demo/full | 0 błędów; odpowiednio 27 i 61 ostrzeżeń |
+| Beta | Podpis debug poprawny; minSdk 31 / targetSdk 36 |
+| Wyłączenie usług | Backend/HD/Pro wyłączone mimo przeciwnych wartości w środowisku; konfiguracja FCM pusta |
+| Manifest bety | FCM auto-init i Analytics collection=false |
+| Integralność APK | SHA-256 `533e6fa5a1fe719a1fea55c3f53c6164ed7a3ffb7b7ea549883a2e1af12f3a77` |
+
+Skrypt bety sprawdzono z przeciwnymi wartościami `ORG_GRADLE_PROJECT_chatraBackendOrigin`,
+`ORG_GRADLE_PROJECT_chatraHdPilot` i `ORG_GRADLE_PROJECT_chatraPlayProduct`;
+jawne właściwości skryptu wygrały. Błąd preferowanej SIM ma test zachowania szkicu
+i usunięcia błędu po ponownym wyborze. Lokalna maszyna nie ma `/dev/kvm`;
+instrumentację wykonuje emulator GitHub Actions.
+
+W przebiegu `44823602509` zaliczono **93 testy JVM oraz 81 testów Androida,
+9 scenariuszy sprzętowych pominiętych, bez błędów** (Room 4/4, full 74 PASS + 9 skip,
+UI demo 3/3). [Pierwsza poprawka CI, `9d00eda`](https://github.com/krystiangaleczka-tech/Chatra/actions/runs/44817784843)
 przeszła buildy, lint i instrumentację full/Room. Nie zawierała jeszcze nowego panelu.
+
+Przebieg `44821075023` sprawdził nowy kod: 93 JVM, Room 4/4 i pełną aplikację
+83 przypadki (74 PASS, 9 scenariuszy sprzętowych pominiętych). UI demo zaliczyło
+2/3. Końcowe oczekiwanie testu odczytu nie uwzględniało zachowania pozycji historii;
+nowy element nie musi być widoczny od razu po zamknięciu panelu. Skorygowany test
+wstawia chronologicznie nową wiadomość, sprawdza brak jej odczytu pod panelem,
+jawnie przewija do jej treści i nadal wymaga odczytu konkretnego `MessageRef`.
+Nie usunięto asercji. Dodatkowo odseparowano full/demo, które Gradle uruchamiał
+równolegle na tym samym emulatorze. Końcowa próba tych zmian: [44823602509](https://github.com/krystiangaleczka-tech/Chatra/actions/runs/44823602509).
 
 Testy UI demo obejmują szkic, przypięcie, wyciszenie, odczyt nowej wiadomości
 pod panelem, nadawcę alfanumerycznego, uczestników grupy i anulowanie blokady/kosza.
 Używają wyłącznie syntetycznych fixture, bez prawdziwych odbiorców i sieci.
 Fizyczny dialer, odmowy roli, odsłuch TalkBack i pełny duży font pozostają do odbioru.
+
+UTP usuwa dane demo przy odinstalowaniu APK. Próba zapisania zrzutu do katalogu
+pobierania w przebiegu `44825686035` też się nie powiodła, ponieważ UiAutomation
+uruchamia polecenia bez interpretowania operatorów powłoki. Test przekazuje teraz
+PNG przez standardowe wejście programu `dd` do katalogu tymczasowego ADB.
+Wyniki i artefakty tej kontroli są dostępne przy [PR #19](https://github.com/krystiangaleczka-tech/Chatra/pull/19).

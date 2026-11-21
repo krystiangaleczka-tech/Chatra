@@ -1,0 +1,112 @@
+{
+  "source_commit": "2d9c97764569151db25463c9aabba75ea3de7fcc",
+  "branch": "codex/cloud-beta-readiness",
+  "backend": {
+    "tests": 18,
+    "failures": 0,
+    "openapi_matches": true
+  },
+  "jvm": {
+    "tests": 93,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "beta": {
+    "path": "build/beta/chatra-full-debug.apk",
+    "bytes": 41559346,
+    "sha256": "533e6fa5a1fe719a1fea55c3f53c6164ed7a3ffb7b7ea549883a2e1af12f3a77",
+    "hd_enabled": false,
+    "pro_enabled": false,
+    "fcm_configured": false,
+    "backend_configured": false,
+    "gradle_environment_override_check": "passed",
+    "signing": "local Android Debug key; not a production signing key"
+  },
+  "lint": {
+    "demo": {
+      "error": 0,
+      "warning": 27
+    },
+    "full": {
+      "error": 0,
+      "warning": 61
+    }
+  },
+  "ci": {
+    "run_id": 44823602509,
+    "url": "https://github.com/krystiangaleczka-tech/Chatra/actions/runs/44823602509",
+    "status": "success",
+    "physical_acceptance": "not_performed",
+    "source_commit": "c81d7d03996be87af5284d0a8fe8ab82edc0a6b3",
+    "serial_full_demo": true,
+    "conclusion": "success",
+    "jvm": {
+      "tests": 93,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "android": {
+      "tests": 90,
+      "passed": 81,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 9
+    },
+    "room": {
+      "tests": 4,
+      "failures": 0,
+      "skipped": 0
+    },
+    "full": {
+      "tests": 83,
+      "passed": 74,
+      "failures": 0,
+      "skipped": 9
+    },
+    "demo_ui": {
+      "tests": 3,
+      "failures": 0,
+      "skipped": 0
+    }
+  },
+  "previous_ui_run": {
+    "run_id": 44821075023,
+    "full": {
+      "tests": 83,
+      "failures": 0,
+      "skipped": 9
+    },
+    "room": {
+      "tests": 4,
+      "failures": 0
+    },
+    "demo": {
+      "tests": 3,
+      "failures": 1,
+      "skipped": 0
+    },
+    "failed_case": "detailsKeepDraftAndDoNotReadMessagesCoveredByThePanel",
+    "failed_assertion": "read callback expected without explicitly revealing new message",
+    "correction": "ordered fixture timestamp, explicit reveal, same MessageRef read assertion, serialized variant suites"
+  },
+  "schema_version": 1,
+  "reviewed_on": "2026-11-20",
+  "distribution": {
+    "firebase": "not_configured_not_uploaded",
+    "public_release": "not_published"
+  },
+  "traffic": {
+    "github_views": "unknown_403_integration_permission",
+    "github_clones": "unknown_403_integration_permission",
+    "firebase_metrics": "no_connection"
+  },
+  "screenshot_capture": {
+    "failed_run_id": 44825686035,
+    "failed_source_commit": "bb15f6429b333c95bc719c90d7341b7b202e53c8",
+    "failure": "UiAutomation directly executes the command without shell operator support",
+    "correction": "stream the PNG to dd in the ADB temporary directory and pull it after UTP cleanup",
+    "checks_url": "https://github.com/krystiangaleczka-tech/Chatra/pull/19/checks"
+  }
+}
