@@ -1,14 +1,15 @@
 name: Chatra domain, migrations and HD
 on:
   push:
-    paths: ["android/**", "backend/**", ".github/workflows/chatra-verification.yml"]
+    branches: [main]
+    paths: ["android/**", "backend/**", "scripts/ch062_*", ".github/workflows/chatra-verification.yml"]
   pull_request:
-    paths: ["android/**", "backend/**", ".github/workflows/chatra-verification.yml"]
+    paths: ["android/**", "backend/**", "scripts/ch062_*", ".github/workflows/chatra-verification.yml"]
   workflow_dispatch:
 permissions:
   contents: read
 concurrency:
-  group: verification-${{ github.ref }}
+  group: checks-${{ github.head_ref || github.ref_name }}
   cancel-in-progress: true
 jobs:
   backend:
@@ -42,9 +43,12 @@ jobs:
           distribution: temurin
           java-version: "17"
       - uses: android-actions/setup-android@v3
+        with:
+          # Legacy `tools` was removed from the Android SDK repository.
+          packages: platform-tools
       - uses: gradle/actions/setup-gradle@v4
-      - run: sdkmanager "platforms;android-37" "build-tools;36.1.0"
-      - run: ./gradlew :core:model:test :core:testing:test :app:testDemoDebugUnitTest :app:testFullDebugUnitTest :app:assembleDemoDebug :app:assembleFullDebug :app:lintFullDebug
+      - run: sdkmanager "platforms;android-37.0" "build-tools;36.1.0"
+      - run: ./gradlew :core:model:test :core:testing:test :core:designsystem:testDebugUnitTest :app:testDemoDebugUnitTest :app:testFullDebugUnitTest :app:assembleDemoDebug :app:assembleFullDebug :app:lintFullDebug :app:lintDemoDebug
         working-directory: android
       - name: Enable emulator acceleration
         run: |
@@ -58,14 +62,7 @@ jobs:
           target: google_apis
           working-directory: android
           disable-animations: true
-          script: |
-            ./gradlew :app:installFullDebug
-            adb shell cmd role add-role-holder --user 0 android.app.role.SMS app.chatra
-            adb shell pm grant app.chatra android.permission.READ_SMS
-            adb shell pm grant app.chatra android.permission.SEND_SMS
-            adb shell pm grant app.chatra android.permission.READ_PHONE_STATE
-            adb shell pm grant app.chatra android.permission.POST_NOTIFICATIONS
-            ./gradlew :core:database:connectedDebugAndroidTest :app:connectedFullDebugAndroidTest
+          script: bash ../scripts/ch062_emulator_checks.sh
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -73,4 +70,13 @@ jobs:
           path: |
             android/**/build/reports/tests/**
             android/**/build/reports/androidTests/**
+            android/**/build/test-results/**
+            android/**/build/outputs/androidTest-results/**
             android/app/build/reports/lint-results-fullDebug.html
+            android/app/build/reports/lint-results-demoDebug.html
+            android/app/build/reports/ui/**
+      - uses: actions/upload-artifact@v4
+        with:
+          name: chatra-debug-apks
+          if-no-files-found: error
+          path: android/app/build/outputs/apk/**/*.apk

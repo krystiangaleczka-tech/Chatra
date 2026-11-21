@@ -82,7 +82,8 @@ fun ChatraApp(container: AppContainer, initial: Navigator?, onExit: () -> Unit, 
     val appearance = app.chatra.core.model.resolveAppearance(globalAppearance, threadAppearance, proAllowed = pro)
     val keyboard = LocalSoftwareKeyboardController.current
     val focus = LocalFocusManager.current
-    val imeVisible = LocalChrome.current.ime > 0.dp
+    // Czytane w chwili cofnięcia, nie w kompozycji — inaczej korzeń przebudowuje się w każdej klatce animacji IME.
+    val chrome = LocalChrome.current
     val observableRole = container.smsRole as? ObservableSmsRoleGate
     val roleState = remember(container) { observableRole?.held ?: kotlinx.coroutines.flow.MutableStateFlow(true) }
     val held by roleState.collectAsStateWithLifecycle()
@@ -111,6 +112,7 @@ fun ChatraApp(container: AppContainer, initial: Navigator?, onExit: () -> Unit, 
     }
     // Back: najpierw IME, potem arkusz, potem ekran (specyfikacja 5).
     BackHandler {
+        val imeVisible = chrome.ime > 0.dp
         focus.clearFocus()
         keyboard?.hide()
         if (!imeVisible && !navigator.back()) onExit()
@@ -159,6 +161,7 @@ fun ChatraApp(container: AppContainer, initial: Navigator?, onExit: () -> Unit, 
                         is Route.NewMessage -> "Nowa wiadomość"
                         is Route.Extras -> "Dodatki"
                         is Route.Schedule -> "Zaplanuj wysyłkę"
+                        is Route.ConversationDetails -> "Szczegóły rozmowy"
                     } }) { Sheet(sheet, navigator) }
                 }
             }
@@ -175,7 +178,6 @@ private fun Screen(route: Route, navigator: Navigator, listStates: MutableMap<Ta
     val c = LocalContainer.current
     val dock = MainDock(navigator.tab, navigator::select) { navigator.push(Route.NewMessage()) }
     val scope = rememberCoroutineScope()
-    val context = androidx.compose.ui.platform.LocalContext.current
     var inboxMenu by remember { mutableStateOf(false) }
     when (route) {
         Route.Start -> {
@@ -191,56 +193,9 @@ private fun Screen(route: Route, navigator: Navigator, listStates: MutableMap<Ta
         is Route.Conversation -> {
             val model = conversationModel(c, route.id)
             var simPicker by remember { mutableStateOf(false) }
-            var details by remember { mutableStateOf(false) }
-            var organizeError by remember { mutableStateOf<String?>(null) }
-            var threadTheme by remember { mutableStateOf(false) }
-            var trashConfirm by remember { mutableStateOf(false) }
-            val pro = c.billing?.state?.collectAsStateWithLifecycle()?.value?.entitled == true
-            val themes = app.chatra.core.model.Composition.entries.filter { !it.pro || pro }
-            if (threadTheme) ChoiceDialog("Wygląd tej rozmowy", listOf("Użyj wyglądu globalnego") + themes.map { it.label }, { choice ->
-                scope.launch {
-                    try { c.conversationAppearance?.update { all ->
-                        if (choice == 0) all - route.id.value
-                        else themes.getOrNull(choice - 1)?.let { theme -> all + (route.id.value to ((all[route.id.value] ?: app.chatra.core.model.AppearanceOverride()).copy(composition = theme))) } ?: all
-                    } } catch (e: Exception) { organizeError = e.message ?: "Nie udało się zapisać wyglądu." }
-                }
-            }, { threadTheme = false })
-            if (trashConfirm) ChoiceDialog("Przenieść dotychczasowe wiadomości do kosza na 30 dni?", listOf("Przenieś do kosza"), {
-                scope.launch { try { c.conversations.moveToTrash(route.id); navigator.back() } catch (e: Exception) { organizeError = e.message ?: "Nie udało się przenieść wiadomości." } }
-            }, { trashConfirm = false })
-            organizeError?.let { error -> ChoiceDialog(error, emptyList(), {}, { organizeError = null }) }
             val state by model.state.collectAsStateWithLifecycle()
-            ConversationScreen(model, { navigator.back() }, { if(c.isDemo) navigator.push(Route.DesignCatalog) else details=true }, { navigator.push(Route.Extras(route.id)) }, { simPicker = true }, target = route.message)
+            ConversationScreen(model, { navigator.back() }, { navigator.push(Route.ConversationDetails(route.id)) }, { navigator.push(Route.Extras(route.id)) }, { simPicker = true }, target = route.message, contentVisible = navigator.sheet == null)
             if (simPicker) app.chatra.ui.common.SimPicker(state.sims, (state.sim as? app.chatra.core.model.SimChoice.Ready)?.sim?.id, model::selectSim, { simPicker = false })
-            if(details) {
-                val numbers=state.summary?.participants.orEmpty().filter {app.chatra.core.model.isOutgoingNumber(it.address.raw)}
-                val noticePrefs by c.notifications.value.collectAsStateWithLifecycle()
-                val until = noticePrefs.mutedUntil[route.id.value] ?: 0
-                val muted = until > System.currentTimeMillis()
-                val participants = state.summary?.participants.orEmpty()
-                val blocks by c.organization.blocked.collectAsStateWithLifecycle()
-                val allBlocked = participants.isNotEmpty() && participants.all { p -> blocks.any { it.id == app.chatra.core.model.recipientKey(p.address.raw) } }
-                val labels = numbers.map { "Zadzwoń: ${it.label} · ${it.address.raw}" } +
-                    listOf("Szukaj w tej rozmowie", "Zaplanuj wiadomość", if (muted) "Włącz powiadomienia" else "Powiadomienia są włączone", "Wycisz na godzinę", "Wycisz na 8 godzin", "Wycisz do odwołania", if (allBlocked) "Odblokuj lokalnie" else "Zablokuj lokalnie", "Przenieś do kosza…", "Wygląd tej rozmowy…")
-                ChoiceDialog(state.summary?.title ?: "Rozmowa", labels, { option ->
-                    if (option < numbers.size) numbers.getOrNull(option)?.let { participant ->
-                        runCatching { context.startActivity(android.content.Intent(android.content.Intent.ACTION_DIAL, android.net.Uri.fromParts("tel", participant.address.raw, null))) }
-                    } else if (option == numbers.size) navigator.push(Route.Search(conversation = route.id))
-                    else if (option == numbers.size + 1) navigator.push(Route.Schedule(route.id))
-                    else if (option == numbers.size + 6) scope.launch {
-                        try {
-                            participants.forEach { p -> if (allBlocked) c.organization.unblock(app.chatra.core.model.recipientKey(p.address.raw)) else c.organization.block(p.address) }
-                            if (!allBlocked) navigator.back()
-                        } catch (e: Exception) { organizeError = e.message ?: "Nie udało się zmienić blokady." }
-                    }
-                    else if (option == numbers.size + 7) trashConfirm = true
-                    else if (option == numbers.size + 8) threadTheme = true
-                    else scope.launch {
-                        val expiry = when (option - numbers.size - 2) { 1 -> System.currentTimeMillis() + 3600000; 2 -> System.currentTimeMillis() + 28800000; 3 -> Long.MAX_VALUE; else -> 0L }
-                        c.notifications.update { it.copy(mutedUntil = it.mutedUntil + (route.id.value to expiry)) }
-                    }
-                }, { details = false })
-            }
         }
         Route.Scheduled -> {
             val model = viewModel { ScheduledViewModel(c.schedules, c.sims, c.clock) }
@@ -280,6 +235,15 @@ private fun Screen(route: Route, navigator: Navigator, listStates: MutableMap<Ta
 private fun Sheet(sheet: Route.Sheet, navigator: Navigator) {
     val c = LocalContainer.current
     when (sheet) {
+        is Route.ConversationDetails -> {
+            val model = conversationModel(c, sheet.id)
+            app.chatra.ui.conversation.ConversationDetailsScreen(model,
+                onBack = { navigator.back() },
+                onSearch = { navigator.popSheets(); navigator.push(Route.Search(conversation = sheet.id)) },
+                onSchedule = { navigator.replaceTop(Route.Schedule(sheet.id)) },
+                onTrashed = { navigator.popSheets(); navigator.back() },
+            )
+        }
         is Route.Extras -> {
             val model = conversationModel(c, sheet.id)
             // Zaplanuj nad Dodatkami: „Wróć” w S05 wraca do Dodatków (wzorzec), Back systemowy tak samo.

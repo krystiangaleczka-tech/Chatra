@@ -60,7 +60,7 @@ fun createContainer(app: Application, referenceFrame: Boolean, roleScenario: Str
     val mediaStore = PrivateMediaStore(app)
     val onlineHd = if (BuildConfig.HD_PILOT) HdQueue(app, mediaStore) else null
     onlineHd?.mailbox = onlineHd?.let { hd -> HdMailbox(app, db, mediaStore, conversations, hd.transport) { hd.identity.value.installation } }
-    val history = HdHistory(conversations, db, mediaStore) { app.smsRead(platform) }
+    val history = HdHistory(conversations, db, mediaStore, scope) { app.smsRead(platform) }
     val playBilling = if (BuildConfig.PLAY_PRODUCT.isNotEmpty()) PlayProBilling(app, scope) else null
     val queue = PersistentSmsQueue(app, db, platform, conversations, sims, smsText, drafts)
     val mmsEngine = MmsEngine(app, db, mediaStore, conversations, platform)

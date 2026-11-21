@@ -15,10 +15,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListLayoutInfo
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,6 +33,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.zIndex
+import app.chatra.core.designsystem.glass.GlassStyle
+import kotlin.math.PI
+import kotlin.math.abs
+import kotlin.math.cos
+import kotlin.math.roundToInt
+import kotlin.math.sin
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
@@ -80,33 +97,173 @@ fun InboxScreen(
     val state by model.state.collectAsStateWithLifecycle()
     val chrome = LocalChrome.current
     val container = app.chatra.ui.LocalContainer.current
+    // Elementy listy przed kartą rozmów: nagłówek, [wersja testowa], wyszukiwarka, filtr.
+    val cardStart = if (container.isDemo) 3 else 4
     ChatraScreen(
         Backgrounds.Inbox,
         floating = { dock.Render(Modifier.align(Alignment.BottomStart)) },
     ) {
-        LazyColumn(
-            Modifier.fillMaxSize(),
-            state = listState,
-            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = chrome.top(52.dp), bottom = chrome.bottom(26.dp) + 64.dp + 16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            item("header") { Header(onMore) }
-            if (!container.isDemo) item("development") {
-                Column {
-                    BasicText("Wersja testowa: SMS i MMS. Obsługa MMS czeka na sprawdzenie u operatorów. Harmonogram działa lokalnie i wymaga dokładnych alarmów. Chatra HD jest jeszcze niedostępna.", style = chatraText(14f, 600, color = ChatraColors.ErrorText))
-                    app.chatra.ui.settings.PermissionPrompt(app.chatra.platform.AccessFeature.Sms)
-                    if (state.history is app.chatra.core.model.HistoryStatus.Error) {
-                        BasicText((state.history as app.chatra.core.model.HistoryStatus.Error).message, style = ChatraType.Preview)
-                        app.chatra.ui.common.TextAction("Odśwież historię", model::refresh)
+        // Własny Box: zIndex szkła porządkuje je tylko względem listy, nie względem tła ekranu.
+        Box(Modifier.fillMaxSize()) {
+            LazyColumn(
+                Modifier.fillMaxSize(),
+                state = listState,
+                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = chrome.top(52.dp), bottom = chrome.bottom(26.dp) + 64.dp + 16.dp),
+            ) {
+                item("header") { Box(Modifier.padding(bottom = SectionGap)) { Header(onMore) } }
+                if (!container.isDemo) item("development") {
+                    Column(Modifier.padding(bottom = SectionGap)) {
+                        BasicText("Wersja testowa: SMS i MMS. Obsługa MMS czeka na sprawdzenie u operatorów. Harmonogram działa lokalnie i wymaga dokładnych alarmów. Chatra HD jest jeszcze niedostępna.", style = chatraText(14f, 600, color = ChatraColors.ErrorText))
+                        app.chatra.ui.settings.PermissionPrompt(app.chatra.platform.AccessFeature.Sms)
+                        if (state.history is app.chatra.core.model.HistoryStatus.Error) {
+                            BasicText((state.history as app.chatra.core.model.HistoryStatus.Error).message, style = ChatraType.Preview)
+                            app.chatra.ui.common.TextAction("Odśwież historię", model::refresh)
+                        }
                     }
                 }
+                item("search") { Box(Modifier.padding(bottom = SectionGap)) { SearchField(onSearch) } }
+                item("filter") { Box(Modifier.padding(bottom = SectionGap)) { Filter(state.filter, state.unreadConversations, model::setFilter) } }
+                conversationCard(state, onOpen)
             }
-            item("search") { SearchField(onSearch) }
-            item("filter") { Filter(state.filter, state.unreadConversations, model::setFilter) }
-            item("list") { ConversationCard(state, onOpen) }
+            // Mierzone po liście (czyta jej świeży układ w tym samym przebiegu), rysowane pod nią.
+            ConversationCardGlass(listState, cardStart, Modifier.zIndex(-1f))
         }
     }
 }
+
+private val SectionGap = 12.dp
+private val CardShape = RoundedCornerShape(28.dp)
+
+/** Zapas tła karty poza ekranem: większy niż promień narożnika, więc ucięta krawędź nigdy nie jest widoczna. */
+private val CardOverscan = 64.dp
+private val CardInset = 16.dp
+
+/**
+ * Wiersze karty jako osobne elementy listy: komponowane i mierzone są tylko widoczne rozmowy,
+ * a nie wszystkie naraz (setki wierszy w jednym elemencie dawały klatki po kilka sekund).
+ */
+private fun LazyListScope.conversationCard(state: InboxState, onOpen: (ConversationId) -> Unit) {
+    when {
+        state.loading -> item("card-status", contentType = "status") { EmptyLine("Wczytujemy rozmowy z telefonu…") }
+        state.pinned.isEmpty() && state.others.isEmpty() -> item("card-status", contentType = "status") {
+            EmptyLine(if (state.filter == InboxFilter.Unread) "Wszystko przeczytane." else "Nie masz jeszcze rozmów.")
+        }
+        else -> {
+            if (state.pinned.isNotEmpty()) {
+                item("label-pinned", contentType = "label") { GroupLabel("Przypięte", divider = false) }
+                items(state.pinned, key = { "c:" + it.id.value }, contentType = { "row" }) { ConversationRow(it, onOpen) }
+            }
+            if (state.others.isNotEmpty()) {
+                item("label-others", contentType = "label") { GroupLabel("Pozostałe", divider = state.pinned.isNotEmpty()) }
+                items(state.others, key = { "c:" + it.id.value }, contentType = { "row" }) { ConversationRow(it, onOpen) }
+            }
+        }
+    }
+}
+
+/** Położenie karty w układzie listy (px, względem góry kontenera); karta to elementy od [cardStart] do końca. */
+private class CardGeometry(
+    /** Rysowany fragment tła karty: jej widoczne brzegi, a poza nimi zapas za krawędzią ekranu. */
+    val top: Int, val bottom: Int,
+    /** Cała karta: dokładnie, gdy jej brzeg jest widoczny, inaczej szacunek ze średniej wysokości wiersza. */
+    val cardTop: Float, val cardHeight: Float,
+)
+
+private fun cardGeometry(info: LazyListLayoutInfo, cardStart: Int, overscan: Int): CardGeometry? {
+    val visible = info.visibleItemsInfo.filter { it.index >= cardStart }
+    if (visible.isEmpty()) return null
+    val first = visible.first()
+    val last = visible.last()
+    val lastIndex = info.totalItemsCount - 1
+    val origin = info.beforeContentPadding
+    val average = visible.sumOf { it.size }.toFloat() / visible.size
+    val cardTop = origin + first.offset - (first.index - cardStart) * average
+    val cardBottom = origin + last.offset + last.size + (lastIndex - last.index) * average
+    val exactTop = origin + first.offset
+    val exactBottom = origin + last.offset + last.size
+    // Gdy jeden brzeg karty jest poza ekranem, fragment ma stałą wysokość (ekran + zapas z obu stron) i tylko
+    // się przesuwa. Zmiana wysokości w każdej klatce przewijania przy górze listy wymuszała ponowne
+    // wygenerowanie dużego rozmytego cienia karty — na A15 ≈ 16 % spóźnionych klatek.
+    val span = info.viewportSize.height + 2 * overscan
+    val topVisible = first.index == cardStart
+    val bottomVisible = last.index == lastIndex
+    val top: Int
+    val bottom: Int
+    when {
+        topVisible && bottomVisible -> { top = exactTop; bottom = exactBottom }
+        topVisible -> { top = exactTop; bottom = exactTop + span }
+        bottomVisible -> { top = exactBottom - span; bottom = exactBottom }
+        else -> { top = -overscan; bottom = info.viewportSize.height + overscan }
+    }
+    if (bottom <= top) return null
+    return CardGeometry(top, bottom, cardTop, (cardBottom - cardTop).coerceAtLeast((bottom - top).toFloat()))
+}
+
+/**
+ * Szkło karty rozmów rysowane raz, tylko pod widocznym fragmentem karty — rozmycie i cień
+ * nie obejmują już całej wysokości wszystkich rozmów. Gradient powierzchni jest przycięty do
+ * tego fragmentu, więc długa karta wygląda tak samo jak wcześniej jedna wysoka powierzchnia.
+ *
+ * Całość (cień, rozmycie, gradient, refleks, obramowanie) leży w jednej warstwie wielkości listy,
+ * którą HWUI trzyma jako gotową teksturę. Przy przewijaniu środka listy karta stoi w miejscu,
+ * więc w każdej klatce GPU tylko ją kopiuje zamiast malować pięć przebiegów od nowa (na A15 kilka ms
+ * na klatkę). Warstwa obejmuje cały obszar listy, więc cień karty nie jest przycinany.
+ */
+@Composable
+private fun ConversationCardGlass(list: LazyListState, cardStart: Int, modifier: Modifier) {
+    val density = LocalDensity.current
+    val overscan = with(density) { CardOverscan.roundToPx() }
+    val inset = with(density) { CardInset.roundToPx() }
+    val base = GlassStyles.Card
+    val style by remember(list, cardStart, overscan, inset, base) {
+        derivedStateOf {
+            val info = list.layoutInfo
+            val geometry = cardGeometry(info, cardStart, overscan) ?: return@derivedStateOf base
+            val width = (info.viewportSize.width - 2 * inset).toFloat()
+            val (from, to) = cardGradient(base, width, geometry)
+            base.copy(from = from, to = to)
+        }
+    }
+    GlassSurface(
+        style, CardShape,
+        modifier.graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }.layout { measurable, constraints ->
+            val width = constraints.maxWidth
+            val height = constraints.maxHeight
+            val geometry = cardGeometry(list.layoutInfo, cardStart, overscan)
+                ?: return@layout layout(width, height) {}
+            val placeable = measurable.measure(Constraints.fixed((width - 2 * inset).coerceAtLeast(0), geometry.bottom - geometry.top))
+            layout(width, height) { placeable.place(inset, geometry.top) }
+        },
+        shadows = listOf(Shadows.Card),
+    )
+}
+
+/**
+ * Kolory gradientu CSS (kąt stylu) całej karty w punktach, w których wypada gradient widocznego
+ * fragmentu. Kwantyzowane do 1/255, żeby przewijanie nie przebudowywało stylu w każdej klatce.
+ */
+private fun cardGradient(style: GlassStyle, width: Float, g: CardGeometry): Pair<Color, Color> {
+    // Jak cssLinearGradient: 0° w górę, zgodnie z ruchem wskazówek; półdługość z rzutu prostokąta.
+    val a = style.angleDegrees * PI.toFloat() / 180f
+    val dx = sin(a)
+    val dy = -cos(a)
+    val partHeight = (g.bottom - g.top).toFloat()
+    val halfCard = (abs(width * dx) + abs(g.cardHeight * dy)) / 2f
+    val halfPart = (abs(width * dx) + abs(partHeight * dy)) / 2f
+    if (halfCard <= 0f) return style.from to style.to
+    // Rzut środka fragmentu na oś gradientu karty, liczony od jej środka (te same krawędzie poziome).
+    val center = (g.top + partHeight / 2f - (g.cardTop + g.cardHeight / 2f)) * dy
+    fun at(t: Float): Color {
+        val s = (t - .5f) * 2f * halfPart + center
+        val fraction = (s / (2f * halfCard) + .5f).coerceIn(0f, 1f)
+        return quantize(lerp(style.from, style.to, fraction))
+    }
+    return at(0f) to at(1f)
+}
+
+private fun quantize(c: Color): Color = Color(
+    (c.red * 255f).roundToInt(), (c.green * 255f).roundToInt(), (c.blue * 255f).roundToInt(), (c.alpha * 255f).roundToInt(),
+)
 
 @Composable
 private fun Header(onMore: () -> Unit) {
@@ -156,29 +313,6 @@ private fun androidx.compose.foundation.layout.RowScope.SegmentButton(text: Stri
         contentAlignment = Alignment.Center,
     ) {
         BasicText(text, style = chatraText(15f, if (active) 600 else 500, color = if (active) ChatraColors.TextPrimary else ChatraColors.TextTertiary))
-    }
-}
-
-@Composable
-private fun ConversationCard(state: InboxState, onOpen: (ConversationId) -> Unit) {
-    GlassSurface(GlassStyles.Card, RoundedCornerShape(28.dp), Modifier.fillMaxWidth(), shadows = listOf(Shadows.Card)) {
-        Column(Modifier.clip(RoundedCornerShape(28.dp))) {
-            when {
-                state.loading -> EmptyLine("Wczytujemy rozmowy z telefonu…")
-                state.pinned.isEmpty() && state.others.isEmpty() ->
-                    EmptyLine(if (state.filter == InboxFilter.Unread) "Wszystko przeczytane." else "Nie masz jeszcze rozmów.")
-                else -> {
-                    if (state.pinned.isNotEmpty()) {
-                        GroupLabel("Przypięte", divider = false)
-                        state.pinned.forEach { ConversationRow(it, onOpen) }
-                    }
-                    if (state.others.isNotEmpty()) {
-                        GroupLabel("Pozostałe", divider = state.pinned.isNotEmpty())
-                        state.others.forEach { ConversationRow(it, onOpen) }
-                    }
-                }
-            }
-        }
     }
 }
 
