@@ -91,7 +91,10 @@ class PrivateMediaStore(private val context: Context) : AttachmentStore {
     override suspend fun get(id: AttachmentId): StoredMedia? = withContext(Dispatchers.IO) {
         mutex.withLock { read(id) }
     }
-    private fun read(id: AttachmentId): StoredMedia? {
+    override suspend fun preview(id: AttachmentId): StoredMedia? = withContext(Dispatchers.IO) {
+        mutex.withLock { read(id, verifyHash = false) }
+    }
+    private fun read(id: AttachmentId, verifyHash: Boolean = true): StoredMedia? {
         valid(id)
         val meta = AtomicFile(File(index, "${id.value}.json"))
         if (!meta.baseFile.exists()) return null
@@ -99,7 +102,7 @@ class PrivateMediaStore(private val context: Context) : AttachmentStore {
         val name = json.getString("name")
         require(name.matches(Regex("${id.value}\\.[a-z0-9]+")))
         val file = File(files, name)
-        if (!file.isFile || file.length() != json.getLong("bytes") || hash(file) != json.getString("sha256")) return null
+        if (!file.isFile || file.length() != json.getLong("bytes") || (verifyHash && hash(file) != json.getString("sha256"))) return null
         return StoredMedia(id, uri(file), json.getString("mime"), file.length(), json.getString("sha256"), json.getLong("createdAt"), json.optString("original").takeIf { it.isNotEmpty() && it != "null" }?.let(::AttachmentId), json.optBoolean("sanitized", false))
     }
     override suspend fun derive(id: AttachmentId, variant: MediaVariant, maxBytes: Long?): StoredMedia = withContext(Dispatchers.IO) {

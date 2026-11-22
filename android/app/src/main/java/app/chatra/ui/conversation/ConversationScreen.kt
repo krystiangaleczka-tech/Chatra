@@ -98,6 +98,7 @@ fun ConversationScreen(
     onPickSim: () -> Unit,
     target: app.chatra.core.model.MessageRef? = null,
     contentVisible: Boolean = true,
+    anchorRequest: Int = 0,
 ) {
     val state by model.state.collectAsStateWithLifecycle()
     val chrome = LocalChrome.current
@@ -130,8 +131,8 @@ fun ConversationScreen(
                 }.distinctUntilChanged().collect { if (it.isNotEmpty()) model.onShown(it) }
             }
         }
-        var anchored by remember(target) { androidx.compose.runtime.mutableStateOf(false) }
-        LaunchedEffect(target, rows) {
+        var anchored by remember(target, anchorRequest) { androidx.compose.runtime.mutableStateOf(false) }
+        LaunchedEffect(target, anchorRequest, rows, state.hasOlder) {
             if (target != null && !anchored) {
                 val index = rows.asReversed().indexOfFirst { it is Row.Bubble && it.message.ref == target }
                 if (index >= 0) { list.scrollToItem(index); anchored = true }

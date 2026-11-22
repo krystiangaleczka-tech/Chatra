@@ -3,4 +3,5 @@
     <files-path name="media" path="media/" />
     <files-path name="camera" path="camera/" />
     <files-path name="mms" path="mms-pdu/" />
+    <cache-path name="gallery_share" path="gallery-share/" />
 </paths>

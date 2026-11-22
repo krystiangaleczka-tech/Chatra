@@ -144,9 +144,12 @@ class SystemHistory(
         requireRead()
         val parts = mutableListOf<MediaRef>()
         resolver.query(Uri.parse("content://mms/${ref.providerId}/part"), arrayOf("_id", "ct", "name", "cl"), null, null, null)?.use { c ->
-            while (c.moveToNext()) if (c.str("ct").let { it.startsWith("image/") || it.startsWith("video/") || it.startsWith("audio/") || it == "application/pdf" }) {
-                val id = c.long("_id")
-                parts += MediaRef(id, messageId = ref.providerId, conversationId = ref.conversationId, mimeType = c.str("ct"), label = c.str("name").ifBlank { c.str("cl").ifBlank { "Załącznik MMS" } }, contentUri = "content://mms/part/$id")
+            while (c.moveToNext()) {
+                val mime = c.str("ct").substringBefore(';').trim().lowercase(java.util.Locale.ROOT)
+                if (!mime.matches(Regex("[a-z0-9.+_-]+/[a-z0-9.+_-]+")) || mime in setOf("text/plain", "application/smil")) continue
+                val partId = c.long("_id")
+                parts += MediaRef(partId, messageId = ref.providerId, conversationId = ref.conversationId, mimeType = mime,
+                    label = c.str("name").ifBlank { c.str("cl").ifBlank { "Załącznik MMS" } }, contentUri = "content://mms/part/$partId")
             }
         } ?: error("Nie udało się odczytać części MMS.")
         db.withTransaction { requireRead(); dao.upsertMedia(parts); dao.sweepParts(ref.providerId, parts.map { it.partId }) }

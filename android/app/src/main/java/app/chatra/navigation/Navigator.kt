@@ -2,6 +2,7 @@ package app.chatra.navigation
 
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -17,6 +18,8 @@ import java.net.URLDecoder
 @Stable
 class Navigator(initialTab: Tab = Tab.Conversations, initialStack: List<Route>? = null) {
     var tab by mutableStateOf(initialTab)
+        private set
+    var galleryJump by mutableIntStateOf(0)
         private set
     private val stacks = mutableStateMapOf<Tab, List<Route>>().apply {
         Tab.entries.forEach { put(it, listOf(it.root())) }
@@ -64,6 +67,12 @@ class Navigator(initialTab: Tab = Tab.Conversations, initialStack: List<Route>? 
         stacks[tab] = stack.dropLastWhile { it is Route.Sheet }
     }
 
+    fun revealGallerySource(id: ConversationId, ref: MessageRef) {
+        popSheets()
+        replaceTop(Route.Conversation(id, ref))
+        galleryJump++
+    }
+
     companion object {
         /** Odtwarza aktywną sekcję i wszystkie stosy, także po ponownym utworzeniu procesu. */
         val Saver = listSaver<Navigator, String>(
@@ -89,6 +98,7 @@ private fun encodeRoute(route: Route): String {
         is Route.Search -> listOf("search", route.initialQuery, route.initialFilter.orEmpty(), route.conversation?.value.orEmpty())
         is Route.Extras -> listOf("extras", route.id.value)
         is Route.ConversationDetails -> listOf("conversation-details", route.id.value)
+        is Route.ConversationGallery -> listOf("conversation-gallery", route.id.value)
         is Route.Schedule -> listOf("schedule", route.id.value, route.preset.toString())
         is Route.NewMessage -> listOf("new", route.preset.toString(), route.externalId.orEmpty())
         is Route.Conversation -> listOf("conversation", route.id.value) + when (val m = route.message) {
@@ -116,6 +126,7 @@ private fun decodeRoute(value: String): Route {
         "search" -> Route.Search(p[1], p[2].ifEmpty { null }, p.getOrNull(3)?.ifEmpty { null }?.let(::ConversationId))
         "extras" -> Route.Extras(ConversationId(p[1]))
         "conversation-details" -> Route.ConversationDetails(ConversationId(p[1]))
+        "conversation-gallery" -> Route.ConversationGallery(ConversationId(p[1]))
         "schedule" -> Route.Schedule(ConversationId(p[1]), p[2].toBoolean())
         "new" -> Route.NewMessage(p[1].toBoolean(), p.getOrNull(2)?.ifEmpty { null })
         "conversation" -> Route.Conversation(ConversationId(p[1]), when (p[2]) {

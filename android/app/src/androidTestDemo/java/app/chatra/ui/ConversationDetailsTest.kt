@@ -97,12 +97,34 @@ class ConversationDetailsTest {
         ui.onNodeWithText("Anuluj").performClick()
         assertFalse(c.organization.blocked.value.any { it.id == recipientKey(Fixture.kuba.address.raw) })
         ui.onNodeWithText("Kontakt i numery").assertDoesNotExist()
-        if (InstrumentationRegistry.getArguments().getString("captureChatraQa") != "true") return
         ui.onNodeWithText("Szczegóły rozmowy").performScrollTo()
+        capturePanel("CH065-details.png")
+    }
+
+    @Test fun sharedGalleryFiltersAndReturnsToTheExactHdMessage() {
+        val (_, nav) = launch(Fixture.Ids.Ola)
+        ui.onNodeWithContentDescription("Szczegóły rozmowy").performClick()
+        ui.onNodeWithText("Otwórz galerię").performScrollTo().performClick()
+        ui.onNodeWithText("Liczba pozycji: 4").assertExists()
+        ui.onNodeWithText("Linki").performScrollTo().performClick()
+        ui.onNodeWithText("Brak pozycji w tej zakładce.").assertExists()
+        ui.onNodeWithText("Zdjęcia").performScrollTo().performClick()
+        capturePanel("CH066-gallery.png")
+        ui.onNodeWithText("Opcje: Zdjęcie 1").performClick()
+        ui.onNodeWithText("Otwórz", substring = false).assertDoesNotExist()
+        ui.onNodeWithText("Pokaż w rozmowie").performClick()
+        ui.runOnIdle {
+            assertNull(nav.sheet)
+            assertEquals(Route.Conversation(Fixture.Ids.Ola, MessageRef.Hd("hd-ola-wesele")), nav.top)
+        }
+    }
+
+    private fun capturePanel(name: String) {
+        if (InstrumentationRegistry.getArguments().getString("captureChatraQa") != "true") return
         val image = ui.onRoot().captureToImage().asAndroidBitmap()
         // Stream to the ADB shell. UTP removes the app's files when it uninstalls the APK.
         val automation = InstrumentationRegistry.getInstrumentation().uiAutomation
-        val path = "/data/local/tmp/CH065-details.png"
+        val path = "/data/local/tmp/$name"
         // UiAutomation launches commands directly, so no shell redirection is available.
         val (stdout, stdin) = automation.executeShellCommandRw("dd of=$path")
         ParcelFileDescriptor.AutoCloseInputStream(stdout).use { output ->

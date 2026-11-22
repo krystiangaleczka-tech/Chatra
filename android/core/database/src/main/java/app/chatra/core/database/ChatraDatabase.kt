@@ -101,8 +101,10 @@ interface ChatraDao {
     @Query("DELETE FROM MediaRef WHERE messageId=:id AND partId NOT IN (:parts)") suspend fun sweepParts(id: Long, parts: List<Long>)
     @Query("SELECT * FROM MediaRef WHERE conversationId=:id AND messageId=:message") suspend fun media(id: String, message: Long): List<MediaRef>
     @Query("SELECT * FROM MediaRef WHERE conversationId=:id AND NOT EXISTS (SELECT 1 FROM TrashRef t WHERE t.kind='MMS' AND t.providerId=MediaRef.messageId)") fun conversationMedia(id: String): Flow<List<MediaRef>>
-    @Query("SELECT * FROM MediaRef WHERE conversationId=:id AND NOT EXISTS (SELECT 1 FROM TrashRef t WHERE t.kind='MMS' AND t.providerId=MediaRef.messageId) AND (:kind='' OR mimeType LIKE :kind) AND (:before IS NULL OR partId<:before) ORDER BY partId DESC LIMIT :limit") suspend fun galleryPage(id: String, kind: String, before: Long?, limit: Int): List<MediaRef>
-    @Query("SELECT COUNT(*) FROM MediaRef WHERE conversationId=:id AND NOT EXISTS (SELECT 1 FROM TrashRef t WHERE t.kind='MMS' AND t.providerId=MediaRef.messageId) AND (:kind='' OR mimeType LIKE :kind)") suspend fun galleryCount(id: String, kind: String): Int
+    @Query(GALLERY_MEDIA + " AND (:before IS NULL OR partId<:before) ORDER BY partId DESC LIMIT :limit")
+    suspend fun galleryPage(id: String, kind: String, before: Long?, limit: Int): List<MediaRef>
+    @Query("SELECT COUNT(*) FROM (" + GALLERY_MEDIA + ")")
+    suspend fun galleryCount(id: String, kind: String): Int
     @Query("SELECT * FROM MediaRef WHERE partId=:id") suspend fun mediaPart(id: Long): MediaRef?
 
 
@@ -137,6 +139,17 @@ interface ChatraDao {
     @Upsert suspend fun saveDraft(row: SavedDraft)
     @Query("DELETE FROM SavedDraft WHERE id=:id") suspend fun deleteDraft(id: String)
 }
+
+private const val GALLERY_MEDIA = """
+    SELECT * FROM MediaRef WHERE conversationId=:id
+    AND NOT EXISTS (SELECT 1 FROM TrashRef t WHERE t.kind='MMS' AND t.providerId=MediaRef.messageId)
+    AND (:kind='' OR :kind=CASE
+        WHEN mimeType LIKE 'image/%' THEN 'Images'
+        WHEN mimeType LIKE 'video/%' THEN 'Videos'
+        WHEN mimeType LIKE 'text/%' OR (mimeType LIKE 'application/%' AND mimeType!='application/octet-stream' COLLATE NOCASE)
+            THEN 'Documents'
+        ELSE 'Other' END)
+"""
 
 @Database(entities = [ConversationMeta::class, ProviderMessageRef::class, MediaRef::class, InboundReceipt::class,
     OutgoingOperation::class, OutgoingRecipient::class, OutgoingAttempt::class, OutgoingPart::class, SavedDraft::class, ClosedDraft::class, ScheduledRow::class, SearchDocument::class, SearchFts::class, LocalBlock::class, TrashEntry::class, TrashRef::class,

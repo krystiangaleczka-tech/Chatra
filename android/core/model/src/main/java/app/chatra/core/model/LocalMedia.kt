@@ -18,6 +18,8 @@ interface AttachmentStore {
         return if (variant == MediaVariant.NoLocationCopy) derive(original.id, variant) else original
     }
     suspend fun get(id: AttachmentId): StoredMedia?
+    /** Lightweight metadata check for display. Use get() before releasing original bytes. */
+    suspend fun preview(id: AttachmentId): StoredMedia? = get(id)
     suspend fun derive(id: AttachmentId, variant: MediaVariant, maxBytes: Long? = null): StoredMedia
     suspend fun collectUnused(protectedIds: Set<AttachmentId>, olderThan: Long)
     fun cameraUri(): String

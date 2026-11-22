@@ -26,6 +26,8 @@ data class HdRecord(
     @Query("SELECT * FROM HdRecord WHERE id=:id") suspend fun get(id: String): HdRecord?
     @Query("SELECT * FROM HdRecord WHERE conversationId=:id AND NOT EXISTS(SELECT 1 FROM TrashHdRef t WHERE t.id=HdRecord.id)")
     suspend fun snapshot(id: String): List<HdRecord>
+    @Query("SELECT * FROM HdRecord WHERE instr(localFiles, char(34) || :id || char(34))>0 AND NOT EXISTS(SELECT 1 FROM TrashHdRef t WHERE t.id=HdRecord.id) ORDER BY createdAt DESC,id DESC")
+    suspend fun visibleWithFile(id: String): List<HdRecord>
     @Query("SELECT * FROM HdRecord WHERE state IN ('QUEUED','DOWNLOADING','RECEIPT')") suspend fun pending(): List<HdRecord>
     @Query("SELECT COUNT(*) FROM HdDismissed WHERE id=:id") suspend fun dismissed(id: String): Int
     @Upsert suspend fun put(row: HdRecord)

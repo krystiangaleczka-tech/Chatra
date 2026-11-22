@@ -1,6 +1,7 @@
 package app.chatra.ui.common
 
 import android.graphics.ImageDecoder
+import android.media.MediaMetadataRetriever
 import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -21,14 +22,22 @@ import kotlinx.coroutines.withContext
 
 /** Dekodowanie dopiero po wejściu bąbelka do LazyColumn; bez kopiowania oryginału. */
 @Composable
-fun ProviderThumbnail(attachment: AttachmentSummary, height: Dp = 140.dp, showLabel: Boolean = true) {
+fun ProviderThumbnail(attachment: AttachmentSummary, height: Dp = 140.dp, showLabel: Boolean = true, showVideo: Boolean = false) {
     val context = LocalContext.current
     val container = LocalContainer.current
-    val bitmap by produceState<ImageBitmap?>(null, attachment.contentUri) {
+    val bitmap by produceState<ImageBitmap?>(null, attachment.contentUri, attachment.mimeType, showVideo) {
+        value = null
         val uri = attachment.contentUri ?: return@produceState
-        if (!attachment.mimeType.startsWith("image/")) return@produceState
+        val image = attachment.mimeType.startsWith("image/")
+        if (!image && !(showVideo && attachment.mimeType.startsWith("video/"))) return@produceState
         value = withContext(Dispatchers.IO) {
             if (!container.isDemo && !container.smsRole.isHeld()) return@withContext null
+            if (!image) return@withContext runCatching {
+                MediaMetadataRetriever().use { retriever ->
+                    retriever.setDataSource(context, Uri.parse(uri))
+                    retriever.getScaledFrameAtTime(-1, MediaMetadataRetriever.OPTION_CLOSEST_SYNC, 384, 216)?.asImageBitmap()
+                }
+            }.getOrNull()
             runCatching { ImageDecoder.decodeBitmap(ImageDecoder.createSource(context.contentResolver, Uri.parse(uri))) { decoder, info, _ ->
                 val scale = minOf(1f, 384f / maxOf(info.size.width, info.size.height))
                 decoder.setTargetSize((info.size.width * scale).toInt().coerceAtLeast(1), (info.size.height * scale).toInt().coerceAtLeast(1))

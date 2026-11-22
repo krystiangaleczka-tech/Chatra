@@ -5,6 +5,7 @@ import app.chatra.core.model.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.withContext
 import java.time.Instant
 import org.json.JSONArray
 
@@ -76,34 +77,76 @@ internal class HdHistory(
     override suspend fun markAllRead() { base.markAllRead(); db.hd().all().map { it.conversationId }.distinct().forEach { db.hd().read(it) } }
 }
 
-/** The same local file ID always points back to its HD message. Hidden sources cannot be opened. */
-internal class HdGallery(private val base: MediaGallery, private val db: ChatraDatabase,
-    private val media: AttachmentStore, private val allowed: () -> Boolean) : MediaGallery {
-    private suspend fun items(conversation: ConversationId?, kind: MediaKind): List<GalleryItem> =
-        if (!allowed()) emptyList() else db.hd().visible().first().filter { conversation == null || it.conversationId == conversation.value }
-            .sortedByDescending { it.createdAt }.flatMap { row -> HdMailbox.ids(row.localFiles).mapNotNull { id -> media.get(id)?.let { file ->
-                if (kind == MediaKind.Images && !file.mime.startsWith("image/") || kind == MediaKind.Videos && !file.mime.startsWith("video/")) null
-                else GalleryItem(id, MessageRef.Hd(row.id), file.mime, file.uri, "Załącznik HD", Transport.HD)
-            } } }.distinctBy { it.id }
-
-    override suspend fun page(conversation: ConversationId, kind: MediaKind, before: Long?, limit: Int): GalleryPage {
-        require(limit in 1..200)
-        if (!allowed()) return GalleryPage(emptyList(), 0, null)
-        val hd = items(conversation, kind)
-        val offset = (before ?: 0).coerceAtLeast(0).coerceAtMost(Int.MAX_VALUE.toLong()).toInt()
-        val hdPage = hd.drop(offset).take(limit)
-        val providerOffset = (offset - hd.size).coerceAtLeast(0)
-        var cursor: Long? = null
-        var skipped = 0
-        var page = base.page(conversation, kind, cursor, 200)
-        while (skipped + page.items.size <= providerOffset && page.nextBefore != null) {
-            skipped += page.items.size; cursor = page.nextBefore
-            page = base.page(conversation, kind, cursor, 200)
-        }
-        val provider = page.items.drop((providerOffset - skipped).coerceAtLeast(0)).take(limit - hdPage.size)
-        val result = hdPage + provider
-        val total = hd.size + page.total
-        return GalleryPage(result, total, (offset + result.size).toLong().takeIf { it < total && result.isNotEmpty() })
+/** HD descriptors come from the conversation's manifest, including files that have yet to arrive. */
+internal class HdGallery(
+    private val base: MediaGallery,
+    private val db: ChatraDatabase,
+    private val media: AttachmentStore,
+    private val allowed: () -> Boolean,
+) : MediaGallery {
+    private data class Slot(val row: HdRecord, val position: Int, val mime: String, val fileId: AttachmentId?) {
+        val source = MessageRef.Hd(row.id)
+        val label = "Plik HD ${position + 1}"
     }
-    override suspend fun readable(id: AttachmentId): GalleryItem? = if (!allowed()) null else items(null, MediaKind.All).firstOrNull { it.id == id } ?: base.readable(id)
+
+    private fun slots(row: HdRecord): List<Slot> {
+        val manifest = JSONArray(row.manifest)
+        val ids = HdMailbox.ids(row.localFiles)
+        return List(manifest.length()) { i ->
+            val mime = manifest.getJSONObject(i).optString("mime").ifBlank { "application/octet-stream" }
+            Slot(row, i, mime, ids.getOrNull(i))
+        }
+    }
+
+    private suspend fun preview(slot: Slot): GalleryItem {
+        val file = slot.fileId?.let { media.preview(it) }
+        val state = when {
+            file != null -> GalleryAvailability.Ready
+            slot.row.state == "EXPIRED" -> GalleryAvailability.Expired
+            slot.fileId != null || slot.row.state in setOf("LOCAL", "SENT", "READY") -> GalleryAvailability.Missing
+            slot.row.state in setOf("QUEUED", "DOWNLOADING", "RECEIPT") -> GalleryAvailability.Downloading
+            else -> GalleryAvailability.AwaitingDownload
+        }
+        return GalleryItem(slot.fileId ?: AttachmentId("hd-slot:${slot.row.id}:${slot.position}"),
+            slot.source, file?.mime ?: slot.mime, file?.uri.orEmpty(), slot.label, Transport.HD, state)
+    }
+
+    override suspend fun page(conversation: ConversationId, kind: MediaKind, before: Long?, limit: Int): GalleryPage =
+        withContext(Dispatchers.IO) {
+            require(limit in 1..100)
+            check(allowed()) { "Brak dostępu do historii." }
+            if (kind == MediaKind.Links) return@withContext base.page(conversation, kind, before, limit)
+
+            val hd = db.hd().snapshot(conversation.value)
+                .sortedWith(compareByDescending<HdRecord> { it.createdAt }.thenByDescending { it.id })
+                .flatMap(::slots).filter { kind.includes(it.mime) }
+            // Negative cursors are offsets in the HD entries. Nonnegative cursors belong to MMS.
+            val offset = if (before == null) 0 else if (before < 0) (-before - 1).coerceAtMost(hd.size.toLong()).toInt() else hd.size
+            val hdPage = hd.drop(offset).take(limit).map { preview(it) }
+            val remaining = limit - hdPage.size
+            val provider = base.page(conversation, kind, before?.takeIf { it >= 0 }, maxOf(remaining, 1))
+            val nextHd = offset + hdPage.size
+            val next = when {
+                nextHd < hd.size -> -(nextHd + 1L)
+                remaining == 0 && provider.total > 0 -> -(hd.size + 1L)
+                else -> provider.nextBefore
+            }
+            GalleryPage(hdPage + provider.items.take(remaining), hd.size + provider.total, next)
+        }
+
+    override suspend fun readable(id: AttachmentId): GalleryItem? = readable(id, null)
+
+    override suspend fun readable(item: GalleryItem): GalleryItem? =
+        if (item.source is MessageRef.Hd) readable(item.id, item.source as MessageRef.Hd)
+        else base.readable(item)
+
+    private suspend fun readable(id: AttachmentId, source: MessageRef.Hd?): GalleryItem? = withContext(Dispatchers.IO) {
+        if (!allowed()) return@withContext null
+        val row = db.hd().visibleWithFile(id.value).firstOrNull { (source == null || it.id == source.id) && id in HdMailbox.ids(it.localFiles) }
+            ?: return@withContext if (source == null) base.readable(id) else null
+        val position = HdMailbox.ids(row.localFiles).indexOf(id)
+        val file = media.get(id) ?: return@withContext null
+        if (!allowed() || db.hd().visibleWithFile(id.value).none { it.id == row.id }) return@withContext null
+        GalleryItem(id, MessageRef.Hd(row.id), file.mime, file.uri, "Plik HD ${position + 1}", Transport.HD)
+    }
 }

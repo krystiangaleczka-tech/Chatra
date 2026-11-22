@@ -7,6 +7,15 @@ import app.chatra.core.model.Clock
 import app.chatra.core.model.ConversationId
 import app.chatra.core.model.SendingPrefs
 import app.chatra.core.model.ProOffer
+import app.chatra.core.model.AttachmentId
+import app.chatra.core.model.GalleryAvailability
+import app.chatra.core.model.GalleryItem
+import app.chatra.core.model.GalleryPage
+import app.chatra.core.model.MediaGallery
+import app.chatra.core.model.MediaKind
+import app.chatra.core.model.MessageRef
+import app.chatra.core.model.Transport
+import app.chatra.core.model.galleryLinks
 import app.chatra.core.testing.FakeExactAlarmGate
 import app.chatra.core.testing.FakeSmsRoleGate
 import app.chatra.core.testing.FixedClock
@@ -18,6 +27,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import android.os.SystemClock
 import java.time.Instant
 import java.time.ZoneId
@@ -36,6 +46,29 @@ fun createContainer(app: Application, referenceFrame: Boolean, roleScenario: Str
     return object : AppContainer {
         override val templates = LocalTemplates(app)
         override val media = PrivateMediaStore(app)
+        override val gallery = object : MediaGallery {
+            override suspend fun page(conversation: ConversationId, kind: MediaKind, before: Long?, limit: Int): GalleryPage {
+                require(limit in 1..100)
+                val items = repo.messages(conversation).first().asReversed().flatMap { message ->
+                    val transport = when {
+                        message.ref is MessageRef.Hd -> Transport.HD
+                        message.attachments.isNotEmpty() -> Transport.MMS
+                        else -> Transport.SMS
+                    }
+                    if (kind == MediaKind.Links) {
+                        galleryLinks(message.body, message.ref, transport).map { it.copy(availability = GalleryAvailability.Preview) }
+                    } else {
+                        message.attachments.filter { kind.includes(it.mimeType) }.map {
+                            GalleryItem(it.id, message.ref, it.mimeType, "", it.label, transport, GalleryAvailability.Preview)
+                        }
+                    }
+                }
+                val offset = (before ?: 0).coerceIn(0, items.size.toLong()).toInt()
+                val end = minOf(offset + limit, items.size)
+                return GalleryPage(items.subList(offset, end), items.size, end.toLong().takeIf { end < items.size })
+            }
+            override suspend fun readable(id: AttachmentId): GalleryItem? = null
+        }
         override val notifications = notificationPrefs
         override val conversations = repo
         override val drafts = repo

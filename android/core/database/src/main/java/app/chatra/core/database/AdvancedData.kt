@@ -22,6 +22,7 @@ data class SearchDocument(
 @Entity
 data class SearchFts(@PrimaryKey @ColumnInfo(name = "rowid") val rowid: Long, val tokens: String)
 data class SearchHash(@ColumnInfo(name = "rowid") val rowid: Long, val hash: String)
+data class GalleryLinkSource(val kind: String, val providerId: Long, val body: String)
 
 @Dao
 interface ScheduleDao {
@@ -41,6 +42,15 @@ interface ScheduleDao {
 
 @Dao
 interface SearchDao {
+    @Query("""
+        SELECT d.kind,d.providerId,d.body FROM SearchDocument d
+        JOIN ProviderMessageRef p ON p.kind=d.kind AND p.providerId=d.providerId
+            AND p.conversationId=d.conversationId AND p.timestamp=d.timestamp
+        WHERE d.conversationId=:id AND d.body LIKE '%http%'
+        AND NOT EXISTS (SELECT 1 FROM TrashRef t WHERE t.kind=p.kind AND t.providerId=p.providerId AND t.timestamp=p.timestamp)
+        ORDER BY d.timestamp DESC,d.rowid DESC
+    """)
+    suspend fun galleryLinkSources(id: String): List<GalleryLinkSource>
     @Upsert suspend fun documents(rows: List<SearchDocument>)
     @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun fts(rows: List<SearchFts>)
     @Query("SELECT rowid,hash FROM SearchDocument WHERE rowid IN (:ids)") suspend fun hashes(ids: List<Long>): List<SearchHash>
