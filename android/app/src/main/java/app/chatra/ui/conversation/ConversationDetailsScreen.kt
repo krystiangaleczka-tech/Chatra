@@ -38,6 +38,7 @@ fun ConversationDetailsScreen(
     onBack: () -> Unit,
     onSearch: () -> Unit,
     onSchedule: () -> Unit,
+    onGallery: () -> Unit,
     onTrashed: () -> Unit,
 ) {
     val c = LocalContainer.current
@@ -152,7 +153,8 @@ fun ConversationDetailsScreen(
             }
             DetailCard {
                 BasicText("Wspólne media", style = chatraText(17f, 600))
-                BasicText("Galeria wszystkich mediów nie jest jeszcze dostępna w tej wersji. Załączniki możesz otwierać bezpośrednio w rozmowie.", style = ChatraType.Preview)
+                DetailsAction("Otwórz galerię", onGallery, !busy && c.gallery != null)
+                if (c.gallery == null) BasicText("Galeria jest niedostępna w tej wersji.", style = ChatraType.Preview)
                 DetailsAction("Wróć do wiadomości", onBack, !busy)
             }
             DetailCard {

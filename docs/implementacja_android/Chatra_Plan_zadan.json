@@ -1185,8 +1185,8 @@
         "CH042"
       ],
       "description": "Wykonanie: na podstawie CH020 stworzyć osobny podwidok otwierany z nagłówka S03. Pokazać prawidłowy kontakt, numer lub członków grupy, akcje Zadzwoń przez systemowy dialer, Szukaj w rozmowie, Wycisz i Więcej; przypięcie, dostęp do galerii CH066, ustawień wyglądu CH068, SIM, blokowania i usuwania. Rozróżnić wyciszenie, blokadę i usunięcie. Nie zakładać wsparcia iMessage/RCS i nie zmieniać planszy S03.\n\nOdbiór: wszystkie akcje działają lub jawnie wyjaśniają niedostępność; po powrocie zachowana pozycja historii i szkic. Weryfikacja: jeden/wiele numerów, alfanumeryczny nadawca, brak dialera/roli, grupa i TalkBack.",
-      "status": "implemented_details_panel_gallery_and_device_acceptance_pending",
-      "review_note": "Osobny panel szczegółów zachowuje rozmowę i szkic, ma jawne mutacje i błędy. Galeria jest jawnie niedostępna do CH066; fizyczny dialer, rola i odsłuch TalkBack pozostają do odbioru.",
+      "status": "implemented_details_panel_device_acceptance_pending",
+      "review_note": "Osobny panel szczegółów zachowuje rozmowę i szkic, ma jawne mutacje i błędy. Panel otwiera galerię CH066; fizyczny dialer, rola i odsłuch TalkBack pozostają do odbioru.",
       "evidence_files": [
         "docs/implementacja_android/CH062_CH065_Chmura_i_beta_2026-11-20.md"
       ]
@@ -1206,10 +1206,10 @@
         "CH065"
       ],
       "description": "Wykonanie: podwidok Wspólne z zakładkami zdjęcia, filmy, linki, dokumenty i pozostałe; paginacja miniaturek, realny licznik elementów, zachowanie po obrocie, otwarcie pliku, zapisz i Sharesheet bez wycieku URI. Każdy element zachowuje MessageRef i akcję Pokaż w rozmowie. Ująć załączniki MMS i Chatra HD z ich realnym stanem.\n\nOdbiór: 67 i 1000 plików wyświetla się kompletnie bez OOM i bez zgubionych stron. Weryfikacja: usunięty plik, brak URI, załącznik HD oczekujący na pobranie, wyszukiwanie źródłowej wiadomości.",
-      "status": "data_adapter_only_gallery_ui_pending",
-      "review_note": "Adaptery galerii MMS/HD istnieją; brak pełnego podwidoku Wspólne, zakładek, paginacji UI i odbioru 67/1000 plików.",
+      "status": "implemented_pending_physical_acceptance",
+      "review_note": "Widok Wspólne, zakładki, liczniki, strony MMS i HD, przejście do wiadomości, otwarcie, zapis i udostępnienie. Weryfikacja telefonu i dostawców pozostaje otwarta.",
       "evidence_files": [
-        "docs/implementacja_android/CH062_CH065_Chmura_i_beta_2026-11-20.md"
+        "docs/implementacja_android/CH066_Galeria_rozmowy.md"
       ]
     },
     {

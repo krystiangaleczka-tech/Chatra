@@ -763,7 +763,7 @@ Wykonanie: na podstawie CH020 stworzyć osobny podwidok otwierany z nagłówka S
 
 Odbiór: wszystkie akcje działają lub jawnie wyjaśniają niedostępność; po powrocie zachowana pozycja historii i szkic. Weryfikacja: jeden/wiele numerów, alfanumeryczny nadawca, brak dialera/roli, grupa i TalkBack.
 
-**Stan roboczy 20.11.2026:** Osobny panel szczegółów zachowuje rozmowę i szkic, ma jawne mutacje i błędy. Galeria jest jawnie niedostępna do CH066; fizyczny dialer, rola i odsłuch TalkBack pozostają do odbioru. [Audyt i weryfikacja](CH062_CH065_Chmura_i_beta_2026-11-20.md).
+**Stan roboczy 20.11.2026:** Osobny panel szczegółów zachowuje rozmowę i szkic, ma jawne mutacje i błędy. Panel otwiera galerię CH066. Fizyczny dialer, rola i odsłuch TalkBack pozostają do odbioru. [Audyt i weryfikacja](CH062_CH065_Chmura_i_beta_2026-11-20.md).
 
 ### CH066 Zbudować galerię mediów jednej rozmowy
 
@@ -773,7 +773,7 @@ Wykonanie: podwidok Wspólne z zakładkami zdjęcia, filmy, linki, dokumenty i p
 
 Odbiór: 67 i 1000 plików wyświetla się kompletnie bez OOM i bez zgubionych stron. Weryfikacja: usunięty plik, brak URI, załącznik HD oczekujący na pobranie, wyszukiwanie źródłowej wiadomości.
 
-**Stan roboczy 20.11.2026:** Adaptery galerii MMS/HD istnieją; brak pełnego podwidoku Wspólne, zakładek, paginacji UI i odbioru 67/1000 plików. [Audyt i weryfikacja](CH062_CH065_Chmura_i_beta_2026-11-20.md).
+**Stan 22.11.2026:** Galeria „Wspólne” ma zakładki, liczniki, paginację i nawigację do wiadomości. Weryfikacja integracji na telefonach pozostaje otwarta. [Implementacja i weryfikacja](CH066_Galeria_rozmowy.md).
 
 ### CH067 Renderować kolaże i stosy załączników w wiadomości
 

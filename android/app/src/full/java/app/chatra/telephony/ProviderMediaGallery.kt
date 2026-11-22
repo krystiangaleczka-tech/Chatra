@@ -14,7 +14,17 @@ class ProviderMediaGallery(private val context: Context, private val db: ChatraD
     private fun item(r: MediaRef) = GalleryItem(AttachmentId("mms-part:${r.partId}"), MessageRef.Provider(ProviderRef(ProviderTransport.MMS, r.messageId)), r.mimeType, r.contentUri, r.label, Transport.MMS)
     override suspend fun page(conversation: ConversationId, kind: MediaKind, before: Long?, limit: Int): GalleryPage = withContext(Dispatchers.IO) {
         check(context.smsRead(role)); require(limit in 1..100)
-        val filter = when (kind) { MediaKind.All -> ""; MediaKind.Images -> "image/%"; MediaKind.Videos -> "video/%" }
+        if (kind == MediaKind.Links) {
+            val all = db.search().galleryLinkSources(conversation.value).flatMap { row ->
+                val provider = ProviderTransport.valueOf(row.kind)
+                val transport = if (provider == ProviderTransport.MMS) Transport.MMS else Transport.SMS
+                galleryLinks(row.body, MessageRef.Provider(ProviderRef(provider, row.providerId)), transport)
+            }
+            val offset = (before ?: 0).coerceIn(0, all.size.toLong()).toInt()
+            val next = minOf(offset + limit, all.size)
+            return@withContext GalleryPage(all.subList(offset, next).toList(), all.size, next.toLong().takeIf { next < all.size })
+        }
+        val filter = if (kind == MediaKind.All) "" else kind.name
         db.withTransaction {
             val rows = db.dao().galleryPage(conversation.value, filter, before, limit + 1)
             GalleryPage(rows.take(limit).map(::item), db.dao().galleryCount(conversation.value, filter), if (rows.size > limit) rows[limit - 1].partId else null)

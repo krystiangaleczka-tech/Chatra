@@ -162,6 +162,7 @@ fun ChatraApp(container: AppContainer, initial: Navigator?, onExit: () -> Unit, 
                         is Route.Extras -> "Dodatki"
                         is Route.Schedule -> "Zaplanuj wysyłkę"
                         is Route.ConversationDetails -> "Szczegóły rozmowy"
+                        is Route.ConversationGallery -> "Wspólne"
                     } }) { Sheet(sheet, navigator) }
                 }
             }
@@ -194,7 +195,7 @@ private fun Screen(route: Route, navigator: Navigator, listStates: MutableMap<Ta
             val model = conversationModel(c, route.id)
             var simPicker by remember { mutableStateOf(false) }
             val state by model.state.collectAsStateWithLifecycle()
-            ConversationScreen(model, { navigator.back() }, { navigator.push(Route.ConversationDetails(route.id)) }, { navigator.push(Route.Extras(route.id)) }, { simPicker = true }, target = route.message, contentVisible = navigator.sheet == null)
+            ConversationScreen(model, { navigator.back() }, { navigator.push(Route.ConversationDetails(route.id)) }, { navigator.push(Route.Extras(route.id)) }, { simPicker = true }, target = route.message, contentVisible = navigator.sheet == null, anchorRequest = navigator.galleryJump)
             if (simPicker) app.chatra.ui.common.SimPicker(state.sims, (state.sim as? app.chatra.core.model.SimChoice.Ready)?.sim?.id, model::selectSim, { simPicker = false })
         }
         Route.Scheduled -> {
@@ -241,8 +242,21 @@ private fun Sheet(sheet: Route.Sheet, navigator: Navigator) {
                 onBack = { navigator.back() },
                 onSearch = { navigator.popSheets(); navigator.push(Route.Search(conversation = sheet.id)) },
                 onSchedule = { navigator.replaceTop(Route.Schedule(sheet.id)) },
+                onGallery = { navigator.push(Route.ConversationGallery(sheet.id)) },
                 onTrashed = { navigator.popSheets(); navigator.back() },
             )
+        }
+        is Route.ConversationGallery -> {
+            val gallery = c.gallery
+            if (gallery == null) Placeholder("Galeria jest niedostępna.")
+            else {
+                val model = viewModel(key = "gallery-${sheet.id.value}") {
+                    app.chatra.ui.gallery.GalleryViewModel(sheet.id, gallery)
+                }
+                app.chatra.ui.gallery.ConversationGalleryScreen(model, gallery, onBack = { navigator.back() }) { source ->
+                    navigator.revealGallerySource(sheet.id, source)
+                }
+            }
         }
         is Route.Extras -> {
             val model = conversationModel(c, sheet.id)
