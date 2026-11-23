@@ -1,6 +1,6 @@
 # CH072 — transporty operatorowe na iOS i Androidzie
 
-Data przeglądu dokumentacji i SDK: 23.11.2026. Decyzja dla wydania Chatry: **bez zmian w transporcie produkcyjnym**. Dalszy prototyp ma sens dopiero po uzyskaniu dostępu do urządzeń i po potwierdzeniu ścieżki operatorskiej.
+Przegląd dokumentacji i SDK wykonano 23.11.2026. Wydanie Chatry zachowuje dotychczasowy transport. Dalszy prototyp ma sens dopiero po uzyskaniu dostępu do urządzeń i po potwierdzeniu ścieżki operatorskiej.
 
 ## iPhone i TelephonyMessagingKit
 

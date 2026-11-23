@@ -53,6 +53,7 @@ class AdaptiveConversationTest {
 
     @Test fun narrowGalleryWithDoubleTextKeepsFilterAndReturnActionReachable() {
         launch(360, 2f, listOf(Route.Inbox, Route.Conversation(id), Route.ConversationDetails(id), Route.ConversationGallery(id)))
+        ui.onNodeWithText("Wspólne").assertIsDisplayed()
         val links = ui.onNode(hasText("Linki") and SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Tab))
         links.performScrollTo().assertIsDisplayed().performClick()
         links.assertIsSelected()

@@ -5,6 +5,7 @@ import android.content.pm.ApplicationInfo
 import android.os.Build
 import android.provider.Telephony
 import androidx.test.platform.app.InstrumentationRegistry
+import app.chatra.ChatraApplication
 import app.chatra.R
 import app.chatra.core.database.ChatraDatabase
 import app.chatra.core.database.OutgoingOperation
@@ -12,6 +13,7 @@ import app.chatra.core.database.SavedDraft
 import app.chatra.core.database.ScheduledRow
 import app.chatra.core.database.TrashEntry
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withTimeout
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.*
 import org.junit.Assume.assumeTrue
@@ -81,8 +83,12 @@ class InstallationRecoveryTest {
         requireResetRun()
         val resolver = context.contentResolver
         try {
-            resolver.query(Telephony.Sms.Inbox.CONTENT_URI, arrayOf("_id"), "address=? AND body=?",
-                arrayOf(sender, marker), null)!!.use { assertEquals(1, it.count) }
+            val providerId = resolver.query(Telephony.Sms.Inbox.CONTENT_URI, arrayOf("_id"), "address=? AND body=?",
+                arrayOf(sender, marker), null)!!.use { cursor ->
+                assertEquals(1, cursor.count)
+                check(cursor.moveToFirst())
+                cursor.getLong(0)
+            }
             val db = ChatraDatabase.open(context)
             try {
                 assertTrue(db.dao().drafts().first().isEmpty())
@@ -90,6 +96,16 @@ class InstallationRecoveryTest {
                 assertTrue(db.schedules().rows().first().isEmpty())
                 assertTrue(db.organization().trash().first().isEmpty())
             } finally { db.close() }
+            val history = (context.applicationContext as ChatraApplication).container(false).conversations
+            withTimeout(20_000) {
+                val conversation = history.inbox().first { rows ->
+                    rows.any { row -> row.participants.any { it.address.raw == sender } }
+                }.single { row -> row.participants.any { it.address.raw == sender } }
+                val ref = app.chatra.core.model.MessageRef.Provider(
+                    app.chatra.core.model.ProviderRef(app.chatra.core.model.ProviderTransport.SMS, providerId))
+                val restored = history.messages(conversation.id).first { rows -> rows.any { it.ref == ref } }
+                assertEquals(marker, restored.single { it.ref == ref }.body)
+            }
         } finally {
             resolver.delete(Telephony.Sms.CONTENT_URI, "address=? AND body=?", arrayOf(sender, marker))
         }
