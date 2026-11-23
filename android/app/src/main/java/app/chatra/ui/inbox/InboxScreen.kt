@@ -33,6 +33,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
@@ -116,6 +117,11 @@ fun InboxScreen(
     var trash by remember { mutableStateOf<ConversationSummary?>(null) }
     var feedback by remember { mutableStateOf<InboxFeedback?>(null) }
     var busy by remember { mutableStateOf(false) }
+    LaunchedEffect(feedback) {
+        val active = feedback ?: return@LaunchedEffect
+        kotlinx.coroutines.delay(12_000)
+        if (feedback === active) feedback = null
+    }
 
     fun action(block: suspend () -> InboxFeedback?) {
         if (busy) return

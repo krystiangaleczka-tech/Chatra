@@ -85,7 +85,7 @@ class MessageNotifications(private val context: Context, private val db: ChatraD
     @SuppressLint("MissingPermission")
     private suspend fun update(s: Snapshot) {
         val dbBlocks = db.organization().blocks().first()
-        val visible = if (permitted()) s.rows.filter { !it.meta.trashed && it.lastAt != null && dbBlocks.none { rule -> addresses(it.meta.participants).any { a -> recipientKey(a.raw) == rule.addressKey } } && (it.unreadCount > 0 || it.meta.manualUnread) } else emptyList()
+        val visible = if (permitted()) s.rows.filter { !it.meta.trashed && it.lastAt != null && dbBlocks.none { rule -> addresses(it.meta.participants).any { a -> recipientKey(a.raw) == rule.addressKey } } && it.unreadCount > 0 } else emptyList()
         val audible = visible.filterNot { it.meta.muted || s.prefs.muted(it.meta.id, s.now) }
         val current = s.rows.associate { it.meta.id to (it.unreadCount to it.lastId) }
         val old = previous; previous = if (context.smsRead(platform)) current else null

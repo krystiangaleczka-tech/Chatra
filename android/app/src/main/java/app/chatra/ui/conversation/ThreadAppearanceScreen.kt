@@ -39,6 +39,7 @@ import java.io.File
 import java.util.UUID
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -129,8 +130,10 @@ internal fun ThreadAppearanceScreen(id: ConversationId, onBack: () -> Unit) {
                     check(file.parentFile?.let { it.isDirectory || it.mkdirs() } == true)
                     file.outputStream().use { check(bitmap.asAndroidBitmap().compress(Bitmap.CompressFormat.JPEG, 85, it)) }
                 }
-                update { it.copy(background = ThreadBackground.Photo, wallpaper = key) }
-                saved = true
+                withContext(NonCancellable) {
+                    update { it.copy(background = ThreadBackground.Photo, wallpaper = key) }
+                    saved = true
+                }
             } finally {
                 if (saved) previous?.let { wallpaperFile(context, it).delete() } else file.delete()
             }

@@ -40,6 +40,7 @@ class SystemHistory(
     private val context: Context, private val db: ChatraDatabase, private val platform: SystemPlatform,
     private val contacts: ContactsDirectory, private val scope: CoroutineScope,
     private val organization: LocalOrganization? = null,
+    private val attachmentStore: AttachmentStore? = null,
 ) : ConversationRepository {
     private val resolver = context.contentResolver
     internal val indexChanges = MutableStateFlow(0)
@@ -266,7 +267,14 @@ class SystemHistory(
                 val operation = operations[link.operationId] ?: return@mapNotNull null
                 if (operation.state in listOf("CANCELLED", "SCHEDULED") || indexed.any { (it.ref as? MessageRef.Provider)?.ref == ProviderRef(ProviderTransport.valueOf(link.providerKind), link.providerId ?: -1) }) return@mapNotNull null
                 if (link.providerId != null && operation.state !in activeStates) return@mapNotNull null
-                Message(MessageRef.Local(OperationId(operation.id)), id, Direction.Outgoing, null, operation.body, Instant.ofEpochMilli(operation.createdAt), true, SubscriptionId(operation.subscriptionId), deliveryStatus(operation.state), OperationId(operation.id))
+                val attachmentIds = operation.snapshot?.let { DraftCodec.decode(it).attachmentIds }.orEmpty()
+                val attachments = attachmentIds.mapIndexed { index, attachmentId ->
+                    val file = attachmentStore?.get(attachmentId)
+                    AttachmentSummary(attachmentId, file?.mime ?: "application/octet-stream", "Plik MMS ${index + 1}", file?.uri)
+                }
+                Message(MessageRef.Local(OperationId(operation.id)), id, Direction.Outgoing, null, operation.body,
+                    Instant.ofEpochMilli(operation.createdAt), true, SubscriptionId(operation.subscriptionId), deliveryStatus(operation.state),
+                    OperationId(operation.id), attachments = attachments)
             }
             (mapped + locals.distinctBy { it.operationId }).sortedBy { it.timestamp }
         }.getOrElse { if (it is CancellationException) throw it; diagnostic(it); status.value = HistoryStatus.Error("Nie udało się odczytać rozmowy."); emptyList() }
@@ -294,7 +302,7 @@ class SystemHistory(
         val thread = Telephony.Threads.getOrCreateThreadId(context, recipients.map { it.raw }.toSet())
         ConversationId(ensureConversation(thread, recipients).id)
     }
-    override suspend fun markRead(id: ConversationId) = changeRead(id, true, null)
+    override suspend fun markRead(id: ConversationId) = changeRead(id, shown = null)
     override suspend fun markAllRead() = withContext(Dispatchers.IO) {
         requireRead()
         val values = ContentValues().apply { put("read", 1); put("seen", 1) }
@@ -329,27 +337,28 @@ class SystemHistory(
         val visible = dao.page(id.value, limit).map { it.kind to it.providerId }.toSet()
         messages.filter { message -> (message.ref as MessageRef.Provider).ref.let { it.transport.name to it.providerId } in visible }
     }
-    override suspend fun markShown(id: ConversationId, refs: Set<MessageRef>) = changeRead(id, true, refs)
-    private suspend fun changeRead(id: ConversationId, read: Boolean, shown: Set<MessageRef>?) = withContext(Dispatchers.IO) {
-        if (!context.smsRead(platform)) return@withContext
+    override suspend fun markShown(id: ConversationId, refs: Set<MessageRef>) = changeRead(id, shown = refs)
+    private suspend fun changeRead(id: ConversationId, shown: Set<MessageRef>?) = withContext(Dispatchers.IO) {
+        if (shown == null) requireRead() else if (!context.smsRead(platform)) return@withContext
         val meta = dao.conversation(id.value) ?: return@withContext
-        val values = ContentValues().apply { put("read", if (read) 1 else 0); if (read) put("seen", 1) }
-        if (shown == null) for (uri in listOf(Telephony.Sms.CONTENT_URI, Telephony.Mms.CONTENT_URI)) {
-            requireRead(); resolver.update(uri, values, "thread_id=?", arrayOf(meta.threadId.toString()))
-        } else {
-            val refs = dao.unreadRefs(id.value).filter { MessageRef.Provider(ProviderRef(ProviderTransport.valueOf(it.kind), it.providerId)) in shown }
-            if (refs.isEmpty()) {
-                if (read && meta.manualUnread) {
-                    val anchor = dao.unreadAnchor(id.value, unread = false)
-                    if (anchor == null || MessageRef.Provider(ProviderRef(ProviderTransport.valueOf(anchor.kind), anchor.providerId)) in shown) {
-                        dao.unread(id.value, false)
-                    }
-                }
-                return@withContext
-            }
-            for (ref in refs) { requireRead(); resolver.update(ContentUris.withAppendedId(if (ref.kind == "SMS") Telephony.Sms.CONTENT_URI else Telephony.Mms.CONTENT_URI, ref.providerId), values, "thread_id=?", arrayOf(meta.threadId.toString())) }
+        val refs = dao.unreadRefs(id.value).filter { row ->
+            shown == null || MessageRef.Provider(ProviderRef(ProviderTransport.valueOf(row.kind), row.providerId)) in shown
         }
-        if (read) dao.unread(id.value, false)
-        refresh()
+        val values = ContentValues().apply { put("read", 1); put("seen", 1) }
+        for (ref in refs) {
+            requireRead()
+            val sms = ref.kind == "SMS"
+            val uri = ContentUris.withAppendedId(if (sms) Telephony.Sms.CONTENT_URI else Telephony.Mms.CONTENT_URI, ref.providerId)
+            val date = if (sms) ref.timestamp else ref.timestamp / 1000
+            resolver.update(uri, values, "thread_id=? AND date=?", arrayOf(meta.threadId.toString(), date.toString()))
+        }
+        if (meta.manualUnread) {
+            val latest = if (shown == null || refs.isNotEmpty()) null else dao.unreadAnchor(id.value, unread = false)
+            if (shown == null || refs.isNotEmpty() || latest == null ||
+                MessageRef.Provider(ProviderRef(ProviderTransport.valueOf(latest.kind), latest.providerId)) in shown) {
+                dao.unread(id.value, false)
+            }
+        }
+        if (refs.isNotEmpty()) refresh()
     }
 }
