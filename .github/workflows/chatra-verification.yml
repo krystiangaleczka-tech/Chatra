@@ -2,9 +2,9 @@ name: Chatra domain, migrations and HD
 on:
   push:
     branches: [main]
-    paths: ["android/**", "backend/**", "scripts/ch062_*", ".github/workflows/chatra-verification.yml"]
+    paths: ["android/**", "backend/**", "scripts/ch006_compare_screens.py", "scripts/ch055_*", "scripts/ch057_*", "scripts/ch072_*", "scripts/ch062_*", ".github/workflows/chatra-verification.yml"]
   pull_request:
-    paths: ["android/**", "backend/**", "scripts/ch062_*", ".github/workflows/chatra-verification.yml"]
+    paths: ["android/**", "backend/**", "scripts/ch006_compare_screens.py", "scripts/ch055_*", "scripts/ch057_*", "scripts/ch072_*", "scripts/ch062_*", ".github/workflows/chatra-verification.yml"]
   workflow_dispatch:
 permissions:
   contents: read
@@ -50,6 +50,8 @@ jobs:
       - run: sdkmanager "platforms;android-37.0" "build-tools;36.1.0"
       - run: ./gradlew :core:model:test :core:testing:test :core:designsystem:testDebugUnitTest :app:testDemoDebugUnitTest :app:testFullDebugUnitTest :app:assembleDemoDebug :app:assembleFullDebug :app:lintFullDebug :app:lintDemoDebug
         working-directory: android
+      - name: Install image comparison dependency
+        run: python3 -m pip install "Pillow>=12.1,<13"
       - name: Enable emulator acceleration
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm.rules
@@ -63,6 +65,15 @@ jobs:
           working-directory: android
           disable-animations: true
           script: bash ../scripts/ch062_emulator_checks.sh
+      - name: Check Android 17 transport API
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: '37.0'
+          arch: x86_64
+          target: google_apis
+          working-directory: android
+          disable-animations: true
+          script: bash ../scripts/ch072_emulator_probe.sh
       - uses: actions/upload-artifact@v4
         if: always()
         with:

@@ -90,15 +90,7 @@ class DatabaseTest {
             val name = "migration-from-$version.db"
             context.deleteDatabase(name)
             val legacy = SQLiteDatabase.openOrCreateDatabase(context.getDatabasePath(name).apply { parentFile!!.mkdirs() }, null)
-            val json = InstrumentationRegistry.getInstrumentation().context.assets
-                .open("app.chatra.core.database.ChatraDatabase/$version.json").bufferedReader().use { org.json.JSONObject(it.readText()).getJSONObject("database") }
-            val entities = json.getJSONArray("entities")
-            for (i in 0 until entities.length()) {
-                val entity = entities.getJSONObject(i)
-                legacy.execSQL(entity.getString("createSql").replace("\${TABLE_NAME}", entity.getString("tableName")))
-                val indices = entity.optJSONArray("indices") ?: continue
-                for (j in 0 until indices.length()) legacy.execSQL(indices.getJSONObject(j).getString("createSql").replace("\${TABLE_NAME}", entity.getString("tableName")))
-            }
+            createExportedSchema(legacy, version)
             legacy.execSQL("INSERT INTO ConversationMeta(id,threadId,participantsKey,participants,pinned,muted,manualUnread,trashed) VALUES ('thread',1,'123','[\"123\"]',1,1,1,0)")
             legacy.execSQL("INSERT INTO ProviderMessageRef VALUES ('MMS',7,'thread',20,1,0,'seed')")
             legacy.execSQL("INSERT INTO MediaRef VALUES (9,'MMS',7,'thread','image/jpeg','photo','content://mms/part/9')")
@@ -117,6 +109,66 @@ class DatabaseTest {
                 assertEquals(1, db.hd().all().size)
                 db.hd().shown("thread", listOf("hd")); assertTrue(db.hd().get("hd")!!.read)
             } finally { db.close(); context.deleteDatabase(name) }
+        }
+    }
+
+    @Test fun interruptedMigrationRollsBackAndRetryPreservesDraftScheduleAndTrash() = runBlocking<Unit> {
+        val name = "migration-interrupted.db"
+        context.deleteDatabase(name)
+        val file = context.getDatabasePath(name).apply { parentFile!!.mkdirs() }
+        try {
+            SQLiteDatabase.openOrCreateDatabase(file, null).use { legacy ->
+                createExportedSchema(legacy, 6)
+                legacy.execSQL("INSERT INTO ConversationMeta(id,threadId,participantsKey,participants,pinned,muted,manualUnread,trashed) VALUES ('thread',1,'123','[123]',1,0,0,0)")
+                legacy.execSQL("INSERT INTO OutgoingOperation(id,draftKey,conversationId,recipients,body,mode,subscriptionId,subscriptionLabel,state,version,createdAt,undoUntil,bootCount) VALUES ('op','plan','thread','[]','test','Single',1,'QA','SCHEDULED',0,1,1,1)")
+                legacy.execSQL("INSERT INTO ScheduledRow(id,operationId,instant,local,zone,policy,version,token,title,createdAt,registered,manual,boot) VALUES ('plan','op',123400,'1970-01-01T00:02:03','UTC','Ask',3,'token','QA',1,1,0,1)")
+                legacy.execSQL("INSERT INTO SavedDraft(id,conversationId,payload,revision,updatedAt) VALUES ('draft','thread','original',4,20)")
+                legacy.execSQL("INSERT INTO TrashEntry VALUES ('trash','thread','QA',1,100,0)")
+                legacy.execSQL("INSERT INTO TrashRef VALUES ('SMS',5,'trash',2)")
+                legacy.version = 6
+            }
+            val abort = object : androidx.room.migration.Migration(6, 7) {
+                override fun migrate(db: androidx.sqlite.db.SupportSQLiteDatabase) {
+                    ChatraDatabase.MIGRATION_6_7.migrate(db)
+                    db.execSQL("DELETE FROM SavedDraft")
+                    error("QA interruption before migration commit")
+                }
+            }
+            val failed = Room.databaseBuilder(context, ChatraDatabase::class.java, name).addMigrations(abort).build()
+            try {
+                val failure = runCatching { failed.dao().savedDraft("draft") }.exceptionOrNull()
+                assertEquals("QA interruption before migration commit", failure?.message)
+            } finally { failed.close() }
+            SQLiteDatabase.openDatabase(file.path, null, SQLiteDatabase.OPEN_READONLY).use { legacy ->
+                assertEquals(6, legacy.version)
+                legacy.rawQuery("SELECT name FROM sqlite_master WHERE name='HdRecord'", null).use { assertFalse(it.moveToFirst()) }
+            }
+            val db = Room.databaseBuilder(context, ChatraDatabase::class.java, name).addMigrations(ChatraDatabase.MIGRATION_6_7).build()
+            try {
+                assertEquals("original", db.dao().savedDraft("draft")!!.payload)
+                assertEquals(4L, db.dao().savedDraft("draft")!!.revision)
+                assertEquals("SCHEDULED", db.dao().operation("op")!!.state)
+                val schedule = db.schedules().row("plan")!!
+                assertEquals(123400L, schedule.instant)
+                assertEquals(3, schedule.version)
+                assertEquals("token", schedule.token)
+                assertEquals(5L, db.organization().refs("trash").single().providerId)
+                assertTrue(db.dao().attempts("op").isEmpty())
+            } finally { db.close() }
+        } finally {
+            context.deleteDatabase(name)
+        }
+    }
+
+    private fun createExportedSchema(legacy: SQLiteDatabase, version: Int) {
+        val json = InstrumentationRegistry.getInstrumentation().context.assets
+            .open("app.chatra.core.database.ChatraDatabase/$version.json").bufferedReader().use { org.json.JSONObject(it.readText()).getJSONObject("database") }
+        val entities = json.getJSONArray("entities")
+        for (i in 0 until entities.length()) {
+            val entity = entities.getJSONObject(i)
+            legacy.execSQL(entity.getString("createSql").replace("\${TABLE_NAME}", entity.getString("tableName")))
+            val indices = entity.optJSONArray("indices") ?: continue
+            for (j in 0 until indices.length()) legacy.execSQL(indices.getJSONObject(j).getString("createSql").replace("\${TABLE_NAME}", entity.getString("tableName")))
         }
     }
 
