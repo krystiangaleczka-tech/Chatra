@@ -69,7 +69,7 @@ fun createContainer(app: Application, referenceFrame: Boolean, roleScenario: Str
     queue.dispatchAllowed = schedules::permit
     val search = SystemSearch(db, ProviderSearchSource(app, db, conversations, contacts, platform), scope)
     val incoming = IncomingSms(app, db, platform, conversations)
-    MessageNotifications(app, db, platform, scope, notificationPrefs, sims)
+    MessageNotifications(app, db, platform, scope, notificationPrefs, sims, prefs.threads)
     scope.launch(Dispatchers.IO) {
         onlineHd?.registerRepair()
         onlineHd?.recover()

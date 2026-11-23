@@ -12,7 +12,7 @@ import org.junit.Test
 import java.util.UUID
 
 class PreferencesPersistenceTest {
-    @Test fun threadNotificationOverridesAndGesturesSurviveRestart() = runBlocking<Unit> {
+    @Test fun inboxGesturePreferenceSurvivesRestart() = runBlocking<Unit> {
         val app = InstrumentationRegistry.getInstrumentation().targetContext
         val directory = java.io.File(app.cacheDir, "prefs-qa-${UUID.randomUUID()}").apply { mkdirs() }
         val context = object : android.content.ContextWrapper(app) {
@@ -20,11 +20,8 @@ class PreferencesPersistenceTest {
         }
         try {
             val prefs = LocalNotificationPrefs(context)
-            prefs.update { it.copy(previews = true, threadPreviews = mapOf("quiet" to false, "with-preview" to true), inboxSwipes = true) }
+            prefs.update { it.copy(inboxSwipes = true) }
             val restarted = LocalNotificationPrefs(context)
-            assertFalse(restarted.value.value.preview("quiet"))
-            assertTrue(restarted.value.value.preview("with-preview"))
-            assertTrue(restarted.value.value.preview("inherited"))
             assertTrue(restarted.value.value.inboxSwipes)
         } finally {
             directory.deleteRecursively()
@@ -42,9 +39,9 @@ class PreferencesPersistenceTest {
             val sending = SendingPrefs(SubscriptionId(17), 10, false, MediaVariant.NoLocationCopy, "QA SIM", false)
             val overrides = mapOf(
                 "thread-a" to AppearanceOverride(composition = Composition.Mist, background = ThreadBackground.Sand,
-                    accent = ThreadColor.Teal, bubble = ThreadColor.Plum),
+                    accent = ThreadColor.Teal, bubble = ThreadColor.Plum, notificationPreview = false),
                 "thread-b" to AppearanceOverride(mode = ThemeMode.Dark, background = ThreadBackground.Photo,
-                    wallpaper = UUID.randomUUID().toString()),
+                    wallpaper = UUID.randomUUID().toString(), notificationPreview = true),
             )
             prefs.appearance.update { appearance }; prefs.sending.update { sending }
             prefs.threads.update { overrides }

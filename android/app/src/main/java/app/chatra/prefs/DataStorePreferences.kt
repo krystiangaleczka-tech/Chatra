@@ -118,14 +118,14 @@ class DataStorePreferences(context: Context, scope: CoroutineScope, name: String
             ThreadBackground.entries.find { it.name == field(6) },
             ThreadColor.entries.find { it.name == field(7) },
             ThreadColor.entries.find { it.name == field(8) },
-            field(9),
+            field(9), field(10)?.toBooleanStrictOrNull(),
         )
     }.toMap()
     private fun writeThreads(p: androidx.datastore.preferences.core.MutablePreferences, values: Map<String, AppearanceOverride>) {
         p.asMap().keys.filter { it.name.startsWith("thread_appearance_") }.forEach { p.remove(it) }
         values.forEach { (id, v) ->
             p[stringPreferencesKey("thread_appearance_$id")] = listOf(v.composition?.name.orEmpty(), v.mode?.name.orEmpty(), v.density?.name.orEmpty(), v.textStep?.toString().orEmpty(), v.reduceTransparency.toString(), v.increaseContrast.toString(),
-                v.background?.name.orEmpty(), v.accent?.name.orEmpty(), v.bubble?.name.orEmpty(), v.wallpaper.orEmpty(),
+                v.background?.name.orEmpty(), v.accent?.name.orEmpty(), v.bubble?.name.orEmpty(), v.wallpaper.orEmpty(), v.notificationPreview?.toString().orEmpty(),
             ).joinToString("|")
         }
     }

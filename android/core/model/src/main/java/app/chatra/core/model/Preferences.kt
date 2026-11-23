@@ -62,6 +62,7 @@ data class AppearanceOverride(
     val accent: ThreadColor? = null,
     val bubble: ThreadColor? = null,
     val wallpaper: String? = null,
+    val notificationPreview: Boolean? = null,
 )
 fun resolveAppearance(global: AppearancePrefs, thread: AppearanceOverride?, proAllowed: Boolean = true): AppearancePrefs {
     val base = global.withProAccess(proAllowed)

@@ -149,7 +149,7 @@ internal fun ThreadAppearanceScreen(id: ConversationId, onBack: () -> Unit) {
                 BasicText("Wyślij", Modifier.align(Alignment.End).background(tokens.accent, RoundedCornerShape(10.dp)).padding(8.dp),
                     style = ChatraType.Body.copy(color = Color.White))
             }
-            BasicText(if (notifications.preview(id.value)) "Powiadomienie · przykładowa treść" else "Powiadomienie · otwórz rozmowę",
+            BasicText(if (style.notificationPreview ?: notifications.previews) "Powiadomienie · przykładowa treść" else "Powiadomienie · otwórz rozmowę",
                 style = ChatraType.Preview)
             BasicText("Wygląd jest lokalny. Ustawienia kontrastu mają pierwszeństwo.", style = ChatraType.Preview)
             if (error) BasicText("Nie udało się zapisać ustawienia.", style = ChatraType.Body)
@@ -160,13 +160,12 @@ internal fun ThreadAppearanceScreen(id: ConversationId, onBack: () -> Unit) {
                 "Tło" to style.background?.label,
                 "Akcent" to style.accent?.label,
                 "Dymki" to style.bubble?.label,
-                "Podgląd w powiadomieniach" to notifications.threadPreviews[id.value]?.let { if (it) "Pokaż" else "Ukryj" },
+                "Podgląd w powiadomieniach" to style.notificationPreview?.let { if (it) "Pokaż" else "Ukryj" },
             )
             labels.forEach { (label, value) -> TextAction("$label · ${value ?: "globalne"}", { setting = label }, enabled = !busy) }
             TextAction("Przywróć ustawienia globalne", {
                 apply {
                     store.update { it - id.value }
-                    container.notifications.update { it.copy(threadPreviews = it.threadPreviews - id.value) }
                     style.wallpaper?.let { wallpaperFile(context, it).delete() }
                 }
             }, enabled = !busy)
@@ -197,12 +196,7 @@ internal fun ThreadAppearanceScreen(id: ConversationId, onBack: () -> Unit) {
             }, { setting = null })
         }
         "Podgląd w powiadomieniach" -> ChoiceDialog("Podgląd w powiadomieniach", listOf(inherit, "Ukryj treść", "Pokaż treść"), { option ->
-            apply {
-                container.notifications.update { prefs ->
-                    prefs.copy(threadPreviews = if (option == 0) prefs.threadPreviews - id.value
-                        else prefs.threadPreviews + (id.value to (option == 2)))
-                }
-            }
+            apply { update { it.copy(notificationPreview = when (option) { 1 -> false; 2 -> true; else -> null }) } }
         }, { setting = null })
     }
 }
