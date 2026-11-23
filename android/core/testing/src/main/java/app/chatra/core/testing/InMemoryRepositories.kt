@@ -118,6 +118,27 @@ class InMemoryChatra(
         summaries.update { all -> all[id]?.let { all + (id to it.copy(unreadCount = 0)) } ?: all }
     }
 
+    override suspend fun markUnread(id: ConversationId) {
+        summaries.update { all -> all[id]?.let { all + (id to it.copy(unreadCount = maxOf(1, it.unreadCount))) } ?: all }
+    }
+
+    override suspend fun clearManualUnread(id: ConversationId) {
+        val unread = history.value[id].orEmpty().count { it.direction == Direction.Incoming && !it.read }
+        summaries.update { all -> all[id]?.let { all + (id to it.copy(unreadCount = unread)) } ?: all }
+    }
+
+    override suspend fun markShown(id: ConversationId, refs: Set<MessageRef>) {
+        val previous = history.value[id].orEmpty()
+        val updated = previous.map { if (it.direction == Direction.Incoming && it.ref in refs) it.copy(read = true) else it }
+        history.update { it + (id to updated) }
+        val unread = updated.count { it.direction == Direction.Incoming && !it.read }
+        val manual = previous.none { it.direction == Direction.Incoming && !it.read } &&
+            previous.lastOrNull { it.direction == Direction.Incoming }?.ref !in refs
+        summaries.update { all ->
+            all[id]?.let { summary -> all + (id to summary.copy(unreadCount = if (manual) summary.unreadCount else unread)) } ?: all
+        }
+    }
+
     override suspend fun setPinned(id: ConversationId, pinned: Boolean) {
         summaries.update { all -> all[id]?.let { all + (id to it.copy(pinned = pinned)) } ?: all }
     }

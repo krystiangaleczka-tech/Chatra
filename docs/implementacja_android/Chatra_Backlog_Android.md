@@ -783,7 +783,7 @@ Wykonanie: połączyć zestaw mediów należących do jednej wiadomości w zwię
 
 Odbiór: 1, 2, 3 i co najmniej 4 zdjęcia są prezentowane czytelnie, każde otwiera prawidłowy oryginał lub stan błędu. Weryfikacja: szybkie przewijanie, długie wiadomości, MMS i HD, dostępność i pamięć.
 
-**Stan roboczy 20.11.2026:** Karta HD pokazuje miniatury i licznik nadmiarowych plików. Pełny zakres MMS/HD, podgląd i macierz 1/2/3/4+ pozostają do odbioru. [Audyt i weryfikacja](CH062_CH065_Chmura_i_beta_2026-11-20.md).
+**Stan roboczy 23.11.2026:** Wspólny podgląd MMS i HD pokazuje pierwsze trzy załączniki i licznik pozostałych. Pełny ekran pozwala przejść przez pliki w kolejności wiadomości, otworzyć oryginał i zobaczyć stan niedostępnego pliku. Do odbioru pozostaje szybkie przewijanie dużych zdjęć na telefonie.
 
 ### CH068 Dodać indywidualny wygląd i ustawienia konwersacji
 
@@ -793,7 +793,7 @@ Wykonanie: per conversationId udostępnić nadpisania globalnego stylu dla tła,
 
 Odbiór: kilka rozmów ma różne ustawienia, a zmiana globalna nie usuwa wyjątków; reset przywraca dziedziczenie. Weryfikacja: restart, ciemny/jasny, zdjęcie o małym kontraście, TalkBack, brak zmian wzorca S09.
 
-**Stan roboczy 20.11.2026:** Działa lokalna kompozycja i reset do dziedziczenia. Niezależne tło, akcent, dymki i pełny podgląd nie są ukończone. [Audyt i weryfikacja](CH062_CH065_Chmura_i_beta_2026-11-20.md).
+**Stan roboczy 23.11.2026:** Ustawienia rozmowy pozwalają niezależnie zmienić kompozycję, tło, akcent, kolor wychodzących dymków i podgląd SMS w powiadomieniach. Ekran pokazuje efekty zmian i resetuje wyłącznie otwartą rozmowę. Do odbioru pozostają własne zdjęcia i TalkBack na telefonie.
 
 ### CH069 Wdrożyć gesty i menu szybkich działań skrzynki
 
@@ -803,7 +803,7 @@ Wykonanie: długie przytrzymanie i opcjonalne gesty przesunięcia na liście roz
 
 Odbiór: gesty nie konfliktują z nawigacją systemową, nie usuwają przypadkowo wątku; opcje menu i gest prowadzą do identycznego stanu. Weryfikacja: przełożenie przypięć, długi swipe, TalkBack, mały ekran i restart.
 
-**Stan roboczy 20.11.2026:** Istnieje menu przytrzymania do przypięcia i przeczytania. Pełne menu, gesty, cofanie i akceptacja mapowania pozostają otwarte. [Audyt i weryfikacja](CH062_CH065_Chmura_i_beta_2026-11-20.md).
+**Stan roboczy 23.11.2026:** Menu przytrzymania obejmuje przypięcie, wyciszenie, stan odczytu, szczegóły, skok do nieprzeczytanej i potwierdzany kosz. Przypięcie i wyciszenie można cofnąć. Opcjonalne gesty włącza się w menu Skrzynki. Do odbioru pozostaje mapowanie gestów z nawigacją systemową.
 
 ### CH070 Ujednolicić nieprzeczytane i skok do wiadomości
 
@@ -813,7 +813,7 @@ Wykonanie: implementować oznacz jako nieprzeczytane, oznacz wszystkie jako prze
 
 Odbiór: otwarcie starszej części historii nie oznacza z automatu niewidocznych nowych wiadomości; restart, napływ SMS i aktualizacja danych zachowują logiczne stany. Weryfikacja: wiele nieprzeczytanych, duże stronicowanie, głęboki link, powrót do skrzynki.
 
-**Stan roboczy 20.11.2026:** Istnieją markUnread, markAllRead i kotwica wiadomości; poprawiono odczyt pod zasłaniającymi panelami. Skok do pierwszej nieprzeczytanej i pełna regresja stronicowania pozostają otwarte. [Audyt i weryfikacja](CH062_CH065_Chmura_i_beta_2026-11-20.md).
+**Stan roboczy 23.11.2026:** Skok wybiera najstarszą nieprzeczytaną z historii MMS/SMS i HD. Ręczny znacznik w Skrzynce zachowuje odczyt w systemowej historii. Masowe oznaczanie wymaga potwierdzenia, a skok wstrzymuje odczyt do przewinięcia do celu.
 
 ### CH071 Opcjonalnie dodać eksport i skrót rozmowy na pulpicie
 
@@ -822,6 +822,8 @@ Odbiór: otwarcie starszej części historii nie oznacza z automatu niewidocznyc
 Wykonanie (po osobnej decyzji produktowej): udostępnianie zaznaczonych wiadomości i załączników przez Android Sharesheet, eksport rozmowy ze świadomym określeniem zakresu i metadanych oraz shortcut do conversationId na ekranie głównym. Nie osadzać treści SMS i numerów w identyfikatorach/etykietach bez zgody. Obsłużyć brak rozmowy i zgodę użytkownika.
 
 Odbiór: eksport nie ujawnia przypadkowo innych wątków, zakres jest czytelny, a skrót nie prowadzi do niewłaściwej osoby. Weryfikacja: przekazanie e-mailem, cofnięte uprawnienia, usunięty wątek, restart i dostępność. Nie blokuje pierwszego pełnego wydania bez zatwierdzenia.
+
+**Stan roboczy 23.11.2026:** Udostępnianie i zapis obejmują ręcznie zaznaczone wiadomości z zakresu ostatnich 20, 100 lub 500 pozycji. Opcjonalne metadane to data i kierunek. Dołączenie plików tworzy ZIP z oryginałami. Skrót z ogólną etykietą wymaga potwierdzenia przez launcher. Do odbioru pozostają rzeczywista aplikacja e-mail, launcher i cofnięcie uprawnień podczas zapisu.
 
 ### CH072 Zbadać TelephonyMessagingKit i alternatywny transport Androida
 

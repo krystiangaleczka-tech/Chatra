@@ -9,6 +9,8 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import app.chatra.core.model.AppearanceOverride
+import app.chatra.core.model.ThreadBackground
+import app.chatra.core.model.ThreadColor
 import app.chatra.core.model.AppearancePrefs
 import app.chatra.core.model.Composition
 import app.chatra.core.model.Density
@@ -113,12 +115,18 @@ class DataStorePreferences(context: Context, scope: CoroutineScope, name: String
             field(1)?.let { runCatching { ThemeMode.valueOf(it) }.getOrNull() },
             field(2)?.let { runCatching { Density.valueOf(it) }.getOrNull() },
             field(3)?.toIntOrNull()?.coerceIn(1, 7), field(4) == "true", field(5) == "true",
+            ThreadBackground.entries.find { it.name == field(6) },
+            ThreadColor.entries.find { it.name == field(7) },
+            ThreadColor.entries.find { it.name == field(8) },
+            field(9),
         )
     }.toMap()
     private fun writeThreads(p: androidx.datastore.preferences.core.MutablePreferences, values: Map<String, AppearanceOverride>) {
         p.asMap().keys.filter { it.name.startsWith("thread_appearance_") }.forEach { p.remove(it) }
         values.forEach { (id, v) ->
-            p[stringPreferencesKey("thread_appearance_$id")] = listOf(v.composition?.name.orEmpty(), v.mode?.name.orEmpty(), v.density?.name.orEmpty(), v.textStep?.toString().orEmpty(), v.reduceTransparency.toString(), v.increaseContrast.toString()).joinToString("|")
+            p[stringPreferencesKey("thread_appearance_$id")] = listOf(v.composition?.name.orEmpty(), v.mode?.name.orEmpty(), v.density?.name.orEmpty(), v.textStep?.toString().orEmpty(), v.reduceTransparency.toString(), v.increaseContrast.toString(),
+                v.background?.name.orEmpty(), v.accent?.name.orEmpty(), v.bubble?.name.orEmpty(), v.wallpaper.orEmpty(),
+            ).joinToString("|")
         }
     }
 

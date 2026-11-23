@@ -1,5 +1,16 @@
 package app.chatra.ui.inbox
 
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.semantics.CustomAccessibilityAction
+import androidx.compose.ui.semantics.customActions
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.LiveRegionMode
+import app.chatra.core.model.MessageRef
+import app.chatra.ui.common.ChoiceDialog
+import app.chatra.ui.common.TextAction
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.flow.first
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -93,15 +104,73 @@ fun InboxScreen(
     onSearch: () -> Unit,
     onMore: () -> Unit,
     dock: MainDock,
+    onDetails: (ConversationId) -> Unit = {},
+    onMessage: (ConversationId, MessageRef) -> Unit = { id, _ -> onOpen(id) },
 ) {
     val state by model.state.collectAsStateWithLifecycle()
     val chrome = LocalChrome.current
     val container = app.chatra.ui.LocalContainer.current
+    val notifications by container.notifications.value.collectAsStateWithLifecycle()
+    val scope = rememberCoroutineScope()
+    var menu by remember { mutableStateOf<ConversationSummary?>(null) }
+    var trash by remember { mutableStateOf<ConversationSummary?>(null) }
+    var feedback by remember { mutableStateOf<InboxFeedback?>(null) }
+    var busy by remember { mutableStateOf(false) }
+
+    fun action(block: suspend () -> InboxFeedback?) {
+        if (busy) return
+        busy = true
+        scope.launch {
+            try { feedback = block() }
+            catch (e: CancellationException) { throw e }
+            catch (_: Exception) { feedback = InboxFeedback("Nie udało się wykonać akcji.") }
+            finally { busy = false }
+        }
+    }
+
+    fun pin(row: ConversationSummary) = action {
+        val current = container.conversations.conversation(row.id).first() ?: error("missing conversation")
+        val next = !current.pinned
+        container.conversations.setPinned(row.id, next)
+        InboxFeedback(if (next) "Rozmowa przypięta" else "Rozmowa odpięta") {
+            if (container.conversations.conversation(row.id).first()?.pinned == next) container.conversations.setPinned(row.id, !next)
+        }
+    }
+
+    fun mute(row: ConversationSummary) = action {
+        val id = row.id.value
+        check(container.conversations.conversation(row.id).first() != null)
+        var previous: Long? = null
+        var next: Long? = null
+        container.notifications.update { prefs ->
+            previous = prefs.mutedUntil[id]
+            next = if (prefs.muted(id, container.clock.now().toEpochMilli())) null else Long.MAX_VALUE
+            prefs.copy(mutedUntil = next?.let { prefs.mutedUntil + (id to it) } ?: (prefs.mutedUntil - id))
+        }
+        InboxFeedback(if (next != null) "Rozmowa wyciszona" else "Wyciszenie wyłączone") {
+            container.notifications.update { prefs ->
+                if (prefs.mutedUntil[id] != next) prefs
+                else prefs.copy(mutedUntil = previous?.let { prefs.mutedUntil + (id to it) } ?: (prefs.mutedUntil - id))
+            }
+        }
+    }
+
     // Elementy listy przed kartą rozmów: nagłówek, [wersja testowa], wyszukiwarka, filtr.
     val cardStart = if (container.isDemo) 3 else 4
     ChatraScreen(
         Backgrounds.Inbox,
-        floating = { dock.Render(Modifier.align(Alignment.BottomStart)) },
+        floating = {
+            dock.Render(Modifier.align(Alignment.BottomStart))
+            feedback?.let { notice ->
+                Row(Modifier.align(Alignment.BottomCenter).padding(start = 16.dp, end = 16.dp, bottom = chrome.bottom(26.dp) + 76.dp)
+                    .clip(RoundedCornerShape(16.dp)).background(ChatraColors.white(1f)).padding(horizontal = 12.dp, vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    BasicText(notice.text, Modifier.weight(1f, fill = false).semantics { liveRegion = LiveRegionMode.Polite }, style = ChatraType.Preview)
+                    notice.undo?.let { undo -> TextAction("Cofnij", { action { undo(); InboxFeedback("Cofnięto zmianę") } }, enabled = !busy) }
+                    TextAction("Zamknij", { feedback = null })
+                }
+            }
+        },
     ) {
         // Własny Box: zIndex szkła porządkuje je tylko względem listy, nie względem tła ekranu.
         Box(Modifier.fillMaxSize()) {
@@ -123,13 +192,61 @@ fun InboxScreen(
                 }
                 item("search") { Box(Modifier.padding(bottom = SectionGap)) { SearchField(onSearch) } }
                 item("filter") { Box(Modifier.padding(bottom = SectionGap)) { Filter(state.filter, state.unreadConversations, model::setFilter) } }
-                conversationCard(state, onOpen)
+                conversationCard(state, onOpen, { menu = it },
+                    swipes = notifications.inboxSwipes && !container.referenceFrame,
+                    onSwipe = { row, right -> if (right) pin(row) else mute(row) })
             }
             // Mierzone po liście (czyta jej świeży układ w tym samym przebiegu), rysowane pod nią.
             ConversationCardGlass(listState, cardStart, Modifier.zIndex(-1f))
         }
     }
+
+    menu?.let { row ->
+        val muted = notifications.muted(row.id.value, container.clock.now().toEpochMilli())
+        val labels = listOf(
+            if (row.isUnread) "Oznacz jako przeczytaną" else "Oznacz jako nieprzeczytaną",
+            if (row.pinned) "Odepnij" else "Przypnij",
+            if (muted) "Wyłącz wyciszenie" else "Wycisz do odwołania",
+            "Szczegóły rozmowy",
+        ) + (if (row.isUnread) listOf("Przejdź do pierwszej nieprzeczytanej") else emptyList()) +
+            (if (container.organization.editable) listOf("Przenieś do kosza…") else emptyList())
+        ChoiceDialog(row.title, labels, { option ->
+            when (labels[option]) {
+                labels[0] -> action {
+                    val latest = container.conversations.conversation(row.id).first() ?: error("missing conversation")
+                    if (latest.isUnread) {
+                        val manualOnly = container.conversations.firstUnread(row.id)?.manual == true
+                        container.conversations.markRead(row.id)
+                        InboxFeedback("Rozmowa oznaczona jako przeczytana",
+                            undo = if (manualOnly) suspend { container.conversations.markUnread(row.id) } else null)
+                    } else {
+                        container.conversations.markUnread(row.id)
+                        InboxFeedback("Rozmowa oznaczona jako nieprzeczytana") { container.conversations.clearManualUnread(row.id) }
+                    }
+                }
+                labels[1] -> pin(row)
+                labels[2] -> mute(row)
+                "Szczegóły rozmowy" -> onDetails(row.id)
+                "Przejdź do pierwszej nieprzeczytanej" -> action {
+                    val anchor = container.conversations.firstUnread(row.id)
+                    if (anchor == null) InboxFeedback("Brak nieprzeczytanych wiadomości.")
+                    else { onMessage(row.id, anchor.ref); null }
+                }
+                "Przenieś do kosza…" -> trash = row
+            }
+        }, { menu = null })
+    }
+    trash?.let { row ->
+        ChoiceDialog("Przenieść dotychczasowe wiadomości do kosza na 30 dni?", listOf("Przenieś do kosza"), {
+            action {
+                container.conversations.moveToTrash(row.id)
+                InboxFeedback("Wiadomości w koszu. Możesz je przywrócić w Ustawieniach.")
+            }
+        }, { trash = null })
+    }
 }
+
+private data class InboxFeedback(val text: String, val undo: (suspend () -> Unit)? = null)
 
 private val SectionGap = 12.dp
 private val CardShape = RoundedCornerShape(28.dp)
@@ -142,7 +259,10 @@ private val CardInset = 16.dp
  * Wiersze karty jako osobne elementy listy: komponowane i mierzone są tylko widoczne rozmowy,
  * a nie wszystkie naraz (setki wierszy w jednym elemencie dawały klatki po kilka sekund).
  */
-private fun LazyListScope.conversationCard(state: InboxState, onOpen: (ConversationId) -> Unit) {
+private fun LazyListScope.conversationCard(
+    state: InboxState, onOpen: (ConversationId) -> Unit, onMenu: (ConversationSummary) -> Unit,
+    swipes: Boolean, onSwipe: (ConversationSummary, Boolean) -> Unit,
+) {
     when {
         state.loading -> item("card-status", contentType = "status") { EmptyLine("Wczytujemy rozmowy z telefonu…") }
         state.pinned.isEmpty() && state.others.isEmpty() -> item("card-status", contentType = "status") {
@@ -151,11 +271,11 @@ private fun LazyListScope.conversationCard(state: InboxState, onOpen: (Conversat
         else -> {
             if (state.pinned.isNotEmpty()) {
                 item("label-pinned", contentType = "label") { GroupLabel("Przypięte", divider = false) }
-                items(state.pinned, key = { "c:" + it.id.value }, contentType = { "row" }) { ConversationRow(it, onOpen) }
+                items(state.pinned, key = { "c:" + it.id.value }, contentType = { "row" }) { ConversationRow(it, onOpen, { onMenu(it) }, swipes, { right -> onSwipe(it, right) }) }
             }
             if (state.others.isNotEmpty()) {
                 item("label-others", contentType = "label") { GroupLabel("Pozostałe", divider = state.pinned.isNotEmpty()) }
-                items(state.others, key = { "c:" + it.id.value }, contentType = { "row" }) { ConversationRow(it, onOpen) }
+                items(state.others, key = { "c:" + it.id.value }, contentType = { "row" }) { ConversationRow(it, onOpen, { onMenu(it) }, swipes, { right -> onSwipe(it, right) }) }
             }
         }
     }
@@ -331,15 +451,32 @@ private fun EmptyLine(text: String) {
 }
 
 @Composable
-private fun ConversationRow(row: ConversationSummary, onOpen: (ConversationId) -> Unit) {
+private fun ConversationRow(
+    row: ConversationSummary, onOpen: (ConversationId) -> Unit, onMenu: () -> Unit,
+    swipes: Boolean, onSwipe: (Boolean) -> Unit,
+) {
     val unread = row.isUnread
     val container = app.chatra.ui.LocalContainer.current
-    val scope = rememberCoroutineScope()
-    var menu by remember { mutableStateOf(false) }
+    val swipeAction = androidx.compose.runtime.rememberUpdatedState(onSwipe)
+    val gesture = if (swipes) Modifier.pointerInput(row.id) {
+        var total = 0f
+        var startsInside = false
+        val edge = 24.dp.toPx()
+        val threshold = 72.dp.toPx()
+        detectHorizontalDragGestures(
+            onDragStart = { total = 0f; startsInside = it.x in edge..(size.width - edge) },
+            onHorizontalDrag = { change, distance -> if (startsInside) { change.consume(); total += distance } },
+            onDragEnd = { if (startsInside && kotlin.math.abs(total) >= threshold) swipeAction.value(total > 0) },
+        )
+    } else Modifier
     Row(
         Modifier.fillMaxWidth()
-            .semantics(mergeDescendants = true) { role = Role.Button }
-            .combinedClickable(interactionSource = null, indication = null, onClick = { onOpen(row.id) }, onLongClickLabel = "Akcje rozmowy", onLongClick = { menu = true })
+            .then(gesture)
+            .semantics(mergeDescendants = true) {
+                role = Role.Button
+                customActions = listOf(CustomAccessibilityAction("Akcje rozmowy") { onMenu(); true })
+            }
+            .combinedClickable(interactionSource = null, indication = null, onClick = { onOpen(row.id) }, onLongClickLabel = "Akcje rozmowy", onLongClick = onMenu)
             .padding(horizontal = 16.dp, vertical = if (app.chatra.core.designsystem.theme.LocalAppearanceTokens.current.compact) 4.dp else 9.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -361,16 +498,7 @@ private fun ConversationRow(row: ConversationSummary, onOpen: (ConversationId) -
             Preview(row, unread)
         }
     }
-    if (menu) app.chatra.ui.common.ChoiceDialog(row.title, listOf(if (unread) "Oznacz jako przeczytane" else "Oznacz jako nieprzeczytane", if (row.pinned) "Odepnij" else "Przypnij", "Anuluj"), { option ->
-        scope.launch {
-            runCatching {
-                when (option) {
-                    0 -> if (unread) container.conversations.markRead(row.id) else container.conversations.markUnread(row.id)
-                    1 -> container.conversations.setPinned(row.id, !row.pinned)
-                }
-            }
-        }
-    }, { menu = false })
+
 }
 
 @Composable

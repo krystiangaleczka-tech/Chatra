@@ -1,5 +1,6 @@
 package app.chatra.ui.conversation
 
+import app.chatra.core.model.MessageRef
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Intent
@@ -40,6 +41,9 @@ fun ConversationDetailsScreen(
     onSchedule: () -> Unit,
     onGallery: () -> Unit,
     onTrashed: () -> Unit,
+    onAppearance: () -> Unit = {},
+    onExport: () -> Unit = {},
+    onMessage: (MessageRef) -> Unit = {},
 ) {
     val c = LocalContainer.current
     val context = LocalContext.current
@@ -54,7 +58,6 @@ fun ConversationDetailsScreen(
     var busy by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<String?>(null) }
     var showSim by remember { mutableStateOf(false) }
-    var showThemes by remember { mutableStateOf(false) }
     var showMute by remember { mutableStateOf(false) }
     var showTrash by remember { mutableStateOf(false) }
     var blockRequest by remember { mutableStateOf<BlockRequest?>(null) }
@@ -95,8 +98,6 @@ fun ConversationDetailsScreen(
             val id = summary.id
             val mutedUntil = notifications.mutedUntil[id.value] ?: 0L
             val muted = mutedUntil > now
-            val pro = c.billing?.state?.collectAsStateWithLifecycle()?.value?.entitled == true
-            val themes = app.chatra.core.model.Composition.entries.filter { !it.pro || pro }
             DetailCard {
                 BasicText(summary.title, style = chatraText(22f, 700))
                 BasicText(if (summary.isGroupMms) "Grupowy MMS · ${summary.participants.size} odbiorców" else "Kontakt i numery", style = ChatraType.Preview)
@@ -126,6 +127,12 @@ fun ConversationDetailsScreen(
             }
             DetailCard {
                 DetailsAction("Szukaj w tej rozmowie", onSearch, !busy)
+                if (summary.isUnread) DetailsAction("Przejdź do pierwszej nieprzeczytanej", {
+                    mutate("Nie udało się znaleźć wiadomości.") {
+                        val anchor = c.conversations.firstUnread(id)
+                        if (anchor == null) error = "Brak nieprzeczytanych wiadomości." else onMessage(anchor.ref)
+                    }
+                }, !busy)
                 DetailsAction("Zaplanuj wiadomość", onSchedule, !busy && summary.participants.any { it.address.canReply })
                 if (summary.participants.none { it.address.canReply }) BasicText("Do tego nadawcy nie można zaplanować odpowiedzi.", style = ChatraType.Preview)
                 DetailsAction(if (summary.pinned) "Odepnij rozmowę" else "Przypnij rozmowę", {
@@ -148,13 +155,14 @@ fun ConversationDetailsScreen(
                 if (state.sims.none { it.available }) BasicText("Brak dostępnych kart SIM lub uprawnienia do ich odczytu.", style = ChatraType.Preview)
                 BasicText("Wybór dotyczy szkicu i preferowanej karty tej rozmowy. Nie zmienia wiadomości już przekazanych do wysyłania.", style = ChatraType.Preview)
                 BasicText("Wygląd: ${threadAppearance[id.value]?.composition?.label ?: "dziedziczony z ustawień globalnych"}", style = ChatraType.Body)
-                DetailsAction("Wygląd tej rozmowy", { showThemes = true }, !busy && c.conversationAppearance != null)
+                DetailsAction("Wygląd tej rozmowy", onAppearance, !busy && c.conversationAppearance != null)
                 BasicText("Zmiany wyglądu są widoczne tylko na Twoim telefonie.", style = ChatraType.Preview)
             }
             DetailCard {
                 BasicText("Wspólne media", style = chatraText(17f, 600))
                 DetailsAction("Otwórz galerię", onGallery, !busy && c.gallery != null)
                 if (c.gallery == null) BasicText("Galeria jest niedostępna w tej wersji.", style = ChatraType.Preview)
+                if (!c.isDemo) DetailsAction("Udostępnij, eksportuj lub dodaj skrót", onExport, !busy)
                 DetailsAction("Wróć do wiadomości", onBack, !busy)
             }
             DetailCard {
@@ -167,11 +175,6 @@ fun ConversationDetailsScreen(
                 val until = when (choice) { 0 -> c.clock.now().plusSeconds(3600).toEpochMilli(); 1 -> c.clock.now().plusSeconds(28800).toEpochMilli(); else -> Long.MAX_VALUE }
                 mutate("Nie udało się wyciszyć rozmowy. Spróbuj ponownie.") { c.notifications.update { it.copy(mutedUntil = it.mutedUntil + (id.value to until)) } }
             }, { showMute = false })
-            if (showThemes) ChoiceDialog("Wygląd tej rozmowy", listOf("Użyj wyglądu globalnego") + themes.map { it.label }, { choice ->
-                mutate("Nie udało się zapisać wyglądu. Spróbuj ponownie.") { c.conversationAppearance?.update { all ->
-                    if (choice == 0) all - id.value else all + (id.value to (all[id.value] ?: AppearanceOverride()).copy(composition = themes[choice - 1]))
-                } }
-            }, { showThemes = false })
             if (showTrash) ChoiceDialog("Przenieść dotychczasowe wiadomości do kosza na 30 dni?", listOf("Przenieś do kosza"), {
                 mutate("Nie udało się przenieść wiadomości do kosza. Spróbuj ponownie.") { c.conversations.moveToTrash(id); onTrashed() }
             }, { showTrash = false })

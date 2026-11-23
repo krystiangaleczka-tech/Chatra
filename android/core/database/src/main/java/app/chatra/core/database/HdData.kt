@@ -26,6 +26,8 @@ data class HdRecord(
     @Query("SELECT * FROM HdRecord WHERE id=:id") suspend fun get(id: String): HdRecord?
     @Query("SELECT * FROM HdRecord WHERE conversationId=:id AND NOT EXISTS(SELECT 1 FROM TrashHdRef t WHERE t.id=HdRecord.id)")
     suspend fun snapshot(id: String): List<HdRecord>
+    @Query("SELECT * FROM HdRecord r WHERE conversationId=:id AND incoming=1 AND read=0 AND NOT EXISTS (SELECT 1 FROM TrashHdRef t WHERE t.id=r.id) ORDER BY r.createdAt,r.id LIMIT 1")
+    suspend fun firstUnread(id: String): HdRecord?
     @Query("SELECT * FROM HdRecord WHERE instr(localFiles, char(34) || :id || char(34))>0 AND NOT EXISTS(SELECT 1 FROM TrashHdRef t WHERE t.id=HdRecord.id) ORDER BY createdAt DESC,id DESC")
     suspend fun visibleWithFile(id: String): List<HdRecord>
     @Query("SELECT * FROM HdRecord WHERE state IN ('QUEUED','DOWNLOADING','RECEIPT')") suspend fun pending(): List<HdRecord>
@@ -34,7 +36,7 @@ data class HdRecord(
     @Query("SELECT cursor FROM HdCursor WHERE owner=:owner") suspend fun cursor(owner: String): String?
     @Upsert suspend fun cursor(row: HdCursor)
     @Query("UPDATE HdRecord SET read=1 WHERE conversationId=:id") suspend fun read(id: String)
-    @Query("UPDATE HdRecord SET read=1 WHERE id IN (:ids) AND conversationId=:conversation") suspend fun shown(conversation: String, ids: List<String>)
+    @Query("UPDATE HdRecord SET read=1 WHERE id IN (:ids) AND conversationId=:conversation AND incoming=1 AND NOT EXISTS (SELECT 1 FROM TrashHdRef t WHERE t.id=HdRecord.id)") suspend fun shown(conversation: String, ids: List<String>)
     @Insert(onConflict = OnConflictStrategy.IGNORE) suspend fun hide(rows: List<TrashHdRef>)
     @Query("SELECT id FROM TrashHdRef WHERE entryId=:entry") suspend fun hidden(entry: String): List<String>
     @Insert(onConflict = OnConflictStrategy.IGNORE) suspend fun dismiss(row: HdDismissed)

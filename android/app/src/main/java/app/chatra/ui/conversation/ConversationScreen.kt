@@ -99,6 +99,7 @@ fun ConversationScreen(
     target: app.chatra.core.model.MessageRef? = null,
     contentVisible: Boolean = true,
     anchorRequest: Int = 0,
+    sceneDecoration: androidx.compose.ui.graphics.drawscope.DrawScope.() -> Unit = {},
 ) {
     val state by model.state.collectAsStateWithLifecycle()
     val chrome = LocalChrome.current
@@ -112,6 +113,7 @@ fun ConversationScreen(
     val bottom = maxOf(chrome.bottom(26.dp) + (ContentBottom - 26).dp, chrome.bottom(26.dp) + composerHeight.dp + 12.dp)
     ChatraScreen(
         Backgrounds.Conversation,
+        sceneDecoration = sceneDecoration,
         floating = {
             Header(state, { model.leave(onBack) }, onDetails, Modifier.align(Alignment.TopStart).padding(top = chrome.top(50.dp), start = 12.dp, end = 12.dp))
             Composer(state, model, onExtras, onPickSim, Modifier.align(Alignment.BottomStart).padding(start = 12.dp, end = 12.dp, bottom = chrome.bottom(26.dp)).onSizeChanged { composerHeight = (it.height / density).toInt() })
@@ -119,8 +121,11 @@ fun ConversationScreen(
     ) {
         val list = rememberLazyListState()
         val rows = remember(state.messages) { buildRows(state.messages) }
-        LaunchedEffect(list, rows, lifecycle, contentVisible) {
-            if (!contentVisible) return@LaunchedEffect
+        var anchored by remember(target, anchorRequest) { mutableStateOf(false) }
+        var anchorMissing by remember(target, anchorRequest) { mutableStateOf(false) }
+        var showLatest by remember(target, anchorRequest) { mutableStateOf(false) }
+        LaunchedEffect(list, rows, lifecycle, contentVisible, anchored, showLatest) {
+            if (!contentVisible || (target != null && !anchored && !showLatest)) return@LaunchedEffect
             lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 snapshotFlow {
                     val layout = list.layoutInfo
@@ -131,12 +136,16 @@ fun ConversationScreen(
                 }.distinctUntilChanged().collect { if (it.isNotEmpty()) model.onShown(it) }
             }
         }
-        var anchored by remember(target, anchorRequest) { androidx.compose.runtime.mutableStateOf(false) }
-        LaunchedEffect(target, anchorRequest, rows, state.hasOlder) {
-            if (target != null && !anchored) {
+        LaunchedEffect(target, anchorRequest, rows, state.hasOlder, state.historyLoaded, showLatest) {
+            anchorMissing = false
+            if (target != null && !anchored && !showLatest) {
                 val index = rows.asReversed().indexOfFirst { it is Row.Bubble && it.message.ref == target }
                 if (index >= 0) { list.scrollToItem(index); anchored = true }
                 else if (state.hasOlder) model.loadOlder()
+                else if (state.historyLoaded) {
+                    kotlinx.coroutines.delay(500)
+                    anchorMissing = true
+                }
             }
         }
         // Wzorzec przycina historię do obszaru 108…(844−150); nagłówek nie leży nad wiadomościami.
@@ -147,6 +156,12 @@ fun ConversationScreen(
             verticalArrangement = Arrangement.spacedBy(if (app.chatra.core.designsystem.theme.LocalAppearanceTokens.current.compact) 3.dp else 6.dp, Alignment.Bottom),
             contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 14.dp),
         ) {
+            if (anchorMissing) item("missing-anchor") {
+                Column {
+                    BasicText("Wiadomość jest niedostępna.", style = ChatraType.Preview)
+                    app.chatra.ui.common.TextAction("Przejdź do najnowszych", { showLatest = true })
+                }
+            }
             items(rows.asReversed(), key = { it.key }) { row -> RowContent(row, state, model) }
             if (state.summary?.blocked == true) item("blocked") { BasicText("Nadawca zablokowany lokalnie. Historia zachowana, powiadomienia wyłączone. Odblokuj w szczegółach rozmowy lub ustawieniach.", style = ChatraType.Preview) }
             if (nativeDrafts) item("drafts") { app.chatra.ui.common.TextAction("Szkice", { draftPicker = true }) }
@@ -193,7 +208,11 @@ private fun RowContent(row: Row, state: ConversationState, model: ConversationVi
         }
         is Row.Bubble -> Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             MessageBubble(row.message)
-            if (row.message.hd == null) row.message.attachments.forEach { app.chatra.ui.common.ProviderThumbnail(it) }
+            if (row.message.hd == null && row.message.attachments.isNotEmpty()) {
+                Box(Modifier.fillMaxWidth(), contentAlignment = if (row.message.direction == Direction.Incoming) Alignment.CenterStart else Alignment.CenterEnd) {
+                    AttachmentStack(row.message, Modifier.widthIn(max = 248.dp))
+                }
+            }
             if (row.showStatus || row.message.status in setOf(DeliveryStatus.Failed, DeliveryStatus.PendingUndo, DeliveryStatus.Uncertain, DeliveryStatus.PartiallySent)) {
                 Status(row.message, state, model)
             }
@@ -226,7 +245,7 @@ private fun MessageBubble(m: Message) {
                     Modifier.widthIn(max = 270.dp)
                         .alpha(if (m.status == DeliveryStatus.PendingUndo) 0.62f else 1f)
                         .then(if (m.status == DeliveryStatus.PendingUndo) Modifier else Modifier.cssShadow(shape, Shadows.BubbleOut))
-                        .clip(shape).background(ChatraColors.Accent)
+                        .clip(shape).background(app.chatra.core.designsystem.theme.LocalAppearanceTokens.current.outgoingBubble)
                         .then(if (m.status == DeliveryStatus.PendingUndo) Modifier else Modifier.topHighlight(shape, ChatraColors.white(0.35f)))
                         .padding(horizontal = 14.dp, vertical = 9.dp),
                     style = chatraText(16f, lineHeight = 21f, color = Color.White),
@@ -281,7 +300,6 @@ private fun HdCard(m: Message) {
 private fun LiveHdCard(m: Message) {
     val hd = m.hd ?: return
     val container = app.chatra.ui.LocalContainer.current
-    val context = androidx.compose.ui.platform.LocalContext.current
     val scope = androidx.compose.runtime.rememberCoroutineScope()
     var error by remember { mutableStateOf<String?>(null) }
     var metered by remember { mutableStateOf(false) }
@@ -318,30 +336,9 @@ private fun LiveHdCard(m: Message) {
                 }
                 app.chatra.ui.common.TextAction(if (hd.stage == "AVAILABLE") "Pobierz pliki" else "Ponów pobieranie", ::download, enabled = !busy)
             }
-            if (m.attachments.isNotEmpty()) Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                m.attachments.take(3).forEachIndexed { index, attachment ->
-                    Box(Modifier.weight(1f).clip(RoundedCornerShape(8.dp))) {
-                        app.chatra.ui.common.ProviderThumbnail(attachment.copy(label = "Plik HD ${index + 1}"), height = 76.dp, showLabel = false)
-                        if (index == 2 && m.attachments.size > 3) BasicText("+${m.attachments.size - 3}",
-                            Modifier.align(Alignment.BottomEnd).background(ChatraColors.TextPrimary).padding(4.dp),
-                            style = chatraText(14f, 700, color = Color.White))
-                    }
-                }
-            }
-            m.attachments.forEachIndexed { index, attachment ->
-                app.chatra.ui.common.TextAction("Otwórz plik ${index + 1}", {
-                    scope.launch {
-                        try {
-                            val item = container.gallery?.readable(attachment.id) ?: error("file_unavailable")
-                            val uri = android.net.Uri.parse(item.uri)
-                            context.startActivity(android.content.Intent(android.content.Intent.ACTION_VIEW).apply {
-                                setDataAndType(uri, item.mime)
-                                clipData = android.content.ClipData.newUri(context.contentResolver, "Załącznik HD", uri)
-                                addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                            })
-                        } catch (_: Exception) { error = "Plik lub aplikacja do jego obsługi są niedostępne." }
-                    }
-                })
+            if (m.attachments.isNotEmpty()) AttachmentStack(m)
+            else if (hd.stage in setOf("LOCAL", "READY", "SENT")) {
+                BasicText("Lokalna kopia plików jest niedostępna.", style = ChatraType.Preview)
             }
             error?.let { BasicText(it, style = ChatraType.Preview) }
         }

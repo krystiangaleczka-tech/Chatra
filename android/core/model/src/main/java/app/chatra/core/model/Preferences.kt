@@ -47,6 +47,9 @@ data class Template(val id: TemplateId, val title: String, val body: String, val
 
 data class BlockRule(val address: Address, val systemWide: Boolean, val createdAtMillis: Long)
 
+enum class ThreadColor(val label: String) { Blue("Niebieski"), Plum("Śliwkowy"), Teal("Morski") }
+enum class ThreadBackground(val label: String) { Mist("Mgła"), Sand("Piasek"), Forest("Las"), Photo("Własne zdjęcie") }
+
 /** Null fields inherit global values. Global accessibility cannot be weakened by a thread. */
 data class AppearanceOverride(
     val composition: Composition? = null,
@@ -55,6 +58,10 @@ data class AppearanceOverride(
     val textStep: Int? = null,
     val reduceTransparency: Boolean = false,
     val increaseContrast: Boolean = false,
+    val background: ThreadBackground? = null,
+    val accent: ThreadColor? = null,
+    val bubble: ThreadColor? = null,
+    val wallpaper: String? = null,
 )
 fun resolveAppearance(global: AppearancePrefs, thread: AppearanceOverride?, proAllowed: Boolean = true): AppearancePrefs {
     val base = global.withProAccess(proAllowed)

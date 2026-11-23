@@ -94,7 +94,9 @@ interface ChatraDao {
 
     @Query("SELECT * FROM ProviderMessageRef") fun references(): Flow<List<ProviderMessageRef>>
     @Query("SELECT * FROM ProviderMessageRef WHERE conversationId=:id AND NOT EXISTS (SELECT 1 FROM TrashRef t WHERE t.kind=ProviderMessageRef.kind AND t.providerId=ProviderMessageRef.providerId AND t.timestamp=ProviderMessageRef.timestamp) ORDER BY timestamp DESC, kind, providerId DESC LIMIT :limit") suspend fun page(id: String, limit: Int): List<ProviderMessageRef>
-    @Query("SELECT * FROM ProviderMessageRef WHERE conversationId=:id AND read=0 AND NOT EXISTS (SELECT 1 FROM TrashRef t WHERE t.kind=ProviderMessageRef.kind AND t.providerId=ProviderMessageRef.providerId AND t.timestamp=ProviderMessageRef.timestamp)") suspend fun unreadRefs(id: String): List<ProviderMessageRef>
+    @Query("SELECT * FROM ProviderMessageRef WHERE conversationId=:id AND incoming=1 AND read=0 AND NOT EXISTS (SELECT 1 FROM TrashRef t WHERE t.kind=ProviderMessageRef.kind AND t.providerId=ProviderMessageRef.providerId AND t.timestamp=ProviderMessageRef.timestamp)") suspend fun unreadRefs(id: String): List<ProviderMessageRef>
+    @Query("SELECT * FROM ProviderMessageRef r WHERE conversationId=:id AND incoming=1 AND (:unread=0 OR read=0) AND NOT EXISTS (SELECT 1 FROM TrashRef t WHERE t.kind=r.kind AND t.providerId=r.providerId AND t.timestamp=r.timestamp) ORDER BY CASE WHEN :unread THEN r.timestamp END ASC, r.timestamp DESC, r.kind, r.providerId LIMIT 1")
+    suspend fun unreadAnchor(id: String, unread: Boolean): ProviderMessageRef?
     @Upsert suspend fun upsertReferences(rows: List<ProviderMessageRef>)
     @Query("DELETE FROM ProviderMessageRef WHERE generation != :generation") suspend fun sweep(generation: String)
     @Upsert suspend fun upsertMedia(rows: List<MediaRef>)

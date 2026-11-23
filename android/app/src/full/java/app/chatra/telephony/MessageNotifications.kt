@@ -95,7 +95,7 @@ class MessageNotifications(private val context: Context, private val db: ChatraD
             for (item in audible) {
                 val before = old?.get(item.meta.id)
                 val fresh = old != null && item.unreadCount > (before?.first ?: 0) && item.lastId != before?.second
-                val preview = if (s.prefs.previews && item.lastKind == "SMS" && item.lastId != null) runCatching {
+                val preview = if (s.prefs.preview(item.meta.id) && item.lastKind == "SMS" && item.lastId != null) runCatching {
                     context.contentResolver.query(Uri.withAppendedPath(android.provider.Telephony.Sms.CONTENT_URI, item.lastId.toString()), arrayOf("body"), null, null, null)?.use { c -> if (c.moveToFirst()) c.getString(0)?.take(200) else null }
                 }.getOrNull() else null
                 val notice = NotificationCompat.Builder(context, "sms").setSmallIcon(android.R.drawable.sym_action_chat)

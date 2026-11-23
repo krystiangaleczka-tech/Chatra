@@ -20,6 +20,7 @@ import java.lang.ref.WeakReference
 import kotlin.coroutines.resume
 import kotlinx.coroutines.*
 import app.chatra.local.PrivateMediaStore
+import app.chatra.telephony.smsRead
 
 /** Launchery rejestrowane przed STARTED; wynik zawsze sprawdza faktyczny stan systemu. */
 class SystemPlatform(private val context: Context) : ActivityPlatform, ObservableSmsRoleGate {
@@ -79,6 +80,17 @@ class SystemPlatform(private val context: Context) : ActivityPlatform, Observabl
         }
         return parseComposeIntent(intent)?.let { external.save(it); incomingDraftId.value = it.id; it.id }
     }
+    override fun pinConversation(id: ConversationId): Boolean {
+        if (!context.smsRead(this) || !androidx.core.content.pm.ShortcutManagerCompat.isRequestPinShortcutSupported(context)) return false
+        val shortcut = androidx.core.content.pm.ShortcutInfoCompat.Builder(context, "pinned-conversation:${id.value}")
+            .setShortLabel("Rozmowa w Chatrze")
+            .setIcon(androidx.core.graphics.drawable.IconCompat.createWithResource(context, android.R.drawable.sym_action_chat))
+            .setIntent(Intent(context, app.chatra.MainActivity::class.java).setAction(ACTION_OPEN_CONVERSATION)
+                .putExtra(EXTRA_CONVERSATION_ID, id.value))
+            .build()
+        return androidx.core.content.pm.ShortcutManagerCompat.requestPinShortcut(context, shortcut, null)
+    }
+
     override fun acknowledgeConversation(id: ConversationId) {
         if (incomingConversationId.value == id) incomingConversationId.value = null
     }

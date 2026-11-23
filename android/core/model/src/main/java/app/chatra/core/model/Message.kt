@@ -2,6 +2,13 @@ package app.chatra.core.model
 
 import java.time.Instant
 
+data class UnreadAnchor(val ref: MessageRef, val timestamp: Instant, val manual: Boolean = false)
+
+fun List<Message>.firstUnreadAnchor(): UnreadAnchor? =
+    filter { it.direction == Direction.Incoming && !it.read }
+        .minWithOrNull(compareBy<Message> { it.timestamp }.thenBy { it.ref.toString() })
+        ?.let { UnreadAnchor(it.ref, it.timestamp) }
+
 enum class Direction { Incoming, Outgoing }
 
 /** Status pokazywany przy wiadomości wychodzącej; wyprowadzany z [SendState] operacji. */

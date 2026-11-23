@@ -8,6 +8,7 @@ import androidx.compose.ui.graphics.Color
 @Immutable data class AppearanceTokens(
     val dark: Boolean = false, val contrast: Boolean = false, val matte: Boolean = false,
     val composition: String = "Glass", val compact: Boolean = false,
+    val accentOverride: Color? = null, val bubbleOverride: Color? = null,
 ) {
     val primary get() = if (dark) Color(0xFFF4F6FF) else if (contrast) Color.Black else Color(0xFF0B0D14)
     val secondary get() = if (dark) Color(0xFFD1D7E8) else if (contrast) Color(0xFF222222) else Color(0xFF3A4054)
@@ -43,7 +44,8 @@ import androidx.compose.ui.graphics.Color
         composition == "Forest" -> Color(0xFFD0E8DA)
         else -> Color(0xFFEDF0F7)
     }
-    val accent get() = if (contrast) Color(0xFF0046AA) else Color(0xFF0A6CFF)
+    val accent get() = if (contrast) Color(0xFF0046AA) else accentOverride ?: Color(0xFF0A6CFF)
+    val outgoingBubble get() = if (contrast) accent else bubbleOverride ?: (if (accentOverride != null) Color(0xFF0A6CFF) else accent)
     val link get() = if (dark) Color(0xFF9BC7FF) else if (contrast) Color(0xFF003B91) else if (composition == "Graphite") Color(0xFF004BB8) else Color(0xFF0058D6)
 }
 val LocalAppearanceTokens = staticCompositionLocalOf { AppearanceTokens() }

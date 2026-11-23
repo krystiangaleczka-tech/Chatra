@@ -20,7 +20,12 @@ class PreferencesPersistenceTest {
             var prefs = store()
             val appearance = AppearancePrefs(Composition.Graphite, ThemeMode.Auto, Density.Compact, 7, true, true)
             val sending = SendingPrefs(SubscriptionId(17), 10, false, MediaVariant.NoLocationCopy, "QA SIM", false)
-            val overrides = mapOf("thread-a" to AppearanceOverride(composition = Composition.Mist), "thread-b" to AppearanceOverride(mode = ThemeMode.Dark))
+            val overrides = mapOf(
+                "thread-a" to AppearanceOverride(composition = Composition.Mist, background = ThreadBackground.Sand,
+                    accent = ThreadColor.Teal, bubble = ThreadColor.Plum),
+                "thread-b" to AppearanceOverride(mode = ThemeMode.Dark, background = ThreadBackground.Photo,
+                    wallpaper = UUID.randomUUID().toString()),
+            )
             prefs.appearance.update { appearance }; prefs.sending.update { sending }
             prefs.threads.update { overrides }
             scope.coroutineContext[Job]!!.cancelAndJoin()
