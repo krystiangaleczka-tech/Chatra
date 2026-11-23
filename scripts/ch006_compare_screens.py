@@ -86,6 +86,8 @@ def main() -> None:
     args.output_dir.mkdir(parents=True, exist_ok=True)
     report_path = args.output_dir / "report.json"
     report_path.write_text(json.dumps({"schemaVersion": 1, "screens": reports}, indent=2) + "\n", encoding="utf-8")
+    for name, report in reports.items():
+        print(f"{name}: {report['affectedFraction']:.2%} of pixels above threshold, {len(report['regions'])} regions")
     print(f"CH006 compare: {len(reports)} screens, "
           f"{sum(x['affectedPixels'] for x in reports.values())} changed pixels, report: {report_path}")
 

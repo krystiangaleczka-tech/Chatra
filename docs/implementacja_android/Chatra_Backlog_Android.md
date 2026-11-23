@@ -659,6 +659,7 @@ Odbiór: każdy ekran spełnia kontrakt 1 do 1, wyjątki tylko jawnie uzgodnione
 
 **Odbiór rozszerzony:** Galeria, karta kontaktu, lokalny wygląd i gesty mają zatwierdzone referencje UX; wzorce S01–S10 nie zostały potajemnie zmienione.
 
+**Stan roboczy 23.11.2026:** Zrzuty S01–S10, nakładki i obszary z CH002 są generowane na emulatorze. Odbiór odchyleń wizualnych i fizycznego GPU pozostaje otwarty. [Odbiór na emulatorze](CH055_CH061_Odbior_na_emulatorze.md).
 
 ### CH056 Przetestować rzeczywistą telefonię
 
@@ -675,6 +676,8 @@ Odbiór: raport dostarczenia i odbioru oraz lista wspieranych konfiguracji; brak
 Wykonanie: zabicie procesu, restart, force stop, Doze, brak odblokowania, cofnięcie roli/alarmów, utrata SIM, zmiana daty/strefy/DST. Kontrolowany wyścig cancel/dispatch i edit/alarm. Granice spóźnienia 59/60/61 min i odzyskanie łączności.
 
 Odbiór: brak niejawnego ponowienia przy niepewności i brak wysyłki po skutecznym anulowaniu; zaległości trafiają do właściwej polityki. Weryfikacja: rejestrowane zdarzenia z correlationId bez treści oraz porównanie liczby rzeczywistych wiadomości.
+
+**Stan roboczy 23.11.2026:** CI wykonuje kontrolowany restart emulatora i weryfikuje przywrócenie alarmu bez próby wysyłki przed terminem. [Odbiór na emulatorze](CH055_CH061_Odbior_na_emulatorze.md).
 
 ### CH058 Przetestować HD end to end i bezpieczeństwo
 
@@ -711,6 +714,7 @@ Odbiór: każda akcja osiągalna, brak informacji tylko kolorem i brak uciętej 
 
 **Odbiór rozszerzony:** Każda akcja gestowa ma dostępny odpowiednik w menu; przy fontScale 2.0 wszystkie funkcje pozostają osiągalne.
 
+**Stan roboczy 23.11.2026:** Dodano testy paneli z tekstem 1,3 i 2,0 oraz alternatywy gestów przez akcje dostępności. Ręczny TalkBack pozostaje do odbioru. [Odbiór na emulatorze](CH055_CH061_Odbior_na_emulatorze.md).
 
 ### CH061 Zweryfikować migracje backup i odzyskanie
 
@@ -719,6 +723,8 @@ Odbiór: każda akcja osiągalna, brak informacji tylko kolorem i brak uciętej 
 Wykonanie: polityka backupu prywatnej bazy/indeksu/kluczy, test aktualizacji i przerwane migracje. Nie odtwarzać nieświadomie starych harmonogramów ani sekretów Keystore z nową instalacją. Rekoncyliacja providera i ponowna weryfikacja HD po utracie powiązania. Opisać ograniczenia reinstalacji.
 
 Odbiór: historia providera nienaruszona, brak drugiej wysyłki po przywróceniu. Weryfikacja: aktualizacja instalacji zawierającej szkice, harmonogram i kosz, czysta instalacja i restore testowy.
+
+**Stan roboczy 23.11.2026:** CI sprawdza przerwaną migrację, ochronę backupu i zachowanie providera po wyczyszczeniu lokalnych danych Chatry. [Odbiór na emulatorze](CH055_CH061_Odbior_na_emulatorze.md).
 
 ### CH062 Przygotować CI konfigurację i instrukcje utrzymania
 
@@ -832,6 +838,8 @@ Odbiór: eksport nie ujawnia przypadkowo innych wątków, zakres jest czytelny, 
 Wykonanie (spike, poza MVP): zweryfikować aktualne wymagania Apple TelephonyMessagingKit dla domyślnej aplikacji SMS/MMS/RCS w UE, entitlement, operatorów PL, historię i ograniczenia względem iMessage. Oddzielnie zbadać AlternativeMessageTransportService Android API 37 jako mechanizm alternatywnego transportu bez zakładania automatycznej interoperacyjności RCS. Przygotować macierz ryzyk, koszty, bramki prototypu i decyzję go/no-go.
 
 Odbiór: raport z oficjalnych API i testów na odpowiednich urządzeniach, bez nieudokumentowanej obietnicy dostępu do iMessage lub RCS Google. Weryfikacja: ścieżka uprawnień, operatorzy, wersje OS, zakres historii i transportów. Nie blokuje pierwszego wydania Androida.
+
+**Stan roboczy 23.11.2026:** Zweryfikowano dokumentację Apple i Androida. Ścieżka operatorowa i test iPhone’a pozostają otwarte. Test API 37 sprawdza punkt rozszerzenia wysyłki bez aktywowania go w aplikacji. [Raport i decyzja CH072](CH072_Transporty_operatorowe.md).
 
 ## 8 Planowanie nakładu i ryzyk
 
