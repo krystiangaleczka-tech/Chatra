@@ -192,6 +192,7 @@ private fun Screen(
     val scope = rememberCoroutineScope()
     var inboxMenu by remember { mutableStateOf(false) }
     var confirmRead by remember { mutableStateOf(false) }
+    var configureGestures by remember { mutableStateOf(false) }
     var inboxError by remember { mutableStateOf<String?>(null) }
     when (route) {
         Route.Start -> {
@@ -221,7 +222,7 @@ private fun Screen(
             } else {
                 ConversationScreen(model, { navigator.back() }, { navigator.push(Route.ConversationDetails(route.id)) },
                     { navigator.push(Route.Extras(route.id)) }, { simPicker = true }, target = route.message,
-                    contentVisible = navigator.sheet == null, anchorRequest = navigator.galleryJump,
+                    contentVisible = navigator.sheet == null, anchorRequest = navigator.messageJump,
                     sceneDecoration = conversationBackground(threadAppearance))
             }
             if (simPicker) app.chatra.ui.common.SimPicker(state.sims, (state.sim as? app.chatra.core.model.SimChoice.Ready)?.sim?.id, model::selectSim, { simPicker = false })
@@ -257,16 +258,21 @@ private fun Screen(
             1 -> navigator.select(Tab.Settings)
             2 -> navigator.push(Route.Help)
             3 -> navigator.push(Route.DesignCatalog)
-            4 -> scope.launch {
-                try {
-                    c.notifications.update { it.copy(inboxSwipes = !it.inboxSwipes) }
-                    inboxError = if (c.notifications.value.value.inboxSwipes) "Gesty włączone. Prawo zmienia przypięcie, lewo zmienia wyciszenie."
-                        else "Gesty wyłączone."
-                } catch (e: CancellationException) { throw e }
-                catch (_: Exception) { inboxError = "Nie udało się zmienić ustawienia gestów." }
-            }
+            4 -> configureGestures = true
         }
     }, { inboxMenu = false })
+    if (configureGestures) {
+        val notifications by c.notifications.value.collectAsStateWithLifecycle()
+        val enabled = notifications.inboxSwipes
+        ChoiceDialog("Gesty skrzynki. W prawo zmieniasz przypięcie, w lewo zmieniasz wyciszenie.",
+            listOf(if (enabled) "Wyłącz gesty" else "Włącz gesty"), {
+                scope.launch {
+                    try { c.notifications.update { it.copy(inboxSwipes = !enabled) } }
+                    catch (e: CancellationException) { throw e }
+                    catch (_: Exception) { inboxError = "Nie udało się zmienić ustawienia gestów." }
+                }
+            }, { configureGestures = false })
+    }
     if (confirmRead) ChoiceDialog("Oznaczyć wszystkie rozmowy jako przeczytane?", listOf("Oznacz wszystkie"), {
         scope.launch {
             try { c.conversations.markAllRead() }
@@ -291,7 +297,7 @@ private fun Sheet(sheet: Route.Sheet, navigator: Navigator) {
                 onTrashed = { navigator.popSheets(); navigator.back() },
                 onAppearance = { navigator.push(Route.ThreadAppearance(sheet.id)) },
                 onExport = { navigator.push(Route.ConversationExport(sheet.id)) },
-                onMessage = { navigator.revealGallerySource(sheet.id, it) },
+                onMessage = { navigator.revealMessage(sheet.id, it) },
             )
         }
         is Route.ThreadAppearance -> app.chatra.ui.conversation.ThreadAppearanceScreen(sheet.id) { navigator.back() }
@@ -304,7 +310,7 @@ private fun Sheet(sheet: Route.Sheet, navigator: Navigator) {
                     app.chatra.ui.gallery.GalleryViewModel(sheet.id, gallery)
                 }
                 app.chatra.ui.gallery.ConversationGalleryScreen(model, gallery, onBack = { navigator.back() }) { source ->
-                    navigator.revealGallerySource(sheet.id, source)
+                    navigator.revealMessage(sheet.id, source)
                 }
             }
         }

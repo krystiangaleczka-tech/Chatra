@@ -98,12 +98,14 @@ internal class HdHistory(
     override suspend fun markRead(id: ConversationId) { base.markRead(id); db.hd().read(id.value) }
     override suspend fun markShown(id: ConversationId, refs: Set<MessageRef>) {
         if (!allowed()) return
-        val anchor = firstUnread(id)
+        val hd = refs.filterIsInstance<MessageRef.Hd>()
+        val manualAnchor = if (hd.isNotEmpty() && db.dao().conversation(id.value)?.manualUnread == true) {
+            firstUnread(id)?.takeIf { it.manual }
+        } else null
         val provider = refs.filterIsInstance<MessageRef.Provider>().toSet()
         if (provider.isNotEmpty()) base.markShown(id, provider)
-        val hd = refs.filterIsInstance<MessageRef.Hd>()
         if (hd.isNotEmpty()) db.hd().shown(id.value, hd.map { it.id })
-        if (anchor?.manual == true && anchor.ref in hd) base.clearManualUnread(id)
+        if (manualAnchor != null && hd.any { it == manualAnchor.ref }) base.clearManualUnread(id)
     }
     override suspend fun markAllRead() { base.markAllRead(); db.hd().all().map { it.conversationId }.distinct().forEach { db.hd().read(it) } }
 }

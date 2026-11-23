@@ -106,6 +106,8 @@ fun ConversationScreen(
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val density = LocalDensity.current.density
     val nativeDrafts = !LocalContainer.current.isDemo
+    val scope = androidx.compose.runtime.rememberCoroutineScope()
+    var viewerOpened by remember { mutableStateOf(false) }
     val savedDrafts by model.savedDrafts.collectAsStateWithLifecycle()
     var draftPicker by remember { mutableStateOf(false) }
     var composerHeight by remember { mutableIntStateOf(0) }
@@ -121,26 +123,31 @@ fun ConversationScreen(
     ) {
         val list = rememberLazyListState()
         val rows = remember(state.messages) { buildRows(state.messages) }
+        val messagesByRow = remember(rows) { rows.filterIsInstance<Row.Bubble>().associate { it.key to it.message } }
         var anchored by remember(target, anchorRequest) { mutableStateOf(false) }
         var anchorMissing by remember(target, anchorRequest) { mutableStateOf(false) }
         var showLatest by remember(target, anchorRequest) { mutableStateOf(false) }
-        LaunchedEffect(list, rows, lifecycle, contentVisible, anchored, showLatest) {
-            if (!contentVisible || (target != null && !anchored && !showLatest)) return@LaunchedEffect
+        LaunchedEffect(list, messagesByRow, lifecycle, contentVisible, anchored, showLatest, viewerOpened, draftPicker) {
+            if (!contentVisible || viewerOpened || draftPicker || (target != null && !anchored && !showLatest)) return@LaunchedEffect
             lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 snapshotFlow {
                     val layout = list.layoutInfo
                     val viewport = layout.viewportEndOffset - layout.viewportStartOffset
                     layout.visibleItemsInfo.filter { viewport > 0 && minOf(it.offset + it.size, layout.viewportEndOffset) - maxOf(it.offset, layout.viewportStartOffset) >= minOf(it.size, viewport / 2) }
-                        .mapNotNull { (rows.asReversed().getOrNull(it.index) as? Row.Bubble)?.message }
+                        .mapNotNull { (it.key as? String)?.let(messagesByRow::get) }
                         .filter { it.direction == Direction.Incoming }.map { it.ref }.toSet()
                 }.distinctUntilChanged().collect { if (it.isNotEmpty()) model.onShown(it) }
             }
         }
         LaunchedEffect(target, anchorRequest, rows, state.hasOlder, state.historyLoaded, showLatest) {
-            anchorMissing = false
+            val offset = if (anchorMissing) 1 else 0
             if (target != null && !anchored && !showLatest) {
                 val index = rows.asReversed().indexOfFirst { it is Row.Bubble && it.message.ref == target }
-                if (index >= 0) { list.scrollToItem(index); anchored = true }
+                if (index >= 0) {
+                    list.scrollToItem(index + offset)
+                    anchorMissing = false
+                    anchored = true
+                }
                 else if (state.hasOlder) model.loadOlder()
                 else if (state.historyLoaded) {
                     kotlinx.coroutines.delay(500)
@@ -159,10 +166,16 @@ fun ConversationScreen(
             if (anchorMissing) item("missing-anchor") {
                 Column {
                     BasicText("Wiadomość jest niedostępna.", style = ChatraType.Preview)
-                    app.chatra.ui.common.TextAction("Przejdź do najnowszych", { showLatest = true })
+                    app.chatra.ui.common.TextAction("Przejdź do najnowszych", {
+                        scope.launch {
+                            list.scrollToItem(0)
+                            anchorMissing = false
+                            showLatest = true
+                        }
+                    })
                 }
             }
-            items(rows.asReversed(), key = { it.key }) { row -> RowContent(row, state, model) }
+            items(rows.asReversed(), key = { it.key }) { row -> RowContent(row, state, model) { viewerOpened = it } }
             if (state.summary?.blocked == true) item("blocked") { BasicText("Nadawca zablokowany lokalnie. Historia zachowana, powiadomienia wyłączone. Odblokuj w szczegółach rozmowy lub ustawieniach.", style = ChatraType.Preview) }
             if (nativeDrafts) item("drafts") { app.chatra.ui.common.TextAction("Szkice", { draftPicker = true }) }
             if (state.hasOlder) item("older") { app.chatra.ui.common.TextAction("Wczytaj wcześniejsze wiadomości", model::loadOlder) }
@@ -199,7 +212,7 @@ private fun buildRows(messages: List<Message>): List<Row> {
 }
 
 @Composable
-private fun RowContent(row: Row, state: ConversationState, model: ConversationViewModel) {
+private fun RowContent(row: Row, state: ConversationState, model: ConversationViewModel, onViewerVisible: (Boolean) -> Unit) {
     when (row) {
         is Row.Day -> Box(Modifier.fillMaxWidth().padding(top = if (row.first) 0.dp else 6.dp), contentAlignment = Alignment.Center) {
             GlassSurface(GlassStyles.DayChip, RoundedCornerShape(12.dp)) {
@@ -207,10 +220,10 @@ private fun RowContent(row: Row, state: ConversationState, model: ConversationVi
             }
         }
         is Row.Bubble -> Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            MessageBubble(row.message)
+            MessageBubble(row.message, onViewerVisible)
             if (row.message.hd == null && row.message.attachments.isNotEmpty()) {
                 Box(Modifier.fillMaxWidth(), contentAlignment = if (row.message.direction == Direction.Incoming) Alignment.CenterStart else Alignment.CenterEnd) {
-                    AttachmentStack(row.message, Modifier.widthIn(max = 248.dp))
+                    AttachmentStack(row.message, Modifier.widthIn(max = 248.dp), onViewerVisible)
                 }
             }
             if (row.showStatus || row.message.status in setOf(DeliveryStatus.Failed, DeliveryStatus.PendingUndo, DeliveryStatus.Uncertain, DeliveryStatus.PartiallySent)) {
@@ -221,11 +234,11 @@ private fun RowContent(row: Row, state: ConversationState, model: ConversationVi
 }
 
 @Composable
-private fun MessageBubble(m: Message) {
+private fun MessageBubble(m: Message, onViewerVisible: (Boolean) -> Unit) {
     val incoming = m.direction == Direction.Incoming
     Box(Modifier.fillMaxWidth(), contentAlignment = if (incoming) Alignment.CenterStart else Alignment.CenterEnd) {
         when {
-            m.hd != null -> HdCard(m)
+            m.hd != null -> HdCard(m, onViewerVisible)
             incoming -> GlassSurface(GlassStyles.Bubble, RoundedCornerShape(20.dp, 20.dp, 20.dp, 6.dp), Modifier.widthIn(max = 270.dp), shadows = listOf(Shadows.Bubble)) {
                 BasicText(m.body, Modifier.padding(horizontal = 14.dp, vertical = 9.dp), style = chatraText(16f, lineHeight = 21f))
             }
@@ -257,9 +270,9 @@ private fun MessageBubble(m: Message) {
 
 /** Karta HD szerokości 248: trzy miniatury (+N), plakietka „HD” w wadze 700 (G01). */
 @Composable
-private fun HdCard(m: Message) {
+private fun HdCard(m: Message, onViewerVisible: (Boolean) -> Unit) {
     val hd = m.hd ?: return
-    if (hd.envelopeId != null) { LiveHdCard(m); return }
+    if (hd.envelopeId != null) { LiveHdCard(m, onViewerVisible); return }
     val tiles = listOf(
         Triple(Color(0xFFF3C6A8), Color(0xFFC98E7A), RoundedCornerShape(16.dp, 6.dp, 6.dp, 6.dp)),
         Triple(Color(0xFFA9C7E8), Color(0xFF6C8FB8), RoundedCornerShape(6.dp)),
@@ -297,7 +310,7 @@ private fun HdCard(m: Message) {
 }
 
 @Composable
-private fun LiveHdCard(m: Message) {
+private fun LiveHdCard(m: Message, onViewerVisible: (Boolean) -> Unit) {
     val hd = m.hd ?: return
     val container = app.chatra.ui.LocalContainer.current
     val scope = androidx.compose.runtime.rememberCoroutineScope()
@@ -336,7 +349,7 @@ private fun LiveHdCard(m: Message) {
                 }
                 app.chatra.ui.common.TextAction(if (hd.stage == "AVAILABLE") "Pobierz pliki" else "Ponów pobieranie", ::download, enabled = !busy)
             }
-            if (m.attachments.isNotEmpty()) AttachmentStack(m)
+            if (m.attachments.isNotEmpty()) AttachmentStack(m, onViewerVisible = onViewerVisible)
             else if (hd.stage in setOf("LOCAL", "READY", "SENT")) {
                 BasicText("Lokalna kopia plików jest niedostępna.", style = ChatraType.Preview)
             }

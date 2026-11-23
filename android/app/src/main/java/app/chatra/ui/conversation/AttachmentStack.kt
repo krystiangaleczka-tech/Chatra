@@ -45,7 +45,9 @@ internal suspend fun AppContainer.readableAttachment(message: Message, attachmen
 }
 
 @Composable
-internal fun AttachmentStack(message: Message, modifier: Modifier = Modifier) {
+internal fun AttachmentStack(
+    message: Message, modifier: Modifier = Modifier, onViewerVisible: (Boolean) -> Unit = {},
+) {
     val files = message.attachments
     if (files.isEmpty()) return
     var selected by remember(message.ref) { mutableIntStateOf(-1) }
@@ -69,7 +71,14 @@ internal fun AttachmentStack(message: Message, modifier: Modifier = Modifier) {
             }
         }
     }
-    if (selected in files.indices) AttachmentViewer(message, selected, { selected = it }, { selected = -1 })
+    if (selected in files.indices) {
+        val visibility = rememberUpdatedState(onViewerVisible)
+        DisposableEffect(Unit) {
+            visibility.value(true)
+            onDispose { visibility.value(false) }
+        }
+        AttachmentViewer(message, selected, { selected = it }, { selected = -1 })
+    }
 }
 
 private data class AttachmentPreview(val file: GalleryItem?, val bitmap: ImageBitmap?)

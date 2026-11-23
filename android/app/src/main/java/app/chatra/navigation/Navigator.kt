@@ -19,7 +19,7 @@ import java.net.URLDecoder
 class Navigator(initialTab: Tab = Tab.Conversations, initialStack: List<Route>? = null) {
     var tab by mutableStateOf(initialTab)
         private set
-    var galleryJump by mutableIntStateOf(0)
+    var messageJump by mutableIntStateOf(0)
         private set
     private val stacks = mutableStateMapOf<Tab, List<Route>>().apply {
         Tab.entries.forEach { put(it, listOf(it.root())) }
@@ -67,10 +67,10 @@ class Navigator(initialTab: Tab = Tab.Conversations, initialStack: List<Route>? 
         stacks[tab] = stack.dropLastWhile { it is Route.Sheet }
     }
 
-    fun revealGallerySource(id: ConversationId, ref: MessageRef) {
+    fun revealMessage(id: ConversationId, ref: MessageRef) {
         popSheets()
         replaceTop(Route.Conversation(id, ref))
-        galleryJump++
+        messageJump++
     }
 
     companion object {

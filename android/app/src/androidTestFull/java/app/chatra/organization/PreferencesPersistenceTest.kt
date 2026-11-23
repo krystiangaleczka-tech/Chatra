@@ -4,6 +4,7 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.test.platform.app.InstrumentationRegistry
 import app.chatra.core.model.*
 import app.chatra.prefs.DataStorePreferences
+import app.chatra.local.LocalNotificationPrefs
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.first
 import org.junit.Assert.*
@@ -11,6 +12,25 @@ import org.junit.Test
 import java.util.UUID
 
 class PreferencesPersistenceTest {
+    @Test fun threadNotificationOverridesAndGesturesSurviveRestart() = runBlocking<Unit> {
+        val app = InstrumentationRegistry.getInstrumentation().targetContext
+        val directory = java.io.File(app.cacheDir, "prefs-qa-${UUID.randomUUID()}").apply { mkdirs() }
+        val context = object : android.content.ContextWrapper(app) {
+            override fun getFilesDir(): java.io.File = directory
+        }
+        try {
+            val prefs = LocalNotificationPrefs(context)
+            prefs.update { it.copy(previews = true, threadPreviews = mapOf("quiet" to false, "with-preview" to true), inboxSwipes = true) }
+            val restarted = LocalNotificationPrefs(context)
+            assertFalse(restarted.value.value.preview("quiet"))
+            assertTrue(restarted.value.value.preview("with-preview"))
+            assertTrue(restarted.value.value.preview("inherited"))
+            assertTrue(restarted.value.value.inboxSwipes)
+        } finally {
+            directory.deleteRecursively()
+        }
+    }
+
     @Test fun everyAppearanceAndSendingOptionSurvivesStoreRecreationAndReset() = runBlocking<Unit> {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         val file = java.io.File(context.filesDir, "qa-${UUID.randomUUID()}.preferences_pb")
