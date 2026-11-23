@@ -38,15 +38,21 @@ fun ProviderThumbnail(attachment: AttachmentSummary, height: Dp = 140.dp, showLa
                     retriever.getScaledFrameAtTime(-1, MediaMetadataRetriever.OPTION_CLOSEST_SYNC, 384, 216)?.asImageBitmap()
                 }
             }.getOrNull()
-            runCatching { ImageDecoder.decodeBitmap(ImageDecoder.createSource(context.contentResolver, Uri.parse(uri))) { decoder, info, _ ->
-                val scale = minOf(1f, 384f / maxOf(info.size.width, info.size.height))
-                decoder.setTargetSize((info.size.width * scale).toInt().coerceAtLeast(1), (info.size.height * scale).toInt().coerceAtLeast(1))
-                decoder.allocator = ImageDecoder.ALLOCATOR_SOFTWARE
-            }.asImageBitmap() }.getOrNull()
+            boundedImage(context, Uri.parse(uri), 384)
         }
     }
     Column(Modifier.widthIn(max = 270.dp)) {
-        bitmap?.let { Image(it, attachment.label, Modifier.fillMaxWidth().height(height), contentScale = ContentScale.Fit) }
+        bitmap?.let { Image(it, attachment.label.takeIf { showLabel }, Modifier.fillMaxWidth().height(height), contentScale = ContentScale.Fit) }
         if (showLabel) BasicText(attachment.label, style = ChatraType.Preview)
     }
 }
+
+
+internal fun boundedImage(context: android.content.Context, uri: Uri, maxSide: Int): ImageBitmap? =
+    runCatching {
+        ImageDecoder.decodeBitmap(ImageDecoder.createSource(context.contentResolver, uri)) { decoder, info, _ ->
+            val scale = minOf(1f, maxSide.toFloat() / maxOf(info.size.width, info.size.height))
+            decoder.setTargetSize((info.size.width * scale).toInt().coerceAtLeast(1), (info.size.height * scale).toInt().coerceAtLeast(1))
+            decoder.allocator = ImageDecoder.ALLOCATOR_SOFTWARE
+        }.asImageBitmap()
+    }.getOrNull()

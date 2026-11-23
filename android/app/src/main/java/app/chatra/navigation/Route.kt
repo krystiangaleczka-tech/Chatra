@@ -6,7 +6,11 @@ import app.chatra.core.model.ConversationId
 sealed interface Route {
     data object Start : Route
     data object Inbox : Route
-    data class Conversation(val id: ConversationId, val message: app.chatra.core.model.MessageRef? = null) : Route
+    data class Conversation(
+        val id: ConversationId,
+        val message: app.chatra.core.model.MessageRef? = null,
+        val fromExternal: Boolean = false,
+    ) : Route
     data class Search(val initialQuery: String = "", val initialFilter: String? = null, val conversation: ConversationId? = null) : Route
     data object Scheduled : Route
     data object Settings : Route
@@ -21,6 +25,8 @@ sealed interface Route {
     /** Arkusze rysowane nad poprzednim ekranem z przyciemnieniem. */
     sealed interface Sheet : Route
     data class ConversationDetails(val id: ConversationId) : Sheet
+    data class ThreadAppearance(val id: ConversationId) : Sheet
+    data class ConversationExport(val id: ConversationId) : Sheet
     data class ConversationGallery(val id: ConversationId) : Sheet
     data class Extras(val id: ConversationId) : Sheet
     /** [preset]: plansza S05 z treścią i terminem fixture (tryb referencyjny). */

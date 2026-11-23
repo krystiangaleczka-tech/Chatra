@@ -210,6 +210,14 @@ class SystemIntegrationTest {
         val summary = withTimeout(20000) { history.inbox().first { list -> list.any { it.unreadCount == 450 && it.participants.any { p -> p.address.raw == sender } } }.first { it.participants.any { p -> p.address.raw == sender } } }
         val initial = withTimeout(15000) { history.messages(summary.id).first { it.size == 200 } }
         assertTrue(history.hasOlder(summary.id).first())
+        val unreadAnchor = checkNotNull(history.firstUnread(summary.id))
+        assertEquals(at, unreadAnchor.timestamp.toEpochMilli())
+        assertFalse(initial.any { it.ref == unreadAnchor.ref })
+        assertFalse(unreadAnchor.manual)
+        val exported = history.exportMessages(summary.id, 20)
+        assertEquals((430 until 450).map { "Historia $it" }, exported.map { it.body })
+        assertTrue(exported.all { it.conversationId == summary.id })
+        assertTrue(history.exportMessages(ConversationId("other-thread"), 20).isEmpty())
         history.loadOlder(summary.id); withTimeout(15000) { history.messages(summary.id).first { it.size == 400 } }
         history.loadOlder(summary.id); withTimeout(15000) { history.messages(summary.id).first { it.size == 450 } }
         assertFalse(history.hasOlder(summary.id).first())
@@ -217,8 +225,16 @@ class SystemIntegrationTest {
         context.contentResolver.query(Telephony.Sms.CONTENT_URI, arrayOf("_id"), "address=? AND read=0", arrayOf(sender), null)!!.use { assertEquals(447, it.count) }
         history.setPinned(summary.id, true); history.refresh()
         withTimeout(15000) { history.inbox().first { it.any { row -> row.id == summary.id && row.pinned && row.unreadCount == 447 } } }
-        history.markRead(summary.id); history.markUnread(summary.id)
-        withTimeout(15000) { history.inbox().first { it.any { row -> row.id == summary.id && row.unreadCount == 450 } } }
+        history.markRead(summary.id)
+        withTimeout(15000) { history.inbox().first { it.any { row -> row.id == summary.id && row.unreadCount == 0 } } }
+        history.markUnread(summary.id)
+        withTimeout(15000) { history.inbox().first { it.any { row -> row.id == summary.id && row.unreadCount == 1 } } }
+        assertEquals(UnreadAnchor(initial.last().ref, initial.last().timestamp, manual = true), history.firstUnread(summary.id))
+        history.markShown(summary.id, setOf(unreadAnchor.ref))
+        assertTrue(history.firstUnread(summary.id)?.manual == true)
+        context.contentResolver.query(Telephony.Sms.CONTENT_URI, arrayOf("_id"), "address=? AND read=0", arrayOf(sender), null)!!.use { assertEquals(0, it.count) }
+        history.markShown(summary.id, setOf(initial.last().ref))
+        assertNull(history.firstUnread(summary.id))
         Unit
     }
 

@@ -50,6 +50,7 @@ data class ConversationState(
     val error: String? = null,
     val sendingAvailable: Boolean = true,
     val hasOlder: Boolean = false,
+    val historyLoaded: Boolean = false,
     val attachmentIds: List<AttachmentId> = emptyList(),
     val attachmentBytes: Long = 0,
     val mediaVariant: MediaVariant? = null,
@@ -100,7 +101,7 @@ class ConversationViewModel(
     }
 
     private val base = combine(conversations.conversation(id), conversations.messages(id), queue.operations(), simRepository.cards(), conversations.hasOlder(id)) { s, m, ops, sims, older ->
-        ConversationState(summary = s, messages = m, operations = ops.associateBy { it.id }, sims = sims, hasOlder = older)
+        ConversationState(summary = s, messages = m, operations = ops.associateBy { it.id }, sims = sims, hasOlder = older, historyLoaded = true)
     }
 
     private val simSettings = combine(chosenSim, conversations.preferredSim(id), simRepository.defaultSubscription()) { chosen, preferred, default -> Triple(chosen, preferred, default) }

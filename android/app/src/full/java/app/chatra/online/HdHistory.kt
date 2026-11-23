@@ -54,25 +54,58 @@ internal class HdHistory(
 
     override fun messages(id: ConversationId): Flow<List<Message>> = combine(base.messages(id), db.hd().visible()) { messages, all ->
         if (!allowed()) emptyList() else {
-            val hd = all.filter { it.conversationId == id.value }.map { row ->
-                val files = JSONArray(row.manifest)
-                val local = HdMailbox.ids(row.localFiles).mapNotNull { media.get(it) }
-                Message(MessageRef.Hd(row.id), id, if (row.incoming) Direction.Incoming else Direction.Outgoing,
-                    Address(row.sender), "", Instant.ofEpochMilli(row.createdAt), row.read,
-                    status = if (!row.incoming) DeliveryStatus.Sent else DeliveryStatus.None,
-                    attachments = local.map { AttachmentSummary(it.id, it.mime, "Załącznik HD", it.uri) },
-                    hd = HdInfo(files.length(), (0 until files.length()).sumOf { files.getJSONObject(it).getLong("size") },
-                        downloadedBy = if (!row.incoming && row.downloadedAt != null) row.recipient else null,
-                        envelopeId = row.id, stage = row.state, bytes = row.bytes))
-            }
+            val hd = all.filter { it.conversationId == id.value }.map { render(id, it) }
             (messages + hd).sortedWith(compareBy<Message> { it.timestamp }.thenBy { it.ref.toString() })
         }
     }.flowOn(Dispatchers.IO)
 
+    private suspend fun render(id: ConversationId, row: HdRecord): Message {
+        val files = JSONArray(row.manifest)
+        val local = HdMailbox.ids(row.localFiles)
+        val attachments = (0 until files.length()).map { index ->
+            val fileId = local.getOrNull(index)
+            val file = fileId?.let { media.get(it) }
+            val mime = files.getJSONObject(index).optString("mime").ifBlank { "application/octet-stream" }
+            AttachmentSummary(fileId ?: AttachmentId("hd-slot:${row.id}:$index"), file?.mime ?: mime, "Plik HD ${index + 1}", file?.uri)
+        }
+        return Message(MessageRef.Hd(row.id), id, if (row.incoming) Direction.Incoming else Direction.Outgoing,
+            Address(row.sender), "", Instant.ofEpochMilli(row.createdAt), row.read,
+            status = if (!row.incoming) DeliveryStatus.Sent else DeliveryStatus.None,
+            attachments = attachments,
+            hd = HdInfo(files.length(), (0 until files.length()).sumOf { files.getJSONObject(it).getLong("size") },
+                downloadedBy = if (!row.incoming && row.downloadedAt != null) row.recipient else null,
+                envelopeId = row.id, stage = row.state, bytes = row.bytes))
+    }
+
+    override suspend fun firstUnread(id: ConversationId): UnreadAnchor? = withContext(Dispatchers.IO) {
+        if (!allowed()) return@withContext null
+        val provider = base.firstUnread(id)
+        val hd = db.hd().firstUnread(id.value)?.let { UnreadAnchor(MessageRef.Hd(it.id), Instant.ofEpochMilli(it.createdAt)) }
+        listOfNotNull(provider?.takeUnless { it.manual }, hd).minByOrNull { it.timestamp }?.let { return@withContext it }
+        if (db.dao().conversation(id.value)?.manualUnread != true) return@withContext null
+        val fallback = db.hd().snapshot(id.value).filter { it.incoming }.maxByOrNull { it.createdAt }
+            ?.let { UnreadAnchor(MessageRef.Hd(it.id), Instant.ofEpochMilli(it.createdAt), manual = true) }
+        listOfNotNull(provider, fallback).maxByOrNull { it.timestamp }
+    }
+
+    override suspend fun exportMessages(id: ConversationId, limit: Int): List<Message> = withContext(Dispatchers.IO) {
+        check(allowed()) { "Brak dostępu do historii." }
+        val provider = base.exportMessages(id, limit)
+        val hd = db.hd().snapshot(id.value).sortedBy { it.createdAt }.takeLast(limit).map { render(id, it) }
+        (provider + hd).sortedWith(compareBy<Message> { it.timestamp }.thenBy { it.ref.toString() }).takeLast(limit)
+    }
+
     override suspend fun markRead(id: ConversationId) { base.markRead(id); db.hd().read(id.value) }
     override suspend fun markShown(id: ConversationId, refs: Set<MessageRef>) {
-        base.markShown(id, refs)
-        db.hd().shown(id.value, refs.filterIsInstance<MessageRef.Hd>().map { it.id })
+        if (!allowed()) return
+        val hd = refs.filterIsInstance<MessageRef.Hd>()
+        val manualAnchor = if (hd.isNotEmpty() && db.dao().conversation(id.value)?.manualUnread == true) {
+            firstUnread(id)?.takeIf { it.manual }
+        } else null
+        val provider = refs.filterIsInstance<MessageRef.Provider>().toSet()
+        if (provider.isNotEmpty()) base.markShown(id, provider)
+        if (hd.isNotEmpty()) db.hd().shown(id.value, hd.map { it.id })
+        if (manualAnchor != null && hd.any { it == manualAnchor.ref }) base.clearManualUnread(id)
     }
     override suspend fun markAllRead() { base.markAllRead(); db.hd().all().map { it.conversationId }.distinct().forEach { db.hd().read(it) } }
 }

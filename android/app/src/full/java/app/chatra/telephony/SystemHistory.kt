@@ -40,6 +40,7 @@ class SystemHistory(
     private val context: Context, private val db: ChatraDatabase, private val platform: SystemPlatform,
     private val contacts: ContactsDirectory, private val scope: CoroutineScope,
     private val organization: LocalOrganization? = null,
+    private val attachmentStore: AttachmentStore? = null,
 ) : ConversationRepository {
     private val resolver = context.contentResolver
     internal val indexChanges = MutableStateFlow(0)
@@ -159,14 +160,16 @@ class SystemHistory(
         val hidden = db.organization().hidden().first().map { Triple(it.kind, it.providerId, it.timestamp) }.toSet()
         return readMessages(refs.filterNot { Triple(it.kind, it.providerId, it.timestamp) in hidden })
     }
-    private suspend fun readMessages(refs: List<IndexRef>): List<Message> {
+    private suspend fun readMessages(refs: List<IndexRef>, expectedThread: Long? = null): List<Message> {
         requireRead()
         val out = mutableMapOf<ProviderRef, Message>()
         refs.filter { it.kind == "SMS" }.chunked(200).forEach { chunk ->
             val lookup = chunk.associateBy { it.providerId }
-            resolver.query(Telephony.Sms.CONTENT_URI, arrayOf("_id", "address", "body", "date", "read", "type", "sub_id", "status"), "_id IN (${chunk.joinToString { "?" }})", chunk.map { it.providerId.toString() }.toTypedArray(), null)?.use { c ->
+            resolver.query(Telephony.Sms.CONTENT_URI, arrayOf("_id", "address", "body", "date", "read", "type", "sub_id", "status", "thread_id"), "_id IN (${chunk.joinToString { "?" }})", chunk.map { it.providerId.toString() }.toTypedArray(), null)?.use { c ->
                 while (c.moveToNext()) {
-                    val ref = lookup.getValue(c.long("_id")); val key = ProviderRef(ProviderTransport.SMS, ref.providerId)
+                    val ref = lookup.getValue(c.long("_id"))
+                    if (expectedThread != null && (c.long("thread_id") != expectedThread || c.long("date") != ref.timestamp)) continue
+                    val key = ProviderRef(ProviderTransport.SMS, ref.providerId)
                     out[key] = Message(MessageRef.Provider(key), ConversationId(ref.conversationId), if (c.long("type") == 1L) Direction.Incoming else Direction.Outgoing, Address(c.str("address")), c.str("body"), Instant.ofEpochMilli(c.long("date")), c.long("read") != 0L,
                         c.long("sub_id").toInt().takeIf { it >= 0 }?.let(::SubscriptionId), when (c.long("type")) {
                             2L -> if (c.long("status") == 0L) DeliveryStatus.Delivered else DeliveryStatus.Sent
@@ -179,20 +182,37 @@ class SystemHistory(
         }
         refs.filter { it.kind == "MMS" }.forEach { ref ->
             requireRead()
-            val header = resolver.query(Uri.parse("content://mms/${ref.providerId}"), arrayOf("date", "read", "msg_box", "sub_id"), null, null, null)?.use { c ->
-                if (!c.moveToFirst()) null else listOf(c.long("date") * 1000, c.long("read"), c.long("msg_box"), c.long("sub_id"))
+            val header = resolver.query(Uri.parse("content://mms/${ref.providerId}"), arrayOf("date", "read", "msg_box", "sub_id", "thread_id"), null, null, null)?.use { c ->
+                if (!c.moveToFirst()) null else listOf(c.long("date") * 1000, c.long("read"), c.long("msg_box"), c.long("sub_id"), c.long("thread_id"))
             } ?: return@forEach
+            if (expectedThread != null && (header[4] != expectedThread || header[0] != ref.timestamp)) return@forEach
             var from: Address? = null
             if (header[2] == 1L) resolver.query(Uri.parse("content://mms/${ref.providerId}/addr"), arrayOf("address"), "type=?", arrayOf("137"), null)?.use { c ->
                 if (c.moveToFirst()) c.str("address").takeIf { it.isNotBlank() && it != "insert-address-token" }?.let { from = Address(it) }
             }
             val body = StringBuilder()
-            resolver.query(Uri.parse("content://mms/${ref.providerId}/part"), arrayOf("_id", "ct", "text"), null, null, null)?.use { c -> while (c.moveToNext()) if (c.str("ct") == "text/plain") {
-                val text = c.str("text").ifEmpty { resolver.openInputStream(Uri.parse("content://mms/part/${c.long("_id")}"))?.bufferedReader()?.use { reader -> val chars = CharArray(65_536); val n = reader.read(chars); if (n > 0) String(chars, 0, n) else "" }.orEmpty() }
-                if (body.isNotEmpty()) body.append('\n'); body.append(text.take((65_536 - body.length).coerceAtLeast(0)))
-            } }
+            val indexedMedia = dao.media(ref.conversationId, ref.providerId).associateBy { it.partId }
+            val media = mutableListOf<AttachmentSummary>()
+            resolver.query(Uri.parse("content://mms/${ref.providerId}/part"), arrayOf("_id", "ct", "text"), null, null, "seq ASC, _id ASC")?.use { c ->
+                while (c.moveToNext()) {
+                    val partId = c.long("_id")
+                    val attachment = indexedMedia[partId]
+                    if (attachment != null) {
+                        media += AttachmentSummary(AttachmentId("mms-part:$partId"), attachment.mimeType, attachment.label, attachment.contentUri)
+                    } else if (c.str("ct") == "text/plain") {
+                        val text = c.str("text").ifEmpty {
+                            resolver.openInputStream(Uri.parse("content://mms/part/$partId"))?.bufferedReader()?.use { reader ->
+                                val chars = CharArray(65_536)
+                                val count = reader.read(chars)
+                                if (count > 0) String(chars, 0, count) else ""
+                            }.orEmpty()
+                        }
+                        if (body.isNotEmpty()) body.append('\n')
+                        body.append(text.take((65_536 - body.length).coerceAtLeast(0)))
+                    }
+                }
+            }
             val key = ProviderRef(ProviderTransport.MMS, ref.providerId)
-            val media = dao.media(ref.conversationId, ref.providerId).map { AttachmentSummary(AttachmentId("mms-part:${it.partId}"), it.mimeType, it.label, it.contentUri) }
             out[key] = Message(MessageRef.Provider(key), ConversationId(ref.conversationId), if (header[2] == 1L) Direction.Incoming else Direction.Outgoing, from, body.toString(), Instant.ofEpochMilli(header[0]), header[1] != 0L, subscriptionId = header[3].toInt().takeIf { it >= 0 }?.let(::SubscriptionId), status = if (header[2] == 1L) DeliveryStatus.None else DeliveryStatus.Sent, attachments = media)
         }
         requireRead()
@@ -247,7 +267,14 @@ class SystemHistory(
                 val operation = operations[link.operationId] ?: return@mapNotNull null
                 if (operation.state in listOf("CANCELLED", "SCHEDULED") || indexed.any { (it.ref as? MessageRef.Provider)?.ref == ProviderRef(ProviderTransport.valueOf(link.providerKind), link.providerId ?: -1) }) return@mapNotNull null
                 if (link.providerId != null && operation.state !in activeStates) return@mapNotNull null
-                Message(MessageRef.Local(OperationId(operation.id)), id, Direction.Outgoing, null, operation.body, Instant.ofEpochMilli(operation.createdAt), true, SubscriptionId(operation.subscriptionId), deliveryStatus(operation.state), OperationId(operation.id))
+                val attachmentIds = operation.snapshot?.let { DraftCodec.decode(it).attachmentIds }.orEmpty()
+                val attachments = attachmentIds.mapIndexed { index, attachmentId ->
+                    val file = attachmentStore?.get(attachmentId)
+                    AttachmentSummary(attachmentId, file?.mime ?: "application/octet-stream", "Plik MMS ${index + 1}", file?.uri)
+                }
+                Message(MessageRef.Local(OperationId(operation.id)), id, Direction.Outgoing, null, operation.body,
+                    Instant.ofEpochMilli(operation.createdAt), true, SubscriptionId(operation.subscriptionId), deliveryStatus(operation.state),
+                    OperationId(operation.id), attachments = attachments)
             }
             (mapped + locals.distinctBy { it.operationId }).sortedBy { it.timestamp }
         }.getOrElse { if (it is CancellationException) throw it; diagnostic(it); status.value = HistoryStatus.Error("Nie udało się odczytać rozmowy."); emptyList() }
@@ -275,7 +302,7 @@ class SystemHistory(
         val thread = Telephony.Threads.getOrCreateThreadId(context, recipients.map { it.raw }.toSet())
         ConversationId(ensureConversation(thread, recipients).id)
     }
-    override suspend fun markRead(id: ConversationId) = changeRead(id, true, null)
+    override suspend fun markRead(id: ConversationId) = changeRead(id, shown = null)
     override suspend fun markAllRead() = withContext(Dispatchers.IO) {
         requireRead()
         val values = ContentValues().apply { put("read", 1); put("seen", 1) }
@@ -283,23 +310,55 @@ class SystemHistory(
         dao.clearManualUnread()
         refresh()
     }
-    override suspend fun markUnread(id: ConversationId) { changeRead(id, false, null); dao.unread(id.value, true) }
-    override suspend fun markShown(id: ConversationId, refs: Set<MessageRef>) = changeRead(id, true, refs)
-    private suspend fun changeRead(id: ConversationId, read: Boolean, shown: Set<MessageRef>?) = withContext(Dispatchers.IO) {
-        if (!context.smsRead(platform)) return@withContext
+    override suspend fun markUnread(id: ConversationId) {
+        requireRead()
+        dao.unread(id.value, true)
+    }
+    override suspend fun clearManualUnread(id: ConversationId) {
+        requireRead()
+        dao.unread(id.value, false)
+    }
+
+    override suspend fun firstUnread(id: ConversationId): UnreadAnchor? = withContext(Dispatchers.IO) {
+        requireRead()
+        val unread = dao.unreadAnchor(id.value, unread = true)
+        val manual = unread == null && dao.conversation(id.value)?.manualUnread == true
+        val row = unread ?: if (manual) dao.unreadAnchor(id.value, unread = false) else null
+        row?.let { UnreadAnchor(MessageRef.Provider(ProviderRef(ProviderTransport.valueOf(it.kind), it.providerId)),
+            Instant.ofEpochMilli(it.timestamp), manual) }
+    }
+
+    override suspend fun exportMessages(id: ConversationId, limit: Int): List<Message> = withContext(Dispatchers.IO) {
+        require(limit in 1..500)
+        requireRead()
+        val meta = dao.conversation(id.value)?.takeUnless { it.trashed } ?: return@withContext emptyList()
+        val references = dao.page(id.value, limit)
+        val messages = readMessages(references, expectedThread = meta.threadId)
+        val visible = dao.page(id.value, limit).map { it.kind to it.providerId }.toSet()
+        messages.filter { message -> (message.ref as MessageRef.Provider).ref.let { it.transport.name to it.providerId } in visible }
+    }
+    override suspend fun markShown(id: ConversationId, refs: Set<MessageRef>) = changeRead(id, shown = refs)
+    private suspend fun changeRead(id: ConversationId, shown: Set<MessageRef>?) = withContext(Dispatchers.IO) {
+        if (shown == null) requireRead() else if (!context.smsRead(platform)) return@withContext
         val meta = dao.conversation(id.value) ?: return@withContext
-        val values = ContentValues().apply { put("read", if (read) 1 else 0); if (read) put("seen", 1) }
-        if (shown == null) for (uri in listOf(Telephony.Sms.CONTENT_URI, Telephony.Mms.CONTENT_URI)) {
-            requireRead(); resolver.update(uri, values, "thread_id=?", arrayOf(meta.threadId.toString()))
-        } else {
-            val refs = dao.unreadRefs(id.value).filter { MessageRef.Provider(ProviderRef(ProviderTransport.valueOf(it.kind), it.providerId)) in shown }
-            if (refs.isEmpty()) {
-                if (read && meta.manualUnread && shown.isNotEmpty()) dao.unread(id.value, false)
-                return@withContext
-            }
-            for (ref in refs) { requireRead(); resolver.update(ContentUris.withAppendedId(if (ref.kind == "SMS") Telephony.Sms.CONTENT_URI else Telephony.Mms.CONTENT_URI, ref.providerId), values, "thread_id=?", arrayOf(meta.threadId.toString())) }
+        val refs = dao.unreadRefs(id.value).filter { row ->
+            shown == null || MessageRef.Provider(ProviderRef(ProviderTransport.valueOf(row.kind), row.providerId)) in shown
         }
-        if (read) dao.unread(id.value, false)
-        refresh()
+        val values = ContentValues().apply { put("read", 1); put("seen", 1) }
+        for (ref in refs) {
+            requireRead()
+            val sms = ref.kind == "SMS"
+            val uri = ContentUris.withAppendedId(if (sms) Telephony.Sms.CONTENT_URI else Telephony.Mms.CONTENT_URI, ref.providerId)
+            val date = if (sms) ref.timestamp else ref.timestamp / 1000
+            resolver.update(uri, values, "thread_id=? AND date=?", arrayOf(meta.threadId.toString(), date.toString()))
+        }
+        if (meta.manualUnread) {
+            val latest = if (shown == null || refs.isNotEmpty()) null else dao.unreadAnchor(id.value, unread = false)
+            if (shown == null || refs.isNotEmpty() || latest == null ||
+                MessageRef.Provider(ProviderRef(ProviderTransport.valueOf(latest.kind), latest.providerId)) in shown) {
+                dao.unread(id.value, false)
+            }
+        }
+        if (refs.isNotEmpty()) refresh()
     }
 }

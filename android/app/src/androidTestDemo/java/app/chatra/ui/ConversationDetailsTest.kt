@@ -13,6 +13,7 @@ import app.chatra.core.testing.Fixture
 import app.chatra.di.*
 import app.chatra.navigation.*
 import kotlinx.coroutines.flow.MutableStateFlow
+import java.time.Instant
 import org.junit.Assert.*
 import org.junit.Rule
 import org.junit.Test
@@ -117,6 +118,35 @@ class ConversationDetailsTest {
             assertNull(nav.sheet)
             assertEquals(Route.Conversation(Fixture.Ids.Ola, MessageRef.Hd("hd-ola-wesele")), nav.top)
         }
+    }
+
+    @Test fun deepLinkReadWaitsForAnOlderPageAndLeavesNewestMessageUnread() {
+        val app = ApplicationProvider.getApplicationContext<Application>()
+        val base = createContainer(app, referenceFrame = true)
+        val id = Fixture.Ids.Ola
+        val all = List(80) { index ->
+            Message(MessageRef.Provider(ProviderRef(ProviderTransport.SMS, 10000L + index)), id,
+                Direction.Incoming, null, "Historia QA $index", Instant.EPOCH.plusSeconds(index.toLong()), false)
+        }
+        val messages = MutableStateFlow(all.takeLast(20))
+        val older = MutableStateFlow(true)
+        val readRefs = java.util.concurrent.ConcurrentHashMap.newKeySet<MessageRef>()
+        val container = object : AppContainer by base {
+            override val conversations = object : ConversationRepository by base.conversations {
+                override fun messages(id: ConversationId) = messages
+                override fun hasOlder(id: ConversationId) = older
+                override suspend fun loadOlder(id: ConversationId) {
+                    messages.value = all
+                    older.value = false
+                }
+                override suspend fun markShown(id: ConversationId, refs: Set<MessageRef>) { readRefs.addAll(refs) }
+            }
+        }
+        val nav = Navigator(initialStack = listOf(Route.Inbox, Route.Conversation(id, all.first().ref)))
+        ui.setContent { ProvideChrome(false) { ChatraApp(container, nav, onExit = {}) } }
+        ui.waitUntil(15_000) { readRefs.contains(all.first().ref) }
+        ui.onNodeWithText("Historia QA 0").assertIsDisplayed()
+        assertFalse(readRefs.contains(all.last().ref))
     }
 
     private fun capturePanel(name: String) {

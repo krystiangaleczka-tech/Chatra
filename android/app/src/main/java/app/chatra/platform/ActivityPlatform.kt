@@ -16,5 +16,6 @@ interface ActivityPlatform : PlatformAccess {
     fun acknowledgeScheduled()
     val incomingConversationId: StateFlow<ConversationId?>
     fun acknowledgeConversation(id: ConversationId)
+    fun pinConversation(id: ConversationId): Boolean = false
     fun acknowledgeCompose(id: String)
 }

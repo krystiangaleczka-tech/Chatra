@@ -29,6 +29,10 @@ class HdMailboxTest {
             val id = remote.id
             assertEquals(1, db.hd().all().size)
             assertEquals(1, history.inbox().first().single().unreadCount)
+            assertEquals(MessageRef.Hd(id), history.firstUnread(ConversationId("thread"))?.ref)
+            val placeholders = history.messages(ConversationId("thread")).first().single().attachments
+            assertEquals(listOf("Plik HD 1", "Plik HD 2"), placeholders.map { it.label })
+            assertTrue(placeholders.all { it.contentUri == null })
             assertNull(remote.downloaded)
             mailbox.enqueue(id, false)
             remote.breakChunk = true
@@ -48,7 +52,7 @@ class HdMailboxTest {
             assertEquals(calls, remote.offsets.size)
             assertEquals("READY", db.hd().get(id)!!.state)
             assertFalse(db.hd().get(id)!!.read)
-            assertEquals(1, history.messages(ConversationId("thread")).first().size)
+            assertEquals(local, history.messages(ConversationId("thread")).first().single().attachments.map { it.id })
             history.markShown(ConversationId("thread"), setOf(MessageRef.Hd(id)))
             assertTrue(db.hd().get(id)!!.read)
             assertEquals(0, history.inbox().first().single().unreadCount)

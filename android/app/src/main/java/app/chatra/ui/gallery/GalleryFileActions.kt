@@ -24,10 +24,7 @@ internal fun suggestedFileName(item: GalleryItem): String {
 
 /** Receivers only receive a temporary read grant for one Chatra-owned file. */
 internal suspend fun fileIntent(context: Context, item: GalleryItem, share: Boolean): Intent = withContext(Dispatchers.IO) {
-    val root = File(context.cacheDir, "gallery-share").apply { check(isDirectory || mkdirs()) }
-    val cutoff = System.currentTimeMillis() - 24L * 60 * 60 * 1000
-    root.listFiles().orEmpty().filter { it.lastModified() < cutoff }.forEach { it.deleteRecursively() }
-    val folder = File(root, java.util.UUID.randomUUID().toString()).apply { check(mkdir()) }
+    val folder = temporaryShareFolder(context)
     try {
         val copy = File(folder, suggestedFileName(item))
         copy.outputStream().use { streamFile(context, item, it) }
@@ -47,6 +44,13 @@ internal suspend fun fileIntent(context: Context, item: GalleryItem, share: Bool
     }
 }
 
+internal fun temporaryShareFolder(context: Context): File {
+    val root = File(context.cacheDir, "gallery-share").apply { check(isDirectory || mkdirs()) }
+    val cutoff = System.currentTimeMillis() - 24L * 60 * 60 * 1000
+    root.listFiles().orEmpty().filter { it.lastModified() < cutoff }.forEach { it.deleteRecursively() }
+    return File(root, java.util.UUID.randomUUID().toString()).apply { check(mkdir()) }
+}
+
 internal suspend fun saveFile(context: Context, destination: Uri, resolve: suspend () -> GalleryItem) = withContext(Dispatchers.IO) {
     require(destination.scheme == "content")
     val resolver = context.contentResolver
@@ -60,7 +64,7 @@ internal suspend fun saveFile(context: Context, destination: Uri, resolve: suspe
     }
 }
 
-private suspend fun streamFile(context: Context, item: GalleryItem, output: OutputStream) {
+internal suspend fun streamFile(context: Context, item: GalleryItem, output: OutputStream) {
     val uri = Uri.parse(item.uri)
     require(uri.scheme == "content" && (uri.authority == "mms" || uri.authority == "${context.packageName}.files"))
     context.contentResolver.openInputStream(uri)?.use { input ->

@@ -52,13 +52,15 @@ class LocalNotificationPrefs(context: Context) : PreferenceStore<NotificationPre
         if (!file.baseFile.exists()) return NotificationPrefs()
         val json = JSONObject(file.readFully().toString(Charsets.UTF_8))
         val muted = json.getJSONObject("muted")
-        return NotificationPrefs(json.optBoolean("previews", false), muted.keys().asSequence().associateWith { muted.getLong(it) })
+        return NotificationPrefs(json.optBoolean("previews", false), muted.keys().asSequence().associateWith { muted.getLong(it) },
+            json.optBoolean("inboxSwipes"))
     }
     override val value = MutableStateFlow(read())
     override suspend fun update(transform: (NotificationPrefs) -> NotificationPrefs) = withContext(Dispatchers.IO) {
         mutex.withLock {
             val next = transform(value.value)
-            file.replace(JSONObject().put("previews", next.previews).put("muted", JSONObject(next.mutedUntil)).toString().toByteArray())
+            file.replace(JSONObject().put("previews", next.previews).put("muted", JSONObject(next.mutedUntil))
+                .put("inboxSwipes", next.inboxSwipes).toString().toByteArray())
             value.value = next
         }
     }

@@ -34,7 +34,9 @@ internal fun conversationIntent(context: Context, id: String): PendingIntent = P
 
 /** Visibility changes, unread counts and timed mutes are reconciled even after a cold start. */
 class MessageNotifications(private val context: Context, private val db: ChatraDatabase, private val platform: SystemPlatform,
-    scope: CoroutineScope, private val prefs: PreferenceStore<NotificationPrefs>, private val sims: SimRepository) {
+    scope: CoroutineScope, private val prefs: PreferenceStore<NotificationPrefs>, private val sims: SimRepository,
+    threadAppearance: PreferenceStore<Map<String, AppearanceOverride>>,
+) {
     private val manager = context.getSystemService(NotificationManager::class.java)
     private val dao = db.dao()
     private var previous: Map<String, Pair<Int, Long?>>? = null
@@ -48,17 +50,22 @@ class MessageNotifications(private val context: Context, private val db: ChatraD
             NotificationChannel("hd", "Chatra HD", NotificationManager.IMPORTANCE_DEFAULT),
         ).onEach { it.lockscreenVisibility = Notification.VISIBILITY_PRIVATE })
         val ticks = flow { while (true) { emit(System.currentTimeMillis()); delay(1000) } }
+        val previews = threadAppearance.value.map { settings ->
+            settings.mapNotNull { (id, style) -> style.notificationPreview?.let { id to it } }.toMap()
+        }.distinctUntilChanged()
         scope.launch(Dispatchers.IO) {
             combine(dao.indices(), platform.changes, prefs.value, sims.cards(), ticks) { rows, _, settings, cards, now ->
                 Snapshot(rows, settings, cards, now)
             }.distinctUntilChangedBy { s -> listOf(s.rows, s.prefs, s.cards, s.rows.map { s.prefs.muted(it.meta.id, s.now) }, permitted()) }
+                .combine(previews) { snapshot, overrides -> snapshot.copy(previews = overrides) }
                 .combine(db.organization().blocks()) { snapshot, _ -> snapshot }.collect { update(it) }
         }
         scope.launch(Dispatchers.IO) {
             combine(dao.operations(), platform.changes, prefs.value) { operations, _, p -> operations to p }.collect { (ops, p) -> status(ops, p) }
         }
     }
-    private data class Snapshot(val rows: List<ConversationIndex>, val prefs: NotificationPrefs, val cards: List<SimCard>, val now: Long)
+    private data class Snapshot(val rows: List<ConversationIndex>, val prefs: NotificationPrefs, val cards: List<SimCard>,
+        val now: Long, val previews: Map<String, Boolean> = emptyMap())
     private fun permitted() = context.smsRead(platform) && (Build.VERSION.SDK_INT < 33 || ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == android.content.pm.PackageManager.PERMISSION_GRANTED)
     private fun clean(prefix: String, active: Set<String>, id: Int) {
         manager.activeNotifications.mapNotNull { it.tag }.filter { it.startsWith(prefix) && it !in active }.forEach { manager.cancel(it, id) }
@@ -78,7 +85,7 @@ class MessageNotifications(private val context: Context, private val db: ChatraD
     @SuppressLint("MissingPermission")
     private suspend fun update(s: Snapshot) {
         val dbBlocks = db.organization().blocks().first()
-        val visible = if (permitted()) s.rows.filter { !it.meta.trashed && it.lastAt != null && dbBlocks.none { rule -> addresses(it.meta.participants).any { a -> recipientKey(a.raw) == rule.addressKey } } && (it.unreadCount > 0 || it.meta.manualUnread) } else emptyList()
+        val visible = if (permitted()) s.rows.filter { !it.meta.trashed && it.lastAt != null && dbBlocks.none { rule -> addresses(it.meta.participants).any { a -> recipientKey(a.raw) == rule.addressKey } } && it.unreadCount > 0 } else emptyList()
         val audible = visible.filterNot { it.meta.muted || s.prefs.muted(it.meta.id, s.now) }
         val current = s.rows.associate { it.meta.id to (it.unreadCount to it.lastId) }
         val old = previous; previous = if (context.smsRead(platform)) current else null
@@ -95,7 +102,7 @@ class MessageNotifications(private val context: Context, private val db: ChatraD
             for (item in audible) {
                 val before = old?.get(item.meta.id)
                 val fresh = old != null && item.unreadCount > (before?.first ?: 0) && item.lastId != before?.second
-                val preview = if (s.prefs.previews && item.lastKind == "SMS" && item.lastId != null) runCatching {
+                val preview = if ((s.previews[item.meta.id] ?: s.prefs.previews) && item.lastKind == "SMS" && item.lastId != null) runCatching {
                     context.contentResolver.query(Uri.withAppendedPath(android.provider.Telephony.Sms.CONTENT_URI, item.lastId.toString()), arrayOf("body"), null, null, null)?.use { c -> if (c.moveToFirst()) c.getString(0)?.take(200) else null }
                 }.getOrNull() else null
                 val notice = NotificationCompat.Builder(context, "sms").setSmallIcon(android.R.drawable.sym_action_chat)

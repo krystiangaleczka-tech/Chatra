@@ -25,6 +25,18 @@ interface ConversationRepository {
     fun preferredSim(id: ConversationId): Flow<SubscriptionId?> = kotlinx.coroutines.flow.flowOf(null)
     suspend fun preferSim(id: ConversationId, sim: SubscriptionId, label: String) {}
     suspend fun markUnread(id: ConversationId) {}
+    suspend fun clearManualUnread(id: ConversationId) {}
+    suspend fun firstUnread(id: ConversationId): UnreadAnchor? {
+        val history = messages(id).first()
+        return history.firstUnreadAnchor()
+            ?: if (conversation(id).first()?.isUnread == true) history.lastOrNull { it.direction == Direction.Incoming }
+                ?.let { UnreadAnchor(it.ref, it.timestamp, manual = true) } else null
+    }
+    /** A bounded snapshot of visible history from this conversation, regardless of the screen's scroll position. */
+    suspend fun exportMessages(id: ConversationId, limit: Int): List<Message> {
+        require(limit in 1..500)
+        return messages(id).first().filter { it.conversationId == id && it.ref !is MessageRef.Local }.takeLast(limit)
+    }
     suspend fun markAllRead() { inbox().first().filter { it.isUnread }.forEach { markRead(it.id) } }
     suspend fun markShown(id: ConversationId, refs: Set<MessageRef>) { markRead(id) }
 }

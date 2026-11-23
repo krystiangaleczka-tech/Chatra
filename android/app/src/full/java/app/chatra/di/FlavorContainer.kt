@@ -54,10 +54,10 @@ fun createContainer(app: Application, referenceFrame: Boolean, roleScenario: Str
     val db = ChatraDatabase.open(app)
     val organization = LocalOrganization(app, db, platform, scope)
     val sims = SystemSim(app, platform, scope)
-    val conversations = SystemHistory(app, db, platform, contacts, scope, organization)
+    val mediaStore = PrivateMediaStore(app)
+    val conversations = SystemHistory(app, db, platform, contacts, scope, organization, mediaStore)
     val drafts = RoomDrafts(db)
     val smsText = PlatformSmsText(app)
-    val mediaStore = PrivateMediaStore(app)
     val onlineHd = if (BuildConfig.HD_PILOT) HdQueue(app, mediaStore) else null
     onlineHd?.mailbox = onlineHd?.let { hd -> HdMailbox(app, db, mediaStore, conversations, hd.transport) { hd.identity.value.installation } }
     val history = HdHistory(conversations, db, mediaStore, scope) { app.smsRead(platform) }
@@ -69,7 +69,7 @@ fun createContainer(app: Application, referenceFrame: Boolean, roleScenario: Str
     queue.dispatchAllowed = schedules::permit
     val search = SystemSearch(db, ProviderSearchSource(app, db, conversations, contacts, platform), scope)
     val incoming = IncomingSms(app, db, platform, conversations)
-    MessageNotifications(app, db, platform, scope, notificationPrefs, sims)
+    MessageNotifications(app, db, platform, scope, notificationPrefs, sims, prefs.threads)
     scope.launch(Dispatchers.IO) {
         onlineHd?.registerRepair()
         onlineHd?.recover()

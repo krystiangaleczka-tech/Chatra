@@ -25,7 +25,11 @@ interface AttachmentStore {
     fun cameraUri(): String
 }
 
-data class NotificationPrefs(val previews: Boolean = false, val mutedUntil: Map<String, Long> = emptyMap()) {
+data class NotificationPrefs(
+    val previews: Boolean = false,
+    val mutedUntil: Map<String, Long> = emptyMap(),
+    val inboxSwipes: Boolean = false,
+) {
     fun muted(id: String, now: Long): Boolean = (mutedUntil[id] ?: 0L) > now
 }
 

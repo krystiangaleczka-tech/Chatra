@@ -64,6 +64,10 @@ import app.chatra.core.model.SettingsEntry
 import app.chatra.core.model.ObservableSmsRoleGate
 import app.chatra.platform.ActivityPlatform
 import app.chatra.ui.common.ChoiceDialog
+import app.chatra.ui.conversation.color
+import app.chatra.ui.conversation.conversationBackground
+import app.chatra.core.model.HistoryStatus
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.rememberCoroutineScope
@@ -103,7 +107,7 @@ fun ChatraApp(container: AppContainer, initial: Navigator?, onExit: () -> Unit, 
             platform.acknowledgeScheduled()
         } else if (held && incomingConversation != null && platform != null) {
             navigator.select(Tab.Conversations)
-            navigator.resetTo(Route.Inbox, Route.Conversation(incomingConversation!!))
+            navigator.resetTo(Route.Inbox, Route.Conversation(incomingConversation!!, fromExternal = true))
             platform.acknowledgeConversation(incomingConversation!!)
         } else if (held && incoming != null && platform != null && navigator.screen != Route.Start) {
             navigator.push(Route.NewMessage(externalId = incoming))
@@ -120,9 +124,11 @@ fun ChatraApp(container: AppContainer, initial: Navigator?, onExit: () -> Unit, 
     val dark = appearance.mode == app.chatra.core.model.ThemeMode.Dark ||
         (appearance.mode == app.chatra.core.model.ThemeMode.Auto && androidx.compose.foundation.isSystemInDarkTheme())
     val tokens = app.chatra.core.designsystem.theme.AppearanceTokens(
-        dark = dark, contrast = appearance.increaseContrast || appearance.composition == app.chatra.core.model.Composition.Contrast,
-        matte = appearance.reduceTransparency || appearance.increaseContrast || appearance.composition == app.chatra.core.model.Composition.Contrast,
+        dark = dark, contrast = appearance.increaseContrast || app.chatra.core.model.Composition.Contrast in listOf(globalAppearance.composition, appearance.composition),
+        matte = forceMatte || appearance.reduceTransparency || appearance.increaseContrast ||
+            app.chatra.core.model.Composition.Contrast in listOf(globalAppearance.composition, appearance.composition),
         composition = appearance.composition.name, compact = appearance.density == app.chatra.core.model.Density.Compact,
+        accentOverride = threadAppearance?.accent.color(), bubbleOverride = threadAppearance?.bubble.color(),
     )
     val activityContext = androidx.compose.ui.platform.LocalContext.current
     androidx.compose.runtime.SideEffect {
@@ -150,7 +156,7 @@ fun ChatraApp(container: AppContainer, initial: Navigator?, onExit: () -> Unit, 
             Box(Modifier.fillMaxSize().backdropSource(screenBackdrop).then(
                 if (navigator.sheet != null) Modifier.clearAndSetSemantics {} else Modifier,
             )) {
-                savedScreens.SaveableStateProvider(navigator.screen.toString()) { Screen(navigator.screen, navigator, listStates) }
+                savedScreens.SaveableStateProvider(navigator.screen.toString()) { Screen(navigator.screen, navigator, listStates, threadAppearance) }
             }
             navigator.sheet?.let { sheet ->
                 Box(Modifier.fillMaxSize().background(Backgrounds.SheetScrim)
@@ -163,6 +169,8 @@ fun ChatraApp(container: AppContainer, initial: Navigator?, onExit: () -> Unit, 
                         is Route.Schedule -> "Zaplanuj wysyłkę"
                         is Route.ConversationDetails -> "Szczegóły rozmowy"
                         is Route.ConversationGallery -> "Wspólne"
+                        is Route.ThreadAppearance -> "Wygląd tej rozmowy"
+                        is Route.ConversationExport -> "Udostępnianie i eksport"
                     } }) { Sheet(sheet, navigator) }
                 }
             }
@@ -175,11 +183,17 @@ private fun startStack(container: AppContainer): List<Route> =
     if (container.isDemo || container.smsRole.isHeld()) listOf(Route.Inbox) else listOf(Route.Start)
 
 @Composable
-private fun Screen(route: Route, navigator: Navigator, listStates: MutableMap<Tab, LazyListState>) {
+private fun Screen(
+    route: Route, navigator: Navigator, listStates: MutableMap<Tab, LazyListState>,
+    threadAppearance: app.chatra.core.model.AppearanceOverride?,
+) {
     val c = LocalContainer.current
     val dock = MainDock(navigator.tab, navigator::select) { navigator.push(Route.NewMessage()) }
     val scope = rememberCoroutineScope()
     var inboxMenu by remember { mutableStateOf(false) }
+    var confirmRead by remember { mutableStateOf(false) }
+    var configureGestures by remember { mutableStateOf(false) }
+    var inboxError by remember { mutableStateOf<String?>(null) }
     when (route) {
         Route.Start -> {
             val model = viewModel { StartViewModel(c.smsRole) }
@@ -189,13 +203,28 @@ private fun Screen(route: Route, navigator: Navigator, listStates: MutableMap<Ta
         Route.Inbox -> {
             val model = viewModel { InboxViewModel(c.conversations) }
             val list = listStates.getOrPut(Tab.Conversations) { rememberLazyListState() }
-            InboxScreen(model, list, { navigator.push(Route.Conversation(it)) }, { navigator.push(Route.Search()) }, { inboxMenu = true }, dock)
+            InboxScreen(model, list, { navigator.push(Route.Conversation(it)) }, { navigator.push(Route.Search()) }, { inboxMenu = true }, dock,
+                onDetails = { id -> navigator.push(Route.Conversation(id)); navigator.push(Route.ConversationDetails(id)) },
+                onMessage = { id, ref -> navigator.push(Route.Conversation(id, ref)) })
         }
         is Route.Conversation -> {
             val model = conversationModel(c, route.id)
             var simPicker by remember { mutableStateOf(false) }
             val state by model.state.collectAsStateWithLifecycle()
-            ConversationScreen(model, { navigator.back() }, { navigator.push(Route.ConversationDetails(route.id)) }, { navigator.push(Route.Extras(route.id)) }, { simPicker = true }, target = route.message, contentVisible = navigator.sheet == null, anchorRequest = navigator.galleryJump)
+            val statusFlow = remember(c) { c.conversations.historyStatus() }
+            val status by statusFlow.collectAsStateWithLifecycle(HistoryStatus.Loading)
+            val unavailable = state.summary == null || state.summary?.trashed == true ||
+                (route.fromExternal && state.messages.isEmpty())
+            if (state.historyLoaded && unavailable && status == HistoryStatus.Ready) {
+                DetailPage("Rozmowa niedostępna", { navigator.back() }) {
+                    BasicText("Rozmowa mogła zostać usunięta lub przeniesiona do kosza.", style = ChatraType.Body)
+                }
+            } else {
+                ConversationScreen(model, { navigator.back() }, { navigator.push(Route.ConversationDetails(route.id)) },
+                    { navigator.push(Route.Extras(route.id)) }, { simPicker = true }, target = route.message,
+                    contentVisible = navigator.sheet == null, anchorRequest = navigator.messageJump,
+                    sceneDecoration = conversationBackground(threadAppearance))
+            }
             if (simPicker) app.chatra.ui.common.SimPicker(state.sims, (state.sim as? app.chatra.core.model.SimChoice.Ready)?.sim?.id, model::selectSim, { simPicker = false })
         }
         Route.Scheduled -> {
@@ -222,14 +251,36 @@ private fun Screen(route: Route, navigator: Navigator, listStates: MutableMap<Ta
         Route.DesignCatalog -> DesignCatalogScreen { navigator.back() }
         else -> Placeholder(route.toString())
     }
-    if (inboxMenu) ChoiceDialog("Rozmowy", listOf("Oznacz wszystkie jako przeczytane", "Ustawienia", "Pomoc", "Projekty uzupełniające"), { option ->
+    if (inboxMenu) ChoiceDialog("Rozmowy", listOf("Oznacz wszystkie jako przeczytane", "Ustawienia", "Pomoc", "Projekty uzupełniające",
+        "Gesty skrzynki"), { option ->
         when (option) {
-            0 -> scope.launch { runCatching { c.conversations.markAllRead() } }
+            0 -> confirmRead = true
             1 -> navigator.select(Tab.Settings)
             2 -> navigator.push(Route.Help)
             3 -> navigator.push(Route.DesignCatalog)
+            4 -> configureGestures = true
         }
     }, { inboxMenu = false })
+    if (configureGestures) {
+        val notifications by c.notifications.value.collectAsStateWithLifecycle()
+        val enabled = notifications.inboxSwipes
+        ChoiceDialog("Gesty skrzynki. W prawo zmieniasz przypięcie, w lewo zmieniasz wyciszenie.",
+            listOf(if (enabled) "Wyłącz gesty" else "Włącz gesty"), {
+                scope.launch {
+                    try { c.notifications.update { it.copy(inboxSwipes = !enabled) } }
+                    catch (e: CancellationException) { throw e }
+                    catch (_: Exception) { inboxError = "Nie udało się zmienić ustawienia gestów." }
+                }
+            }, { configureGestures = false })
+    }
+    if (confirmRead) ChoiceDialog("Oznaczyć wszystkie rozmowy jako przeczytane?", listOf("Oznacz wszystkie"), {
+        scope.launch {
+            try { c.conversations.markAllRead() }
+            catch (e: CancellationException) { throw e }
+            catch (_: Exception) { inboxError = "Nie udało się oznaczyć wszystkich rozmów." }
+        }
+    }, { confirmRead = false })
+    inboxError?.let { message -> ChoiceDialog(message, emptyList(), {}, { inboxError = null }) }
 }
 
 @Composable
@@ -244,8 +295,13 @@ private fun Sheet(sheet: Route.Sheet, navigator: Navigator) {
                 onSchedule = { navigator.replaceTop(Route.Schedule(sheet.id)) },
                 onGallery = { navigator.push(Route.ConversationGallery(sheet.id)) },
                 onTrashed = { navigator.popSheets(); navigator.back() },
+                onAppearance = { navigator.push(Route.ThreadAppearance(sheet.id)) },
+                onExport = { navigator.push(Route.ConversationExport(sheet.id)) },
+                onMessage = { navigator.revealMessage(sheet.id, it) },
             )
         }
+        is Route.ThreadAppearance -> app.chatra.ui.conversation.ThreadAppearanceScreen(sheet.id) { navigator.back() }
+        is Route.ConversationExport -> app.chatra.ui.conversation.ConversationExportScreen(sheet.id) { navigator.back() }
         is Route.ConversationGallery -> {
             val gallery = c.gallery
             if (gallery == null) Placeholder("Galeria jest niedostępna.")
@@ -254,7 +310,7 @@ private fun Sheet(sheet: Route.Sheet, navigator: Navigator) {
                     app.chatra.ui.gallery.GalleryViewModel(sheet.id, gallery)
                 }
                 app.chatra.ui.gallery.ConversationGalleryScreen(model, gallery, onBack = { navigator.back() }) { source ->
-                    navigator.revealGallerySource(sheet.id, source)
+                    navigator.revealMessage(sheet.id, source)
                 }
             }
         }
