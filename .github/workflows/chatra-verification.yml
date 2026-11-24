@@ -61,6 +61,7 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
       - uses: reactivecircus/android-emulator-runner@v2
+        id: emulator16
         with:
           api-level: 36
           arch: x86_64
@@ -69,6 +70,7 @@ jobs:
           disable-animations: true
           script: bash ../scripts/ch062_emulator_checks.sh
       - name: Check Android 17 transport API
+        if: ${{ !cancelled() && steps.emulator16.conclusion != 'skipped' }}
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: '37.0'
