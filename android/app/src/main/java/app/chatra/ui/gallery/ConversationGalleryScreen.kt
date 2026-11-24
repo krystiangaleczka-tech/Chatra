@@ -93,11 +93,13 @@ internal fun ConversationGalleryScreen(
     ChatraScreen(Backgrounds.Settings) {
         Column(Modifier.fillMaxSize().padding(start = 16.dp, end = 16.dp, top = chrome.top(50.dp), bottom = chrome.bottom(16.dp)),
             verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            val largeText = androidx.compose.ui.platform.LocalDensity.current.fontScale >= 1.7f
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 GlassCircleButton(ChatraIcons.ChevronLeft, "Wróć do szczegółów rozmowy", onBack)
                 BasicText("Wspólne", Modifier.weight(1f).semantics { heading() }, style = chatraText(25f, 700))
-                TextAction("Odśwież", model::refresh, enabled = !state.loading && !working)
+                if (!largeText) TextAction("Odśwież", model::refresh, enabled = !state.loading && !working)
             }
+            if (largeText) TextAction("Odśwież", model::refresh, Modifier.heightIn(min = 48.dp), enabled = !state.loading && !working)
             Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).selectableGroup(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 for (kind in MediaKind.entries) {

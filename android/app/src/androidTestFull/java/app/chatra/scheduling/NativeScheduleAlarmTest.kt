@@ -48,7 +48,7 @@ class NativeScheduleAlarmTest {
     @Test fun prepareFutureScheduleForReboot()=runBlocking<Unit> {
         assumeTrue(InstrumentationRegistry.getArguments().getString("rebootPrepare")=="true")
         val c=container();assumeTrue(c.exactAlarms.canScheduleExact())
-        val at=Instant.now().plusSeconds(600);val zone=ZoneId.systemDefault()
+        val at=Instant.now().plusSeconds(3600);val zone=ZoneId.systemDefault()
         val id=c.schedules.schedule(draft("Reboot AVD QA"),at,at.atZone(zone).toLocalDateTime(),zone,LatenessPolicy.Ask)
         val db=ChatraDatabase.open(context)
         try {
@@ -57,7 +57,7 @@ class NativeScheduleAlarmTest {
             assertTrue(row.registered)
         } finally {db.close()}
     }
-    @Test fun inspectBootReceiverBeforeOpeningContainerAndCancel()=runBlocking<Unit> {
+    @Test fun inspectRebootRecoveryAndCancel()=runBlocking<Unit> {
         assumeTrue(InstrumentationRegistry.getArguments().getString("rebootInspect")=="true")
         val id=prefs.getString("id",null)!!;val db=ChatraDatabase.open(context)
         try {
