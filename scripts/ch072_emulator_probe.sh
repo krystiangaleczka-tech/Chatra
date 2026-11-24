@@ -8,5 +8,5 @@ out=app/build/reports/ui/transport-api37.txt
 mkdir -p "$(dirname "$out")"
 adb shell am instrument -w -r -e class app.chatra.acceptance.TransportApiTest \
   app.chatra.test/androidx.test.runner.AndroidJUnitRunner | tee "$out"
-rg -q '^OK \(1 test\)' "$out"
-! rg -q 'INSTRUMENTATION_STATUS_CODE: -(3|4)|FAILURES' "$out"
+grep -Eq '^OK \(1 test\)' "$out"
+! grep -Eq 'INSTRUMENTATION_STATUS_CODE: -(3|4)|FAILURES' "$out"

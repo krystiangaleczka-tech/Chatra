@@ -57,6 +57,7 @@ class AdaptiveConversationTest {
         val links = ui.onNode(hasText("Linki") and SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Tab))
         links.performScrollTo().assertIsDisplayed().performClick()
         links.assertIsSelected()
+        ui.waitUntil(10_000) { ui.onAllNodesWithText("Brak pozycji w tej zakładce.").fetchSemanticsNodes().isNotEmpty() }
         ui.onNodeWithText("Brak pozycji w tej zakładce.").assertIsDisplayed()
         ui.onNodeWithContentDescription("Wróć do szczegółów rozmowy").assertIsDisplayed().performClick()
         ui.onNodeWithText("Otwórz galerię").performScrollTo().assertIsDisplayed()
@@ -74,7 +75,9 @@ class AdaptiveConversationTest {
 
     @Test fun accessibilityActionProvidesAlternativeToInboxSwipes() {
         launch(430, 1.3f, listOf(Route.Inbox))
-        val row = ui.onNode(hasText("Ola Nowak") and SemanticsMatcher.keyIsDefined(SemanticsActions.CustomActions))
+        val rowMatcher = hasText("Ola Nowak") and SemanticsMatcher.keyIsDefined(SemanticsActions.CustomActions)
+        ui.waitUntil(10_000) { ui.onAllNodes(rowMatcher).fetchSemanticsNodes().isNotEmpty() }
+        val row = ui.onNode(rowMatcher)
         val menu = row.assertIsDisplayed().fetchSemanticsNode().config[SemanticsActions.CustomActions]
             .single { it.label == "Akcje rozmowy" }
         ui.runOnIdle { check(menu.action()) }

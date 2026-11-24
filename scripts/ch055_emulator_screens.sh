@@ -20,7 +20,7 @@ adb shell getprop ro.build.fingerprint > "$out/build-fingerprint.txt"
 for n in {01..10}; do
   adb shell am force-stop app.chatra.demo
   adb shell am start -W -n app.chatra.demo/app.chatra.MainActivity --ez frame true --es screen "S$n" > "$out/start-S$n.txt"
-  rg -q '^Status: ok' "$out/start-S$n.txt"
+  grep -q '^Status: ok' "$out/start-S$n.txt"
   sleep 1
   adb exec-out screencap -p > "$out/actual/android-S$n.png"
 done

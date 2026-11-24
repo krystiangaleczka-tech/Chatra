@@ -13,8 +13,8 @@ run_full_case() {
   local name="$1" method="$2"
   shift 2
   adb shell am instrument -w -r -e class "$method" "$@" app.chatra.test/androidx.test.runner.AndroidJUnitRunner | tee "$out/$name.txt"
-  rg -q '^OK \(1 test\)' "$out/$name.txt"
-  ! rg -q 'INSTRUMENTATION_STATUS_CODE: -(3|4)|FAILURES' "$out/$name.txt"
+  grep -Eq '^OK \(1 test\)' "$out/$name.txt"
+  ! grep -Eq 'INSTRUMENTATION_STATUS_CODE: -(3|4)|FAILURES' "$out/$name.txt"
 }
 alarm=app.chatra.scheduling.NativeScheduleAlarmTest
 run_full_case prepare-reboot "$alarm#prepareFutureScheduleForReboot" -e rebootPrepare true
@@ -32,7 +32,7 @@ run_full_case inspect-reboot "$alarm#inspectRebootRecoveryAndCancel" -e rebootIn
 recovery=app.chatra.acceptance.InstallationRecoveryTest
 run_full_case prepare-reset "$recovery#seedPrivateDataAndProvider" -e resetQa true
 adb shell pm clear app.chatra | tee "$out/clear-private-data.txt"
-rg -q '^Success' "$out/clear-private-data.txt"
+grep -q '^Success' "$out/clear-private-data.txt"
 adb shell cmd role add-role-holder --user 0 android.app.role.SMS app.chatra
 adb shell pm grant app.chatra android.permission.READ_SMS
 adb shell pm grant app.chatra android.permission.SEND_SMS
