@@ -7,15 +7,24 @@ out="$repo_root/android/app/build/reports/ui/reference"
 mkdir -p "$out/actual"
 orig_size="$(adb shell wm size | tr -d '\r' | sed -n 's/^Override size: //p')"
 orig_density="$(adb shell wm density | tr -d '\r' | sed -n 's/^Override density: //p')"
+orig_immersive="$(adb shell settings get secure immersive_mode_confirmations | tr -d '\r')"
 restore_display() {
   adb shell wm size "${orig_size:-reset}"
   adb shell wm density "${orig_density:-reset}"
+  if [[ "$orig_immersive" == null ]]; then
+    adb shell settings delete secure immersive_mode_confirmations
+  else
+    adb shell settings put secure immersive_mode_confirmations "$orig_immersive"
+  fi
 }
 trap restore_display EXIT
 adb shell wm size 780x1688
 adb shell wm density 320
 adb shell input keyevent KEYCODE_WAKEUP
 adb shell wm dismiss-keyguard
+# A newly provisioned Android displays an instructional SystemUI overlay on the first
+# immersive activity. Pre-confirm it for this AVD so the captures show the app.
+adb shell settings put secure immersive_mode_confirmations confirmed
 adb shell getprop ro.build.fingerprint > "$out/build-fingerprint.txt"
 for n in {01..10}; do
   adb shell am force-stop app.chatra.demo
