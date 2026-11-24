@@ -51,4 +51,5 @@ done
 bash ../scripts/ch057_emulator_restart.sh \
   app/build/outputs/apk/androidTest/full/debug/app-full-debug-androidTest.apk \
   "$PWD/app/build/reports/ui/recovery" || status=1
+bash ../scripts/ch062_beta_emulator_smoke.sh || status=1
 exit "$status"

@@ -42,16 +42,22 @@ class GalleryPagingTest {
                 db.dao().upsertMedia(parts)
                 db.hd().put(HdRecord("hd-$count", "qa", id.value, "", "", true, 2, Long.MAX_VALUE,
                     """[{"mime":"image/jpeg"},{"mime":"image/png"}]"""))
+                val durationsMicros = mutableListOf<Long>()
                 var cursor: Long? = null
                 val seen = mutableListOf<GalleryItem>()
                 do {
+                    val started = android.os.SystemClock.elapsedRealtimeNanos()
                     val page = gallery.page(id, MediaKind.All, cursor, if (seen.isEmpty()) 2 else 40)
+                    durationsMicros += (android.os.SystemClock.elapsedRealtimeNanos() - started) / 1000
                     assertEquals(count, page.total)
                     assertTrue(page.items.isNotEmpty())
                     seen += page.items
                     cursor = page.nextBefore
                     assertTrue("Paging must terminate", seen.size <= count)
                 } while (cursor != null)
+                val sorted = durationsMicros.sorted()
+                val p95 = sorted[kotlin.math.ceil(sorted.size * .95).toInt() - 1]
+                android.util.Log.i("ChatraGalleryQA", "items=$count pages=${sorted.size} first_us=${durationsMicros.first()} p95_us=$p95")
                 assertEquals(count, seen.map { it.id }.distinct().size)
                 assertEquals(List(2) { GalleryAvailability.AwaitingDownload }, seen.take(2).map { it.availability })
                 assertEquals(parts.asReversed().map { "mms-part:${it.partId}" }, seen.drop(2).map { it.id.value })
