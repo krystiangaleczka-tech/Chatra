@@ -12,7 +12,7 @@ Limit 16,7 ms czasu klatki, start skrzynki i docelowy pomiar 50 tys. wiadomości
 
 `scripts/ch062_build_beta.sh` wymaga czystego commitu oraz SDK z Android Build Tools 36.1.0. W CI podajemy sprzeczną, syntetyczną konfigurację Gradle i jawnie wyłączamy integracje podczas budowy. Skrypt sprawdza podpis i identyfikator pakietu przed przeniesieniem wyniku do `build/beta/`. Pakiet `chatra-offline-beta` zawiera APK debug, sumę SHA-256, SHA źródła, metadane pakietu, publiczny odcisk certyfikatu i notatkę dla testerów.
 
-Emulator instaluje właśnie ten plik i sprawdza sumę oraz SHA checkoutu. Test odczytuje konfigurację z zainstalowanego APK. Weryfikuje wyłączone HD, backend, FCM i Play Billing, a potem otwiera syntetyczny SMS z systemowej historii po odłączeniu sieci. Certyfikat debug z GitHub Actions służy tej próbie. Aktualizacje w trwałym kanale testerskim wymagają tego samego klucza między buildami. Staging, podpis wydania i dystrybucja wymagają konfiguracji właściciela. [Instrukcja Android](../../android/README.md)
+CI uruchamia `ch062_emulator_checks.sh --verify-beta` po zbudowaniu paczki. Emulator instaluje właśnie ten plik i sprawdza sumę oraz SHA checkoutu. Test odczytuje konfigurację z zainstalowanego APK. Weryfikuje wyłączone HD, backend, FCM i Play Billing, a potem otwiera syntetyczny SMS z systemowej historii po odłączeniu sieci. Certyfikat debug z GitHub Actions służy tej próbie. Aktualizacje w trwałym kanale testerskim wymagają tego samego klucza między buildami. Staging, podpis wydania i dystrybucja wymagają konfiguracji właściciela. [Instrukcja Android](../../android/README.md)
 
 ## CH063 — dowody dla funkcji
 

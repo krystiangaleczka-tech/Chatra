@@ -78,7 +78,7 @@ jobs:
           target: google_apis
           working-directory: android
           disable-animations: true
-          script: bash ../scripts/ch062_emulator_checks.sh
+          script: bash ../scripts/ch062_emulator_checks.sh --verify-beta
       - name: Check Android 17 transport API
         if: ${{ !cancelled() && steps.emulator16.conclusion != 'skipped' }}
         uses: reactivecircus/android-emulator-runner@v2
