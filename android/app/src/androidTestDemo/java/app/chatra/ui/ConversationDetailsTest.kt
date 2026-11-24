@@ -1,8 +1,6 @@
 package app.chatra.ui
 
 import android.app.Application
-import android.graphics.Bitmap
-import android.os.ParcelFileDescriptor
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -151,20 +149,6 @@ class ConversationDetailsTest {
 
     private fun capturePanel(name: String) {
         if (InstrumentationRegistry.getArguments().getString("captureChatraQa") != "true") return
-        val image = ui.onRoot().captureToImage().asAndroidBitmap()
-        // Stream to the ADB shell. UTP removes the app's files when it uninstalls the APK.
-        val automation = InstrumentationRegistry.getInstrumentation().uiAutomation
-        val path = "/data/local/tmp/$name"
-        // UiAutomation launches commands directly, so no shell redirection is available.
-        val (stdout, stdin) = automation.executeShellCommandRw("dd of=$path")
-        ParcelFileDescriptor.AutoCloseInputStream(stdout).use { output ->
-            ParcelFileDescriptor.AutoCloseOutputStream(stdin).use { input ->
-                assertTrue("Could not encode the panel as PNG", image.compress(Bitmap.CompressFormat.PNG, 100, input))
-            }
-            output.readBytes() // Wait for dd to close the output file.
-        }
-        val stat = automation.executeShellCommand("stat -c %s $path")
-        val size = ParcelFileDescriptor.AutoCloseInputStream(stat).use { it.bufferedReader().readText().trim().toLongOrNull() }
-        assertTrue("The exported panel PNG is empty or missing", size != null && size > 0)
+        writeQaCapture(ui.onRoot().captureToImage().asAndroidBitmap(), name)
     }
 }

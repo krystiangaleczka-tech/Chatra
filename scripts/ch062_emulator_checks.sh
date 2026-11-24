@@ -25,9 +25,14 @@ adb shell am force-stop app.chatra
 # Leave room for the 430 dp adaptive test and independently constrain each Compose viewport.
 (
   trap 'adb shell wm size reset; adb shell wm density reset' EXIT
-  adb shell wm size 864x1728
+  adb shell wm size 864x1900
   adb shell wm density 320
-  ./gradlew :app:connectedDemoDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.captureChatraQa=true
+  for n in {01..10}; do
+    adb shell rm -f "/data/local/tmp/android-S$n.png"
+  done
+  ./gradlew :app:connectedDemoDebugAndroidTest \
+    -Pandroid.testInstrumentationRunnerArguments.captureChatraQa=true \
+    -Pandroid.testInstrumentationRunnerArguments.captureChatraReferences=true
 ) || status=1
 for screenshot in "${screenshots[@]}"; do
   adb pull "/data/local/tmp/$screenshot" "app/build/reports/ui/$screenshot" || status=1
@@ -35,8 +40,6 @@ for screenshot in "${screenshots[@]}"; do
   adb shell rm -f "/data/local/tmp/$screenshot"
 done
 
-# Capture all reference screens while the system display can be safely configured.
-./gradlew :app:installDemoDebug
 bash ../scripts/ch055_emulator_screens.sh || status=1
 
 # The package and test runner must remain installed across an actual device restart.
