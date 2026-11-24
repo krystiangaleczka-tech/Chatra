@@ -26,6 +26,8 @@ data class HdRecord(
     @Query("SELECT * FROM HdRecord WHERE id=:id") suspend fun get(id: String): HdRecord?
     @Query("SELECT * FROM HdRecord WHERE conversationId=:id AND NOT EXISTS(SELECT 1 FROM TrashHdRef t WHERE t.id=HdRecord.id)")
     suspend fun snapshot(id: String): List<HdRecord>
+    @Query("SELECT * FROM HdRecord WHERE conversationId=:id AND NOT EXISTS(SELECT 1 FROM TrashHdRef t WHERE t.id=HdRecord.id) ORDER BY id")
+    fun observeConversation(id: String): Flow<List<HdRecord>>
     @Query("SELECT * FROM HdRecord r WHERE conversationId=:id AND incoming=1 AND read=0 AND NOT EXISTS (SELECT 1 FROM TrashHdRef t WHERE t.id=r.id) ORDER BY r.createdAt,r.id LIMIT 1")
     suspend fun firstUnread(id: String): HdRecord?
     @Query("SELECT * FROM HdRecord WHERE instr(localFiles, char(34) || :id || char(34))>0 AND NOT EXISTS(SELECT 1 FROM TrashHdRef t WHERE t.id=HdRecord.id) ORDER BY createdAt DESC,id DESC")

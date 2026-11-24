@@ -702,6 +702,8 @@ Odbiór: raport liczbowy i spełnione lub jawnie ponownie uzgodnione cele, bez r
 
 **Stan roboczy 20.11.2026:** Optymalizacja skrzynki i pomiary A15 z 14.11 są na gałęzi roboczej; pełny profil rozmowy, galerii, HD i macierz urządzeń pozostają otwarte. [Audyt i weryfikacja](CH062_CH065_Chmura_i_beta_2026-11-20.md).
 
+**Stan roboczy 24.11.2026:** Historia HD odczytuje metadane bez ponownego liczenia sum oryginałów. W CI są liczniki odczytu i pomiary stronicowania galerii dla 67 i 1000 pozycji. [Wydajność i beta](CH059_CH063_Beta_i_wydajnosc.md).
+
 ### CH060 Odebrać dostępność i układy adaptacyjne
 
 **P1 · QA i UX i Android · 2–3 osobodni · zależności CH020 CH040 CH055 CH065 CH066 CH068 CH069 CH070**
@@ -736,6 +738,8 @@ Odbiór: nowa osoba z zespołu odtwarza build i środowisko testowe z instrukcji
 
 **Stan roboczy 20.11.2026:** Poprawiono pakiety SDK, dodano artefakty APK, testy UI i skrypt bety bez usług zdalnych. Staging, podpis wydania, Firebase i próba rollback pozostają otwarte. [Audyt i weryfikacja](CH062_CH065_Chmura_i_beta_2026-11-20.md).
 
+**Stan roboczy 24.11.2026:** CI buduje paczkę offline, weryfikuje podpis i sumę SHA-256, a potem ćwiczy instalację tego APK na emulatorze. [Wydajność i beta](CH059_CH063_Beta_i_wydajnosc.md).
+
 ### CH063 Przeprowadzić pełny odbiór produktu
 
 **P0 · produkt i QA · 2–3 osobodni · zależności CH034 CH039 CH041 CH042 CH043 CH044 CH045 CH055 CH056 CH057 CH058 CH059 CH060 CH061 CH062 CH065 CH066 CH067 CH068 CH069 CH070**
@@ -748,6 +752,7 @@ Odbiór: pełna matryca bez martwych przycisków i nieprawdziwych statusów; bui
 
 **Odbiór rozszerzony:** Raport zawiera mapę UX01–UX06→CH065–CH070→testy; nie ma fikcyjnego RCS, iMessage ani niewidocznych martwych akcji.
 
+**Stan roboczy 24.11.2026:** Test bety sprawdza otwarcie wiadomości z historii systemowej bez sieci. Macierz wskazuje dowody dla CH065–CH070 i pozostałe bramki przed wydaniem. [Wydajność i beta](CH059_CH063_Beta_i_wydajnosc.md).
 
 ### CH064 Przygotować dystrybucję i przekazanie
 

@@ -52,7 +52,23 @@ class HdMailboxTest {
             assertEquals(calls, remote.offsets.size)
             assertEquals("READY", db.hd().get(id)!!.state)
             assertFalse(db.hd().get(id)!!.read)
-            assertEquals(local, history.messages(ConversationId("thread")).first().single().attachments.map { it.id })
+            val hashes = store.fullReads
+            val previews = store.previewReads
+            val message = history.messages(ConversationId("thread")).first().single()
+            assertEquals(local, message.attachments.map { it.id })
+            assertTrue(message.attachments.all { it.contentUri != null })
+            assertEquals(hashes, store.fullReads)
+            assertEquals(previews + local.size, store.previewReads)
+            android.util.Log.i("ChatraGalleryQA",
+                "hd_files=${local.size} original_bytes=${remote.content.sumOf { it.size }} verified_reads_on_history=${store.fullReads - hashes}")
+
+            val gallery = HdGallery(object : MediaGallery {
+                override suspend fun page(conversation: ConversationId, kind: MediaKind, before: Long?, limit: Int) =
+                    GalleryPage(emptyList(), 0, null)
+                override suspend fun readable(id: AttachmentId): GalleryItem? = null
+            }, db, store) { true }
+            assertNotNull(gallery.readable(local.first()))
+            assertEquals(hashes + 1, store.fullReads)
             history.markShown(ConversationId("thread"), setOf(MessageRef.Hd(id)))
             assertTrue(db.hd().get(id)!!.read)
             assertEquals(0, history.inbox().first().single().unreadCount)
@@ -119,16 +135,14 @@ class HdMailboxTest {
         }
     }
 
-    private suspend fun scenario(block: suspend (ChatraDatabase, AttachmentStore, Remote, HdMailbox, ConversationRepository, Context) -> Unit) {
+    private suspend fun scenario(block: suspend (ChatraDatabase, TrackedStore, Remote, HdMailbox, ConversationRepository, Context) -> Unit) {
         val app = ApplicationProvider.getApplicationContext<Context>()
         val root = File(app.cacheDir, "mailbox-${newOnlineId()}").apply { mkdirs() }
         val context = object : ContextWrapper(app) { override fun getNoBackupFilesDir() = root }
         val db = Room.inMemoryDatabaseBuilder(app, ChatraDatabase::class.java).build()
         val imported = mutableListOf<AttachmentId>()
         val actual = PrivateMediaStore(app)
-        val store = object : AttachmentStore by actual {
-            override suspend fun importUri(uri: String): StoredMedia = actual.importUri(uri).also { imported += it.id }
-        }
+        val store = TrackedStore(actual, imported)
         val base = object : ConversationRepository {
             val summary = ConversationSummary(ConversationId("thread"), listOf(Participant(Address("+12025550101"))), "Test", Instant.EPOCH,
                 ConversationSummary.Preview.Text(""), 0, false)
@@ -150,6 +164,24 @@ class HdMailboxTest {
                 File(app.filesDir, "media").listFiles()?.filter { it.name.startsWith(id.value + ".") }?.forEach { it.delete() }
             }
         }
+    }
+
+    private class TrackedStore(
+        private val store: AttachmentStore, private val imported: MutableList<AttachmentId>,
+    ) : AttachmentStore by store {
+        var fullReads = 0
+            private set
+        var previewReads = 0
+            private set
+        override suspend fun get(id: AttachmentId): StoredMedia? {
+            fullReads++
+            return store.get(id)
+        }
+        override suspend fun preview(id: AttachmentId): StoredMedia? {
+            previewReads++
+            return store.preview(id)
+        }
+        override suspend fun importUri(uri: String): StoredMedia = store.importUri(uri).also { imported += it.id }
     }
 
     private fun png(size: Int): ByteArray {

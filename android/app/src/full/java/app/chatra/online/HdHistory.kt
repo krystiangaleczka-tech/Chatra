@@ -48,13 +48,16 @@ internal class HdHistory(
         }
     }.flowOn(Dispatchers.IO)
 
-    override fun conversation(id: ConversationId): Flow<ConversationSummary?> = combine(base.conversation(id), db.hd().visible()) { summary, rows ->
-        if (!allowed()) null else summary?.let { merge(it, rows.filter { r -> r.conversationId == id.value }) }
-    }.flowOn(Dispatchers.IO)
+    override fun conversation(id: ConversationId): Flow<ConversationSummary?> =
+        combine(base.conversation(id), db.hd().observeConversation(id.value).distinctUntilChanged()) { summary, rows ->
+            if (!allowed()) null else summary?.let { merge(it, rows) }
+        }.flowOn(Dispatchers.IO)
 
-    override fun messages(id: ConversationId): Flow<List<Message>> = combine(base.messages(id), db.hd().visible()) { messages, all ->
+    override fun messages(id: ConversationId): Flow<List<Message>> = combine(
+        base.messages(id), db.hd().observeConversation(id.value).distinctUntilChanged(),
+    ) { messages, rows ->
         if (!allowed()) emptyList() else {
-            val hd = all.filter { it.conversationId == id.value }.map { render(id, it) }
+            val hd = rows.map { render(id, it) }
             (messages + hd).sortedWith(compareBy<Message> { it.timestamp }.thenBy { it.ref.toString() })
         }
     }.flowOn(Dispatchers.IO)
@@ -64,7 +67,8 @@ internal class HdHistory(
         val local = HdMailbox.ids(row.localFiles)
         val attachments = (0 until files.length()).map { index ->
             val fileId = local.getOrNull(index)
-            val file = fileId?.let { media.get(it) }
+            // Loading history needs metadata for the thumbnail. Explicit open/export uses HdGallery.readable.
+            val file = fileId?.let { media.preview(it) }
             val mime = files.getJSONObject(index).optString("mime").ifBlank { "application/octet-stream" }
             AttachmentSummary(fileId ?: AttachmentId("hd-slot:${row.id}:$index"), file?.mime ?: mime, "Plik HD ${index + 1}", file?.uri)
         }
