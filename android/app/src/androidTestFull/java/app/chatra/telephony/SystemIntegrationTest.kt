@@ -74,9 +74,8 @@ class SystemIntegrationTest {
             override suspend fun request() = RoleRequestResult.Unavailable
             override fun openSystemSettings() {}
         }
-        val sims = object : SimRepository { override fun cards() = flowOf(listOf(sim)) }
-        return if (time == null) PersistentSmsQueue(context, db, role, history, sims, PlatformSmsText(context), RoomDrafts(db), transport, work)
-        else PersistentSmsQueue(context, db, role, history, sims, PlatformSmsText(context), RoomDrafts(db), transport, work, time)
+        return if (time == null) PersistentSmsQueue(context, db, role, history, PlatformSmsText(context), RoomDrafts(db), transport, work)
+        else PersistentSmsQueue(context, db, role, history, PlatformSmsText(context), RoomDrafts(db), transport, work, time)
     }
     private fun draft(body: String, address: String) = Draft(DraftId.new(), null, listOf(Address(address)), body, RecipientMode.Single, emptyList(), sim.id, Instant.now(), subscriptionLabel = sim.label)
     private fun status(attempt: OutgoingAttempt, part: Int, kind: String = "sent") = Intent("app.chatra.SMS_STATUS", Uri.parse("chatra-callback://sms/${attempt.id}/$part/$kind/${attempt.callbackToken}"))

@@ -11,6 +11,8 @@ Zakres obejmuje otwarte pozycje CH055, CH057, CH060 i CH061. Osobne badanie CH07
 
 W S04 demo przewija cały wybór mediów i przypina przycisk wysyłki o wysokości co najmniej 54 dp. W referencji HTML przycisk jest ściśnięty u dołu. S05 pozwala zawijać etykiety kart SIM i zwiększa wysokość przycisków przy długim tekście. Test przy 360 dp i skali 2,0 wybiera MMS w S04, a w S05 drugą kartę SIM i politykę spóźnienia. Przegląd wyglądu na fizycznym GPU i uzgodnienie różnic z referencją wciąż są częścią odbioru.
 
+Próba restartu ujawniła wyścig przy inicjalizacji listy SIM. Kolejka waliduje teraz dostępność karty i pobiera jej etykietę z tego samego odczytu systemowego. Dotyczy to zapisu, uruchomienia i ponowienia zlecenia.
+
 Zrzuty CH055 są robione z obszaru aplikacji po pokazaniu danych danego ekranu. Porównanie skaluje kopię zatwierdzonych referencji z 1365 × 2954 px do proporcjonalnego 780 × 1688 px metodą Lanczos. W raporcie są oryginalne skróty SHA-256 oraz zakresy obszarów odpowiadające pomiarom z CH002. Udział różniących się pikseli jest pomiarem, bez arbitralnego progu zaliczenia. Goldeny pozostają w repozytorium w oryginalnym rozmiarze. [Kontrakt referencji](CH002_Weryfikacja_wzorcow.md)
 
 Workflow publikuje raporty w artefakcie `android-verification`. Katalog `app/build/reports/ui/reference` zawiera dziesięć zrzutów, porównania i JSON. Katalog `recovery` zawiera wyjścia instrumentacji przed i po restarcie oraz czyszczeniu danych. Osobny plik `transport-api37.txt` zawiera wynik próby klasy AMTS. Skrypty instrumentujące mają warunek jednorazowego emulatora, ponieważ test CH061 czyści dane aplikacji i wstawia syntetyczny SMS do testowego providera.

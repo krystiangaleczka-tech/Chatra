@@ -58,10 +58,9 @@ class PersistentSchedulesTest {
         scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
         val contacts = object : ContactsDirectory { override fun suggestions() = flowOf(emptyList<Participant>()); override suspend fun lookup(address: Address): Participant? = null }
         history = SystemHistory(context, db, platform, contacts, scope); drafts = RoomDrafts(db)
-        val sims = object : SimRepository { override fun cards() = flowOf(listOf(card)) }
         val work = object : SmsWork { override fun schedule(id: String, deadline: Long) {}; override fun cancel(id: String) {} }
         val time = object : SmsQueueTime { override fun wall() = clock.now().toEpochMilli(); override fun elapsed() = clock.elapsedRealtimeMillis(); override fun boot() = alarms.bootId }
-        queue = PersistentSmsQueue(context, db, platform, history, sims, PlatformSmsText(context), drafts, SmsTransport { _, _, parts, _, _ -> calls++; sentBodies += parts.joinToString("") }, work, time)
+        queue = PersistentSmsQueue(context, db, platform, history, PlatformSmsText(context), drafts, SmsTransport { _, _, parts, _, _ -> calls++; sentBodies += parts.joinToString("") }, work, time)
         repo = repository()
         queue.dispatchAllowed = { repo.permit(it) }
     }
