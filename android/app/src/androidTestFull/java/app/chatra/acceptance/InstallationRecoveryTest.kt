@@ -79,10 +79,12 @@ class InstallationRecoveryTest {
         } finally { db.close() }
     }
 
-    @Test fun apkUpdatePreservesLocalStateWithoutSending() = runBlocking<Unit> {
+    @Test fun apkReplacementPreservesLocalStateWithoutSending() = runBlocking<Unit> {
         requireResetRun()
-        assumeTrue(InstrumentationRegistry.getArguments().getString("upgradeQa") == "true")
-        assertEquals(2L, context.packageManager.getPackageInfo(context.packageName, 0).longVersionCode)
+        val expectedVersionCode = InstrumentationRegistry.getArguments().getString("expectedVersionCode")
+        assumeTrue(expectedVersionCode != null)
+        assertEquals(requireNotNull(expectedVersionCode).toLong(),
+            context.packageManager.getPackageInfo(context.packageName, 0).longVersionCode)
         val platform = app.chatra.platform.SystemPlatform(context)
         assertTrue(platform.isHeld())
         context.contentResolver.query(Telephony.Sms.Inbox.CONTENT_URI, arrayOf("_id"), "address=? AND body=?",

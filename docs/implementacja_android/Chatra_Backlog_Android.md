@@ -661,6 +661,8 @@ Odbiór: każdy ekran spełnia kontrakt 1 do 1, wyjątki tylko jawnie uzgodnione
 
 **Stan roboczy 23.11.2026:** Zrzuty S01–S10, nakładki i obszary z CH002 są generowane na emulatorze. Odbiór odchyleń wizualnych i fizycznego GPU pozostaje otwarty. [Odbiór na emulatorze](CH055_CH061_Odbior_na_emulatorze.md).
 
+**Stan roboczy 25.11.2026:** W S04 można przewinąć wszystkie warianty mediów przy przypiętej akcji. W S05 data, karty SIM i przycisk potwierdzenia dopasowują się do dużej czcionki. CI sprawdza oba arkusze przy szerokości 360 dp i skali tekstu 2,0. [Odbiór na emulatorze](CH055_CH061_Odbior_na_emulatorze.md).
+
 ### CH056 Przetestować rzeczywistą telefonię
 
 **P0 · QA i Android · 4–6 osobodni · zależności CH021 CH023 CH024 CH026 CH027 CH029 CH030 CH032**
@@ -748,6 +750,8 @@ Odbiór: nowa osoba z zespołu odtwarza build i środowisko testowe z instrukcji
 
 **Stan roboczy 24.11.2026:** CI buduje paczkę offline, weryfikuje podpis i sumę SHA-256, a potem ćwiczy instalację tego APK na emulatorze. [Wydajność i beta](CH059_CH063_Beta_i_wydajnosc.md).
 
+**Stan roboczy 25.11.2026:** Próba wycofania kodu Androida buduje poprzednie źródło z wyższym numerem wersji. CI weryfikuje ponowną instalację, zachowanie danych i brak dodatkowej próby wysyłki. [Wydajność i beta](CH059_CH063_Beta_i_wydajnosc.md).
+
 ### CH063 Przeprowadzić pełny odbiór produktu
 
 **P0 · produkt i QA · 2–3 osobodni · zależności CH034 CH039 CH041 CH042 CH043 CH044 CH045 CH055 CH056 CH057 CH058 CH059 CH060 CH061 CH062 CH065 CH066 CH067 CH068 CH069 CH070**
@@ -761,6 +765,8 @@ Odbiór: pełna matryca bez martwych przycisków i nieprawdziwych statusów; bui
 **Odbiór rozszerzony:** Raport zawiera mapę UX01–UX06→CH065–CH070→testy; nie ma fikcyjnego RCS, iMessage ani niewidocznych martwych akcji.
 
 **Stan roboczy 24.11.2026:** Test bety sprawdza otwarcie wiadomości z historii systemowej bez sieci. Macierz wskazuje dowody dla CH065–CH070 i pozostałe bramki przed wydaniem. [Wydajność i beta](CH059_CH063_Beta_i_wydajnosc.md).
+
+**Stan roboczy 25.11.2026:** Test zainstalowanej bety wyszukuje systemowy SMS bez internetu i bez wpisywania polskich znaków. Wybranie trafienia otwiera wiadomość w rozmowie. [Wydajność i beta](CH059_CH063_Beta_i_wydajnosc.md).
 
 ### CH064 Przygotować dystrybucję i przekazanie
 

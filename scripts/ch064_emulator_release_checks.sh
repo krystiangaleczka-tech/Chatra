@@ -39,7 +39,17 @@ adb shell dumpsys package app.chatra | sed -n '/versionCode=/p' > "$out/version-
 grep -q 'versionCode=1 ' "$out/version-before.txt"
 ./gradlew :app:assembleFullDebug -PchatraVersionCode=2
 adb install -r app/build/outputs/apk/full/debug/app-full-debug.apk
-run_case after-update "$recovery#apkUpdatePreservesLocalStateWithoutSending" -e resetQa true -e upgradeQa true || status=1
+run_case after-update "$recovery#apkReplacementPreservesLocalStateWithoutSending" -e resetQa true -e expectedVersionCode 2 || status=1
+
+if [[ "${1:-}" == "--verify-rollback" ]]; then
+  rollback="$root/build/rollback-qa"
+  test "$(cat "$rollback/SOURCE_COMMIT")" != "$(git -C "$root" rev-parse HEAD)"
+  (cd "$rollback" && sha256sum -c SHA256SUMS)
+  mkdir -p "$out/rollback"
+  cp "$rollback"/{APK_METADATA.txt,SHA256SUMS,SIGNING.txt,SOURCE_COMMIT} "$out/rollback/"
+  adb install -r "$rollback/chatra-full-debug.apk" | tee "$out/rollback/install.txt"
+  run_case after-rollback "$recovery#apkReplacementPreservesLocalStateWithoutSending" -e resetQa true -e expectedVersionCode 3 || status=1
+fi
 
 # The release APK is signed by a different key. Install afresh in this test environment.
 release="$root/build/release-qa"

@@ -62,6 +62,8 @@ jobs:
         run: bash scripts/ch062_build_beta.sh
       - name: Build signed release for QA
         run: bash scripts/ch064_build_release_qa.sh
+      - name: Rebuild the previous Android version for rollback QA
+        run: bash scripts/ch062_build_rollback.sh
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -80,7 +82,7 @@ jobs:
           target: google_apis
           working-directory: android
           disable-animations: true
-          script: bash ../scripts/ch062_emulator_checks.sh --verify-beta --verify-release
+          script: bash ../scripts/ch062_emulator_checks.sh --verify-beta --verify-release --verify-rollback
       - name: Check Android 17 transport API
         if: ${{ !cancelled() && steps.emulator16.conclusion != 'skipped' }}
         uses: reactivecircus/android-emulator-runner@v2

@@ -14,11 +14,13 @@ Limit 16,7 ms czasu klatki, start skrzynki i docelowy pomiar 50 tys. wiadomości
 
 CI uruchamia `ch062_emulator_checks.sh --verify-beta` po zbudowaniu paczki. Emulator instaluje właśnie ten plik i sprawdza sumę oraz SHA checkoutu. Test odczytuje konfigurację z zainstalowanego APK. Weryfikuje wyłączone HD, backend, FCM i Play Billing, a potem otwiera syntetyczny SMS z systemowej historii po odłączeniu sieci. Certyfikat debug z GitHub Actions służy tej próbie. Aktualizacje w trwałym kanale testerskim wymagają tego samego klucza między buildami. Staging, podpis wydania i dystrybucja wymagają konfiguracji właściciela. [Instrukcja Android](../../android/README.md)
 
+Próba wycofania kodu instaluje kolejno wersje QA 1, 2 i 3 z tym samym certyfikatem debug. Wersja 3 jest odbudowana z poprzedniego commitu `894b034`, dzięki czemu Android przyjmuje ją jako aktualizację. Po instalacji test sprawdza rolę SMS, historię systemową, szkic, kosz i zaplanowane zlecenie z zerem prób wysyłki. Raport zawiera commit, metadane paczki, jej sumę i wynik instalacji. Próba obejmuje ten sam schemat Room. Przed wycofaniem kodu po zmianie schematu trzeba potwierdzić, że poprzedni kod otwiera nową bazę albo przygotować kompatybilną poprawkę z kolejnym numerem wersji.
+
 ## CH063 — dowody dla funkcji
 
 | Zakres | Zautomatyzowany dowód | Pozostały odbiór |
 | --- | --- | --- |
-| Beta lokalna | `BetaInstallSmokeTest` instaluje paczkę i otwiera systemowy SMS offline | Wysyłka SMS i MMS u operatorów na fizycznych kartach |
+| Beta lokalna | `BetaInstallSmokeTest` otwiera systemowy SMS offline, wyszukuje go bez polskich znaków i otwiera trafienie w rozmowie | Wysyłka SMS i MMS u operatorów na fizycznych kartach |
 | Szczegóły i galeria, CH065–CH066 | `ConversationDetailsTest` oraz `GalleryPagingTest` sprawdzają szczegóły, powrót do źródła, filtry i stronicowanie | Duże pliki u operatorów, TalkBack, dialer |
 | Kolaż i wygląd, CH067–CH068 | `AttachmentStackTest`, `AdaptiveConversationTest` i `PreferencesPersistenceTest` | Szybkie przewijanie dużych zdjęć i własne tło na sprzęcie |
 | Akcje skrzynki i odczyt, CH069–CH070 | `AdaptiveConversationTest`, `ConversationDetailsTest` oraz `SystemIntegrationTest` | Gesty producentów i powiadomienia przy zmianie roli |
