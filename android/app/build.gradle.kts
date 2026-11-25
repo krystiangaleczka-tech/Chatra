@@ -5,11 +5,15 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 
-// Podpis wydania poza repozytorium: android/keystore.properties (wzór: keystore.properties.example).
+// CI can supply a temporary signing file. Local release builds still read keystore.properties.
+val signingFileOverride = providers.gradleProperty("chatraSigningPropertiesFile").orNull
 val keystoreProperties = Properties().apply {
-    val file = rootProject.file("keystore.properties")
-    if (file.exists()) file.inputStream().use { load(it) }
+    val file = rootProject.file(signingFileOverride ?: "keystore.properties")
+    require(signingFileOverride == null || file.isFile) { "Brak wskazanego pliku konfiguracji podpisu." }
+    if (file.isFile) file.inputStream().use { load(it) }
 }
+val appVersionCode = providers.gradleProperty("chatraVersionCode").orElse("1").get().toInt()
+require(appVersionCode in 1..2_100_000_000) { "Nieprawidłowy numer wersji aplikacji." }
 
 val backendOrigin = providers.gradleProperty("chatraBackendOrigin").orElse("").get()
 val playProduct = providers.gradleProperty("chatraPlayProduct").orElse("").get()
@@ -33,7 +37,7 @@ android {
         applicationId = "app.chatra"
         minSdk = 31
         targetSdk = 36
-        versionCode = 1
+        versionCode = appVersionCode
         versionName = "0.1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

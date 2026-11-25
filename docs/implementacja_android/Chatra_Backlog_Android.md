@@ -669,6 +669,8 @@ Wykonanie: macierz fizycznych telefonów/SIM/operatorów z CH001. SMS/MMS w obu 
 
 Odbiór: raport dostarczenia i odbioru oraz lista wspieranych konfiguracji; brak uznania emulatora za dowód MMS. Weryfikacja: zapis wersji OS/operatora i wyników dla każdej kombinacji, regresja po poprawkach.
 
+**Stan roboczy 25.11.2026:** Dodano dostarczenie przez emulowany modem i sprawdzenie SMS-a na ekranie podpisanego release. [Kandydat QA](CH056_CH064_Kandydat_QA.md).
+
 ### CH057 Przetestować alarmy i awarie wysyłki
 
 **P0 · QA i Android · 3–4 osobodni · zależności CH028 CH035 CH036 CH037**
@@ -678,6 +680,8 @@ Wykonanie: zabicie procesu, restart, force stop, Doze, brak odblokowania, cofni�
 Odbiór: brak niejawnego ponowienia przy niepewności i brak wysyłki po skutecznym anulowaniu; zaległości trafiają do właściwej polityki. Weryfikacja: rejestrowane zdarzenia z correlationId bez treści oraz porównanie liczby rzeczywistych wiadomości.
 
 **Stan roboczy 23.11.2026:** CI wykonuje kontrolowany restart emulatora i weryfikuje przywrócenie alarmu bez próby wysyłki przed terminem. [Odbiór na emulatorze](CH055_CH061_Odbior_na_emulatorze.md).
+
+**Stan roboczy 25.11.2026:** Do CI dodano próbę dokładnego alarmu w głębokim Doze z jedną wysyłką przez wirtualny modem. [Kandydat QA](CH056_CH064_Kandydat_QA.md).
 
 ### CH058 Przetestować HD end to end i bezpieczeństwo
 
@@ -718,6 +722,8 @@ Odbiór: każda akcja osiągalna, brak informacji tylko kolorem i brak uciętej 
 
 **Stan roboczy 23.11.2026:** Dodano testy paneli z tekstem 1,3 i 2,0 oraz alternatywy gestów przez akcje dostępności. Ręczny TalkBack pozostaje do odbioru. [Odbiór na emulatorze](CH055_CH061_Odbior_na_emulatorze.md).
 
+**Stan roboczy 25.11.2026:** Klawiatura i D-pad mogą przenieść fokus i wybrać zakładkę galerii. Emulator weryfikuje zmianę filtra. [Kandydat QA](CH056_CH064_Kandydat_QA.md).
+
 ### CH061 Zweryfikować migracje backup i odzyskanie
 
 **P0 · Android i QA · 2–3 osobodni · zależności CH022 CH028 CH035 CH043 CH047 CH050**
@@ -727,6 +733,8 @@ Wykonanie: polityka backupu prywatnej bazy/indeksu/kluczy, test aktualizacji i p
 Odbiór: historia providera nienaruszona, brak drugiej wysyłki po przywróceniu. Weryfikacja: aktualizacja instalacji zawierającej szkice, harmonogram i kosz, czysta instalacja i restore testowy.
 
 **Stan roboczy 23.11.2026:** CI sprawdza przerwaną migrację, ochronę backupu i zachowanie providera po wyczyszczeniu lokalnych danych Chatry. [Odbiór na emulatorze](CH055_CH061_Odbior_na_emulatorze.md).
+
+**Stan roboczy 25.11.2026:** Dodano próbę reinstalacji aktualizacyjnej APK 1→2 z zachowaniem roli, historii, szkicu, harmonogramu i kosza. [Kandydat QA](CH056_CH064_Kandydat_QA.md).
 
 ### CH062 Przygotować CI konfigurację i instrukcje utrzymania
 
@@ -761,6 +769,8 @@ Odbiór: pełna matryca bez martwych przycisków i nieprawdziwych statusów; bui
 Wykonanie: ponownie sprawdzić wymagania Google Play/target SDK/uprawnień SMS/Billing i dane prywatności. Przygotować podpisany AAB/APK w uzgodnionym kanale, opis sklepu, obrazy, deklaracje i politykę. Przekazać repozytoria, ADR, OpenAPI, konfiguracje bez sekretów i raporty. Przygotowanie do wydania nie oznacza automatycznej publikacji.
 
 Odbiór: paczka instaluje się z kanału testowego, podstawowe przepływy działają w buildzie release; właściciel ma instrukcję wypuszczenia i wsparcia. Weryfikacja: smoke test wydania oraz zgodność treści sklepu z realnym zakresem bez RCS/iMessage.
+
+**Stan roboczy 25.11.2026:** Dodano podpisane APK i AAB wariantu release z jednorazowym kluczem QA oraz próbę instalacji. Kanał i klucz wydania pozostają do konfiguracji. [Kandydat QA](CH056_CH064_Kandydat_QA.md).
 
 ## 7a Rozszerzenia UX wynikające z Textry i iOS (CH065–CH072)
 

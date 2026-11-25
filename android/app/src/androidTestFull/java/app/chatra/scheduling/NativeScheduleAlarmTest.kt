@@ -30,6 +30,9 @@ class NativeScheduleAlarmTest {
     }
     @Test fun exactWakeUsesSharedQueueOnceWithNoVisibleActivity()=runBlocking<Unit> {
         assumeTrue(InstrumentationRegistry.getArguments().getString("nativeAlarm")=="true")
+        val checkIdle = InstrumentationRegistry.getArguments().getString("assertDeepIdle") == "true"
+        val power = context.getSystemService(android.os.PowerManager::class.java)
+        if (checkIdle) assertTrue("Emulator must be in Doze before scheduling", power.isDeviceIdleMode)
         val c=container();assumeTrue(c.exactAlarms.canScheduleExact());assumeTrue(c.smsRole.isHeld())
         val at=Instant.now().plusSeconds(65);val zone=ZoneId.systemDefault()
         val id=c.schedules.schedule(draft("Scheduled AVD QA"),at,at.atZone(zone).toLocalDateTime(),zone,LatenessPolicy.Ask)
@@ -42,6 +45,7 @@ class NativeScheduleAlarmTest {
             assertEquals(1,attempts.size)
             assertFalse(result.createdAt.isBefore(at))
             assertTrue(result.state in setOf(SendState.SENT,SendState.DELIVERED))
+            if (checkIdle) assertTrue("Emulator must still be in Doze after sending", power.isDeviceIdleMode)
             android.util.Log.i("ChatraScheduleQA","FINISHED:${result.state}:attempts=${attempts.size}")
         } finally {db.close()}
     }

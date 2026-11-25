@@ -79,6 +79,24 @@ class InstallationRecoveryTest {
         } finally { db.close() }
     }
 
+    @Test fun apkUpdatePreservesLocalStateWithoutSending() = runBlocking<Unit> {
+        requireResetRun()
+        assumeTrue(InstrumentationRegistry.getArguments().getString("upgradeQa") == "true")
+        assertEquals(2L, context.packageManager.getPackageInfo(context.packageName, 0).longVersionCode)
+        val platform = app.chatra.platform.SystemPlatform(context)
+        assertTrue(platform.isHeld())
+        context.contentResolver.query(Telephony.Sms.Inbox.CONTENT_URI, arrayOf("_id"), "address=? AND body=?",
+            arrayOf(sender, marker), null)!!.use { assertEquals(1, it.count) }
+        val db = ChatraDatabase.open(context)
+        try {
+            assertEquals("fixture", db.dao().savedDraft("recovery-draft")?.payload)
+            assertEquals("recovery-op", db.schedules().row("recovery-schedule")?.operationId)
+            assertEquals("SCHEDULED", db.dao().operation("recovery-op")?.state)
+            assertEquals("recovery-thread", db.organization().entry("recovery-trash")?.conversationId)
+            assertTrue(db.dao().attempts("recovery-op").isEmpty())
+        } finally { db.close() }
+    }
+
     @Test fun systemHistorySurvivesWithoutLocalOperations() = runBlocking<Unit> {
         requireResetRun()
         val resolver = context.contentResolver

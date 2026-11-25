@@ -54,4 +54,7 @@ bash ../scripts/ch057_emulator_restart.sh \
 if [[ "${1:-}" == "--verify-beta" ]]; then
   bash ../scripts/ch062_beta_emulator_smoke.sh || status=1
 fi
+if [[ "${2:-}" == "--verify-release" ]]; then
+  bash ../scripts/ch064_emulator_release_checks.sh || status=1
+fi
 exit "$status"
