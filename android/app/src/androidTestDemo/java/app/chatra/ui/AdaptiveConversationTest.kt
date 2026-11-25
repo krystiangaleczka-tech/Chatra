@@ -91,6 +91,7 @@ class AdaptiveConversationTest {
         launch(360, 1.3f, listOf(Route.Inbox, Route.Conversation(id), Route.ConversationDetails(id), Route.ConversationGallery(id)))
         val photos = ui.onNode(hasText("Zdjęcia") and SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Tab))
         val videos = ui.onNode(hasText("Filmy") and SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Tab))
+        ui.onRoot().performKeyInput { pressKey(Key.Tab) }
         photos.performSemanticsAction(SemanticsActions.RequestFocus)
         photos.assertIsFocused().performKeyInput { pressKey(Key.DirectionRight) }
         videos.assertIsFocused().performKeyInput { pressKey(Key.Enter) }
