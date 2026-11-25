@@ -29,6 +29,15 @@ adb shell wm dismiss-keyguard
 adb shell am start -W -n app.chatra/app.chatra.MainActivity
 run_full_case inspect-reboot "$alarm#inspectRebootRecoveryAndCancel" -e rebootInspect true
 
+run_full_case prepare-force-stop "$alarm#prepareAskScheduleForForceStop" -e forceStopPrepare true
+adb shell am force-stop app.chatra
+sleep 67
+adb shell dumpsys package app.chatra | sed -n '/stopped=true/p' > "$out/force-stop-package.txt"
+grep -q 'stopped=true' "$out/force-stop-package.txt"
+adb shell am start -W -n app.chatra/app.chatra.MainActivity > "$out/force-stop-start.txt"
+grep -q '^Status: ok' "$out/force-stop-start.txt"
+run_full_case inspect-force-stop "$alarm#inspectForceStopRecoveryWithinAlarmTolerance" -e forceStopInspect true
+
 recovery=app.chatra.acceptance.InstallationRecoveryTest
 run_full_case prepare-reset "$recovery#seedPrivateDataAndProvider" -e resetQa true
 adb shell pm clear app.chatra | tee "$out/clear-private-data.txt"

@@ -43,6 +43,7 @@ class PersistentSchedulesTest {
         val entries = mutableMapOf<String, ScheduledRow>()
         override fun boot() = bootId
         override fun available() = permitted
+        override fun hasPending(row: ScheduledRow) = entries[row.id]?.token == row.token
         override fun register(row: ScheduledRow) { if (fail) error("Registration failed"); entries[row.id] = row }
         override fun cancel(row: ScheduledRow) { if (entries[row.id]?.token == row.token) entries.remove(row.id) }
     }
@@ -120,6 +121,26 @@ class PersistentSchedulesTest {
         repo.fire(ScheduleId(row.id), row.version, row.token) // Persisted work may beat boot reconciliation.
         repo.reconcile("BOOT_COMPLETED")
         assertEquals(0, calls); assertEquals("MISSED_NEEDS_DECISION", db.dao().operation(row.operationId)!!.state)
+    }
+    @Test fun missingAlarmInSameBootRequiresDecisionEvenInsideTolerance() = runBlocking {
+        val row = plan()
+        assertTrue(row.registered)
+        alarms.cancel(row)
+        clock.instant = Instant.ofEpochMilli(row.instant).plusSeconds(5)
+        repo.reconcile("startup")
+        repo.fire(ScheduleId(row.id), row.version, row.token)
+        assertEquals("MISSED_NEEDS_DECISION", db.dao().operation(row.operationId)?.state)
+        assertTrue(db.dao().attempts(row.operationId).isEmpty())
+        assertEquals(0, calls)
+    }
+    @Test fun reconciliationLeavesAskForItsRealAlarmWithinTolerance() = runBlocking {
+        val row = plan()
+        clock.instant = Instant.ofEpochMilli(row.instant).plusSeconds(5)
+        repo.reconcile()
+        assertEquals("SCHEDULED", db.dao().operation(row.operationId)?.state)
+        assertEquals(0, calls)
+        repo.fire(ScheduleId(row.id), row.version, row.token)
+        assertEquals(1, calls)
     }
     @Test fun deletingUncertainScheduleRetainsEvidenceAndAcceptsLateSuccess() = runBlocking {
         val row = plan(); clock.instant = Instant.ofEpochMilli(row.instant)

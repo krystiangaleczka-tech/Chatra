@@ -28,6 +28,7 @@ class PlatformScheduleAlarms(private val context: Context) : ScheduleAlarms {
             .setData(Uri.Builder().scheme("chatra-schedule").authority("due").appendPath(row.id).appendPath(row.version.toString()).appendPath(row.token).build())
         return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE or if (create) PendingIntent.FLAG_UPDATE_CURRENT else PendingIntent.FLAG_NO_CREATE)
     }
+    override fun hasPending(row: ScheduledRow) = pending(row, false) != null
     override fun register(row: ScheduledRow) {
         check(manager.canScheduleExactAlarms()) { "Brak dostępu do dokładnych alarmów." }
         manager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, row.instant, requireNotNull(pending(row, true)))
