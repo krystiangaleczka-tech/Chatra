@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsProperties
@@ -83,5 +84,17 @@ class AdaptiveConversationTest {
         ui.runOnIdle { check(menu.action()) }
         ui.onNodeWithText("Wycisz do odwołania").performScrollTo().assertHasClickAction()
         ui.onNodeWithText("Szczegóły rozmowy").performScrollTo().assertHasClickAction()
+    }
+
+    @OptIn(ExperimentalTestApi::class)
+    @Test fun keyboardMovesAndSelectsGalleryFilters() {
+        launch(360, 1.3f, listOf(Route.Inbox, Route.Conversation(id), Route.ConversationDetails(id), Route.ConversationGallery(id)))
+        val photos = ui.onNode(hasText("Zdjęcia") and SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Tab))
+        val videos = ui.onNode(hasText("Filmy") and SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Tab))
+        photos.performSemanticsAction(SemanticsActions.RequestFocus)
+        photos.assertIsFocused().performKeyInput { pressKey(Key.DirectionRight) }
+        videos.assertIsFocused().performKeyInput { pressKey(Key.Enter) }
+        videos.assertIsSelected().assertIsDisplayed()
+        ui.waitUntil(10_000) { ui.onAllNodesWithText("Brak pozycji w tej zakładce.").fetchSemanticsNodes().isNotEmpty() }
     }
 }

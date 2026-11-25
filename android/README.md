@@ -38,7 +38,9 @@ cd android
 ./gradlew :app:lintDemoDebug               # lint wariantu demo
 ```
 
-Wydanie testowe: skopiuj `keystore.properties.example` do `keystore.properties`, wskaż własny keystore poza repozytorium, potem `./gradlew :app:assembleFullRelease`. Bez tego pliku release buduje się niepodpisany.
+Wydanie lokalne korzysta z `keystore.properties` na podstawie `keystore.properties.example`. Skonfiguruj klucz poza repozytorium i użyj `./gradlew :app:assembleFullRelease :app:bundleFullRelease -PchatraVersionCode=<numer>`. Bez pliku Gradle buduje niepodpisane paczki.
+
+CI używa osobnego skryptu `scripts/ch064_build_release_qa.sh`, który podpisuje wariant release jednorazowym kluczem QA. Raport i ograniczenia tej kompilacji są w [odbiorze kandydata](../docs/implementacja_android/CH056_CH064_Kandydat_QA.md).
 
 Wariant `full` kompiluje się i od CH022–CH026 odczytuje historię oraz wysyła SMS.
 Pozostaje wersją testową. Implementuje SMS/MMS, trwałą kolejkę, harmonogram, lokalny indeks, blokady i kosz.

@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.focusGroup
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -100,7 +101,7 @@ internal fun ConversationGalleryScreen(
                 if (!largeText) TextAction("Odśwież", model::refresh, enabled = !state.loading && !working)
             }
             if (largeText) TextAction("Odśwież", model::refresh, Modifier.heightIn(min = 48.dp), enabled = !state.loading && !working)
-            Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).selectableGroup(),
+            Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).focusGroup().selectableGroup(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 for (kind in MediaKind.entries) {
                     val active = kind == state.kind

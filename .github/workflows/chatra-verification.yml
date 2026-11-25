@@ -2,9 +2,9 @@ name: Chatra domain, migrations and HD
 on:
   push:
     branches: [main]
-    paths: ["android/**", "backend/**", "scripts/ch006_compare_screens.py", "scripts/ch055_*", "scripts/ch057_*", "scripts/ch072_*", "scripts/ch062_*", ".github/workflows/chatra-verification.yml"]
+    paths: ["android/**", "backend/**", "scripts/ch006_compare_screens.py", "scripts/ch055_*", "scripts/ch057_*", "scripts/ch072_*", "scripts/ch062_*", "scripts/ch064_*", ".github/workflows/chatra-verification.yml"]
   pull_request:
-    paths: ["android/**", "backend/**", "scripts/ch006_compare_screens.py", "scripts/ch055_*", "scripts/ch057_*", "scripts/ch072_*", "scripts/ch062_*", ".github/workflows/chatra-verification.yml"]
+    paths: ["android/**", "backend/**", "scripts/ch006_compare_screens.py", "scripts/ch055_*", "scripts/ch057_*", "scripts/ch072_*", "scripts/ch062_*", "scripts/ch064_*", ".github/workflows/chatra-verification.yml"]
   workflow_dispatch:
 permissions:
   contents: read
@@ -60,6 +60,8 @@ jobs:
           ORG_GRADLE_PROJECT_chatraFirebaseSenderId: '123456789'
           ORG_GRADLE_PROJECT_chatraFirebaseProjectId: qa-config-check
         run: bash scripts/ch062_build_beta.sh
+      - name: Build signed release for QA
+        run: bash scripts/ch064_build_release_qa.sh
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -78,7 +80,7 @@ jobs:
           target: google_apis
           working-directory: android
           disable-animations: true
-          script: bash ../scripts/ch062_emulator_checks.sh --verify-beta
+          script: bash ../scripts/ch062_emulator_checks.sh --verify-beta --verify-release
       - name: Check Android 17 transport API
         if: ${{ !cancelled() && steps.emulator16.conclusion != 'skipped' }}
         uses: reactivecircus/android-emulator-runner@v2
@@ -105,6 +107,11 @@ jobs:
         with:
           name: chatra-offline-beta
           path: build/beta/
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: chatra-release-qa
+          path: build/release-qa/
           if-no-files-found: error
       - uses: actions/upload-artifact@v4
         with:
