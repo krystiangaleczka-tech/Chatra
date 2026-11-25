@@ -1,12 +1,12 @@
 package app.chatra.ui
 
 import android.app.Application
+import android.view.KeyEvent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsProperties
@@ -16,6 +16,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.test.core.app.ApplicationProvider
+import androidx.test.platform.app.InstrumentationRegistry
 import app.chatra.core.model.AppearancePrefs
 import app.chatra.core.model.AppearanceOverride
 import app.chatra.core.model.NotificationPrefs
@@ -86,16 +87,21 @@ class AdaptiveConversationTest {
         ui.onNodeWithText("Szczegóły rozmowy").performScrollTo().assertHasClickAction()
     }
 
-    @OptIn(ExperimentalTestApi::class)
     @Test fun keyboardMovesAndSelectsGalleryFilters() {
         launch(360, 1.3f, listOf(Route.Inbox, Route.Conversation(id), Route.ConversationDetails(id), Route.ConversationGallery(id)))
         val photos = ui.onNode(hasText("Zdjęcia") and SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Tab))
         val videos = ui.onNode(hasText("Filmy") and SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Tab))
-        ui.onRoot().performKeyInput { pressKey(Key.Tab) }
-        photos.performSemanticsAction(SemanticsActions.RequestFocus)
-        photos.assertIsFocused().performKeyInput { pressKey(Key.DirectionRight) }
-        videos.assertIsFocused().performKeyInput { pressKey(Key.Enter) }
-        videos.assertIsSelected().assertIsDisplayed()
-        ui.waitUntil(10_000) { ui.onAllNodesWithText("Brak pozycji w tej zakładce.").fetchSemanticsNodes().isNotEmpty() }
+        val instrumentation = InstrumentationRegistry.getInstrumentation()
+        instrumentation.setInTouchMode(false)
+        try {
+            instrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_TAB)
+            photos.performSemanticsAction(SemanticsActions.RequestFocus)
+            photos.assertIsFocused()
+            instrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_DPAD_RIGHT)
+            videos.assertIsFocused()
+            instrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_ENTER)
+            videos.assertIsSelected().assertIsDisplayed()
+            ui.waitUntil(10_000) { ui.onAllNodesWithText("Brak pozycji w tej zakładce.").fetchSemanticsNodes().isNotEmpty() }
+        } finally { instrumentation.setInTouchMode(true) }
     }
 }
