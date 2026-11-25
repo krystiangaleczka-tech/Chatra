@@ -16,6 +16,7 @@ import java.util.UUID
 interface ScheduleAlarms {
     fun boot(): Int = 0
     fun available(): Boolean
+    fun hasPending(row: ScheduledRow): Boolean
     fun register(row: ScheduledRow)
     fun cancel(row: ScheduledRow)
 }
@@ -219,13 +220,23 @@ class PersistentSchedules(private val db: ChatraDatabase, private val queue: Per
                     continue
                 }
                 if (op.state !in listOf("SCHEDULED", "MISSED_NEEDS_DECISION")) continue
-                if (clock.now().isBefore(Instant.ofEpochMilli(row.instant))) {
+                val now = clock.now()
+                if (now.isBefore(Instant.ofEpochMilli(row.instant))) {
                     if (op.state == "SCHEDULED") register(row)
-                } else if ((row.policy == LatenessPolicy.SendWithinHour.name || row.registered && row.boot == alarms.boot() && !reason.contains("BOOT", true)) && row.model().decide(clock.now()) is DueDecision.Send && conditions.problem(SubscriptionId(op.subscriptionId)) == null && alarms.available()) {
-                    // The actual worker checks the deadline again, rather than trusting this wake-up.
+                    continue
+                }
+                val withinWindow = row.model().decide(now) is DueDecision.Send &&
+                    conditions.problem(SubscriptionId(op.subscriptionId)) == null && alarms.available()
+                if (withinWindow && row.policy == LatenessPolicy.SendWithinHour.name) {
                     if (op.state == "MISSED_NEEDS_DECISION") dao.transition(op.id, op.state, op.version, "SCHEDULED")
                     due += row
-                } else missed(row, "Termin minął lub zmieniły się warunki. Wybierz dalsze działanie.")
+                    continue
+                }
+                // Ask can use the normal alarm tolerance only when its own callback arrives.
+                // A successful registration in Room can outlive the system alarm after force-stop.
+                if (withinWindow && op.state == "SCHEDULED" && row.registered && row.boot == alarms.boot() &&
+                    !reason.contains("BOOT", true) && alarms.hasPending(row)) continue
+                missed(row, "Termin minął lub zmieniły się warunki. Wybierz dalsze działanie.")
             }
         }
         due.forEach { fire(ScheduleId(it.id), it.version, it.token) }

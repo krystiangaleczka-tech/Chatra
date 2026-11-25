@@ -685,6 +685,8 @@ Odbiór: brak niejawnego ponowienia przy niepewności i brak wysyłki po skutecz
 
 **Stan roboczy 25.11.2026:** Do CI dodano próbę dokładnego alarmu w głębokim Doze z jedną wysyłką przez wirtualny modem. [Kandydat QA](CH056_CH064_Kandydat_QA.md).
 
+**Stan roboczy 25.11.2026:** Po wymuszonym zatrzymaniu aplikacji zaległe zlecenie z polityką „Zapytaj” wymaga decyzji. Próba uruchamia aplikację w ciągu dwóch minut po terminie i sprawdza brak prób wysyłki. [Odbiór na emulatorze](CH055_CH061_Odbior_na_emulatorze.md).
+
 ### CH058 Przetestować HD end to end i bezpieczeństwo
 
 **P0 · QA i bezpieczeństwo · 3–5 osobodni · zależności CH047 CH048 CH050 CH051 CH052 CH053**
@@ -777,6 +779,8 @@ Wykonanie: ponownie sprawdzić wymagania Google Play/target SDK/uprawnień SMS/B
 Odbiór: paczka instaluje się z kanału testowego, podstawowe przepływy działają w buildzie release; właściciel ma instrukcję wypuszczenia i wsparcia. Weryfikacja: smoke test wydania oraz zgodność treści sklepu z realnym zakresem bez RCS/iMessage.
 
 **Stan roboczy 25.11.2026:** Dodano podpisane APK i AAB wariantu release z jednorazowym kluczem QA oraz próbę instalacji. Kanał i klucz wydania pozostają do konfiguracji. [Kandydat QA](CH056_CH064_Kandydat_QA.md).
+
+**Stan roboczy 25.11.2026:** CI sprawdza wyrównanie ZIP w APK i segmentów ELF w APK oraz AAB dla stron 16 KiB. Wynik trafia do paczki QA. [Kandydat QA](CH056_CH064_Kandydat_QA.md).
 
 ## 7a Rozszerzenia UX wynikające z Textry i iOS (CH065–CH072)
 

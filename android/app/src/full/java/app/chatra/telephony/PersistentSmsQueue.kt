@@ -10,6 +10,7 @@ import android.provider.Settings
 import android.provider.Telephony
 import android.telephony.SmsMessage
 import android.telephony.SubscriptionManager
+import android.telephony.SubscriptionInfo
 import androidx.core.content.ContextCompat
 import androidx.room.withTransaction
 import androidx.work.*
@@ -37,7 +38,7 @@ private class AndroidSmsTime(private val context: Context) : SmsQueueTime {
 
 class PersistentSmsQueue(
     private val context: Context, private val db: ChatraDatabase, private val platform: SmsRoleGate,
-    private val history: SystemHistory, private val sims: SimRepository, private val text: PlatformSmsText,
+    private val history: SystemHistory, private val text: PlatformSmsText,
     private val drafts: RoomDrafts,
     private val transport: SmsTransport = NativeSmsTransport(text),
     private val work: SmsWork = PlatformSmsWork(context),
@@ -49,10 +50,11 @@ class PersistentSmsQueue(
     private val dao = db.dao()
     private val startup = CoroutineScope(SupervisorJob() + Dispatchers.IO).async(start = CoroutineStart.LAZY) { recover() }
     suspend fun awaitReady() { startup.await() }
-    internal suspend fun requireSim(id: SubscriptionId) {
+    private fun requireSim(id: SubscriptionId): SubscriptionInfo {
         check(context.smsSend(platform) && context.smsRead(platform)) { "Brak roli SMS lub uprawnienia." }
         check(ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) { "Brak dostępu do kart SIM." }
-        check(context.getSystemService(SubscriptionManager::class.java).activeSubscriptionInfoList.orEmpty().any { it.subscriptionId == id.value }) { "Karta SIM jest niedostępna. Wybierz ją ponownie." }
+        return checkNotNull(context.getSystemService(SubscriptionManager::class.java).activeSubscriptionInfoList.orEmpty()
+            .firstOrNull { it.subscriptionId == id.value }) { "Karta SIM jest niedostępna. Wybierz ją ponownie." }
     }
     private suspend fun certainFailures(id: String): List<OutgoingRecipient> {
         val attempts = dao.attempts(id)
@@ -84,8 +86,7 @@ class PersistentSmsQueue(
         if (MmsEngine.isMms(draft)) requireNotNull(mms) { "MMS jest niedostępny." }.validate(draft)
         require(undoSeconds in SendingPrefs.UNDO_OPTIONS)
         val sim = requireNotNull(draft.subscriptionId)
-        requireSim(sim)
-        val card = sims.cards().first().first { it.id == sim }
+        val card = requireSim(sim).toSimCard()
         val unique = draft.recipients.distinctBy { recipientKey(it.raw) }
         val group = if (draft.recipientMode == RecipientMode.GroupMms) history.conversationFor(unique) else null
         val recipients = unique.map { it to (group ?: history.conversationFor(listOf(it))) }
@@ -110,8 +111,7 @@ class PersistentSmsQueue(
         OperationId(id)
     }
     internal suspend fun activateScheduled(row: OutgoingOperation, sim: SubscriptionId): Boolean {
-        requireSim(sim)
-        val card = sims.cards().first().first { it.id == sim }
+        val card = requireSim(sim).toSimCard()
         if (db.schedules().activate(row.id, row.version, time.wall(), time.elapsed(), time.boot(), sim.value, card.label) != 1) return false
         dao.recipients(row.id).forEach { dao.recipient(it.copy(state = "PENDING_UNDO")) }
         return true
@@ -164,8 +164,7 @@ class PersistentSmsQueue(
     override suspend fun retry(id: OperationId, sim: SubscriptionId): Boolean = withContext(Dispatchers.IO) {
         awaitReady()
         reconcile(id)
-        requireSim(sim)
-        val card = sims.cards().first().first { it.id == sim }
+        val card = requireSim(sim).toSimCard()
         val child = db.withTransaction {
             val row = dao.operation(id.value) ?: return@withTransaction null
             if (row.state !in listOf("FAILED", "PARTIALLY_SENT") || dao.retryChild(row.id) != null) return@withTransaction null

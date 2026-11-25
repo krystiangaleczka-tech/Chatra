@@ -73,4 +73,46 @@ class NativeScheduleAlarmTest {
             assertTrue(container().schedules.delete(ScheduleId(id),row.version))
         } finally {db.close()}
     }
+
+    @Test fun prepareAskScheduleForForceStop() = runBlocking<Unit> {
+        assumeTrue(InstrumentationRegistry.getArguments().getString("forceStopPrepare") == "true")
+        val c = container()
+        assertTrue(c.exactAlarms.canScheduleExact())
+        assertTrue(c.smsRole.isHeld())
+        val at = Instant.now().plusSeconds(65)
+        val zone = ZoneId.systemDefault()
+        val id = c.schedules.schedule(draft("Force-stop AVD QA"), at, at.atZone(zone).toLocalDateTime(), zone, LatenessPolicy.Ask)
+        val db = ChatraDatabase.open(context)
+        try {
+            val row = requireNotNull(db.schedules().row(id.value))
+            assertTrue(row.registered)
+            assertTrue(prefs.edit().putString("forceStopId", row.id).putLong("forceStopDeadline", row.instant).commit())
+        } finally { db.close() }
+    }
+
+    @Test fun inspectForceStopRecoveryWithinAlarmTolerance() = runBlocking<Unit> {
+        assumeTrue(InstrumentationRegistry.getArguments().getString("forceStopInspect") == "true")
+        check(Build.HARDWARE in listOf("ranchu", "goldfish"))
+        val id = requireNotNull(prefs.getString("forceStopId", null))
+        val deadline = Instant.ofEpochMilli(prefs.getLong("forceStopDeadline", -1))
+        val lateBy = Duration.between(deadline, Instant.now())
+        assertTrue("Reopen after the deadline and inside the alarm tolerance. Actual delay: $lateBy",
+            lateBy > Duration.ZERO && lateBy < Duration.ofMinutes(2))
+        val db = ChatraDatabase.open(context)
+        try {
+            val row = requireNotNull(db.schedules().row(id))
+            assertEquals(deadline.toEpochMilli(), row.instant)
+            val state = withTimeout(30_000) {
+                var current = requireNotNull(db.dao().operation(row.operationId))
+                while (current.state == "SCHEDULED") {
+                    delay(100)
+                    current = requireNotNull(db.dao().operation(row.operationId))
+                }
+                current.state
+            }
+            assertEquals("MISSED_NEEDS_DECISION", state)
+            assertTrue(db.dao().attempts(row.operationId).isEmpty())
+            assertTrue(container().schedules.delete(ScheduleId(id), row.version))
+        } finally { db.close() }
+    }
 }

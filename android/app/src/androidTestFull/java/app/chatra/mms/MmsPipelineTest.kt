@@ -74,9 +74,8 @@ class MmsPipelineTest {
     @Test fun sharedQueueAssignsTheGroupConversationBeforeTheUndoWindow() = runBlocking {
         val info = context.getSystemService(android.telephony.SubscriptionManager::class.java).activeSubscriptionInfoList.orEmpty().first()
         val card = SimCard(SubscriptionId(info.subscriptionId), info.simSlotIndex, "QA SIM")
-        val sims = object : SimRepository { override fun cards() = flowOf(listOf(card)) }
         val work = object : SmsWork { override fun schedule(id: String, deadline: Long) {}; override fun cancel(id: String) {} }
-        val queue = PersistentSmsQueue(context, db, SystemPlatform(context), history, sims, PlatformSmsText(context), RoomDrafts(db), SmsTransport { _, _, _, _, _ -> fail("SMS transport called for group MMS") }, work)
+        val queue = PersistentSmsQueue(context, db, SystemPlatform(context), history, PlatformSmsText(context), RoomDrafts(db), SmsTransport { _, _, _, _, _ -> fail("SMS transport called for group MMS") }, work)
         queue.mms = engine(noDownload)
         val draft = Draft(DraftId.new(), null, listOf(Address("+48555000320"), Address("+48555000321")), "Queue group QA", RecipientMode.GroupMms, emptyList(), card.id, Instant.now())
         val id = queue.enqueue(draft, 3)

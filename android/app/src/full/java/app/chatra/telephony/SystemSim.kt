@@ -8,6 +8,7 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.telephony.SmsManager
 import android.telephony.SmsMessage
+import android.telephony.SubscriptionInfo
 import android.telephony.SubscriptionManager
 import androidx.core.content.ContextCompat
 import app.chatra.core.model.*
@@ -16,6 +17,8 @@ import app.chatra.platform.SystemPlatform
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
+
+internal fun SubscriptionInfo.toSimCard() = SimCard(SubscriptionId(subscriptionId), simSlotIndex, displayName?.toString().orEmpty())
 
 class SystemSim(context: Context, platform: SystemPlatform, scope: CoroutineScope) : SimRepository {
     private val manager = context.getSystemService(SubscriptionManager::class.java)
@@ -30,7 +33,7 @@ class SystemSim(context: Context, platform: SystemPlatform, scope: CoroutineScop
     }
     private val snapshot: StateFlow<Pair<List<SimCard>, SubscriptionId?>> = combine(changes, platform.changes) { _, _ ->
         if (!platform.allowed(AccessFeature.Sims) || ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) Pair<List<SimCard>, SubscriptionId?>(emptyList(), null) else try {
-            val cards = manager.activeSubscriptionInfoList.orEmpty().map { SimCard(SubscriptionId(it.subscriptionId), it.simSlotIndex, it.displayName?.toString().orEmpty()) }
+            val cards = manager.activeSubscriptionInfoList.orEmpty().map(SubscriptionInfo::toSimCard)
             cards to SubscriptionManager.getDefaultSmsSubscriptionId().takeIf { wanted -> cards.any { it.id.value == wanted } }?.let(::SubscriptionId)
         } catch (_: SecurityException) { emptyList<SimCard>() to null }
         catch (_: Exception) { emptyList<SimCard>() to null }
