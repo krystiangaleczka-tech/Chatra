@@ -4,8 +4,16 @@ import android.content.ContentValues
 import android.content.Intent
 import android.net.ConnectivityManager
 import android.provider.Telephony
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasClickAction
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performImeAction
+import androidx.compose.ui.test.performTextInput
 import androidx.test.core.app.ActivityScenario
 import androidx.test.platform.app.InstrumentationRegistry
 import app.chatra.ChatraApplication
@@ -23,7 +31,7 @@ import org.junit.Test
 class BetaInstallSmokeTest {
     @get:Rule val ui = createEmptyComposeRule()
 
-    @Test fun builtBetaShowsSystemSmsWithNoNetworkOrOnlineServices() {
+    @Test fun builtBetaOpensAndFindsSystemSmsWithNoNetworkOrOnlineServices() {
         assumeTrue(InstrumentationRegistry.getArguments().getString("betaSmoke") == "true")
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         assertEquals("app.chatra", context.packageName)
@@ -49,7 +57,7 @@ class BetaInstallSmokeTest {
         assertNull(container.billing)
         val resolver = context.contentResolver
         val sender = "+12025550162"
-        val text = "Chatra beta QA offline"
+        val text = "Chatra beta QA Żółwchatraqa"
         val uri = requireNotNull(resolver.insert(Telephony.Sms.Inbox.CONTENT_URI, ContentValues().apply {
             put("address", sender)
             put("thread_id", Telephony.Threads.getOrCreateThreadId(context, sender))
@@ -68,8 +76,20 @@ class BetaInstallSmokeTest {
             }
             ActivityScenario.launch<MainActivity>(Intent(context, MainActivity::class.java)
                 .setAction(SystemPlatform.ACTION_OPEN_CONVERSATION)
-                .putExtra(SystemPlatform.EXTRA_CONVERSATION_ID, id.value)).use {
+                .putExtra(SystemPlatform.EXTRA_CONVERSATION_ID, id.value)).use { scenario ->
                 ui.waitUntil(15_000) { ui.onAllNodesWithText(text).fetchSemanticsNodes().isNotEmpty() }
+                scenario.onActivity { it.onBackPressedDispatcher.onBackPressed() }
+                ui.onNodeWithContentDescription("Szukaj kontaktu, treści lub kodu").performClick()
+                val search = ui.onNodeWithContentDescription("Szukaj w rozmowach")
+                search.performClick()
+                search.performTextInput("zolwchatraqa")
+                search.performImeAction()
+                val result = hasText(text) and hasClickAction()
+                ui.waitUntil(20_000) { ui.onAllNodes(result).fetchSemanticsNodes().isNotEmpty() }
+                ui.onNode(result).assertIsDisplayed().performClick()
+                search.assertDoesNotExist()
+                ui.onNodeWithText(text).assertIsDisplayed()
+                assertNull(network.activeNetwork)
             }
         } finally {
             resolver.delete(uri, null, null)

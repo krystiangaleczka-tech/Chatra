@@ -75,6 +75,25 @@ class AdaptiveConversationTest {
         ui.waitUntil(5_000) { id.value !in container.conversationAppearance!!.value.value }
     }
 
+    @Test fun extrasCanScrollToMmsAndKeepConfirmationReachableAtDoubleText() {
+        launch(360, 2f, listOf(Route.Inbox, Route.Conversation(id), Route.Extras(id)))
+        val mms = ui.onNode(hasText("MMS") and SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.RadioButton))
+        mms.performScrollTo().assertIsDisplayed().performClick()
+        mms.assertIsSelected()
+        ui.onNodeWithText("Wyślij 4 zdjęcia jako MMS").assertIsDisplayed().assertHasClickAction()
+    }
+
+    @Test fun scheduleCanSelectEitherSimAndLatenessPolicyAtDoubleText() {
+        launch(360, 2f, listOf(Route.Inbox, Route.Conversation(id), Route.Schedule(id, preset = true)))
+        val workSim = ui.onNodeWithText("SIM 2 · Praca")
+        workSim.performScrollTo().assertIsDisplayed().performClick()
+        workSim.assertIsSelected()
+        val withinHour = ui.onNodeWithText("Wyślij, jeśli spóźnienie nie przekracza 1 h")
+        withinHour.performScrollTo().assertIsDisplayed().performClick()
+        withinHour.assertIsSelected()
+        ui.onNodeWithText("Zaplanuj na", substring = true).assertIsDisplayed().assertIsEnabled()
+    }
+
     @Test fun accessibilityActionProvidesAlternativeToInboxSwipes() {
         launch(430, 1.3f, listOf(Route.Inbox))
         val rowMatcher = hasText("Ola Nowak") and SemanticsMatcher.keyIsDefined(SemanticsActions.CustomActions)

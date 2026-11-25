@@ -5,12 +5,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -27,6 +29,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import app.chatra.core.designsystem.component.GlassStyles
@@ -48,11 +51,11 @@ import app.chatra.ui.LocalChrome
 @Composable
 fun SheetSurface(top: Dp, label: String, modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
     val chrome = LocalChrome.current
-    Box(Modifier.fillMaxSize()) {
+    BoxWithConstraints(Modifier.fillMaxSize()) {
         GlassSurface(
             GlassStyles.Sheet, RoundedCornerShape(40.dp),
             modifier
-                .padding(start = 8.dp, end = 8.dp, top = chrome.top(top), bottom = chrome.bottom(8.dp))
+                .padding(start = 8.dp, end = 8.dp, top = chrome.top(minOf(top, maxHeight / 3)), bottom = chrome.bottom(8.dp))
                 .fillMaxSize()
                 .semantics { contentDescription = label },
             shadows = listOf(Shadows.Sheet),
@@ -89,14 +92,15 @@ fun SheetTitle(title: String, onClose: () -> Unit, closeLabel: String = "Zamknij
 fun PrimaryButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier, enabled: Boolean = true) {
     val shape = RoundedCornerShape(27.dp)
     Box(
-        modifier.fillMaxWidth().height(54.dp)
+        modifier.fillMaxWidth().heightIn(min = 54.dp)
             .then(if (enabled) Modifier.cssShadow(shape, app.chatra.core.designsystem.component.CssShadow(10.dp, 24.dp, Color(10, 60, 160).copy(alpha = 0.26f))) else Modifier)
             .clip(shape).background(if (enabled) ChatraColors.Accent else ChatraColors.Accent.copy(alpha = 0.4f))
             .topHighlight(shape, ChatraColors.white(0.45f))
             .semantics { role = Role.Button }
-            .pressable(onClick, enabled),
+            .pressable(onClick, enabled)
+            .padding(horizontal = 12.dp, vertical = 6.dp),
         contentAlignment = Alignment.Center,
-    ) { BasicText(text, style = chatraText(17f, 600, color = Color.White)) }
+    ) { BasicText(text, style = chatraText(17f, 600, color = Color.White).copy(textAlign = TextAlign.Center)) }
 }
 
 /**

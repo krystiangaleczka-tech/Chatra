@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -238,13 +239,13 @@ private fun Shortcuts(shortcuts: List<ScheduleShortcut>, current: LocalDateTime,
 @Composable
 private fun Chip(label: String, selected: Boolean, onClick: () -> Unit) {
     val shape = RoundedCornerShape(18.dp)
-    val base = Modifier.height(36.dp).clip(shape)
+    val base = Modifier.heightIn(min = 36.dp).clip(shape)
     val surface = if (selected) base.background(ChatraColors.Accent)
     else base.background(ChatraColors.white(0.6f)).border(1.dp, ChatraColors.white(0.95f), shape)
     Box(
         surface.semantics { role = Role.Button; this.selected = selected }.pressable(onClick)
             // border-box: wybrany bez obramowania, pozostałe 1 + padding 14.
-            .padding(horizontal = if (selected) 14.dp else 15.dp),
+            .padding(horizontal = if (selected) 14.dp else 15.dp, vertical = 4.dp),
         contentAlignment = Alignment.Center,
     ) {
         BasicText(label, style = if (selected) chatraText(14f, 600, color = Color.White) else chatraText(14f, 500))
@@ -276,8 +277,7 @@ private fun FieldRow(label: String, divider: Boolean, value: @Composable () -> U
     Column {
         Row(Modifier.fillMaxWidth().heightIn(min = 50.dp).padding(horizontal = 14.dp), verticalAlignment = Alignment.CenterVertically) {
             BasicText(label, Modifier.padding(end = 12.dp), style = chatraText(16f))
-            Spacer(Modifier.weight(1f))
-            value()
+            Box(Modifier.weight(1f).wrapContentWidth(Alignment.End)) { value() }
         }
         // border-bottom 1 w content-box: wiersz 50 + linia 1.
         if (divider) Box(Modifier.fillMaxWidth().height(cssBorder()).background(ChatraColors.Ink07))
@@ -288,31 +288,33 @@ private fun FieldRow(label: String, divider: Boolean, value: @Composable () -> U
 private fun ValueButton(text: String, description: String, onClick: () -> Unit, tabular: Boolean = false) {
     val style = chatraText(16f, 600, color = ValueColor).let { if (tabular) it.copy(fontFeatureSettings = "tnum") else it }
     Box(
-        Modifier.height(34.dp).clip(RoundedCornerShape(10.dp)).background(ValueBackground)
+        Modifier.heightIn(min = 34.dp).clip(RoundedCornerShape(10.dp)).background(ValueBackground)
             .semantics { role = Role.Button; contentDescription = description }.pressable(onClick)
-            .padding(horizontal = 12.dp),
+            .padding(horizontal = 12.dp, vertical = 4.dp),
         contentAlignment = Alignment.Center,
     ) { BasicText(text, style = style) }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun SimSegment(sims: List<Pair<SubscriptionId, String>>, selected: SubscriptionId?, onSim: (SubscriptionId) -> Unit) {
-    Row(
+    FlowRow(
         Modifier.clip(RoundedCornerShape(12.dp)).background(ChatraColors.Ink06).padding(3.dp)
             .semantics { contentDescription = "Karta SIM" },
         horizontalArrangement = Arrangement.spacedBy(3.dp),
+        verticalArrangement = Arrangement.spacedBy(3.dp),
     ) {
         sims.forEach { (id, label) ->
             val on = id == selected
             val shape = RoundedCornerShape(9.dp)
             Box(
-                Modifier.height(30.dp)
+                Modifier.heightIn(min = 30.dp)
                     .then(if (on) Modifier.cssShadow(shape, SegmentShadow).clip(shape).background(app.chatra.core.designsystem.theme.LocalAppearanceTokens.current.surface) else Modifier.clip(shape))
                     .semantics { role = Role.Button; this.selected = on }.pressable({ onSim(id) })
-                    .padding(horizontal = 10.dp),
+                    .padding(horizontal = 10.dp, vertical = 4.dp),
                 contentAlignment = Alignment.Center,
             ) {
-                BasicText(label, style = if (on) chatraText(13f, 600) else chatraText(13f, 500, color = ChatraColors.TextTertiary), maxLines = 1)
+                BasicText(label, style = if (on) chatraText(13f, 600) else chatraText(13f, 500, color = ChatraColors.TextTertiary))
             }
         }
     }

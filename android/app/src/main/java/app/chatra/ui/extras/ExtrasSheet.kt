@@ -43,7 +43,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.chatra.core.designsystem.component.pressable
@@ -106,52 +108,49 @@ fun ExtrasSheet(model: ConversationViewModel, onClose: () -> Unit, onSchedule: (
         // a odstęp 14 został — golden ma tytuł 22 pod górną krawędzią treści.
         Spacer(Modifier.height(0.dp))
         SheetTitle("Dodaj do wiadomości", onClose)
-        // Wiersz siatki ma 75,71: „Zaplanuj” to <a> z content-box (74 + obramowanie, skurczone przez Chrome).
-        Row(Modifier.height(75.71.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            ActionTile(ChatraIcons.Photo, "Zdjęcie", mode == Mode.Photo) { if (mode == Mode.Photo) pick() else mode = Mode.Photo }
-            ActionTile(ChatraIcons.Camera, "Aparat", false) { pick() }
-            ActionTile(ChatraIcons.Clock, "Zaplanuj", false, onSchedule)
-            ActionTile(ChatraIcons.Lines, "Szablony", mode == Mode.Templates) { mode = Mode.Templates }
-        }
-        if (mode == Mode.Templates) {
-            Column(Modifier.weight(1f).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Column(Modifier.weight(1f).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(14.dp)) {
+            // Wiersz ma 75,71 dp w referencji i rośnie razem z tekstem.
+            Row(Modifier.heightIn(min = 75.71.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                ActionTile(ChatraIcons.Photo, "Zdjęcie", mode == Mode.Photo) { if (mode == Mode.Photo) pick() else mode = Mode.Photo }
+                ActionTile(ChatraIcons.Camera, "Aparat", false) { pick() }
+                ActionTile(ChatraIcons.Clock, "Zaplanuj", false, onSchedule)
+                ActionTile(ChatraIcons.Lines, "Szablony", mode == Mode.Templates) { mode = Mode.Templates }
+            }
+            if (mode == Mode.Templates) {
                 TemplatePicker { model.insertText(it); onClose() }
-            }
-            return@SheetSurface
-        }
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                BasicText(if (n == 0) "Nic nie wybrano" else "Wybrane: $n ${photosWord(n)}", Modifier.weight(1f), style = chatraText(15f, 600))
-                Box(Modifier.heightIn(min = 32.dp).semantics { role = Role.Button }.pressable(pick), contentAlignment = Alignment.Center) {
-                    BasicText(if (n == 0) "Wybierz" else "Zmień", style = chatraText(15f, color = ChatraColors.Link))
+            } else {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                        BasicText(if (n == 0) "Nic nie wybrano" else "Wybrane: $n ${photosWord(n)}", Modifier.weight(1f), style = chatraText(15f, 600))
+                        Box(Modifier.heightIn(min = 32.dp).semantics { role = Role.Button }.pressable(pick), contentAlignment = Alignment.Center) {
+                            BasicText(if (n == 0) "Wybierz" else "Zmień", style = chatraText(15f, color = ChatraColors.Link))
+                        }
+                    }
+                    if (n > 0) Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        picked.take(4).forEachIndexed { i, p -> Thumb(p, "Zdjęcie ${i + 1}, wybrane", Modifier.weight(1f)) }
+                        repeat(4 - picked.take(4).size) { Spacer(Modifier.weight(1f)) }
+                    }
                 }
-            }
-            if (n > 0) Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                picked.take(4).forEachIndexed { i, p -> Thumb(p, "Zdjęcie ${i + 1}, wybrane", Modifier.weight(1f)) }
-                repeat(4 - picked.take(4).size) { Spacer(Modifier.weight(1f)) }
-            }
-        }
-        // Warianty zajmują całe wolne miejsce (odpowiednik flex: 1 pod nimi) i przewijają się, gdy się nie mieszczą.
-        // Golden ściska CTA do 20,6 dp i wypycha go poza arkusz — tu CTA zostaje 54 dp i przypięte (odstępstwo, cel dotyku).
-        Column(Modifier.weight(1f).verticalScroll(rememberScrollState())) {
-            BasicText("Jak wysłać?", Modifier.padding(bottom = 8.dp), style = chatraText(15f, 600))
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                RadioOption(variant == MediaVariant.OriginalHd, { variant = MediaVariant.OriginalHd }) {
-                    OptionText(
-                        "Oryginał", hd = true,
-                        "${formatMegabytes(bytes)} bez kompresji, przez internet. " + if (hdCapable) "$name ma Chatra, więc zdjęcia pojawią się w rozmowie."
-                        else "$name nie ma Chatry — zapytamy, czy wysłać SMS z linkiem.",
-                    )
-                }
-                RadioOption(variant == MediaVariant.NoLocationCopy, { variant = MediaVariant.NoLocationCopy }) {
-                    OptionText("Kopia bez lokalizacji", hd = false, "Usuniemy dane GPS. To już nie będzie identyczny plik.")
-                }
-                RadioOption(variant == MediaVariant.Mms, { variant = MediaVariant.Mms }) {
-                    OptionText("MMS", hd = false, "Pomniejszona kopia w limicie operatora. Część szczegółów przepadnie.")
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    BasicText("Jak wysłać?", style = chatraText(15f, 600))
+                    RadioOption(variant == MediaVariant.OriginalHd, { variant = MediaVariant.OriginalHd }) {
+                        OptionText(
+                            "Oryginał", hd = true,
+                            "${formatMegabytes(bytes)} bez kompresji, przez internet. " + if (hdCapable) "$name ma Chatra, więc zdjęcia pojawią się w rozmowie."
+                            else "$name nie ma Chatry — zapytamy, czy wysłać SMS z linkiem.",
+                        )
+                    }
+                    RadioOption(variant == MediaVariant.NoLocationCopy, { variant = MediaVariant.NoLocationCopy }) {
+                        OptionText("Kopia bez lokalizacji", hd = false, "Usuniemy dane GPS. To już nie będzie identyczny plik.")
+                    }
+                    RadioOption(variant == MediaVariant.Mms, { variant = MediaVariant.Mms }) {
+                        OptionText("MMS", hd = false, "Pomniejszona kopia w limicie operatora. Część szczegółów przepadnie.")
+                    }
                 }
             }
         }
-        PrimaryButton(ctaText(variant, n), {
+        // Przypięty przycisk ma 54 dp lub więcej, także gdy zdjęcia wypełniają arkusz.
+        if (mode == Mode.Photo) PrimaryButton(ctaText(variant, n), {
             model.sendMedia(picked.map { it.id }, bytes, variant)
             onClose()
         }, enabled = n > 0)
@@ -183,16 +182,17 @@ private fun OptionText(title: String, hd: Boolean, description: String) {
 private fun RowScope.ActionTile(icon: ChatraIcon, label: String, selected: Boolean, onClick: () -> Unit) {
     val shape = RoundedCornerShape(20.dp)
     Column(
-        Modifier.weight(1f).height(74.dp).clip(shape)
+        Modifier.weight(1f).heightIn(min = 74.dp).clip(shape)
             .background(if (selected) app.chatra.core.designsystem.theme.LocalAppearanceTokens.current.surface else ChatraColors.white(0.6f))
             .border(if (selected) 1.5.dp else 1.dp, if (selected) ChatraColors.Accent else ChatraColors.white(0.95f), shape)
-            .semantics(mergeDescendants = true) { role = Role.Button }
-            .pressable(onClick),
+            .semantics(mergeDescendants = true) { role = Role.Button; this.selected = selected }
+            .pressable(onClick)
+            .padding(vertical = 6.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(5.dp, Alignment.CenterVertically),
     ) {
-        Icon(icon, 24.dp, ChatraColors.TextPrimary, 1.8f)
-        BasicText(label, style = chatraText(12f, 600))
+        Icon(icon, 24.dp, if (selected) ChatraColors.Accent else ChatraColors.TextPrimary, 1.8f)
+        BasicText(label, style = chatraText(12f, 600).copy(textAlign = TextAlign.Center))
     }
 }
 
