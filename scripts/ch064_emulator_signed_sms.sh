@@ -61,7 +61,7 @@ if [[ "$1" == "--verify-role-change" ]]; then
   adb shell input keyevent KEYCODE_HOME
   adb shell cmd role remove-role-holder --user 0 android.app.role.SMS app.chatra
   start_app role-removed
-  wait_for_ui role-removed 'Ustaw jako domyślną aplikację SMS' "$message"
+  wait_for_ui role-removed 'Spokojne SMS i MMS. Bez reklam w rozmowach i bez zakładania konta.' "$message"
   adb shell input keyevent KEYCODE_HOME
   grant_role
   start_app role-restored
