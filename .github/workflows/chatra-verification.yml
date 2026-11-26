@@ -61,6 +61,7 @@ jobs:
           ORG_GRADLE_PROJECT_chatraFirebaseProjectId: qa-config-check
         run: bash scripts/ch062_build_beta.sh
       - name: Build signed release for QA
+        id: release_build
         run: bash scripts/ch064_build_release_qa.sh
       - name: Check signed release for 16 KiB page alignment
         run: |
@@ -98,6 +99,17 @@ jobs:
           working-directory: android
           disable-animations: true
           script: bash ../scripts/ch072_emulator_probe.sh
+      - name: Run signed APK on Android 16 with 16 KiB pages
+        if: ${{ !cancelled() && steps.release_build.conclusion == 'success' && steps.emulator16.conclusion != 'skipped' }}
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 36
+          arch: x86_64
+          target: google_apis_ps16k
+          avd-name: chatra-api36-16k
+          working-directory: android
+          disable-animations: true
+          script: bash ../scripts/ch064_emulator_signed_sms.sh --require-16k
       - uses: actions/upload-artifact@v4
         if: always()
         with:

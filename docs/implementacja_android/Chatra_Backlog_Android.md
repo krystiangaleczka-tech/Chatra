@@ -673,6 +673,8 @@ Odbiór: raport dostarczenia i odbioru oraz lista wspieranych konfiguracji; brak
 
 **Stan roboczy 25.11.2026:** Dodano dostarczenie przez emulowany modem i sprawdzenie SMS-a na ekranie podpisanego release. [Kandydat QA](CH056_CH064_Kandydat_QA.md).
 
+**Stan roboczy 26.11.2026:** Próba odebrania i przywrócenia roli SMS sprawdza ekran Start oraz ponowne wyświetlenie tej samej wiadomości w Skrzynce. [Kandydat QA](CH056_CH064_Kandydat_QA.md).
+
 ### CH057 Przetestować alarmy i awarie wysyłki
 
 **P0 · QA i Android · 3–4 osobodni · zależności CH028 CH035 CH036 CH037**
@@ -770,6 +772,8 @@ Odbiór: pełna matryca bez martwych przycisków i nieprawdziwych statusów; bui
 
 **Stan roboczy 25.11.2026:** Test zainstalowanej bety wyszukuje systemowy SMS bez internetu i bez wpisywania polskich znaków. Wybranie trafienia otwiera wiadomość w rozmowie. [Wydajność i beta](CH059_CH063_Beta_i_wydajnosc.md).
 
+**Stan roboczy 26.11.2026:** Zainstalowana beta zapisuje szkic bez internetu. Test sprawdza tekst po ponownym otwarciu rozmowy oraz brak operacji wysyłki. [Wydajność i beta](CH059_CH063_Beta_i_wydajnosc.md).
+
 ### CH064 Przygotować dystrybucję i przekazanie
 
 **P0 · właściciel produktu i Android i DevOps · 2–3 osobodni · zależności CH063**
@@ -781,6 +785,8 @@ Odbiór: paczka instaluje się z kanału testowego, podstawowe przepływy dział
 **Stan roboczy 25.11.2026:** Dodano podpisane APK i AAB wariantu release z jednorazowym kluczem QA oraz próbę instalacji. Kanał i klucz wydania pozostają do konfiguracji. [Kandydat QA](CH056_CH064_Kandydat_QA.md).
 
 **Stan roboczy 25.11.2026:** CI sprawdza wyrównanie ZIP w APK i segmentów ELF w APK oraz AAB dla stron 16 KiB. Wynik trafia do paczki QA. [Kandydat QA](CH056_CH064_Kandydat_QA.md).
+
+**Stan roboczy 26.11.2026:** Osobny emulator Androida 16 potwierdza wielkość strony 16384 bajtów, instaluje podpisany APK i sprawdza odbiór SMS. [Kandydat QA](CH056_CH064_Kandydat_QA.md).
 
 ## 7a Rozszerzenia UX wynikające z Textry i iOS (CH065–CH072)
 

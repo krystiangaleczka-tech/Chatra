@@ -20,7 +20,7 @@ Próba wycofania kodu instaluje kolejno wersje QA 1, 2 i 3 z tym samym certyfika
 
 | Zakres | Zautomatyzowany dowód | Pozostały odbiór |
 | --- | --- | --- |
-| Beta lokalna | `BetaInstallSmokeTest` otwiera systemowy SMS offline, wyszukuje go bez polskich znaków i otwiera trafienie w rozmowie | Wysyłka SMS i MMS u operatorów na fizycznych kartach |
+| Beta lokalna | `BetaInstallSmokeTest` otwiera i wyszukuje systemowy SMS offline. Zapisuje też szkic z polskimi znakami, sprawdza jego tekst po ponownym otwarciu rozmowy i potwierdza brak operacji wysyłki. | Wysyłka SMS i MMS u operatorów na fizycznych kartach |
 | Szczegóły i galeria, CH065–CH066 | `ConversationDetailsTest` oraz `GalleryPagingTest` sprawdzają szczegóły, powrót do źródła, filtry i stronicowanie | Duże pliki u operatorów, TalkBack, dialer |
 | Kolaż i wygląd, CH067–CH068 | `AttachmentStackTest`, `AdaptiveConversationTest` i `PreferencesPersistenceTest` | Szybkie przewijanie dużych zdjęć i własne tło na sprzęcie |
 | Akcje skrzynki i odczyt, CH069–CH070 | `AdaptiveConversationTest`, `ConversationDetailsTest` oraz `SystemIntegrationTest` | Gesty producentów i powiadomienia przy zmianie roli |
