@@ -51,27 +51,5 @@ if [[ "${1:-}" == "--verify-rollback" ]]; then
   run_case after-rollback "$recovery#apkReplacementPreservesLocalStateWithoutSending" -e resetQa true -e expectedVersionCode 3 || status=1
 fi
 
-# The release APK is signed by a different key. Install afresh in this test environment.
-release="$root/build/release-qa"
-test "$(cat "$release/SOURCE_COMMIT")" = "$(git -C "$root" rev-parse HEAD)"
-(cd "$release" && sha256sum -c SHA256SUMS)
-adb uninstall app.chatra
-adb install "$release/chatra-release-qa.apk"
-grant_sms_role
-adb shell am start -W -n app.chatra/app.chatra.MainActivity > "$out/release-start.txt"
-grep -q '^Status: ok' "$out/release-start.txt"
-message="Chatra release QA SMS"
-adb emu sms send +12025550163 "$message"
-# The emulated modem sends through SMS_DELIVER. Require a visible inbox row before accepting.
-for attempt in {1..10}; do
-  if adb shell uiautomator dump /data/local/tmp/release-qa.xml >/dev/null 2>&1 &&
-      adb exec-out cat /data/local/tmp/release-qa.xml > "$out/release-incoming.xml" &&
-      grep -Fq "$message" "$out/release-incoming.xml"; then
-    adb shell rm -f /data/local/tmp/release-qa.xml
-    printf 'Signed release showed one synthetic SMS in its inbox.\n' | tee "$out/release-incoming.txt"
-    exit "$status"
-  fi
-  sleep 2
-done
-adb logcat -d -t 500 AndroidRuntime:E '*:S' > "$out/release-runtime.txt"
-exit 1
+bash "$root/scripts/ch064_emulator_signed_sms.sh" --verify-role-change || status=1
+exit "$status"

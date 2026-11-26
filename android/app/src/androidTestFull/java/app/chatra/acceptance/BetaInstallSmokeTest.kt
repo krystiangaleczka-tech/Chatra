@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.ConnectivityManager
 import android.provider.Telephony
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createEmptyComposeRule
@@ -31,7 +32,7 @@ import org.junit.Test
 class BetaInstallSmokeTest {
     @get:Rule val ui = createEmptyComposeRule()
 
-    @Test fun builtBetaOpensAndFindsSystemSmsWithNoNetworkOrOnlineServices() {
+    @Test fun builtBetaFindsSystemSmsAndReopensDraftOffline() {
         assumeTrue(InstrumentationRegistry.getArguments().getString("betaSmoke") == "true")
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         assertEquals("app.chatra", context.packageName)
@@ -58,6 +59,7 @@ class BetaInstallSmokeTest {
         val resolver = context.contentResolver
         val sender = "+12025550162"
         val text = "Chatra beta QA Żółwchatraqa"
+        val draftText = "Szkic bez internetu — zażółć"
         val uri = requireNotNull(resolver.insert(Telephony.Sms.Inbox.CONTENT_URI, ContentValues().apply {
             put("address", sender)
             put("thread_id", Telephony.Threads.getOrCreateThreadId(context, sender))
@@ -74,9 +76,11 @@ class BetaInstallSmokeTest {
                         .single { row -> row.participants.any { it.address.raw == sender } }.id
                 }
             }
-            ActivityScenario.launch<MainActivity>(Intent(context, MainActivity::class.java)
+            val openConversation = Intent(context, MainActivity::class.java)
                 .setAction(SystemPlatform.ACTION_OPEN_CONVERSATION)
-                .putExtra(SystemPlatform.EXTRA_CONVERSATION_ID, id.value)).use { scenario ->
+                .putExtra(SystemPlatform.EXTRA_CONVERSATION_ID, id.value)
+            val composer = ui.onNodeWithContentDescription("Wiadomość SMS do", substring = true)
+            ActivityScenario.launch<MainActivity>(openConversation).use { scenario ->
                 ui.waitUntil(15_000) { ui.onAllNodesWithText(text).fetchSemanticsNodes().isNotEmpty() }
                 scenario.onActivity { it.onBackPressedDispatcher.onBackPressed() }
                 ui.onNodeWithContentDescription("Szukaj kontaktu, treści lub kodu").performClick()
@@ -89,9 +93,23 @@ class BetaInstallSmokeTest {
                 ui.onNode(result).assertIsDisplayed().performClick()
                 search.assertDoesNotExist()
                 ui.onNodeWithText(text).assertIsDisplayed()
+                composer.performClick()
+                composer.performTextInput(draftText)
+            }
+            runBlocking {
+                withTimeout(10_000) { container.drafts.draft(id).first { it?.text == draftText } }
+                assertTrue(container.sendQueue.operations().first().none { it.body == draftText })
+            }
+            ActivityScenario.launch<MainActivity>(openConversation).use {
+                ui.waitUntil(15_000) { ui.onAllNodesWithText(draftText).fetchSemanticsNodes().isNotEmpty() }
+                composer.assertIsDisplayed().assertTextEquals(draftText)
+                ui.onNodeWithText(text).assertIsDisplayed()
                 assertNull(network.activeNetwork)
             }
         } finally {
+            runBlocking {
+                container.drafts.all().first().filter { it.text == draftText }.forEach { container.drafts.delete(it.id) }
+            }
             resolver.delete(uri, null, null)
         }
     }
